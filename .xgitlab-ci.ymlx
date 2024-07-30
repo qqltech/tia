@@ -1,0 +1,50 @@
+before_script:
+  - uname
+  - whoami
+  - python3 /opt/others/wss/client.py mychan 'starting to deploy..'
+  # - pwd
+  - python3 /opt/others/wss/client.py mychan 'copying to live directory'
+  - cp -r ./  /opt/others/www/larahan_gitlab
+  - python3 /opt/others/wss/client.py mychan 'all files has been copied, change dir to live directory'
+  - cd /opt/others/www/larahan_gitlab
+building:
+  stage: build
+  script:
+    # - git pull origin master
+    - python3 /opt/others/wss/client.py mychan 'composer is installing...'
+    - composer install
+    - python3 /opt/others/wss/client.py mychan 'composer finished successfully, starting to deploy'
+    - mkdir database/migrations/projects
+    - mkdir database/migrations/alters
+    - cp database/migrations/__defaults/*.* database/migrations/projects/
+    - cp .env-example .env
+    - chmod 777 .gitignore
+    - chmod 777 .env 
+    - chmod 777 -R app/Models
+    - chmod 777 -R public
+    - chmod 777 -R storage
+    - chmod 777 -R database/migrations
+    - python3 /opt/others/wss/client.py mychan 'deployment finished successfully'
+    # - git pull origin develop
+    # - composer install
+    # - cp .env.example .env
+    # - php artisan key:generate
+    # - php artisan migrate --seed
+    # - php artisan cache:clear
+    # - php artisan config:clear
+    # - php artisan storage:link
+    # - sudo chown -R deployer:www-data /opt/others/www/larahan_gitlab/
+    # - find /opt/others/www/larahan_gitlab -type f -exec chmod 664 {} \;
+    # - find /opt/others/www/larahan_gitlab -type d -exec chmod 775 {} \;
+    # - chgrp -R www-data storage bootstrap/cache
+    # - chmod -R ug+rwx storage bootstrap/cache
+testing:
+  stage: test
+  script:
+    - php ./vendor/bin/phpunit
+deploying:
+  stage: deploy
+  script:
+    - ls -al
+    - echo "Deployed"
+    # - php artisan queue:restart #if you use queue

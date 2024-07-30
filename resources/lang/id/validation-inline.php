@@ -1,0 +1,132 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Validation Language Lines
+|--------------------------------------------------------------------------
+|
+| The following language lines contain the default error messages used by
+| the validator class. Some of these rules have multiple versions such
+| as the size rules. Feel free to tweak each of these messages here.
+|
+*/
+
+return [
+    'accepted'             => 'harus diterima.',
+    'active_url'           => 'bukan URL yang valid.',
+    'after'                => 'harus berisi tanggal setelah :date.',
+    'after_or_equal'       => 'harus berisi tanggal setelah atau sama dengan :date.',
+    'alpha'                => 'hanya boleh berisi huruf.',
+    'alpha_dash'           => 'hanya boleh berisi huruf, angka, strip, dan garis bawah.',
+    'alpha_num'            => 'hanya boleh berisi huruf dan angka.',
+    'array'                => 'harus berisi sebuah array.',
+    'attached'             => 'This is already attached.',
+    'before'               => 'harus berisi tanggal sebelum :date.',
+    'before_or_equal'      => 'harus berisi tanggal sebelum atau sama dengan :date.',
+    'between'              => [
+        'array'   => 'harus memiliki :min sampai :max anggota.',
+        'file'    => 'harus berukuran antara :min sampai :max kilobita.',
+        'numeric' => 'harus bernilai antara :min sampai :max.',
+        'string'  => 'harus berisi antara :min sampai :max karakter.',
+    ],
+    'boolean'              => 'harus bernilai true atau false',
+    'confirmed'            => 'Konfirmasi tidak cocok.',
+    'date'                 => 'bukan tanggal yang valid.',
+    'date_equals'          => 'harus berisi tanggal yang sama dengan :date.',
+    'date_format'          => 'tidak cocok dengan format :format.',
+    'different'            => 'dan :other harus berbeda.',
+    'digits'               => 'harus terdiri dari :digits angka.',
+    'digits_between'       => 'harus terdiri dari :min sampai :max angka.',
+    'dimensions'           => 'tidak memiliki dimensi gambar yang valid.',
+    'distinct'             => 'memiliki nilai yang duplikat.',
+    'email'                => 'harus berupa alamat surel yang valid.',
+    'ends_with'            => 'harus diakhiri salah satu dari berikut: :values',
+    'exists'               => 'yang dipilih tidak valid.',
+    'file'                 => 'harus berupa sebuah berkas.',
+    'filled'               => 'harus memiliki nilai.',
+    'gt'                   => [
+        'array'   => 'harus memiliki lebih dari :value anggota.',
+        'file'    => 'harus berukuran lebih besar dari :value kilobita.',
+        'numeric' => 'harus bernilai lebih besar dari :value.',
+        'string'  => 'harus berisi lebih besar dari :value karakter.',
+    ],
+    'gte'                  => [
+        'array'   => 'harus terdiri dari :value anggota atau lebih.',
+        'file'    => 'harus berukuran lebih besar dari atau sama dengan :value kilobita.',
+        'numeric' => 'harus bernilai lebih besar dari atau sama dengan :value.',
+        'string'  => 'harus berisi lebih besar dari atau sama dengan :value karakter.',
+    ],
+    'image'                => 'harus berupa gambar.',
+    'in'                   => 'yang dipilih tidak valid.',
+    'in_array'             => 'tidak ada di dalam :other.',
+    'integer'              => 'harus berupa bilangan bulat.',
+    'ip'                   => 'harus berupa alamat IP yang valid.',
+    'ipv4'                 => 'harus berupa alamat IPv4 yang valid.',
+    'ipv6'                 => 'harus berupa alamat IPv6 yang valid.',
+    'json'                 => 'harus berupa JSON string yang valid.',
+    'lt'                   => [
+        'array'   => 'harus memiliki kurang dari :value anggota.',
+        'file'    => 'harus berukuran kurang dari :value kilobita.',
+        'numeric' => 'harus bernilai kurang dari :value.',
+        'string'  => 'harus berisi kurang dari :value karakter.',
+    ],
+    'lte'                  => [
+        'array'   => 'harus tidak lebih dari :value anggota.',
+        'file'    => 'harus berukuran kurang dari atau sama dengan :value kilobita.',
+        'numeric' => 'harus bernilai kurang dari atau sama dengan :value.',
+        'string'  => 'harus berisi kurang dari atau sama dengan :value karakter.',
+    ],
+    'max'                  => [
+        'array'   => 'maksimal terdiri dari :max anggota.',
+        'file'    => 'maksimal berukuran :max kilobita.',
+        'numeric' => 'maksimal bernilai :max.',
+        'string'  => 'maksimal berisi :max karakter.',
+    ],
+    'mimes'                => 'harus berupa berkas berjenis: :values.',
+    'mimetypes'            => 'harus berupa berkas berjenis: :values.',
+    'min'                  => [
+        'array'   => 'minimal terdiri dari :min anggota.',
+        'file'    => 'minimal berukuran :min kilobita.',
+        'numeric' => 'minimal bernilai :min.',
+        'string'  => 'minimal berisi :min karakter.',
+    ],
+    'multiple_of'          => 'must be a multiple of :value',
+    'not_in'               => 'yang dipilih tidak valid.',
+    'not_regex'            => 'Format tidak valid.',
+    'numeric'              => 'harus berupa angka.',
+    'password'             => 'Kata sandi salah.',
+    'present'              => 'wajib ada.',
+    'prohibited'           => ':Attribute tidak boleh ada.',
+    'prohibited_if'        => ':Attribute tidak boleh ada bila :other adalah :value.',
+    'prohibited_unless'    => ':Attribute tidak boleh ada kecuali :other memiliki nilai :values.',
+    'prohibits'            => ':Attribute melarang isian :other untuk ditampilkan.',
+    'regex'                => 'Format tidak valid.',
+    'relatable'            => 'This may not be associated with this resource.',
+    'required'             => 'wajib diisi.',
+    'required_if'          => 'wajib diisi bila :other adalah :value.',
+    'required_unless'      => 'wajib diisi kecuali :other memiliki nilai :values.',
+    'required_with'        => 'wajib diisi bila terdapat :values.',
+    'required_with_all'    => 'wajib diisi bila terdapat :values.',
+    'required_without'     => 'wajib diisi bila tidak terdapat :values.',
+    'required_without_all' => 'wajib diisi bila sama sekali tidak terdapat :values.',
+    'same'                 => 'dan :other harus sama.',
+    'size'                 => [
+        'array'   => 'harus mengandung :size anggota.',
+        'file'    => 'harus berukuran :size kilobyte.',
+        'numeric' => 'harus berukuran :size.',
+        'string'  => 'harus berukuran :size karakter.',
+    ],
+    'starts_with'          => 'harus diawali salah satu dari berikut: :values',
+    'string'               => 'harus berupa string.',
+    'timezone'             => 'harus berisi zona waktu yang valid.',
+    'unique'               => 'sudah ada sebelumnya.',
+    'uploaded'             => 'gagal diunggah.',
+    'url'                  => 'Format tidak valid.',
+    'uuid'                 => 'harus merupakan UUID yang valid.',
+    'custom'               => [
+        'attribute-name' => [
+            'rule-name' => 'custom-message',
+        ],
+    ],
+    'attributes'           => [],
+];
