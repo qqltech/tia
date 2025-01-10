@@ -62,7 +62,7 @@ class NonApiController extends Controller
         $pdf->setTitle( $title );
         $orientation = config('export_orientation') ?? @$req->orientation ?? 'L';
         $size = config('export_size') ?? @$req->size ?? 'A4';
-        $pdf->AddPage( $orientation, $size/*$size=[217, 180]*/);
+        $pdf->AddPage( $orientation, @$req->size_p && @$req->size_l ? [@$req->size_p, @$req->size_l] : $size/*$size=[217, 180]*/);
         $pdf->writeHTML($html, true, false,true,false,'');
         $pdf->Output( $title.'.pdf', 'I' );
         exit();

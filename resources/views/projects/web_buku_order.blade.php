@@ -1,0 +1,329 @@
+@php
+$req = app()->request;
+$nobo = \DB::select("select * ,tbo.tipe_order,
+	mg.deskripsi pelabuhan_nama, mg2.deskripsi depo_nama, tbodn.ukuran as ukuran_kontainer,
+  mg3.deskripsi as jenis_kontainer,mk.nama as petugas_pengkont_nama,
+	mk2.nama as petugas_pemasukan_nama, mc.jenis_perusahaan,
+	mc.nama_perusahaan, mcg.nama as cg_nama
+from t_buku_order tbo
+left join t_buku_order_d_npwp tbodn on tbodn.t_buku_order_id = tbo.id
+left join set.m_general mg on mg.id = tbo.pelabuhan_id
+LEFT JOIN set.m_general mg2 on mg2.id = tbodn.depo
+left join set.m_general mg3 on mg3.id = tbodn.jenis 
+left join set.m_kary mk on mk.id = tbodn.m_petugas_pengkont_id 
+left join set.m_kary mk2 on mk2.id = tbodn.m_petugas_pemasukan_id 
+left join m_customer mc on mc.id = tbo.m_customer_id
+left join m_customer_group mcg on mcg.id = mc.m_customer_group_id 
+where tbo.id = ? ", [$req['id']]);
+$currentDate = date("d/m/Y");
+$currentTime = date("H:i:s");
+
+
+
+@endphp
+@foreach ($nobo as $n)
+@php
+$jeniskontainer = "";
+  if ($n->jenis_kontainer == "DRY CONTAINER"){
+  $jeniskontainer = "DC";
+  }
+  else if ($n->jenis_kontainer == "FLAT RACK CONTAINER"){
+  $jeniskontainer = "FRC";
+  }
+  else if ($n->jenis_kontainer == "OPEN TOP CONTAINER"){
+  $jeniskontainer = "OTC";
+  }
+  else if ($n->jenis_kontainer == "TUNNEL CONTAINER"){
+  $jeniskontainer = "TC";
+  } 
+  else if ($n->jenis_kontainer == "OPEN SIDE CONTAINER"){
+  $jeniskontainer = "OSC";
+  } 
+  else if ($n->jenis_kontainer == "REEFER CONTAINER"){
+  $jeniskontainer = "RR";
+  } 
+  else if ($n->jenis_kontainer == "INSULATED CONTAINER"){
+  $jeniskontainer = "IC";
+  } 
+  else if ($n->jenis_kontainer == "ISO TANK"){
+  $jeniskontainer = "ISO";
+  }
+  else if ($n->jenis_kontainer == "CARGO STORAGE ROLL"){
+  $jeniskontainer = "CSR";
+  }
+  else if ($n->jenis_kontainer == "HALF CONTAINER"){
+  $jeniskontainer = "HC";
+  }
+  else if ($n->jenis_kontainer == "CAR CARRIER"){
+  $jeniskontainer = "CC";
+  }
+  else if ($n->jenis_kontainer == "VENTILATION CONTAINER"){
+  $jeniskontainer = "VC";
+  }
+  else if ($n->jenis_kontainer == "SPECIAL PURPOSE CONTAINER"){
+  $jeniskontainer = "SPC";
+  }
+@endphp
+<div class="container">
+  <table style="width: 100%">
+      <tr>
+          <td style="width: 50%; vertical-align: top;">
+              PT. EMKL - TIA SENTOSA<br>
+              JL. PERAK TIMUR NO.236 -SURABAYA
+          </td>
+          <td style="width: 50%; vertical-align: top; text-align: right">
+              Tanggal Cetak : {{$currentDate}}
+          </td>
+      </tr>
+  </table>
+  <br>
+          <h1 style="color: #333; margin-left: 40px; text-align: center;">
+              <u>{{$n->no_buku_order}}</u><br> {{$n->cg_nama}}, {{$n->jenis_perusahaan}} {{$n->nama_perusahaan}}
+          </h1>
+  <br>
+  <table style="width: 100%">
+      <tr>
+          <td style="vertical-align: top; width: 50%; font-size: larger; font-weight: bold;"> AJU :
+          </td>
+          <td style="vertical-align: top; width: 50%; font-size: larger; font-weight: bold;">
+              Tgl : 
+          </td>
+      </tr>
+  </table>
+  <table style="border-collapse: collapse; width: 100%">
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Jml. Kontainer</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">1x{{$n->ukuran_kontainer}} {{$jeniskontainer}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >Tgl. Order</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">{{$n->tgl}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Pelayaran</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->nama_pelayaran}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Jenis Barang</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->jenis_barang}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >ETD/ETA</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">20/11/2024</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Kapal</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->nama_kapal}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >Voyage</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">{{$n->voyage}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Dari ke ( Tujuan )</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%" colspan:4>{{$n->tujuan_asal}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Closing Cont. Tgl.</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->tanggal_closing_cont}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >Jam</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">{{$n->jam_closing_cont}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Closing Doc Tgl.</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->tanggal_closing_doc}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >Jam</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">{{$n->jam_closing_doc}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >NO. BL</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->no_bl}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >Tgl</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">{{$n->tanggal_bl}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >SI / Booking No.</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">AMBIL NO INVOICE</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >No. Invoice</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->no_invoice}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >Tgl</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">{{$n->tanggal_invoice}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="20%" >Pelabuhan</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->pelabuhan_nama}}</td>
+
+          <td style="vertical-align: top; text-align: right;" width="13%" >Depo</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="20%">{{$n->depo_nama}}</td>
+      </tr>
+  </table>
+  <br>
+  <table style="width: 100%">
+      <tr>
+          <td style="width: 50%; font-size: larger; font-weight: bold;">
+            <p>No. Pend PEB/PIB :</p>
+          </td>
+          <td style="width: 50%; font-size: larger; font-weight: bold;">
+            <p>Tgl : </p>
+          </td>
+      </tr>
+  </table>
+  <table style="border-collapse: collapse; width: 100%">
+      <tr>
+          <td style="vertical-align: top;" width="15%" >BPBP</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="33%">-</td>
+
+          <td style="vertical-align: top;" width="5%" >Tgl.</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">24/10/2024</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="15%" >Peng. Kont.</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="33%">{{$n->petugas_pengkont_nama}}</td>
+
+          <td style="vertical-align: top;" width="5%" >Tgl.</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->tanggal_pengkont}}</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top;" width="15%" >Pemasukan</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="33%">{{$n->petugas_pemasukan_nama}}</td>
+
+          <td style="vertical-align: top;" width="5%" >Tgl.</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="43%">{{$n->tanggal_pemasukan}}</td>
+      </tr>
+  </table>
+  <br>
+  <table style="border-collapse: collapse; width: 100%">
+    <tr>
+        <td colspan="8">
+            <p><u>Keterangan</u></p>
+        </td>
+    </tr>
+      <tr>
+          <td style="vertical-align: top; text-align: center;" width="5%">1.</td>
+          <td style="vertical-align: top;" width="15%" >COO</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">{{$n->coo}}</td>
+
+          <td style="vertical-align: top; text-align: center;" width="5%">6.</td>
+          <td style="vertical-align: top;" width="15%" >Overweight</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: center;" width="5%">2.</td>
+          <td style="vertical-align: top;" width="15%" >HC</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">{{$n->hc}}</td>
+
+          <td style="vertical-align: top; text-align: center;" width="5%">7.</td>
+          <td style="vertical-align: top;" width="15%" >Closing</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">-</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top; text-align: center;" width="5%">3.</td>
+          <td style="vertical-align: top;" width="15%" >Angkutan</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">-</td>
+
+          <td style="vertical-align: top; text-align: center;" width="5%">8.</td>
+          <td style="vertical-align: top;" width="15%" >STAPEL</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">0 Hari (perlu ditanyakan)</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top; text-align: center;" width="5%">4.</td>
+          <td style="vertical-align: top;" width="15%" >Genset</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">-</td>
+
+          <td style="vertical-align: top; text-align: center;" width="5%">9.</td>
+          <td style="vertical-align: top;" width="15%" >Tgl. Stempel</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">24/09/2024 s/d 30/10/2024</td>
+      </tr>
+      <tr>
+          <td style="vertical-align: top; text-align: center;" width="5%">5.</td>
+          <td style="vertical-align: top;" width="15%" >Lokasi Stuffing</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top;" width="30%">
+              {{$n->lokasi_stuffing}}
+          </td>
+
+          <td style="vertical-align: top; text-align: center;vertical-align: top;" width="5%">10.</td>
+          <td style="vertical-align: top;" width="15%" >Lain-lain</td>
+          <td style="vertical-align: top;" width="2%">:</td>
+          <td style="vertical-align: top; text-align: left;" width="30%">Harap dibaca dengan teliti sebelum melakukan tugas
+          </td>
+      </tr>
+  </table>
+  <p></p>
+  <table style="vertical-align: top; border-collapse: collapse; width: 100%">
+    <tr>
+        <td style="vertical-align: top;" width="40%">
+            <table style="border: 0.5px solid black; border-collapse: collapse; width: 100%">
+                <tr>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="13%">No.</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-weight: bold; font-size: 10pt" width="42%" >Tipe Container</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-weight: bold; font-size: 10pt" width="45%">Detail</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt" width="13%">1.</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="42%">- (perlu ditanyakan)</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="45%">40'REEFER (perlu ditanyakan)</td>
+                </tr>
+            </table>
+        </td>
+        <td width="10%">
+
+        </td>
+        <td style="vertical-align: top;" width="50%">
+            <table style="border: 0.5px solid black; border-collapse: collapse; width: 100%">
+                <tr>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">PPJK</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Faktur Pajak</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Kwitansi Angkutan</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Tagihan</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Scan</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+  </table>
+</div>
+@endforeach
