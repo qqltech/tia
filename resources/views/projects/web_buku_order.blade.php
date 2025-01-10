@@ -1,19 +1,20 @@
 @php
 $req = app()->request;
 $nobo = \DB::select("select * ,tbo.tipe_order,
-	mg.deskripsi pelabuhan_nama, mg2.deskripsi depo_nama, tbodn.ukuran as ukuran_kontainer,
+	mg.kode pelabuhan_nama, mg2.deskripsi depo_nama, mg4.deskripsi as ukuran_kontainer_value,
   mg3.deskripsi as jenis_kontainer,mk.nama as petugas_pengkont_nama,
 	mk2.nama as petugas_pemasukan_nama, mc.jenis_perusahaan,
-	mc.nama_perusahaan, mcg.nama as cg_nama
+	mc.nama_perusahaan, mc.kode as kode_perusahan, mg5.deskripsi as kode_pelayaran, tbo.no_boking
 from t_buku_order tbo
 left join t_buku_order_d_npwp tbodn on tbodn.t_buku_order_id = tbo.id
 left join set.m_general mg on mg.id = tbo.pelabuhan_id
 LEFT JOIN set.m_general mg2 on mg2.id = tbodn.depo
 left join set.m_general mg3 on mg3.id = tbodn.jenis 
+left join set.m_general mg4 on mg4.id = tbodn.ukuran
+left join set.m_general mg5 on mg5.id = tbo.kode_pelayaran_id
 left join set.m_kary mk on mk.id = tbodn.m_petugas_pengkont_id 
 left join set.m_kary mk2 on mk2.id = tbodn.m_petugas_pemasukan_id 
 left join m_customer mc on mc.id = tbo.m_customer_id
-left join m_customer_group mcg on mcg.id = mc.m_customer_group_id 
 where tbo.id = ? ", [$req['id']]);
 $currentDate = date("d/m/Y");
 $currentTime = date("H:i:s");
@@ -24,25 +25,25 @@ $currentTime = date("H:i:s");
 @foreach ($nobo as $n)
 @php
 $jeniskontainer = "";
-  if ($n->jenis_kontainer == "DRY CONTAINER"){
+  if ($n->jenis_kontainer == "DRY"){
   $jeniskontainer = "DC";
   }
-  else if ($n->jenis_kontainer == "FLAT RACK CONTAINER"){
+  else if ($n->jenis_kontainer == "FLAT RACK"){
   $jeniskontainer = "FRC";
   }
-  else if ($n->jenis_kontainer == "OPEN TOP CONTAINER"){
+  else if ($n->jenis_kontainer == "OPEN TOP"){
   $jeniskontainer = "OTC";
   }
-  else if ($n->jenis_kontainer == "TUNNEL CONTAINER"){
+  else if ($n->jenis_kontainer == "TUNNEL"){
   $jeniskontainer = "TC";
   } 
-  else if ($n->jenis_kontainer == "OPEN SIDE CONTAINER"){
+  else if ($n->jenis_kontainer == "OPEN SIDE"){
   $jeniskontainer = "OSC";
   } 
-  else if ($n->jenis_kontainer == "REEFER CONTAINER"){
+  else if ($n->jenis_kontainer == "REEFER"){
   $jeniskontainer = "RR";
   } 
-  else if ($n->jenis_kontainer == "INSULATED CONTAINER"){
+  else if ($n->jenis_kontainer == "INSULATED"){
   $jeniskontainer = "IC";
   } 
   else if ($n->jenis_kontainer == "ISO TANK"){
@@ -51,16 +52,16 @@ $jeniskontainer = "";
   else if ($n->jenis_kontainer == "CARGO STORAGE ROLL"){
   $jeniskontainer = "CSR";
   }
-  else if ($n->jenis_kontainer == "HALF CONTAINER"){
+  else if ($n->jenis_kontainer == "HALF"){
   $jeniskontainer = "HC";
   }
   else if ($n->jenis_kontainer == "CAR CARRIER"){
   $jeniskontainer = "CC";
   }
-  else if ($n->jenis_kontainer == "VENTILATION CONTAINER"){
+  else if ($n->jenis_kontainer == "VENTILATION"){
   $jeniskontainer = "VC";
   }
-  else if ($n->jenis_kontainer == "SPECIAL PURPOSE CONTAINER"){
+  else if ($n->jenis_kontainer == "SPECIAL PURPOSE"){
   $jeniskontainer = "SPC";
   }
 @endphp
@@ -68,7 +69,7 @@ $jeniskontainer = "";
   <table style="width: 100%">
       <tr>
           <td style="width: 50%; vertical-align: top;">
-              PT. EMKL - TIA SENTOSA<br>
+              PT. TIA SENTOSA MAKMUR<br>
               JL. PERAK TIMUR NO.236 -SURABAYA
           </td>
           <td style="width: 50%; vertical-align: top; text-align: right">
@@ -78,7 +79,7 @@ $jeniskontainer = "";
   </table>
   <br>
           <h1 style="color: #333; margin-left: 40px; text-align: center;">
-              <u>{{$n->no_buku_order}}</u><br> {{$n->cg_nama}}, {{$n->jenis_perusahaan}} {{$n->nama_perusahaan}}
+              <u>{{$n->no_buku_order}}</u><br> {{$n->kode_perusahan}}, {{$n->jenis_perusahaan}} {{$n->nama_perusahaan}}
           </h1>
   <br>
   <table style="width: 100%">
@@ -94,7 +95,7 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >Jml. Kontainer</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">1x{{$n->ukuran_kontainer}} {{$jeniskontainer}}</td>
+          <td style="vertical-align: top;" width="43%">1x{{$n->ukuran_kontainer_value}} {{$jeniskontainer}}</td>
 
           <td style="vertical-align: top; text-align: right;" width="13%" >Tgl. Order</td>
           <td style="vertical-align: top;" width="2%">:</td>
@@ -103,7 +104,7 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >Pelayaran</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{$n->nama_pelayaran}}</td>
+          <td style="vertical-align: top;" width="43%">{{$n->kode_pelayaran}}</td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="20%" >Jenis Barang</td>
@@ -112,7 +113,7 @@ $jeniskontainer = "";
 
           <td style="vertical-align: top; text-align: right;" width="13%" >ETD/ETA</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="20%">20/11/2024</td>
+          <td style="vertical-align: top;" width="20%"></td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="20%" >Kapal</td>
@@ -158,7 +159,7 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >SI / Booking No.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">AMBIL NO INVOICE</td>
+          <td style="vertical-align: top;" width="43%">{{$n->no_boking}}</td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="20%" >No. Invoice</td>
@@ -191,7 +192,7 @@ $jeniskontainer = "";
       </tr>
   </table>
   <table style="border-collapse: collapse; width: 100%">
-      <tr>
+      <!-- <tr>
           <td style="vertical-align: top;" width="15%" >BPBP</td>
           <td style="vertical-align: top;" width="2%">:</td>
           <td style="vertical-align: top;" width="33%">-</td>
@@ -199,7 +200,7 @@ $jeniskontainer = "";
           <td style="vertical-align: top;" width="5%" >Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
           <td style="vertical-align: top;" width="43%">24/10/2024</td>
-      </tr>
+      </tr> -->
       <tr>
           <td style="vertical-align: top;" width="15%" >Peng. Kont.</td>
           <td style="vertical-align: top;" width="2%">:</td>
@@ -297,8 +298,8 @@ $jeniskontainer = "";
                 </tr>
                 <tr>
                     <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt" width="13%">1.</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="42%">- (perlu ditanyakan)</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="45%">40'REEFER (perlu ditanyakan)</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="42%">{{$n->ukuran_kontainer_value}} {{$jeniskontainer}}</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="45%"></td>
                 </tr>
             </table>
         </td>

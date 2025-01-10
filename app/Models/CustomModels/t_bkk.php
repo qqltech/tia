@@ -23,7 +23,6 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft BKK"),
             "no_bkk" => $this->helper->generateNomor("Nomor BKK"),
-            "tanggal" => date("Y-m-d"),
             "status" => "DRAFT",
         ];
         $newArrayData = array_merge($arrayData, $newData);

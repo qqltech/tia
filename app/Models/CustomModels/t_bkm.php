@@ -21,7 +21,6 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
         $newData = [
             "no_draft" => $this->helper->generateNomor("DRAFT BKM"),
             "no_bkm" => $this->helper->generateNomor("Nomor BKM"),
-            "tanggal" => date("Y-m-d"),
             "status" => "DRAFT",
         ];
         $newArrayData = array_merge($arrayData, $newData);

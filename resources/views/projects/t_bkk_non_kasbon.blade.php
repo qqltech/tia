@@ -92,7 +92,7 @@
         placeholder="No. BKK" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-1/2 !mt-3" :value="data.tanggal"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-1/2 !mt-3" :value="data.tanggal"
         :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
         :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
     </div>

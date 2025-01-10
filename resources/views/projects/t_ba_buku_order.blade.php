@@ -6,8 +6,8 @@
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 text-white hover:bg-green-600' 
-          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-blue-600 text-white hover:bg-blue-600' 
+          : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           DRAFT
         </button>
@@ -66,8 +66,8 @@
 
   <!-- FORM START -->
   <div class="grid <md:grid-cols-1 grid-cols-3 grid-flow-row p-4 gap-3">
-    <div class=" w-full !mt-3">
-      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.no_draft"
+    <div class=" w-full !mt-3 pointer-events-none">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.no_draft"
         :errorText="formErrors.no_draft?'failed':''" @input="v=>values.no_draft=v" :hints="formErrors.no_draft"
         placeholder="Auto Generate By System" label="No. Draft" :check="false" />
     </div>
@@ -79,9 +79,10 @@
           {'id' : 'APPROVED', 'key' : 'APPROVED'},]" placeholder="Pilih Status" label="Status" :check="true" />
     </div>
     <div class="w-full !mt-3">
-      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.no_ba_buku_order"
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.no_ba_buku_order"
         :errorText="formErrors.no_ba_buku_order?'failed':''" @input="v=>values.no_ba_buku_order=v"
-        :hints="formErrors.no_ba_buku_order" placeholder="No. BA Buku Order" :check="false" />
+        :hints="formErrors.no_ba_buku_order" placeholder="Auto Generate By System" label="No. BA Buku Order"
+        :check="false" />
     </div>
     <div class="w-full !mt-3 pointer-events-none">
       <FieldX class="!mt-0" :bind="{ disabled: true, readonly: true }" :value="values.tanggal"
@@ -135,30 +136,48 @@
     <div></div>
   </div>
   <!-- FORM END -->
+
+  <!-- Button Form-->
   <hr>
-  <div class="flex flex-row items-center justify-end space-x-2 p-2">
+  <div class="flex flex-row items-center justify-end space-x-2 p-2" v-show="actionText">
     <i class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
-    <button
-        class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
-        v-show="actionText"
-        @click="onReset(true)"
-      >
-        <icon fa="times" />
-        Reset
+    <button class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform 
+    hover:-translate-y-0.5 rounded-md p-2" @click="onReset(true)" v-show="actionText">
+      <icon fa="times" />
+      <span>Reset</span>
     </button>
-    <button class="text-sm rounded-md py-2 px-3 text-white bg-cyan-600 hover:bg-cyan-700 flex gap-x-1 items-center
-        transition-colors duration-300" @click="onSave(true)">
-            <icon fa="paper-plane" />
-            <span>Send Approval</span>
+    <button v-if="(((actionText=='Edit' || actionText=='Create' || actionText=='Copy') && (values.status=='DRAFT')))" 
+    class="text-sm rounded-md py-2 px-3 text-white bg-cyan-600 hover:bg-cyan-700 flex gap-x-1 items-center
+        transition-colors duration-300" @click="sendApproval" v-show="actionText">
+      <icon fa="location-arrow" />
+      <span>Send Approval</span>
     </button>
-    <button
-        class="bg-green-600 text-white font-semibold hover:bg-green-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
-        @click="onSave(false)"
-      >
-        <icon fa="save" />
-        Simpan
+    <button class="bg-green-600 text-white font-semibold hover:bg-green-500 transition-transform duration-300 
+    transform hover:-translate-y-0.5 rounded-md p-2" @click="onSave" v-show="actionText">
+      <icon fa="save" />
+      <span>Simpan</span>
     </button>
   </div>
+  <!-- END Button Form -->
+
+  <!-- Button Aprroval -->
+  <hr v-show="is_approval" />
+  <div class="flex flex-row items-center justify-end space-x-2 py-3 px-4" v-show="is_approval">
+    <button class="text-sm rounded py-2 px-2.5 text-white  bg-green-600 hover:bg-green-700 flex gap-x-1 items-center 
+        transition-colors duration-300" @click="progress('APPROVED')">
+      <span>Approve</span>
+    </button>
+    <!-- <button class="text-sm rounded py-2 px-2.5 text-white bg-orange-400 hover:bg-orange-500 flex gap-x-1 items-center
+        transition-colors duration-300" @click="progress('REVISED')">
+      <span>Revise</span>
+    </button>
+    <button class="text-sm rounded py-2 px-2.5 text-white  bg-red-600 hover:bg-red-700 flex gap-x-1 items-center
+        transition-colors duration-300" @click="progress('REJECTED')">
+      <span>Reject</span>
+    </button> -->
+  </div>
+  <!-- END Button Aprroval -->
+
 </div>
 
 @endverbatim

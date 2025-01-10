@@ -21,7 +21,6 @@ class t_bkm_non_order extends \App\Models\BasicModels\t_bkm_non_order
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft BKM Non Order"),
             "no_bkm" => $this->helper->generateNomor("Nomor BKM Non Order"),
-            "tanggal" => date("Y-m-d"),
             "status" => "DRAFT",
         ];
         $newArrayData = array_merge($arrayData, $newData);

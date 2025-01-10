@@ -76,7 +76,7 @@
         @input="v=>values.no_bkm=v" :hints="formErrors.no_bkm" label="No. BKM" placeholder="No. BKM" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3"
+      <FieldX :bind="{ readonly: !actionText, disabled:!actionText, clearable:false }" class="w-full !mt-3"
         :value="values.tanggal" :errorText="formErrors.tanggal?'failed':''"
         @input="v=>values.tanggal=v"  :hints="formErrors.tanggal" 
         :check="false"

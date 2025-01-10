@@ -70,8 +70,7 @@
       <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:true }" :value="values.tipe_tarif"
         @input="v => values.tipe_tarif = v" :errorText="formErrors.tipe_tarif ? 'failed' : ''"
         :hints="formErrors.tipe_tarif" valueField="id" displayField="key"
-        :options="[{'id' : 'Eksport' , 'key' : 'Eksport'}, {'id' : 'Import', 'key' : 'Import'}, {'id' : 'Eksport S', 'key' : 'Eksport S'},
-         {'id' : 'Import S', 'key' : 'Import S'}, {'id' : 'Lokal', 'key' : 'Lokal'},{'id' : 'OL', 'key' : 'OL'},{'id' : 'OLS', 'key' : 'OLS'}]" label="Tipe Tarif"
+        :options="[{'id' : 'Eksport' , 'key' : 'Eksport'}, {'id' : 'Import', 'key' : 'Import'}, {'id' : 'Eksport S', 'key' : 'Eksport S'}, {'id' : 'Lokal', 'key' : 'Lokal'},{'id' : 'OL', 'key' : 'OL'},{'id' : 'OLS', 'key' : 'OLS'}]" label="Tipe Tarif"
         placeholder="Pilih Eksport/Import" :check="true" />
     </div>
 

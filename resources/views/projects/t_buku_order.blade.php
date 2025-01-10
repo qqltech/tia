@@ -63,7 +63,7 @@
       <FieldSelect :bind="{ disabled: !actionText, clearable: true }" class="w-full !mt-3" :value="values.tipe_order"
         @input="v => values.tipe_order = v" :errorText="formErrors.tipe_order ? 'failed' : ''"
         :hints="formErrors.tipe_order" valueField="key" displayField="key"
-        :options="['EKSPORT', 'EKSPORT S', 'IMPORT', 'IMPORT S', 'LOKAL', 'OL', 'OLS']" placeholder="Pilih Tipe Order"
+        :options="['EKSPORT', 'EKSPORT S', 'IMPORT', 'LOKAL', 'OL', 'OLS']" placeholder="Pilih Tipe Order"
         label="Tipe Order" :check="true" />
     </div>
     <div>

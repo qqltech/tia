@@ -24,7 +24,7 @@ class m_coa extends Model
     public $rules       = [];
     public $joins       = ["set.m_general.id=m_coa.tipe_perkiraan","set.m_general.id=m_coa.kategori","m_coa.id=m_coa.m_induk_id","set.m_general.id=m_coa.jenis"];
     public $details     = [];
-    public $heirs       = ["set.m_kary","t_bkk","t_bkk","t_bkm_non_order","m_customer","t_bkk_non_order","t_credit_note","t_bkm","t_bkm_d","t_pembayaran_piutang","t_bkk_non_order_d","t_bkm_non_order_d","t_debit_note","t_bkk_d","t_bll","t_bll_d","t_pembayaran_hutang","m_coa","t_confirm_asset","t_confirm_asset","t_confirm_asset","t_memo_jurnal_d","t_buku_penyesuaian_d","t_buku_penyesuaian","t_sub_debit_note","t_sub_credit_note"];
+    public $heirs       = ["set.m_kary","t_bkk","t_bkk","t_bkm_non_order","m_customer","t_bkk_non_order","t_credit_note","t_bkm","t_bkm_d","t_pembayaran_piutang","t_bon_dinas_luar","t_bkk_non_order_d","t_bkm_non_order_d","t_debit_note","t_bkk_d","t_bll","t_bll_d","t_pembayaran_hutang","m_coa","t_confirm_asset","t_confirm_asset","t_confirm_asset","t_memo_jurnal_d","t_buku_penyesuaian_d","t_buku_penyesuaian","t_sub_debit_note","t_sub_credit_note"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

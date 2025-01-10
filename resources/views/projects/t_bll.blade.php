@@ -95,7 +95,7 @@
         placeholder="No. BLL" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{readonly: true, disabled: true }" class="w-full !mt-3" :value="data.tanggal"
+      <FieldX :bind="{readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3" :value="data.tanggal"
         :errorText="formErrors.tanggal?'failed':''" :hints="formErrors.tanggal" :check="false" type="date"
         label="Tgl BLL" placeholder="Pilih Tgl BLL" />
     </div>

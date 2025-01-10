@@ -21,7 +21,6 @@ class t_bon_dinas_luar extends \App\Models\BasicModels\t_bon_dinas_luar
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft Bon Dinas Luar"),
             "no_bon_dinas_luar" => $this->helper->generateNomor("No Bon Dinas Luar"),
-            "tanggal" => date("Y-m-d"),
             "status" => "DRAFT",
         ];
         $newArrayData = array_merge($arrayData, $newData);

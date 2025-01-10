@@ -220,11 +220,11 @@ async function onSave() {
 
     if (!result.isConfirmed) return;
     
-    if(!data.kode_jasa){
-      formErrors.value = { kode_jasa: ['Bidang ini wajib di isi'] };
-      swal.fire({ icon: 'error', text: 'Maaf data belum valid, silahkan dikoreksi' || "Failed when trying to post data"});
-      return;
-    }
+    // if(!data.kode_jasa){
+    //   formErrors.value = { kode_jasa: ['Bidang ini wajib di isi'] };
+    //   swal.fire({ icon: 'error', text: 'Maaf data belum valid, silahkan dikoreksi' || "Failed when trying to post data"});
+    //   return;
+    // }
 
     try {
         const isCreating = ['Create', 'Copy'].includes(actionText.value);

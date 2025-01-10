@@ -23,7 +23,6 @@ class t_bll extends \App\Models\BasicModels\t_bll
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft BLL"),
             "no_bll" => $this->helper->generateNomor("Nomor BLL"),
-            "tanggal" => date("Y-m-d"),
             "status" => "DRAFT",
         ];
         $newArrayData = array_merge($arrayData, $newData);

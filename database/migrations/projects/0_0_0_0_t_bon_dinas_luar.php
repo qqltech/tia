@@ -16,7 +16,7 @@ class tbondinasluar extends Migration
             $table->string('no_draft', 20)->nullable();
             $table->string('status', 100)->nullable();
             $table->bigInteger('tipe_order_id')->comment('{"src":"m_gen.id"}');
-            $table->bigInteger('tipe_kategori_id')->comment('{"src":"m_gen.id"}');
+            $table->bigInteger('tipe_kategori_id')->comment('{"src":"m_coa.id"}');
             $table->date('tanggal')->nullable();
             $table->bigInteger('t_bkk_id')->comment('{"src":"t_bkk.id"}');
             $table->string('no_bkk', 100);

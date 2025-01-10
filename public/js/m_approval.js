@@ -187,7 +187,8 @@ function onBack() {
 
 async function onSave() {
   //values.tags = JSON.stringify(values.tags)
-  values.treatments = detailArr.value
+  // values.treatments = detailArr.value
+  values.m_approval_det = detailArr.value
       try {
         const isCreating = ['Create','Copy','Tambah'].includes(actionText.value)
         const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
