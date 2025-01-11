@@ -21,8 +21,9 @@ $n = $dataBukuOrder[0];
 
 $detailBukuOrder = \DB::select(
   "select 
-  *, mg1.deskripsi as jenis_value,
-  COUNT(tbodn.ukuran) AS jumlah, ukuran,
+  mg1.deskripsi as jenis_value,
+  mg2.deskripsi as ukuran_value,
+  COUNT(tbodn.ukuran) AS jumlah, tbodn.ukuran,
   CASE
     WHEN UPPER(mg1.deskripsi) = 'DRY' then 'DC'
     WHEN UPPER(mg1.deskripsi) = 'FLAT RACK' then 'FRC'
@@ -41,24 +42,17 @@ $detailBukuOrder = \DB::select(
   END AS jenis_value_singkatan
   from t_buku_order_d_npwp as tbodn
   left join set.m_general mg1 on mg1.id = tbodn.jenis 
+  left join set.m_general mg2 on mg2.id = tbodn.ukuran 
   where tbodn.t_buku_order_id = ?
-  
-  ",[$n->t_buku_order_id]
-);
-
-$detailBukuOrder2 = \DB::select(
-  "
-  select COUNT(ukuran) as jumlah, ukuran
-  from t_buku_order_d_npwp as tbodn
-  where tbodn.t_buku_order_id = ?
-  group by ukuran
+  GROUP BY tbodn.ukuran, mg1.deskripsi, mg2.deskripsi
+  Order by tbodn.ukuran asc
   ",[$n->t_buku_order_id]
 );
 
 $str = [];
 $count = 0;
 foreach ($detailBukuOrder as $dbo) {
-    $str[$count] = $dbo->jumlah . "x" . $dbo->ukuran;
+    $str[$count] = $dbo->jumlah . "x" . $dbo->ukuran_value . ' ' .$dbo->jenis_value_singkatan;
     $count += 1;
 }
 $format = implode(", ", $str);
@@ -67,6 +61,11 @@ $format = implode(", ", $str);
 $currentDate = date("d/m/Y");
 $currentTime = date("H:i:s");
 
+function formatDate($date){
+  $unixTime = strtotime($date);
+  $date_result = date("d/m/Y", $unixTime);
+  return $date_result;
+}
 
 @endphp
 @php
@@ -113,8 +112,8 @@ $jeniskontainer = "";
 @endphp
 <div class="container">
   <!-- <pre>{{var_dump($dataBukuOrder)}}</pre> -->
-  <pre>{{$format}}</pre>
-  <pre>{{var_dump($detailBukuOrder2)}}</pre>
+  <!-- <pre>{{$format}}</pre> -->
+  
 
   <table style="width: 100%">
       <tr>
@@ -145,11 +144,11 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >Jml. Kontainer</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">1x{{$n->ukuran_kontainer_value}} {{$jeniskontainer}}</td>
+          <td style="vertical-align: top;" width="35%">{{$format}}</td>
 
-          <td style="vertical-align: top; text-align: right;" width="13%" >Tgl. Order</td>
+          <td style="vertical-align: top; text-align: right;" width="21%" >Tgl. Order</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="20%">{{$n->tgl}}</td>
+          <td style="vertical-align: top;" width="20%">{{formatDate($n->tgl)}}</td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="20%" >Pelayaran</td>
@@ -182,7 +181,7 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >Closing Cont. Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{$n->tanggal_closing_cont}}</td>
+          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_closing_cont)}}</td>
 
           <td style="vertical-align: top; text-align: right;" width="13%" >Jam</td>
           <td style="vertical-align: top;" width="2%">:</td>
@@ -191,7 +190,7 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >Closing Doc Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{$n->tanggal_closing_doc}}</td>
+          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_closing_doc)}}</td>
 
           <td style="vertical-align: top; text-align: right;" width="13%" >Jam</td>
           <td style="vertical-align: top;" width="2%">:</td>
@@ -204,7 +203,7 @@ $jeniskontainer = "";
 
           <td style="vertical-align: top; text-align: right;" width="13%" >Tgl</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="20%">{{$n->tanggal_bl}}</td>
+          <td style="vertical-align: top;" width="20%">{{formatDate($n->tanggal_bl)}}</td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="20%" >SI / Booking No.</td>
@@ -218,7 +217,7 @@ $jeniskontainer = "";
 
           <td style="vertical-align: top; text-align: right;" width="13%" >Tgl</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="20%">{{$n->tanggal_invoice}}</td>
+          <td style="vertical-align: top;" width="20%">{{formatDate($n->tanggal_invoice)}}</td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="20%" >Pelabuhan</td>
@@ -258,7 +257,7 @@ $jeniskontainer = "";
 
           <td style="vertical-align: top;" width="5%" >Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{$n->tanggal_pengkont}}</td>
+          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_pengkont)}}</td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="15%" >Pemasukan</td>
@@ -267,7 +266,7 @@ $jeniskontainer = "";
 
           <td style="vertical-align: top;" width="5%" >Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{$n->tanggal_pemasukan}}</td>
+          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_pemasukan)}}</td>
       </tr>
   </table>
   <br>

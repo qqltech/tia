@@ -432,7 +432,7 @@
                 where:`this.is_active=true and this.group='UKURAN KONTAINER'`
 
               }
-          }" placeholder="Pilih Jumlah Kontainer" label="Jumlah Kontainer" :check="true" />
+          }" placeholder="Pilih Ukuran Kontainer" label="Ukuran Kontainer" :check="true" />
     </div>
     <div>
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.jumlah_row"

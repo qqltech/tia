@@ -64,7 +64,7 @@
     <div class=" w-full !mt-3">
       <FieldX class="!mt-0" :bind="{ readonly: !actionText, disabled:!actionText }" :value="values.no_tarif"
         :errorText="formErrors.no_tarif?'failed':''" @input="v=>values.no_tarif=v" :hints="formErrors.no_tarif"
-        placeholder="No. Tarif" :check="false" />
+        placeholder="Kode Tarif" :check="false" />
     </div>
     <div class="w-full !mt-3">
       <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:true }" :value="values.tipe_tarif"
