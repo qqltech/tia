@@ -1,6 +1,6 @@
 @php
 $req = app()->request;
-$dataBukuOrder = \DB::select("select * ,tbo.id as t_buku_order_id, tbo.tipe_order,
+$nobo = \DB::select("select * ,tbo.tipe_order,
 	mg.kode pelabuhan_nama, mg2.deskripsi depo_nama, mg4.deskripsi as ukuran_kontainer_value,
   mg3.deskripsi as jenis_kontainer,mk.nama as petugas_pengkont_nama,
 	mk2.nama as petugas_pemasukan_nama, mc.jenis_perusahaan,
@@ -16,59 +16,13 @@ left join set.m_kary mk on mk.id = tbodn.m_petugas_pengkont_id
 left join set.m_kary mk2 on mk2.id = tbodn.m_petugas_pemasukan_id 
 left join m_customer mc on mc.id = tbo.m_customer_id
 where tbo.id = ? ", [$req['id']]);
-
-$n = $dataBukuOrder[0];
-
-$detailBukuOrder = \DB::select(
-  "select 
-  *, mg1.deskripsi as jenis_value,
-  COUNT(tbodn.ukuran) AS jumlah, ukuran,
-  CASE
-    WHEN UPPER(mg1.deskripsi) = 'DRY' then 'DC'
-    WHEN UPPER(mg1.deskripsi) = 'FLAT RACK' then 'FRC'
-    WHEN UPPER(mg1.deskripsi) = 'OPEN TOP' then 'OTC'
-    WHEN UPPER(mg1.deskripsi) = 'TUNNEL' then 'TC'
-    WHEN UPPER(mg1.deskripsi) = 'OPEN SIDE' then 'OSC'
-    WHEN UPPER(mg1.deskripsi) = 'REEFER' then 'RR'
-    WHEN UPPER(mg1.deskripsi) = 'INSULATED' then 'IC'
-    WHEN UPPER(mg1.deskripsi) = 'ISO TANK' then 'ISO'
-    WHEN UPPER(mg1.deskripsi) = 'CARGO STORAGE ROLL' then 'CSR'
-    WHEN UPPER(mg1.deskripsi) = 'HALF' then 'HC'
-    WHEN UPPER(mg1.deskripsi) = 'CAR CARRIER' then 'CC'
-    WHEN UPPER(mg1.deskripsi) = 'VENTILATION' then 'VC'
-    WHEN UPPER(mg1.deskripsi) = 'SPECIAL PURPOSE' then 'SPC'
-    ELSE '-'
-  END AS jenis_value_singkatan
-  from t_buku_order_d_npwp as tbodn
-  left join set.m_general mg1 on mg1.id = tbodn.jenis 
-  where tbodn.t_buku_order_id = ?
-  
-  ",[$n->t_buku_order_id]
-);
-
-$detailBukuOrder2 = \DB::select(
-  "
-  select COUNT(ukuran) as jumlah, ukuran
-  from t_buku_order_d_npwp as tbodn
-  where tbodn.t_buku_order_id = ?
-  group by ukuran
-  ",[$n->t_buku_order_id]
-);
-
-$str = [];
-$count = 0;
-foreach ($detailBukuOrder as $dbo) {
-    $str[$count] = $dbo->jumlah . "x" . $dbo->ukuran;
-    $count += 1;
-}
-$format = implode(", ", $str);
-
-
 $currentDate = date("d/m/Y");
 $currentTime = date("H:i:s");
 
 
+
 @endphp
+@foreach ($nobo as $n)
 @php
 $jeniskontainer = "";
   if ($n->jenis_kontainer == "DRY"){
@@ -112,10 +66,6 @@ $jeniskontainer = "";
   }
 @endphp
 <div class="container">
-  <!-- <pre>{{var_dump($dataBukuOrder)}}</pre> -->
-  <pre>{{$format}}</pre>
-  <pre>{{var_dump($detailBukuOrder2)}}</pre>
-
   <table style="width: 100%">
       <tr>
           <td style="width: 50%; vertical-align: top;">
@@ -377,3 +327,4 @@ $jeniskontainer = "";
     </tr>
   </table>
 </div>
+@endforeach

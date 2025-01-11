@@ -200,7 +200,7 @@
 
     <!-- No. Faktur Pajak -->
     <div>
-      <FieldSelect class="w-full !mt-3" valueField="id" displayField="no_faktur_pajak" :value="values.no_faktur_pajak"
+      <!-- <FieldSelect class="w-full !mt-3" valueField="id" displayField="no_faktur_pajak" :value="values.no_faktur_pajak"
         @input="(v)=>values.no_faktur_pajak=v" :api="{
               url: `${store.server.url_backend}/operation/m_faktur_pajak_d`,
               headers: { 'Content-Type': 'Application/json', 
@@ -208,7 +208,10 @@
               params: {
                 scopes: 'NoFakturNew'
               }
-            }" label="No.Faktur Pajak" placeholder="Pilih No.Faktur Pajak" :check="false" />
+            }" label="No.Faktur Pajak" placeholder="Pilih No.Faktur Pajak" :check="false" /> -->
+      <FieldX :bind="{ readonly: false }" class="w-full !mt-3 w-full" :value="values.no_faktur_pajak"
+        :errorText="formErrors.no_faktur_pajak?'failed':''" @input="v=>values.no_faktur_pajak=v" :hints="formErrors.no_faktur_pajak"
+        label="No. Faktur Pajak" placeholder="No. Faktur Pajak" :check="false" />
     </div>
     <!-- TARIF COO -->
     <!-- <div>
