@@ -1,28 +1,57 @@
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
+  <div class="pl-2 pb-0 mb-0">
+    <h1 class="text-xl font-semibold">Konfirmasi Asset</h1>
+  </div>
   <div class="flex justify-between items-center gap-x-4 p-4">
 
     <!-- FILTER -->
-    <!-- <div class="flex items-center gap-x-2">
+    <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData(true)" :class="filterButton === true ? 'bg-green-600 text-white hover:bg-green-600' 
-        : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
-          Active
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 text-white hover:bg-green-600' 
+          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          DRAFT
         </button>
-        <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
-        <button @click="filterShowData(false)" :class="filterButton === false ? 'bg-red-600 text-white hover:bg-red-600' 
-        : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
-          InActive
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('IN APPROVAL')" :class="filterButton === 'IN APPROVAL' ? 'bg-sky-600 text-white hover:bg-sky-600' 
+          : 'border border-sky-600 text-sky-600 bg-white hover:bg-sky-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          IN APPROVAL
+        </button>
+        <!-- <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('In Process')" :class="filterButton === 'In Process' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
+          : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          In Process
+        </button> -->
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
+          : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          APPROVED
+        </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('REVISED')" :class="filterButton === 'REVISED' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
+          : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          REVISED
+        </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('REJECTED')" :class="filterButton === 'REJECTED' ? 'bg-red-600 text-white hover:bg-red-600' 
+          : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          REJECTED
         </button>
       </div>
-    </div> -->
+    </div>
 
     <!-- ACTION BUTTON -->
     <div class="flex items-center gap-x-4">
       <RouterLink :to="$route.path + '/create?' + (Date.parse(new Date()))" class="border border-blue-600 
-      text-blue-600 bg-white hover:bg-blue-600 hover:text-white 
-                        text-sm rounded-md py-1 px-2.5 transition-colors duration-300">
+      text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
+      transition-colors duration-300">
         Create New
       </RouterLink>
     </div>
@@ -67,6 +96,91 @@
             placeholder="Pilih LPB" label="Nomor LPB" :check='false'
             :api="{
             url: `${store.server.url_backend}/operation/t_lpb`,
+            headers: {
+              'Content-Type': 'Application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+            params: {
+              simplest:false,
+              searchfield:'this.no_lpb , this.tanggal_lpb , this.no_sj_supplier , this.tanggal_sj_supplier',
+            },
+          }"
+
+             :columns="[{
+            headerName: 'No',
+            valueGetter:(p)=>p.node.rowIndex + 1,
+            width: 60,
+            sortable: false, resizable: false, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50']
+          },
+          {
+            flex: 1,
+            field: 'no_lpb',
+            headerName: 'Nomor LPB',
+            sortable: true, 
+            resizable: true, 
+            filter: false,
+            cellClass: ['border-r', '!border-gray-200', 'justify-center']
+            
+          },
+          {
+            flex: 1,
+             field: 'tanggal_lpb',
+            headerName: 'Tanggal LPB',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            
+            resizable: true, 
+            filter: false,
+          },
+          {
+            flex: 1,
+             field: 'no_sj_supplier',
+            headerName: 'Nomor SJ Supplier',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            
+            resizable: true, 
+            filter: false,
+          },
+          {
+            flex: 1,
+             field: 'tanggal_sj_supplier',
+            headerName: 'Tanggal SJ Supplier',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            resizable: true, 
+            filter: false,
+          },
+          {
+            flex: 1,
+             field: 'm_supplier.nama',
+            headerName: 'Nama Supplier',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            resizable: true, 
+            filter: false,
+          },
+          {
+            flex: 1,
+             field: 'm_supplier.negara',
+            headerName: 'Negara Supplier',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            resizable: true, 
+            filter: false,
+          },
+          ]" />
+    </div>
+    <div class=" w-full !mt-3">
+      <FieldPopup class="!mt-0"
+       displayField="no_lpb" valueField="id" :bind="{ readonly: !actionText }" 
+            :value="values.m_item_id"
+            @input="(v)=>values.m_item_id=v"
+            :errorText="formErrors.m_item_id?'failed':''" :hints="formErrors.m_item_id"
+            placeholder="Pilih LPB" label="Kode Asset" :check='false'
+            :api="{
+            url: `${store.server.url_backend}/operation/m_item`,
             headers: {
               'Content-Type': 'Application/json',
               Authorization: `${store.user.token_type} ${store.user.token}`

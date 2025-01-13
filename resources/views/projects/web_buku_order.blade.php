@@ -4,7 +4,7 @@ $dataBukuOrder = \DB::select("select * ,tbo.id as t_buku_order_id, tbo.tipe_orde
 	mg.kode pelabuhan_nama, mg2.deskripsi depo_nama, mg4.deskripsi as ukuran_kontainer_value,
   mg3.deskripsi as jenis_kontainer,mk.nama as petugas_pengkont_nama,
 	mk2.nama as petugas_pemasukan_nama, mc.jenis_perusahaan,
-	mc.nama_perusahaan, mc.kode as kode_perusahan, mg5.deskripsi as kode_pelayaran, tbo.no_boking
+	mc.nama_perusahaan, mc.kode as kode_perusahan, mg5.deskripsi as kode_pelayaran, tbo.no_boking, tbodn.no_prefix, tbodn.no_suffix
 from t_buku_order tbo
 left join t_buku_order_d_npwp tbodn on tbodn.t_buku_order_id = tbo.id
 left join set.m_general mg on mg.id = tbo.pelabuhan_id
@@ -21,14 +21,18 @@ $n = $dataBukuOrder[0];
 
 $detailBukuOrder = \DB::select(
   "select 
+  tbodn.no_prefix, 
+  tbodn.no_suffix,
   mg1.deskripsi as jenis_value,
   mg2.deskripsi as ukuran_value,
-  COUNT(tbodn.ukuran) AS jumlah, tbodn.ukuran,
+  COUNT(tbodn.ukuran) AS jumlah, 
+  tbodn.ukuran,
   CASE
     WHEN UPPER(mg1.deskripsi) = 'DRY' then 'DC'
     WHEN UPPER(mg1.deskripsi) = 'FLAT RACK' then 'FRC'
     WHEN UPPER(mg1.deskripsi) = 'OPEN TOP' then 'OTC'
     WHEN UPPER(mg1.deskripsi) = 'TUNNEL' then 'TC'
+    WHEN UPPER(mg1.deskripsi) = 'TRUCK' then 'TRUCK'
     WHEN UPPER(mg1.deskripsi) = 'OPEN SIDE' then 'OSC'
     WHEN UPPER(mg1.deskripsi) = 'REEFER' then 'RR'
     WHEN UPPER(mg1.deskripsi) = 'INSULATED' then 'IC'
@@ -44,10 +48,16 @@ $detailBukuOrder = \DB::select(
   left join set.m_general mg1 on mg1.id = tbodn.jenis 
   left join set.m_general mg2 on mg2.id = tbodn.ukuran 
   where tbodn.t_buku_order_id = ?
-  GROUP BY tbodn.ukuran, mg1.deskripsi, mg2.deskripsi
+  GROUP BY 
+    tbodn.no_prefix, 
+    tbodn.no_suffix, 
+    tbodn.ukuran, 
+    mg1.deskripsi, 
+    mg2.deskripsi
   Order by tbodn.ukuran asc
-  ",[$n->t_buku_order_id]
+  ", [$n->t_buku_order_id]
 );
+
 
 $str = [];
 $count = 0;
@@ -338,41 +348,50 @@ $jeniskontainer = "";
   <p></p>
   <table style="vertical-align: top; border-collapse: collapse; width: 100%">
     <tr>
+        <!-- Bagian Tabel Kiri -->
         <td style="vertical-align: top;" width="40%">
             <table style="border: 0.5px solid black; border-collapse: collapse; width: 100%">
                 <tr>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="13%">No.</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; font-weight: bold; font-size: 10pt" width="42%" >Tipe Container</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 10pt;" width="13%">No.</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-weight: bold; font-size: 10pt" width="42%">Tipe Container</td>
                     <td style="vertical-align: top; border: 0.5px solid black; font-weight: bold; font-size: 10pt" width="45%">Detail</td>
                 </tr>
+                @foreach ($detailBukuOrder as $index => $dbo)
                 <tr>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt" width="13%">1.</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="42%">{{$n->ukuran_kontainer_value}} {{$jeniskontainer}}</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="45%"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt" width="13%">{{ $index + 1 }}.</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="42%">
+                        {{ $dbo->ukuran_value }} {{ $dbo->jenis_value_singkatan }} ({{ $dbo->no_prefix }} {{ $dbo->no_suffix }})
+                    </td>
+                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="45%"></td> <!-- Tetap kosong -->
                 </tr>
+                @endforeach
             </table>
         </td>
-        <td width="10%">
 
-        </td>
+        <!-- Ruang Kosong -->
+        <td width="10%"></td>
+
+        <!-- Bagian Tabel Kanan -->
         <td style="vertical-align: top;" width="50%">
             <table style="border: 0.5px solid black; border-collapse: collapse; width: 100%">
                 <tr>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">PPJK</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Faktur Pajak</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Kwitansi Angkutan</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Tagihan</td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%">Scan</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 10pt;" width="20%">PPJK</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 10pt;" width="20%">Faktur Pajak</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 10pt;" width="20%">Kwitansi Angkutan</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 10pt;" width="20%">Tagihan</td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 10pt;" width="20%">Scan</td>
                 </tr>
                 <tr>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
-                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center;font-weight: bold; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt;" width="20%" height="75px"></td>
+                    <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt;" width="20%" height="75px"></td>
                 </tr>
             </table>
         </td>
     </tr>
-  </table>
+</table>
+
+
 </div>
