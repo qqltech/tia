@@ -111,7 +111,7 @@
               url: `${store.server.url_backend}/operation/t_buku_order`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
-                simplest:true
+                simplest:true,
               },
               onsuccess: response=> {
                 response.page = response.current_page
