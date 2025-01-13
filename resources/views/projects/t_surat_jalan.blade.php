@@ -111,9 +111,13 @@
               url: `${store.server.url_backend}/operation/t_buku_order`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
-                simplest:true,
-                where: `this.status='POST'`
-              }
+                simplest:true
+              },
+              onsuccess: response=> {
+                response.page = response.current_page
+                response.hasNext = response.has_next
+                return response
+            },
             }" placeholder="No Order" :check="false" :columns="[{
               headerName: 'No',
               valueGetter:(p)=>p.node.rowIndex + 1,
@@ -224,17 +228,18 @@
           }" placeholder="Isi Kontainer" label="Isi Kontainer" :check="false" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }" :value="values.lokasi_stuffing"
-          @input="v=>values.lokasi_stuffing=v" :errorText="formErrors.lokasi_stuffing?'failed':''"
-          :hints="formErrors.lokasi_stuffing" placeholder="Lokasi Stuffing" :check="false" />
+        <FieldX class="!mt-0" :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
+          :value="values.lokasi_stuffing" @input="v=>values.lokasi_stuffing=v"
+          :errorText="formErrors.lokasi_stuffing?'failed':''" :hints="formErrors.lokasi_stuffing"
+          placeholder="Lokasi Stuffing" :check="false" />
       </div>
       <div class="w-full !mt-3">
         <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.depo" @input="v=>values.depo=v"
           :errorText="formErrors.depo?'failed':''" :hints="formErrors.depo" placeholder="Depo" :check="false" />
       </div>
       <div class="w-full !mt-3">
-        <FieldUpload :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }" class="!mt-0" :value="values.foto_berkas"
-          @input="(v)=>values.foto_berkas=v" :maxSize="10"
+        <FieldUpload :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
+          class="!mt-0" :value="values.foto_berkas" @input="(v)=>values.foto_berkas=v" :maxSize="10"
           :reducerDisplay="val=>!val?null:val.split(':::')[val.split(':::').length-1]" :api="{
             url: `${store.server.url_backend}/operation${endpointApi}/upload`,
             headers: { Authorization: `${store.user.token_type} ${store.user.token}`},

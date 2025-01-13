@@ -10,10 +10,10 @@ class tbukuorder extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
-            // $table->renameColumn('kode_pelayaran','kode_pelayaran_id');
+            // $table->renameColumn('no_etd_eta','tgl_etd_eta');
             //$table->string('_columnName_');
 
-            $table->dropColumn(['berkas_coo']);
+            // $table->dropColumn(['berkas_coo']);
             // $table->string('tipe_order',10)->nullable()->change();
             // $table->string('no_buku_order',20)->nullable();
             // $table->integer('m_customer_id')->comment('{"src":"m_customer.id"}')->nullable()->change();
@@ -59,6 +59,7 @@ class tbukuorder extends Migration
             // $table->string('lokasi_stuffing')->nullable();
             // $table->string('berkas_coo')->nullable();
             // $table->integer('tipe')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->date('tgl_etd_eta')->nullable();
         });
     }
 }

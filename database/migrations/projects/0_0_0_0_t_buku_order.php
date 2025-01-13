@@ -34,6 +34,7 @@ class tbukuorder extends Migration
             $table->date('tanggal_invoice')->nullable();
             $table->date('tanggal_pengkont')->nullable(); 
             $table->date('tanggal_pemasukan')->nullable();
+            $table->date('tgl_etd_eta')->nullable();
 
             $table->integer('jumlah_coo')->nullable()->default(0);
             $table->integer('lembar_coo')->nullable()->default(0);

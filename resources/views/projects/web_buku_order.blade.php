@@ -21,29 +21,33 @@ $n = $dataBukuOrder[0];
 
 $detailBukuOrder = \DB::select(
   "select 
+  mg1.deskripsi as jenis_value,
+  mg2.deskripsi as ukuran_value,
+  mg1.deskripsi2 as jenis_singkatan_value,
+  COUNT(tbodn.ukuran) AS jumlah, 
+  tbodn.ukuran
+  from t_buku_order_d_npwp as tbodn
+  left join set.m_general mg1 on mg1.id = tbodn.jenis 
+  left join set.m_general mg2 on mg2.id = tbodn.ukuran
+  where tbodn.t_buku_order_id = ?
+  GROUP BY 
+    tbodn.ukuran, 
+    mg1.deskripsi,
+    mg1.deskripsi2, 
+    mg2.deskripsi
+  Order by tbodn.ukuran asc
+  ", [$n->t_buku_order_id]
+);
+
+$detailBukuOrder2 = \DB::select(
+  "select 
   tbodn.no_prefix, 
   tbodn.no_suffix,
   mg1.deskripsi as jenis_value,
   mg2.deskripsi as ukuran_value,
+  mg1.deskripsi2 as jenis_singkatan_value,
   COUNT(tbodn.ukuran) AS jumlah, 
-  tbodn.ukuran,
-  CASE
-    WHEN UPPER(mg1.deskripsi) = 'DRY' then 'DC'
-    WHEN UPPER(mg1.deskripsi) = 'FLAT RACK' then 'FRC'
-    WHEN UPPER(mg1.deskripsi) = 'OPEN TOP' then 'OTC'
-    WHEN UPPER(mg1.deskripsi) = 'TUNNEL' then 'TC'
-    WHEN UPPER(mg1.deskripsi) = 'TRUCK' then 'TRUCK'
-    WHEN UPPER(mg1.deskripsi) = 'OPEN SIDE' then 'OSC'
-    WHEN UPPER(mg1.deskripsi) = 'REEFER' then 'RR'
-    WHEN UPPER(mg1.deskripsi) = 'INSULATED' then 'IC'
-    WHEN UPPER(mg1.deskripsi) = 'ISO TANK' then 'ISO'
-    WHEN UPPER(mg1.deskripsi) = 'CARGO STORAGE ROLL' then 'CSR'
-    WHEN UPPER(mg1.deskripsi) = 'HALF' then 'HC'
-    WHEN UPPER(mg1.deskripsi) = 'CAR CARRIER' then 'CC'
-    WHEN UPPER(mg1.deskripsi) = 'VENTILATION' then 'VC'
-    WHEN UPPER(mg1.deskripsi) = 'SPECIAL PURPOSE' then 'SPC'
-    ELSE '-'
-  END AS jenis_value_singkatan
+  tbodn.ukuran
   from t_buku_order_d_npwp as tbodn
   left join set.m_general mg1 on mg1.id = tbodn.jenis 
   left join set.m_general mg2 on mg2.id = tbodn.ukuran 
@@ -52,7 +56,8 @@ $detailBukuOrder = \DB::select(
     tbodn.no_prefix, 
     tbodn.no_suffix, 
     tbodn.ukuran, 
-    mg1.deskripsi, 
+    mg1.deskripsi,
+    mg1.deskripsi2, 
     mg2.deskripsi
   Order by tbodn.ukuran asc
   ", [$n->t_buku_order_id]
@@ -62,7 +67,7 @@ $detailBukuOrder = \DB::select(
 $str = [];
 $count = 0;
 foreach ($detailBukuOrder as $dbo) {
-    $str[$count] = $dbo->jumlah . "x" . $dbo->ukuran_value . ' ' .$dbo->jenis_value_singkatan;
+    $str[$count] = $dbo->jumlah . "x" . $dbo->ukuran_value . ' ' .$dbo->jenis_singkatan_value;
     $count += 1;
 }
 $format = implode(", ", $str);
@@ -78,50 +83,8 @@ function formatDate($date){
 }
 
 @endphp
-@php
-$jeniskontainer = "";
-  if ($n->jenis_kontainer == "DRY"){
-  $jeniskontainer = "DC";
-  }
-  else if ($n->jenis_kontainer == "FLAT RACK"){
-  $jeniskontainer = "FRC";
-  }
-  else if ($n->jenis_kontainer == "OPEN TOP"){
-  $jeniskontainer = "OTC";
-  }
-  else if ($n->jenis_kontainer == "TUNNEL"){
-  $jeniskontainer = "TC";
-  } 
-  else if ($n->jenis_kontainer == "OPEN SIDE"){
-  $jeniskontainer = "OSC";
-  } 
-  else if ($n->jenis_kontainer == "REEFER"){
-  $jeniskontainer = "RR";
-  } 
-  else if ($n->jenis_kontainer == "INSULATED"){
-  $jeniskontainer = "IC";
-  } 
-  else if ($n->jenis_kontainer == "ISO TANK"){
-  $jeniskontainer = "ISO";
-  }
-  else if ($n->jenis_kontainer == "CARGO STORAGE ROLL"){
-  $jeniskontainer = "CSR";
-  }
-  else if ($n->jenis_kontainer == "HALF"){
-  $jeniskontainer = "HC";
-  }
-  else if ($n->jenis_kontainer == "CAR CARRIER"){
-  $jeniskontainer = "CC";
-  }
-  else if ($n->jenis_kontainer == "VENTILATION"){
-  $jeniskontainer = "VC";
-  }
-  else if ($n->jenis_kontainer == "SPECIAL PURPOSE"){
-  $jeniskontainer = "SPC";
-  }
-@endphp
 <div class="container">
-  <!-- <pre>{{var_dump($dataBukuOrder)}}</pre> -->
+  <!-- <pre>{{var_dump($detailBukuOrder)}}</pre> -->
   <!-- <pre>{{$format}}</pre> -->
   
 
@@ -172,7 +135,8 @@ $jeniskontainer = "";
 
           <td style="vertical-align: top; text-align: right;" width="13%" >ETD/ETA</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="20%"></td>
+          <!-- <td style="vertical-align: top;" width="20%">{{$n->tgl_etd_eta}}</td> -->
+          <td style="vertical-align: top;" width="43%">{{ empty($n->tgl_etd_eta) || $n->tgl_etd_eta == '1970-01-01' ? '-' : formatDate($n->tgl_etd_eta) }}</td>
       </tr>
       <tr>
           <td style="vertical-align: top;" width="20%" >Kapal</td>
@@ -191,7 +155,8 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >Closing Cont. Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_closing_cont)}}</td>
+          <!-- <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_closing_cont)}}</td> -->
+          <td style="vertical-align: top;" width="43%">{{ empty($n->tanggal_closing_cont) || $n->tanggal_closing_cont == '1970-01-01' ? '-' : formatDate($n->tanggal_closing_cont) }}</td>
 
           <td style="vertical-align: top; text-align: right;" width="13%" >Jam</td>
           <td style="vertical-align: top;" width="2%">:</td>
@@ -200,7 +165,8 @@ $jeniskontainer = "";
       <tr>
           <td style="vertical-align: top;" width="20%" >Closing Doc Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_closing_doc)}}</td>
+          <!-- <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_closing_doc)}}</td> -->
+          <td style="vertical-align: top;" width="43%">{{ empty($n->tanggal_closing_doc) || $n->tanggal_closing_doc == '1970-01-01' ? '-' : formatDate($n->tanggal_closing_doc) }}</td>
 
           <td style="vertical-align: top; text-align: right;" width="13%" >Jam</td>
           <td style="vertical-align: top;" width="2%">:</td>
@@ -261,14 +227,15 @@ $jeniskontainer = "";
           <td style="vertical-align: top;" width="43%">24/10/2024</td>
       </tr> -->
       <tr>
-          <td style="vertical-align: top;" width="15%" >Peng. Kont.</td>
-          <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="33%">{{$n->petugas_pengkont_nama}}</td>
+    <td style="vertical-align: top;" width="15%">Peng. Kont.</td>
+    <td style="vertical-align: top;" width="2%">:</td>
+    <td style="vertical-align: top;" width="33%">{{ $n->petugas_pengkont_nama }}</td>
 
-          <td style="vertical-align: top;" width="5%" >Tgl.</td>
-          <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_pengkont)}}</td>
-      </tr>
+    <td style="vertical-align: top;" width="5%">Tgl.</td>
+    <td style="vertical-align: top;" width="2%">:</td>
+    <td style="vertical-align: top;" width="43%">{{ empty($n->tanggal_pengkont) || $n->tanggal_pengkont == '1970-01-01' ? '-' : formatDate($n->tanggal_pengkont) }}</td>
+</tr>
+
       <tr>
           <td style="vertical-align: top;" width="15%" >Pemasukan</td>
           <td style="vertical-align: top;" width="2%">:</td>
@@ -276,7 +243,8 @@ $jeniskontainer = "";
 
           <td style="vertical-align: top;" width="5%" >Tgl.</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_pemasukan)}}</td>
+          <!-- <td style="vertical-align: top;" width="43%">{{formatDate($n->tanggal_pemasukan)}}</td> -->
+          <td style="vertical-align: top;" width="43%">{{ empty($n->tanggal_pemasukan) || $n->tanggal_pemasukan == '1970-01-01' ? '-' : formatDate($n->tanggal_pemasukan) }}</td>
       </tr>
   </table>
   <br>
@@ -356,13 +324,15 @@ $jeniskontainer = "";
                     <td style="vertical-align: top; border: 0.5px solid black; font-weight: bold; font-size: 10pt" width="42%">Tipe Container</td>
                     <td style="vertical-align: top; border: 0.5px solid black; font-weight: bold; font-size: 10pt" width="45%">Detail</td>
                 </tr>
-                @foreach ($detailBukuOrder as $index => $dbo)
+                @foreach ($detailBukuOrder2 as $index => $dbo)
                 <tr>
                     <td style="vertical-align: top; border: 0.5px solid black; text-align: center; font-size: 10pt" width="13%">{{ $index + 1 }}.</td>
                     <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="42%">
-                        {{ $dbo->ukuran_value }} {{ $dbo->jenis_value_singkatan }} ({{ $dbo->no_prefix }} {{ $dbo->no_suffix }})
+                        {{ $dbo->ukuran_value }} {{ $dbo->jenis_singkatan_value }}
                     </td>
-                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="45%"></td> <!-- Tetap kosong -->
+                    <td style="vertical-align: top; border: 0.5px solid black; font-size: 10pt" width="45%">
+                        {{ $dbo->no_prefix }} {{ $dbo->no_suffix }}
+                    </td>
                 </tr>
                 @endforeach
             </table>
@@ -392,6 +362,7 @@ $jeniskontainer = "";
         </td>
     </tr>
 </table>
+
 
 
 </div>

@@ -172,13 +172,23 @@
           },
           ]" />
     </div>
+    <div class="w-full !mt-3 flex space-x-3">
+          <FieldX
+            class="!mt-0 "
+            :bind="{ readonly: true }" 
+            :value="values.kode" :errorText="formErrors.kode?'failed':''"
+            @input="v=>values.kode=v"
+            :hints="formErrors.kode" 
+            placeholder="Kode Asset" label="Kode Asset":check="false"
+          />
+    </div>
     <div class=" w-full !mt-3">
       <FieldPopup class="!mt-0"
-       displayField="no_lpb" valueField="id" :bind="{ readonly: !actionText }" 
+       displayField="nama_item" valueField="id" :bind="{ readonly: !actionText }" 
             :value="values.m_item_id"
             @input="(v)=>values.m_item_id=v"
             :errorText="formErrors.m_item_id?'failed':''" :hints="formErrors.m_item_id"
-            placeholder="Pilih LPB" label="Kode Asset" :check='false'
+            placeholder="Pilih Asset" label="Nama Asset" :check='false'
             :api="{
             url: `${store.server.url_backend}/operation/m_item`,
             headers: {
@@ -200,8 +210,8 @@
           },
           {
             flex: 1,
-            field: 'no_lpb',
-            headerName: 'Nomor LPB',
+            field: 'kode',
+            headerName: 'Kode Asset',
             sortable: true, 
             resizable: true, 
             filter: false,
@@ -210,8 +220,8 @@
           },
           {
             flex: 1,
-             field: 'tanggal_lpb',
-            headerName: 'Tanggal LPB',
+             field: 'nama_item',
+            headerName: 'Nama Asset',
             cellClass: ['justify-center', 'border-r', '!border-gray-200',],
             sortable: true,
             
@@ -220,38 +230,11 @@
           },
           {
             flex: 1,
-             field: 'no_sj_supplier',
-            headerName: 'Nomor SJ Supplier',
+             field: 'tipe_item',
+            headerName: 'Tipe Item',
             cellClass: ['justify-center', 'border-r', '!border-gray-200',],
             sortable: true,
             
-            resizable: true, 
-            filter: false,
-          },
-          {
-            flex: 1,
-             field: 'tanggal_sj_supplier',
-            headerName: 'Tanggal SJ Supplier',
-            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
-            sortable: true,
-            resizable: true, 
-            filter: false,
-          },
-          {
-            flex: 1,
-             field: 'm_supplier.nama',
-            headerName: 'Nama Supplier',
-            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
-            sortable: true,
-            resizable: true, 
-            filter: false,
-          },
-          {
-            flex: 1,
-             field: 'm_supplier.negara',
-            headerName: 'Negara Supplier',
-            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
-            sortable: true,
             resizable: true, 
             filter: false,
           },
@@ -309,6 +292,55 @@
             headerName: 'Nomor ID',
             cellClass: ['justify-center', 'border-r', '!border-gray-200',],
             sortable: true,
+            resizable: true, 
+            filter: false,
+          },
+          ]" />
+    </div>
+    <div class="w-full !mt-3">
+      <FieldPopup class="!mt-0"
+       displayField="nama" valueField="id" :bind="{ readonly: !actionText }" 
+            :value="values.kategori_id"
+            @input="(v)=>values.kategori_id=v"
+            :errorText="formErrors.kategori_id?'failed':''" :hints="formErrors.kategori_id"
+            placeholder="Pilih Kategori" label="Kategori" :check='false'
+            :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: {
+              'Content-Type': 'Application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+            params: {
+              simplest:false,
+               where:`this.group='KATEGORI ASSET'`,
+              searchfield:'this.no_lpb , this.tanggal_lpb , this.no_sj_supplier , this.tanggal_sj_supplier',
+            },
+          }"
+
+             :columns="[{
+            headerName: 'No',
+            valueGetter:(p)=>p.node.rowIndex + 1,
+            width: 60,
+            sortable: false, resizable: false, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50']
+          },
+          {
+            flex: 1,
+            field: 'kode',
+            headerName: 'Kode',
+            sortable: true, 
+            resizable: true, 
+            filter: false,
+            cellClass: ['border-r', '!border-gray-200', 'justify-center']
+            
+          },
+          {
+            flex: 1,
+             field: 'deskripsi',
+            headerName: 'Deskripsi',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            
             resizable: true, 
             filter: false,
           },

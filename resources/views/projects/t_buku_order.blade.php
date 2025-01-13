@@ -213,6 +213,12 @@
         placeholder="Pilih Tanggal Pemasukan" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: !actionText , required: true}" class="w-full !mt-3" :value="values.tgl_etd_eta"
+        :errorText="formErrors.tgl_etd_eta?'failed':''" @input="v=>values.tgl_etd_eta=v"
+        :hints="formErrors.tgl_etd_eta" :check="false" type="date" label="Tanggal ETD/ETA"
+        placeholder="Pilih Tanggal ETD/ETA" />
+    </div>
+    <div>
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.jumlah_coo"
         :errorText="formErrors.jumlah_coo?'failed':''" @input="v=>values.jumlah_coo=v" :hints="formErrors.jumlah_coo"
         :check="false" label="COO (Jumlah)" placeholder="Masukan COO (Jumlah)" />
@@ -579,7 +585,7 @@
                           ]" />
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="nama"
+              <!-- <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="nama"
                 :hints="formErrors.m_petugas_pengkont_id" :value="item.m_petugas_pengkont_id"
                 @input="(v)=>item.m_petugas_pengkont_id=v" :api="{
                             url: `${store.server.url_backend}/operation/m_kary`,
@@ -620,10 +626,26 @@
                             sortable: false, resizable: true, filter: 'ColFilter',
                             cellClass: ['border-r', '!border-gray-200', 'justify-start']
                           }
-                          ]" />
+                          ]" /> -->
+              <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
+        :value="values.m_petugas_pengkont_id" @input="v=>{
+            if(v){
+              values.m_petugas_pengkont_id=v
+            }else{
+              values.m_petugas_pengkont_id=null
+            }
+          }" :errorText="formErrors.m_petugas_pengkont_id?'failed':''" :hints="formErrors.m_petugas_pengkont_id"
+        valueField="id" displayField="nama" :api="{
+              url: `${store.server.url_backend}/operation/m_kary`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                simplest:true,
+
+              }
+          }" placeholder="Pilih Nama Karyawan" label="" :check="true" />
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="nama"
+              <!-- <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="nama"
                 :hints="formErrors.m_petugas_pemasukan_id" :value="item.m_petugas_pemasukan_id"
                 @input="(v)=>item.m_petugas_pemasukan_id=v" :api="{
                             url: `${store.server.url_backend}/operation/m_kary`,
@@ -664,7 +686,23 @@
                             sortable: false, resizable: true, filter: 'ColFilter',
                             cellClass: ['border-r', '!border-gray-200', 'justify-start']
                           }
-                          ]" />
+                          ]" /> -->
+              <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
+        :value="values.m_petugas_pemasukan_id" @input="v=>{
+            if(v){
+              values.m_petugas_pemasukan_id=v
+            }else{
+              values.m_petugas_pemasukan_id=null
+            }
+          }" :errorText="formErrors.m_petugas_pemasukan_id?'failed':''" :hints="formErrors.m_petugas_pemasukan_id"
+        valueField="id" displayField="nama" :api="{
+              url: `${store.server.url_backend}/operation/m_kary`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                simplest:true,
+
+              }
+          }" placeholder="Pilih Nama Karyawan" label="" :check="true" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldX :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.no_prefix"
