@@ -93,7 +93,7 @@
                 join:true,
                 simplest:true,
                 searchfield: 'this.tgl , this.no_buku_order , this.jenis_barang, this.status',
-                where: `this.status = 'POST'`
+                
                 
               }
             }" placeholder="Pilih No. Buku Order" :check="false" :columns="[{

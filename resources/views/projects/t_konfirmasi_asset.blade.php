@@ -88,13 +88,13 @@
   <!-- FORM START -->
   <div class="grid <md:grid-cols-1 grid-cols-3 grid-flow-row p-4 gap-3">
     <div class=" w-full !mt-3">
-      <FieldPopup class="!mt-0"
-       displayField="no_lpb" valueField="id" :bind="{ readonly: !actionText }" 
-            :value="values.t_lpb_id"
-            @input="(v)=>values.t_lpb_id=v"
-            :errorText="formErrors.t_lpb_id?'failed':''" :hints="formErrors.t_lpb_id"
-            placeholder="Pilih LPB" label="Nomor LPB" :check='false'
-            :api="{
+      <FieldPopup class="!mt-0" displayField="no_lpb" valueField="id" :bind="{ readonly: !actionText }"
+        :value="values.t_lpb_id" @input="(v)=>values.t_lpb_id=v" :errorText="formErrors.t_lpb_id?'failed':''"
+        :hints="formErrors.t_lpb_id" placeholder="Pilih LPB" label="Nomor LPB" :check='false' @update:valueFull="(dt)=>{
+            values.amt=dt['t_po.total_amount']
+            values.tgl_asset=dt['tanggal_lpb']
+            $log(dt)
+            }" :api="{
             url: `${store.server.url_backend}/operation/t_lpb`,
             headers: {
               'Content-Type': 'Application/json',
@@ -102,11 +102,10 @@
             },
             params: {
               simplest:false,
+              scopes:'GetAmount',
               searchfield:'this.no_lpb , this.tanggal_lpb , this.no_sj_supplier , this.tanggal_sj_supplier',
             },
-          }"
-
-             :columns="[{
+          }" :columns="[{
             headerName: 'No',
             valueGetter:(p)=>p.node.rowIndex + 1,
             width: 60,
@@ -173,23 +172,15 @@
           ]" />
     </div>
     <div class="w-full !mt-3 flex space-x-3">
-          <FieldX
-            class="!mt-0 "
-            :bind="{ readonly: true }" 
-            :value="values.kode" :errorText="formErrors.kode?'failed':''"
-            @input="v=>values.kode=v"
-            :hints="formErrors.kode" 
-            placeholder="Kode Asset" label="Kode Asset":check="false"
-          />
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.kode" :errorText="formErrors.kode?'failed':''"
+        @input="v=>values.kode=v" :hints="formErrors.kode" placeholder="Kode Asset" label="Kode Asset" :check="false" />
     </div>
     <div class=" w-full !mt-3">
-      <FieldPopup class="!mt-0"
-       displayField="nama_item" valueField="id" :bind="{ readonly: !actionText }" 
-            :value="values.m_item_id"
-            @input="(v)=>values.m_item_id=v"
-            :errorText="formErrors.m_item_id?'failed':''" :hints="formErrors.m_item_id"
-            placeholder="Pilih Asset" label="Nama Asset" :check='false'
-            :api="{
+      <FieldPopup class="!mt-0" displayField="nama_item" valueField="id" :bind="{ readonly: !actionText }"
+        :value="values.m_item_id" @input="(v)=>values.m_item_id=v" :errorText="formErrors.m_item_id?'failed':''"
+        :hints="formErrors.m_item_id" placeholder="Pilih Asset" label="Nama Asset" :check='false' @update:valueFull="(dt)=>{
+              values.kode=dt['kode']
+                }" :api="{
             url: `${store.server.url_backend}/operation/m_item`,
             headers: {
               'Content-Type': 'Application/json',
@@ -199,9 +190,7 @@
               simplest:false,
               searchfield:'this.no_lpb , this.tanggal_lpb , this.no_sj_supplier , this.tanggal_sj_supplier',
             },
-          }"
-
-             :columns="[{
+          }" :columns="[{
             headerName: 'No',
             valueGetter:(p)=>p.node.rowIndex + 1,
             width: 60,
@@ -241,13 +230,9 @@
           ]" />
     </div>
     <div class="w-full !mt-3">
-      <FieldPopup class="!mt-0"
-       displayField="nama" valueField="id" :bind="{ readonly: !actionText }" 
-            :value="values.pic"
-            @input="(v)=>values.pic=v"
-            :errorText="formErrors.pic?'failed':''" :hints="formErrors.pic"
-            placeholder="Pilih PIC" label="PIC" :check='false'
-            :api="{
+      <FieldPopup class="!mt-0" displayField="nama" valueField="id" :bind="{ readonly: !actionText }"
+        :value="values.pic" @input="(v)=>values.pic=v" :errorText="formErrors.pic?'failed':''" :hints="formErrors.pic"
+        placeholder="Pilih PIC" label="PIC" :check='false' :api="{
             url: `${store.server.url_backend}/operation/m_kary`,
             headers: {
               'Content-Type': 'Application/json',
@@ -257,9 +242,7 @@
               simplest:false,
               searchfield:'this.no_lpb , this.tanggal_lpb , this.no_sj_supplier , this.tanggal_sj_supplier',
             },
-          }"
-
-             :columns="[{
+          }" :columns="[{
             headerName: 'No',
             valueGetter:(p)=>p.node.rowIndex + 1,
             width: 60,
@@ -298,13 +281,9 @@
           ]" />
     </div>
     <div class="w-full !mt-3">
-      <FieldPopup class="!mt-0"
-       displayField="nama" valueField="id" :bind="{ readonly: !actionText }" 
-            :value="values.kategori_id"
-            @input="(v)=>values.kategori_id=v"
-            :errorText="formErrors.kategori_id?'failed':''" :hints="formErrors.kategori_id"
-            placeholder="Pilih Kategori" label="Kategori" :check='false'
-            :api="{
+      <FieldPopup class="!mt-0" displayField="nama" valueField="id" :bind="{ readonly: !actionText }"
+        :value="values.kategori_id" @input="(v)=>values.kategori_id=v" :errorText="formErrors.kategori_id?'failed':''"
+        :hints="formErrors.kategori_id" placeholder="Pilih Kategori" label="Kategori" :check='false' :api="{
             url: `${store.server.url_backend}/operation/m_general`,
             headers: {
               'Content-Type': 'Application/json',
@@ -315,9 +294,7 @@
                where:`this.group='KATEGORI ASSET'`,
               searchfield:'this.no_lpb , this.tanggal_lpb , this.no_sj_supplier , this.tanggal_sj_supplier',
             },
-          }"
-
-             :columns="[{
+          }" :columns="[{
             headerName: 'No',
             valueGetter:(p)=>p.node.rowIndex + 1,
             width: 60,
@@ -347,29 +324,65 @@
           ]" />
     </div>
     <div class="w-full !mt-3">
-      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tgl_asset"
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.tgl_asset"
         :errorText="formErrors.tgl_asset?'failed':''" @input="v=>values.tgl_asset=v" :hints="formErrors.tgl_asset"
-        type="date" placeholder="Tanggal Asset" label="Tanggal Asset" :check="false" />
+        type="date" placeholder="Tanggal LPB" label="Tanggal Asset" :check="false" />
     </div>
+
     <div class="w-full !mt-3 flex space-x-3">
-          <FieldNumber
-            class="!mt-0 w-[70%]"
-            :bind="{ readonly: !actionText }" 
-            :value="values.masa_manfaat" :errorText="formErrors.masa_manfaat?'failed':''"
-            @input="v=>values.masa_manfaat=v"
-            :hints="formErrors.masa_manfaat" 
-            placeholder="Masukan Masa Manfaat" label="Masa Manfaat":check="false"
-          />
-          <span class="!mt-0 text-xl font-bold">BLN</span>
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.amt" :errorText="formErrors.amt?'failed':''"
+        @input="v=>values.amt=v" :hints="formErrors.amt" placeholder="Harga Perolehan" label="Harga Perolehan"
+        :check="false" />
+    </div>
+
+    <div class="w-full !mt-3 flex space-x-3">
+      <FieldNumber class="!mt-0 w-[70%]" :bind="{ readonly: !actionText }" :value="values.masa_manfaat"
+        :errorText="formErrors.masa_manfaat?'failed':''" @input="v=>values.masa_manfaat=v"
+        :hints="formErrors.masa_manfaat" placeholder="Masukan Masa Manfaat" label="Masa Manfaat" :check="false" />
+      <span class="!mt-0 text-xl font-bold">BLN</span>
+    </div>
+
+    <div class="w-full !mt-3">
+      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tgl_awal"
+        :errorText="formErrors.tgl_awal?'failed':''" @input="v=>values.tgl_awal=v" :hints="formErrors.tgl_awal"
+        type="date" placeholder="Tanggal Awal Susut" label="Tanggal Awal Susut" :check="false" />
     </div>
     <div class="w-full !mt-3">
-      <FieldPopup class="!mt-0"
-       displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }" 
-            :value="values.m_perkiraan_akun_penyusutan"
-            @input="(v)=>values.m_perkiraan_akun_penyusutan=v"
-            :errorText="formErrors.m_perkiraan_akun_penyusutan?'failed':''" :hints="formErrors.m_perkiraan_akun_penyusutan"
-            placeholder="Pilih Perkiraan Akun Penyusutan" label="Perkiraan Akun Penyusutan" :check='false'
-            :api="{
+      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tgl_akhir"
+        :errorText="formErrors.tgl_akhir?'failed':''" @input="v=>values.tgl_akhir=v" :hints="formErrors.tgl_akhir"
+        type="date" placeholder="Tanggal Akhir Susut" label="Tanggal Akhir Susut" :check="false" />
+    </div>
+
+    <div class="w-full !mt-3 flex space-x-3">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.nilai_susut"
+        :errorText="formErrors.nilai_susut?'failed':''" @input="v=>values.nilai_susut=v" :hints="formErrors.nilai_susut"
+        placeholder="Nilai Penyusutan" label="Nilai Penyusutan" :check="false" />
+    </div>
+
+    <div class="w-full !mt-3 flex space-x-3">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.akum_susut"
+        :errorText="formErrors.akum_susut?'failed':''" @input="v=>values.akum_susut=v" :hints="formErrors.akum_susut"
+        placeholder="Akumulasi Penyusutan" label="Akumulasi Penyusutan" :check="false" />
+    </div>
+
+    <div class="w-full !mt-3 flex space-x-3">
+      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.nilai_min"
+        :errorText="formErrors.nilai_min?'failed':''" @input="v=>values.nilai_min=v" :hints="formErrors.nilai_min"
+        placeholder="Nilai Minimal" label="Nilai Minimal" :check="false" />
+    </div>
+
+    <div class="w-full !mt-3 flex space-x-3">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.nilai_buku"
+        :errorText="formErrors.nilai_buku?'failed':''" @input="v=>values.nilai_buku=v" :hints="formErrors.nilai_buku"
+        placeholder="Nilai Buku" label="Nilai Buku" :check="false" />
+    </div>
+
+
+    <div class="w-full !mt-3">
+      <FieldPopup class="!mt-0" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }"
+        :value="values.m_perkiraan_asset_id" @input="(v)=>values.m_perkiraan_asset_id=v"
+        :errorText="formErrors.m_perkiraan_asset_id?'failed':''" :hints="formErrors.m_perkiraan_asset_id"
+        placeholder="Perkiraan Asset" label="Perkiraan Asset" :check='false' :api="{
             url: `${store.server.url_backend}/operation/m_coa`,
             headers: {
               'Content-Type': 'Application/json',
@@ -380,9 +393,7 @@
               simplest:false,
               searchfield:'this.nama_coa , this.nomor',
             },
-          }"
-
-             :columns="[{
+          }" :columns="[{
             headerName: 'No',
             valueGetter:(p)=>p.node.rowIndex + 1,
             width: 60,
@@ -411,6 +422,115 @@
           ]" />
     </div>
 
+    <div class="w-full !mt-3">
+      <FieldPopup class="!mt-0" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }"
+        :value="values.m_perkiraan_akun_penyusutan" @input="(v)=>values.m_perkiraan_akun_penyusutan=v"
+        :errorText="formErrors.m_perkiraan_akun_penyusutan?'failed':''" :hints="formErrors.m_perkiraan_akun_penyusutan"
+        placeholder="Pilih Perkiraan Akun Penyusutan" label="Perkiraan Akun Penyusutan" :check='false' :api="{
+            url: `${store.server.url_backend}/operation/m_coa`,
+            headers: {
+              'Content-Type': 'Application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+            params: {
+              join:false,
+              simplest:false,
+              searchfield:'this.nama_coa , this.nomor',
+            },
+          }" :columns="[{
+            headerName: 'No',
+            valueGetter:(p)=>p.node.rowIndex + 1,
+            width: 60,
+            sortable: false, resizable: false, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50']
+          },
+          {
+            flex: 1,
+             field: 'nama_coa',
+            headerName: 'Nama',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            
+            resizable: true, 
+            filter: false,
+          },
+          {
+            flex: 1,
+             field: 'nomor',
+            headerName: 'Nomor ID',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            resizable: true, 
+            filter: false,
+          },
+          ]" />
+    </div>
+
+    <div class="w-full !mt-3">
+      <FieldPopup class="!mt-0" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }"
+        :value="values.m_perkiraan_by_akun_penyusutan" @input="(v)=>values.m_perkiraan_by_akun_penyusutan=v"
+        :errorText="formErrors.m_perkiraan_by_akun_penyusutan?'failed':''" :hints="formErrors.m_perkiraan_by_akun_penyusutan"
+        placeholder="Perkiraan By Akun Penyusutan" label="Perkiraan By Akun Penyusutan" :check='false' :api="{
+            url: `${store.server.url_backend}/operation/m_coa`,
+            headers: {
+              'Content-Type': 'Application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+            params: {
+              join:false,
+              simplest:false,
+              searchfield:'this.nama_coa , this.nomor',
+            },
+          }" :columns="[{
+            headerName: 'No',
+            valueGetter:(p)=>p.node.rowIndex + 1,
+            width: 60,
+            sortable: false, resizable: false, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50']
+          },
+          {
+            flex: 1,
+             field: 'nama_coa',
+            headerName: 'Nama',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            
+            resizable: true, 
+            filter: false,
+          },
+          {
+            flex: 1,
+             field: 'nomor',
+            headerName: 'Nomor ID',
+            cellClass: ['justify-center', 'border-r', '!border-gray-200',],
+            sortable: true,
+            resizable: true, 
+            filter: false,
+          },
+          ]" />
+    </div>
+
+    <div>
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" type="textarea" :value="values.catatan"
+        :errorText="formErrors.catatan?'failed':''" @input="v=>values.catatan=v" :hints="formErrors.catatan"
+        label="Catatan" placeholder="Catatan" :check="false" />
+    </div>
+
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="values.status"
+        @input="v=>values.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status" valueField="id"
+        displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
+      {'id' : 'Posted', 'key' : 'Posted'},
+      {'id' : 'APPROVAL', 'key' : 'APPROVAL'},
+      {'id' : 'APPROVED', 'key' : 'APPROVED'}, 
+      {'id' : 'COMPLETED', 'key' : 'COMPLETED'}, 
+      {'id' : 'CLOSED', 'key' : 'CLOSED'}, 
+      {'id' : 'CANCEL', 'key' : 'CANCEL'}, 
+      {'id' : 'REJECTED', 'key' : 'REJECTED'},
+      {'id' : 'REVISED', 'key' : 'REVISED'}]" fa-icon="sort-desc" placeholder="Pilih Status" label="Status"
+        :check="false" />
+    </div>
+
   </div>
   <!-- FORM END -->
   <div class="flex flex-row items-center justify-end space-x-2 p-2">
@@ -432,135 +552,119 @@
         Simpan
       </button>
   </div>
-    <hr>
+  <hr>
 
-    <!-- DETAIL -->
-    <!-- detail -->
-    <div class="p-4">
-      <button v-show="actionText" @click="addDetail" type="button" class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+  <!-- DETAIL -->
+  <!-- detail -->
+  <div class="p-4">
+    <button v-show="actionText" @click="addDetail" type="button" class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
           <icon fa="plus" />
           Add to List
         </button>
 
-      <div class="mt-4" style="overflow-x: auto; border: 1px solid #CACACA;">
-        <table class="w-[120%] table-auto border border-[#CACACA]">
-          <thead>
-            <tr class="border">
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[1%] border bg-[#f8f8f8] border-[#CACACA]">
-                No.
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Tanggal Sebelum
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Nilai Akun Sebelum
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Nilai Buku Sebelum
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Nilai Penyusutan
-              </td>
+    <div class="mt-4" style="overflow-x: auto; border: 1px solid #CACACA;">
+      <table class="w-[120%] table-auto border border-[#CACACA]">
+        <thead>
+          <tr class="border">
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[1%] border bg-[#f8f8f8] border-[#CACACA]">
+              No.
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Tanggal Sebelum
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Nilai Akun Sebelum
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Nilai Buku Sebelum
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Nilai Penyusutan
+            </td>
 
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Nilai Akun Setelah
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Nilai Buku Setelah
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Status
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
-                Action
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, i) in detailArr" :key="item.id" class="border-t" v-if="detailArr.length > 0">
-              <td class="p-2 text-center border border-[#CACACA]">
-                {{ i + 1 }}.
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldX :bind="{ disabled: !actionText, clearable:false }"
-                  class="w-full py-2 !mt-0" :value="item.tgl_penyusutan" @input="v=>item.tgl_penyusutan=v"
-                  type="date"
-                  :check="false"
-                  :errorText="formErrors.tgl_penyusutan?'failed':''" :hints="formErrors.tgl_penyusutan"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                :check="false"
-                  class="w-full py-2 !mt-0" :value="item.nilai_akun_sebelum" @input="v=>item.nilai_akun_sebelum=v"
-                  :errorText="formErrors.nilai_akun_sebelum?'failed':''" :hints="formErrors.nilai_akun_sebelum"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                :check="false"
-                  class="w-full py-2 !mt-0" :value="item.nilai_buku_sebelum" @input="v=>item.nilai_buku_sebelum=v"
-                  :errorText="formErrors.nilai_buku_sebelum?'failed':''" :hints="formErrors.nilai_buku_sebelum"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                :check="false"
-                  class="w-full py-2 !mt-0" :value="item.nilai_penyusutan" @input="v=>item.nilai_penyusutan=v"
-                  :errorText="formErrors.nilai_penyusutan?'failed':''" :hints="formErrors.nilai_penyusutan"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                :check="false"
-                  class="w-full py-2 !mt-0" :value="item.nilai_akun_setelah" @input="v=>item.nilai_akun_setelah=v"
-                  :errorText="formErrors.nilai_akun_setelah?'failed':''" :hints="formErrors.nilai_akun_setelah"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                :check="false"
-                  class="w-full py-2 !mt-0" :value="item.nilai_buku_setelah" @input="v=>item.nilai_buku_setelah=v"
-                  :errorText="formErrors.nilai_buku_setelah?'failed':''" :hints="formErrors.nilai_buku_setelah"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldSelect :bind="{ disabled: !actionText, clearable:false }"
-                :check="false"
-                  class="w-full py-2 !mt-0" :value="item.status" @input="v=>item.status=v"
-                  :errorText="formErrors.status?'failed':''" valueField="key" displayField="key"
-        :options="['NEW' , 'OLD']" :hints="formErrors.status"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <div class="flex justify-center">
-                  <button type="button" @click="removeItem(i)" :disabled="!actionText" title="Hapus">
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Nilai Akun Setelah
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Nilai Buku Setelah
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Status
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
+              Action
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, i) in detailArr" :key="item.id" class="border-t" v-if="detailArr.length > 0">
+            <td class="p-2 text-center border border-[#CACACA]">
+              {{ i + 1 }}.
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ disabled: !actionText, clearable:false }" class="w-full py-2 !mt-0"
+                :value="item.tgl_penyusutan" @input="v=>item.tgl_penyusutan=v" type="date" :check="false"
+                :errorText="formErrors.tgl_penyusutan?'failed':''" :hints="formErrors.tgl_penyusutan" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldNumber :bind="{ disabled: !actionText, clearable:false }" :check="false" class="w-full py-2 !mt-0"
+                :value="item.nilai_akun_sebelum" @input="v=>item.nilai_akun_sebelum=v"
+                :errorText="formErrors.nilai_akun_sebelum?'failed':''" :hints="formErrors.nilai_akun_sebelum" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldNumber :bind="{ disabled: !actionText, clearable:false }" :check="false" class="w-full py-2 !mt-0"
+                :value="item.nilai_buku_sebelum" @input="v=>item.nilai_buku_sebelum=v"
+                :errorText="formErrors.nilai_buku_sebelum?'failed':''" :hints="formErrors.nilai_buku_sebelum" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldNumber :bind="{ disabled: !actionText, clearable:false }" :check="false" class="w-full py-2 !mt-0"
+                :value="item.nilai_penyusutan" @input="v=>item.nilai_penyusutan=v"
+                :errorText="formErrors.nilai_penyusutan?'failed':''" :hints="formErrors.nilai_penyusutan" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldNumber :bind="{ disabled: !actionText, clearable:false }" :check="false" class="w-full py-2 !mt-0"
+                :value="item.nilai_akun_setelah" @input="v=>item.nilai_akun_setelah=v"
+                :errorText="formErrors.nilai_akun_setelah?'failed':''" :hints="formErrors.nilai_akun_setelah" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldNumber :bind="{ disabled: !actionText, clearable:false }" :check="false" class="w-full py-2 !mt-0"
+                :value="item.nilai_buku_setelah" @input="v=>item.nilai_buku_setelah=v"
+                :errorText="formErrors.nilai_buku_setelah?'failed':''" :hints="formErrors.nilai_buku_setelah" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldSelect :bind="{ disabled: !actionText, clearable:false }" :check="false" class="w-full py-2 !mt-0"
+                :value="item.status" @input="v=>item.status=v" :errorText="formErrors.status?'failed':''"
+                valueField="key" displayField="key" :options="['NEW' , 'OLD']" :hints="formErrors.status" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <div class="flex justify-center">
+                <button type="button" @click="removeItem(i)" :disabled="!actionText" title="Hapus">
                       <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path id="Vector" d="M14 1H10.5L9.5 0H4.5L3.5 1H0V3H14M1 16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H11C11.5304 18 12.0391 17.7893 12.4142 17.4142C12.7893 17.0391 13 16.5304 13 16V4H1V16Z" fill="#F24E1E"/>
                       </svg>
                     </button>
-                </div>
+              </div>
 
-              </td>
-            </tr>
-            <tr v-else class="text-center">
-              <td colspan="7" class="py-[20px]">
-                No data to show
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            </td>
+          </tr>
+          <tr v-else class="text-center">
+            <td colspan="7" class="py-[20px]">
+              No data to show
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 
 </div>
 

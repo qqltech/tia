@@ -89,5 +89,25 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
             return response(["error" => true, "success" => false], 422);
         }
     }
+
+    public function scopeGetAmount($model)
+{
+    // Menggabungkan tabel-tabel yang diperlukan
+    $model->join('t_lpb_d', 't_lpb_d.t_lpb_id', '=', 't_lpb.id')
+          ->join('m_item', 't_lpb_d.m_item_id', '=', 'm_item.id');
+
+    // Memilih data yang diperlukan, termasuk harga perolehan dan item terkait
+    $model->select(
+        't_lpb.id as t_lpb_id',       
+        't_lpb.no_lpb as no_lpb',        // ID dari t_lpb
+        't_lpb.no_sj_supplier as no_sj',    // Nomor Surat Jalan dari t_lpb
+        't_lpb_d.m_item_id',                // ID item dari t_lpb_d
+        'm_item.nama_item as item_name',    // Nama item dari m_item (disesuaikan dengan nama kolom)
+        't_lpb_d.harga as harga_perolehan', // Harga perolehan dari t_lpb_d
+        't_lpb_d.qty as qty',               // Jumlah barang yang dipesan
+        // DB::raw('t_lpb_d.harga * t_lpb_d.qty as total_perolehan') // Total perolehan (harga * qty)
+    );
+}
+
     
 }

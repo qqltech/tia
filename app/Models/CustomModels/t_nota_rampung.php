@@ -119,6 +119,7 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
         $grandTotal = 0;
         $pelabuhan = $req['pelabuhan'];
         $arrayContainer = $req['t_nota_rampung_d'];
+        // trigger_error(json_encode($req));
         foreach ($arrayContainer as $single){    
             
             //Get Data
@@ -130,6 +131,7 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
             ->where('uk.id',$single['ukuran'])
             ->where('jk.id',$single['jenis'])
             ->first();
+            
             if(!$getTarif) continue;
             
             //Map

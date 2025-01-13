@@ -285,7 +285,7 @@ function formatDate($date){
           <td style="vertical-align: top; text-align: center;" width="5%">8.</td>
           <td style="vertical-align: top;" width="15%" >STAPEL</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="30%">0 Hari (perlu ditanyakan)</td>
+          <td style="vertical-align: top;" width="30%">.... Hari</td>
       </tr>
       <tr>
           <td style="vertical-align: top; text-align: center;" width="5%">4.</td>
@@ -296,7 +296,7 @@ function formatDate($date){
           <td style="vertical-align: top; text-align: center;" width="5%">9.</td>
           <td style="vertical-align: top;" width="15%" >Tgl. Stempel</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="30%">24/09/2024 s/d 30/10/2024</td>
+          <td style="vertical-align: top;" width="30%">-</td>
       </tr>
       <tr>
           <td style="vertical-align: top; text-align: center;" width="5%">5.</td>
@@ -309,7 +309,7 @@ function formatDate($date){
           <td style="vertical-align: top; text-align: center;vertical-align: top;" width="5%">10.</td>
           <td style="vertical-align: top;" width="15%" >Lain-lain</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top; text-align: left;" width="30%">Harap dibaca dengan teliti sebelum melakukan tugas
+          <td style="vertical-align: top; text-align: left;" width="30%">
           </td>
       </tr>
   </table>

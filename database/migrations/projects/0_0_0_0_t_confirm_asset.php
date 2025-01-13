@@ -18,6 +18,7 @@ class tconfirmasset extends Migration
             $table->integer('masa_manfaat');
             $table->integer('m_item_id')->comment('{"src":"m_item.id"}');
             $table->integer('m_perkiraan_akun_penyusutan')->comment('{"src":"m_coa.id"}');
+            $table->decimal('harga_perolehan',18,2);
             $table->integer('kategori_id')->comment('{"src":"set.m_general.id"}');
             $table->integer('m_perkiraan_asset_id')->comment('{"src":"m_coa.id"}');
             $table->integer('m_perkiraan_by_akun_penyusutan')->comment('{"src":"m_coa.id"}');
