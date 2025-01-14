@@ -51,6 +51,7 @@ class tbukuorder extends Migration
             $table->text('catatan')->nullable();
 
             $table->string('nama_kapal',100)->nullable();
+            $table->string('genzet',100)->nullable();
             $table->integer('pelabuhan_id')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->boolean('dispensasi_closing_cont')->default(true)->nullable();
             $table->boolean('dispensasi_closing_doc')->default(true)->nullable();

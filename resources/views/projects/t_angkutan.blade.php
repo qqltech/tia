@@ -96,7 +96,6 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                where:`this.status='POST'`,
                 //selectfield: 'id,no_buku_order,tgl',
                 searchfield: 'this.no_buku_order, this.tgl'
               }

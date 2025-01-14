@@ -82,26 +82,6 @@
   <div class="p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 ">
     <!-- START COLUMN -->
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_draft"
-        :errorText="formErrors.no_draft?'failed':''" @input="v=>data.no_draft=v" :hints="formErrors.no_draft"
-        label="No. Draft" placeholder="No. Draft" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_bkk"
-        :errorText="formErrors.no_bkk?'failed':''" @input="v=>data.no_bkk=v" :hints="formErrors.no_bkk" label="No. BKK"
-        placeholder="No. BKK" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.no_reference"
-        :errorText="formErrors.no_reference?'failed':''" @input="v=>data.no_reference=v"
-        :hints="formErrors.no_reference" label="No. Reference" placeholder="No. Reference" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3" :value="data.tanggal"
-        :errorText="formErrors.tanggal?'failed':''" :hints="formErrors.tanggal" :check="false" type="date"
-        label="Tgl BKK" placeholder="Pilih Tgl BKK" />
-    </div>
-    <div>
       <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
         :value="data.m_business_unit_id" @input="v=>{
             if(v){
@@ -123,6 +103,26 @@
           }" placeholder="Pilih Business Unit" label="Business Unit" :check="true" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_draft"
+        :errorText="formErrors.no_draft?'failed':''" @input="v=>data.no_draft=v" :hints="formErrors.no_draft"
+        label="No. Draft" placeholder="No. Draft" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_bkk"
+        :errorText="formErrors.no_bkk?'failed':''" @input="v=>data.no_bkk=v" :hints="formErrors.no_bkk" label="No. BKK"
+        placeholder="No. BKK" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.no_reference"
+        :errorText="formErrors.no_reference?'failed':''" @input="v=>data.no_reference=v"
+        :hints="formErrors.no_reference" label="No. Reference" placeholder="No. Reference" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"
+        :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''" :hints="formErrors.tanggal" :check="false"
+        type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
+    </div>
+    <div>
       <FieldPopup class="w-full !mt-3" :api="{
         url: `${store.server.url_backend}/operation/m_coa`,
         headers: {
@@ -135,7 +135,7 @@
           join:true,
           // override:true,
           // where:`this.is_active=true`,
-          searchfield:'this.nomor, this.nama_coa, kategori.deskripsi, this.jenis, this.induk',
+          searchfield:'this.nomor, this.nama_coa, kategori.deskripsi, jenis.deskripsi, this.induk',
           // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili'
           notin: `this.id: ${actionText=='Edit' ? [data.m_akun_pembayaran_id] : []}`, 
         },
@@ -145,8 +145,8 @@
       }" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }" :value="data.m_perkiraan_id"
         @input="(v)=>data.m_perkiraan_id=v" @update:valueFull="(response)=>{
         $log(response);
-      }" :errorText="formErrors.m_perkiraan_id?'failed':''" class="w-full !mt-3"
-        :hints="formErrors.m_perkiraan_id" placeholder="Pilih Akun Pembayaran" :check='false' :columns="[
+      }" :errorText="formErrors.m_perkiraan_id?'failed':''" class="w-full !mt-3" :hints="formErrors.m_perkiraan_id"
+        placeholder="Pilih Akun Pembayaran" :check='false' :columns="[
         {
           headerName: 'No',
           valueGetter:(p)=>p.node.rowIndex + 1,
@@ -177,7 +177,7 @@
         },
         {
           headerName: 'Jenis',
-          field: 'jenis',
+          field: 'jenis.deskripsi',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
           sortable: true, resizable: true, filter: false,
@@ -244,7 +244,7 @@
               $log(response.data[0]['m_item.id'])
               response.data = [...response.data].map((dt) => {
                 return {
-                  t_bkk_id: data.id || null,
+                  t_bkk_id: data.id || 0,
                   m_coa_id: dt.id,
                   nomor: dt.nomor,
                   nama_coa: dt.nama_coa,

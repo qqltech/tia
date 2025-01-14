@@ -92,7 +92,7 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
         foreach($getNotaRampung as $single){
              $total = $single['lolo'] + $single['m2'] + $single['ow'] + $single['m3'] + $single['m4'] + $single['m5'] + $single['plg_mon'] 
                     + $single['ge'] + $single['strp_stuf'] + $single['canc_doc'] + $single['closing_container'] + $single['batal_muat'] + $single['vgm']
-                    + $single['lolo_non_sp'];
+                    + $single['mob'] + $single['denda_koreksi'] + $single['materai'] + $single['by_adm_nr'] + $single['denda_sp'];
 
             $grandTotal += $total;
         }
@@ -147,6 +147,13 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
             $grandTotal += $getTarif['tarif_strtp_stuff'] * ($single['strp_stuf'] ?? 0);
             $grandTotal += $getTarif['tarif_batal_muat_pindah'] * ($single['batal_muat'] ?? 0);
             $grandTotal += $getTarif['tarif_closing_container'] * ($single['closing_container'] ?? 0);
+
+            $grandTotal += $getTarif['tarif_vgm'] * ($single['vgm'] ?? 0);
+            $grandTotal += $getTarif['tarif_mob'] * ($single['mob'] ?? 0);
+            $grandTotal += $getTarif['tarif_denda_koreksi'] * ($single['denda_koreksi'] ?? 0);
+            $grandTotal += $getTarif['tarif_materai'] * ($single['materai'] ?? 0);
+            $grandTotal += $getTarif['tarif_by_adm_nr'] * ($single['by_adm_nr'] ?? 0);
+            $grandTotal += $getTarif['tarif_denda_sp'] * ($single['denda_sp'] ?? 0);
 
         }
         $grandTotal += $req['lolo_non_sp'] ?? 0;

@@ -152,7 +152,7 @@
           values.jenis_kontainer=null
         }" :errorText="formErrors.t_buku_order_d_npwp_id?'failed':''" :hints="formErrors.t_buku_order_d_npwp_id"
           @update:valueFull="(dt) => {
-            values.ukuran_kontainer = dt.ukuran
+            values.ukuran_kontainer = dt['ukuran.deskripsi']
             values.jenis_kontainer = dt['jenis.deskripsi']
           }" valueField="id" displayField="no_cont" :api="{
               url: `${store.server.url_backend}/operation/t_buku_order_d_npwp`,
@@ -177,7 +177,7 @@
             },
             {
               flex: 1,
-              field: 'ukuran',
+              field: 'ukuran.deskripsi',
               headerName:  'Ukuran Kontainer',
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-center']

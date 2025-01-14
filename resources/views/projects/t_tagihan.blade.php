@@ -113,6 +113,13 @@
               headerName:  'Jenis Barang',
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            },
+             {
+              flex: 1,
+              field: 'status',
+              headerName:  'Status',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
             }
             ]" />
     </div>

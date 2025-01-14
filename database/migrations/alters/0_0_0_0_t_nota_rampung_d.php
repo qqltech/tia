@@ -12,7 +12,7 @@ class tnotarampungd extends Migration
         Schema::table($this->tableName, function (Blueprint $table) {
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            $table->dropColumn(['tipe']);
+            // $table->dropColumn(['tipe']);
             // $table->string('no_kontainer',30)->nullable()->change();
             // $table->integer('ukuran_kontainer_id');
             // $table->integer('tipe_kontainer_id');
@@ -34,6 +34,14 @@ class tnotarampungd extends Migration
             // $table->decimal('closing_container',18,4)->nullable();
             // $table->decimal('batal_muat',18,4)->nullable();
             // $table->string('spek_kont',100)->nullable();
+            // $table->decimal('vgm',18,4)->nullable();
+            // $table->decimal('mob',18,4)->nullable();
+            // $table->decimal('denda_koreksi',18,4)->nullable();
+            // $table->decimal('materai',18,4)->nullable();
+            // $table->decimal('by_adm_nr',18,4)->nullable();
+            // $table->string('nr')->nullable();
+            // $table->decimal('denda_sp',18,4)->nullable();
+            
         });
     }
 }

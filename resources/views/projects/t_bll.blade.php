@@ -105,18 +105,24 @@
         valueField="id" displayField="key" :options="['Kas','Non Kas']" placeholder="Tipe BKK" :check="false"
         fa-icon="sort-desc" />
     </div>
-    <div>
-      <FieldPopup label="No. Buku Order" :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" valueField="id" displayField="no_invoice"
-        :value="data.t_buku_order_id" @input="(v)=>data.t_buku_order_id=v"
-        :errorText="formErrors.t_buku_order_id?'failed':''" :hints="formErrors.t_buku_order_id" :api="{
+    <div class="w-full !mt-3">
+      <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="v=>{
+          if(v){
+            data.t_buku_order_id=v
+          }else{
+            data.t_buku_order_id=null
+          }
+        }" :errorText="formErrors.t_buku_order_id?'failed':''" :hints="formErrors.t_buku_order_id" @update:valueFull="(dt) => {
+              $log(dt)
+            }" valueField="id" displayField="no_buku_order" :api="{
               url: `${store.server.url_backend}/operation/t_buku_order`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                selectfield: 'id,no_invoice,tipe_order,jenis_barang,sektor',
-                searchfield: 'this.no_invoice, this.tipe_order, this.jenis_barang,this.sektor'
+                //where: `this.status='POST'`
+                searchfield:'this.no_buku_order, this.jenis_barang, m_customer.nama_perusahaan',
               }
-            }" placeholder="Pilih No. Buku Order" :check="false" :columns="[{
+            }" placeholder="No Order" :check="false" :columns="[{
               headerName: 'No',
               valueGetter:(p)=>p.node.rowIndex + 1,
               width: 60,
@@ -125,42 +131,29 @@
             },
             {
               flex: 1,
-              field: 'no_invoice',
-              headerName:  'NO. Buku Order',
+              field: 'no_buku_order',
+              headerName:  'No Order',
               sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-start']
-            },
-            {
-              flex: 1,
-              field: 'no_invoice',
-              headerName:  'NO. Invoice',
-              sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-start']
-            },
-            {
-              flex: 1,
-              field: 'tipe_order',
-              headerName:  'Tipe Order',
-              sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+              cellClass: ['border-r', '!border-gray-200', 'justify-center']
             },
             {
               flex: 1,
               field: 'jenis_barang',
               headerName:  'Jenis Barang',
               sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+              cellClass: ['border-r', '!border-gray-200', 'justify-center']
             },
+            
             {
               flex: 1,
-              field: 'sektor',
-              headerName:  'Sektor',
+              field: 'm_customer.nama_perusahaan',
+              headerName:  'Nama Customer',
               sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+              cellClass: ['border-r', '!border-gray-200', 'justify-center']
             }
             ]" />
     </div>
-    <div>
+    <!-- <div>
       <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
         :value="data.m_akun_pembayaran_id" @input="v=>{
             if(v){
@@ -179,6 +172,75 @@
                 where:'this.is_active=true'
               }
           }" placeholder="Pilih Akun Pembayaran" fa-icon="sort-desc" label="Akun Pembayaran" :check="true" />
+    </div> -->
+    <div>
+      <FieldPopup class="w-full !mt-3" :api="{
+        url: `${store.server.url_backend}/operation/m_coa`,
+        headers: {
+          'Content-Type': 'Application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`
+        },
+        params: {
+          simplest:false,
+          transform:false,
+          join:true,
+          // override:true,
+          // where:`this.is_active=true`,
+          searchfield:'this.nomor, this.nama_coa, kategori.deskripsi, jenis.deskripsi, this.induk',
+          // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili'
+          notin: `this.id: ${actionText=='Edit' ? [data.m_akun_pembayaran_id] : []}`, 
+        },
+        onsuccess: (response) => {
+          return response;
+        }
+      }" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }" :value="data.m_perkiraan_id"
+        @input="(v)=>data.m_perkiraan_id=v" @update:valueFull="(response)=>{
+        $log(response);
+      }" :errorText="formErrors.m_perkiraan_id?'failed':''" class="w-full !mt-3" :hints="formErrors.m_perkiraan_id"
+        placeholder="Pilih Akun Pembayaran" :check='false' :columns="[
+        {
+          headerName: 'No',
+          valueGetter:(p)=>p.node.rowIndex + 1,
+          width: 60,
+          sortable: false, resizable: false, filter: false,
+          cellClass: ['justify-center', 'bg-gray-50']
+        },
+        {
+          flex: 1,
+          field: 'nomor',
+          headerName: 'No. COA',
+          sortable: true, resizable: true, filter: false,
+          cellClass: ['border-r', '!border-gray-200', 'justify-center']
+        },
+        {
+          headerName: 'Nama COA',
+          field: 'nama_coa',
+          flex: 1,
+          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          sortable: true, resizable: true, filter: false,
+        },
+        {
+          headerName: 'Kategori',
+          field: 'kategori.deskripsi',
+          flex: 1,
+          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          sortable: true, resizable: true, filter: false,
+        },
+        {
+          headerName: 'Jenis',
+          field: 'jenis.deskripsi',
+          flex: 1,
+          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          sortable: true, resizable: true, filter: false,
+        },
+        {
+          headerName: 'Parent COA',
+          field: 'induk',
+          flex: 1,
+          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          sortable: true, resizable: true, filter: false,
+        },
+      ]" />
     </div>
     <div>
       <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="data.total_amt"
@@ -199,12 +261,12 @@
     <!-- ACTION BUTTON START -->
   </div>
   <div class="grid grid-cols-4 place-content-center place-items-center w-[calc(80%)] min-w-220 items-center">
-    <button v-for="(item, i) in coaList" :key="i" v-show="coaList.length > 0"
+    <!-- <button v-for="(item, i) in coaList" :key="i" v-show="coaList.length > 0"
       class="border-1 border-blue-500 hover:bg-blue-400 hover:text-white transition-transform duration-300 transform hover:-translate-y-0.5 shadow-xl m-2 h-[80px] w-[calc(80%)] rounded-1xl m-2 text-xl font-semibold"
       :class="(data && data.m_coa_id === item.id) ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'"
       @click="setPerkiraan(item.id)">
         {{item.nama_coa}}
-    </button>
+    </button> -->
     <!-- <button
       class="border-1 border-blue-500 hover:bg-blue-400 hover:text-white transition-transform duration-300 transform hover:-translate-y-0.5 shadow-xl m-2 h-[80px] w-[calc(80%)] rounded-1xl m-2 text-xl font-semibold"
       :class="(data && data.m_coa_id === 1) ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'"
@@ -261,7 +323,7 @@
 
   <div class="<md:col-span-1 col-span-3 p-2 grid <md:grid-cols-1 grid-cols-3 gap-2">
     <div class="overflow-x-auto <md:col-span-1 col-span-3">
-      <!-- <ButtonMultiSelect @add="addDetailArr" :api="{
+      <ButtonMultiSelect @add="addDetailArr" :api="{
         url: `${store.server.url_backend}/operation/m_coa`,
         headers: {
           'Content-Type': 'Application/json', 
@@ -275,7 +337,7 @@
               $log(response.data[0]['m_item.id'])
               response.data = [...response.data].map((dt) => {
                 return {
-                  t_bkk_id: data.id || null,
+                  t_bll_id: data.id || 0,
                   m_coa_id: dt.id,
                   nomor: dt.nomor,
                   nama_coa: dt.nama_coa,
@@ -332,12 +394,12 @@
           <icon fa="plus" size="sm" />
           <span>Add To List</span>
         </div>
-      </ButtonMultiSelect> -->
-      <button class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
+      </ButtonMultiSelect>
+      <!-- <button class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
             items-center transition-colors duration-300" @click="setDetail">
           <icon fa="plus" size="sm" />
           <span>Add To List</span>
-      </button>
+      </button> -->
       <table class="w-full overflow-x-auto table-auto border border-[#CACACA] mt-4">
         <thead>
           <tr class="border">

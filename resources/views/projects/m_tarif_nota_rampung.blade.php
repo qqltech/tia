@@ -207,7 +207,7 @@
     <div>
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_container_doc"
         :errorText="formErrors.tarif_container_doc?'failed':''" @input="v=>values.tarif_container_doc=v"
-        :hints="formErrors.tarif_container_doc" label="Tarif Container Doc" placeholder="Tarif Container Doc" :check="false" />
+        :hints="formErrors.tarif_container_doc" label="Tarif Canc Doc" placeholder="Tarif Canc Doc" :check="false" />
     </div>
 
     <!-- Tarif STRTP/STUFF Coloumn -->
@@ -229,6 +229,48 @@
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_closing_container"
         :errorText="formErrors.tarif_closing_container?'failed':''" @input="v=>values.tarif_closing_container=v"
         :hints="formErrors.tarif_closing_container" label="Tarif Closing Container" placeholder="Tarif Closing Container" :check="false" />
+    </div>
+
+    <!-- Tarif MOB Coloumn -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_mob"
+        :errorText="formErrors.tarif_mob?'failed':''" @input="v=>values.tarif_mob=v"
+        :hints="formErrors.tarif_mob" label="Tarif MOB" placeholder="Tarif MOB" :check="false" />
+    </div>
+
+    <!-- Tarif VGM Coloumn -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_vgm"
+        :errorText="formErrors.tarif_vgm?'failed':''" @input="v=>values.tarif_vgm=v"
+        :hints="formErrors.tarif_vgm" label="Tarif VGM" placeholder="Tarif VGM" :check="false" />
+    </div>
+
+    <!-- Tarif BY ADM NR Coloumn -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_by_adm_nr"
+        :errorText="formErrors.tarif_by_adm_nr?'failed':''" @input="v=>values.tarif_by_adm_nr=v"
+        :hints="formErrors.tarif_by_adm_nr" label="Tarif BY ADM NR" placeholder="Tarif BY ADM NR" :check="false" />
+    </div>
+
+    <!-- Tarif Materai Coloumn -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_materai"
+        :errorText="formErrors.tarif_materai?'failed':''" @input="v=>values.tarif_materai=v"
+        :hints="formErrors.tarif_materai" label="Tarif Materai" placeholder="Tarif Materai" :check="false" />
+    </div>
+
+    <!-- Tarif Denda Koreksi Coloumn -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_denda_koreksi"
+        :errorText="formErrors.tarif_denda_koreksi?'failed':''" @input="v=>values.tarif_denda_koreksi=v"
+        :hints="formErrors.tarif_denda_koreksi" label="Tarif Denda Koreksi" placeholder="Tarif Denda Koreksi" :check="false" />
+    </div>
+
+    <!-- Tarif Denda Sp Coloumn -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_denda_sp"
+        :errorText="formErrors.tarif_denda_sp?'failed':''" @input="v=>values.tarif_denda_sp=v"
+        :hints="formErrors.tarif_denda_sp" label="Tarif Denda SP" placeholder="Tarif Denda SP" :check="false" />
     </div>
 
     <!-- Catatan Column -->

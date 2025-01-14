@@ -130,7 +130,14 @@
               headerName:  'Customer',
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-start']
-            }
+            },
+            {
+              flex: 1,
+              field: 'status',
+              headerName:  'Status',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            },
             ]" />
     </div>
     <div>
@@ -148,9 +155,9 @@
         :errorText="formErrors.pelabuhan?'failed':''" @input="v=>values.pelabuhan=v" :hints="formErrors.pelabuhan"
         label="Pelabuhan" placeholder="Pelabuhan" :check="false" />
     </div>
-    <div> 
+    <div>
       <FieldSelect :bind="{ disabled: true, clearable:false }" class="w-full !mt-3" :value="values.tipe1"
-                  @input="v=>values.tipe1=v" valueField="id" displayField="deskripsi" :api="{          
+        @input="v=>values.tipe1=v" valueField="id" displayField="deskripsi" :api="{          
                           url: `${store.server.url_backend}/operation/m_general`,
                           headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                           params: {
@@ -175,26 +182,26 @@
 
     <div>
       <FieldX :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_stack"
-        :errorText="formErrors.tgl_stack?'failed':''" type="date" @input="values.tgl_stack" :hints="formErrors.tgl_stack" :check="false"
-        label="Tanggal Stack" placeholder="Pilih Tanggal Stack" />
+        :errorText="formErrors.tgl_stack?'failed':''" type="date" @input="values.tgl_stack"
+        :hints="formErrors.tgl_stack" :check="false" label="Tanggal Stack" placeholder="Pilih Tanggal Stack" />
     </div>
 
     <div>
       <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.no_eir"
-        :errorText="formErrors.no_eir?'failed':''" @input="v=>values.no_eir=v" :hints="formErrors.no_eir"
-        :check="false" label="Nomor Eir" placeholder="Nomor Eir" />
+        :errorText="formErrors.no_eir?'failed':''" @input="v=>values.no_eir=v" :hints="formErrors.no_eir" :check="false"
+        label="Nomor Eir" placeholder="Nomor Eir" />
     </div>
 
     <div>
       <FieldX :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_eir"
-        :errorText="formErrors.tgl_eir?'failed':''" @input="values.tgl_eir" type="date" :hints="formErrors.tgl_eir" :check="false"
-        label="Tanggal Eir" placeholder="Pilih Tanggal Eir" />
+        :errorText="formErrors.tgl_eir?'failed':''" @input="values.tgl_eir" type="date" :hints="formErrors.tgl_eir"
+        :check="false" label="Tanggal Eir" placeholder="Pilih Tanggal Eir" />
     </div>
 
     <div>
       <FieldX :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_nr"
-        :errorText="formErrors.tgl_nr?'failed':''" @input="values.tgl_nr" type="date" :hints="formErrors.tgl_nr" :check="false"
-        label="Tanggal Nota Rampung" placeholder="Pilih Tanggal Nota Rampung" />
+        :errorText="formErrors.tgl_nr?'failed':''" @input="values.tgl_nr" type="date" :hints="formErrors.tgl_nr"
+        :check="false" label="Tanggal Nota Rampung" placeholder="Pilih Tanggal Nota Rampung" />
     </div>
 
     <div>
@@ -245,7 +252,7 @@
     <!-- END COLUMN -->
 
   </div>
-  <div class="p-4"> 
+  <div class="p-4">
     <button
         class="bg-yellow-600 text-white font-semibold hover:bg-yellow-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         v-show="actionText"
@@ -256,8 +263,8 @@
       </button>
   </div>
 
-    <div class="p-4 font-semibold text-xl"> 
-     <span>Total = {{ formatCurrency(values.grand_total) }}</span>
+  <div class="p-4 font-semibold text-xl">
+    <span>Total = {{ formatCurrency(values.grand_total) }}</span>
   </div>
   <hr>
 
@@ -392,6 +399,36 @@
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 CLOSING CONTAINER
               </td>
+
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                VGM
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                MOB
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                DENDA KOREKSI
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                MATERAI
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                BY ADM NR
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                NR
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                DENDAA SP
+              </td>
+
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Catatan
@@ -476,8 +513,46 @@
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.closing_container"
                   :errorText="formErrors.closing_container?'failed':''" @input="v=>item.closing_container=v"
-                  :hints="formErrors.closing_container" :check="false" label="" placeholder="Batal Muat Pindah" />
+                  :hints="formErrors.closing_container" :check="false" label="" placeholder="Closing Container" />
               </td>
+
+              <td class="p-2 border border-[#CACACA]">
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.vgm"
+                  :errorText="formErrors.vgm?'failed':''" @input="v=>item.vgm=v" :hints="formErrors.vgm" :check="false"
+                  label="" placeholder="VGM" />
+              </td>
+              <td class="p-2 border border-[#CACACA]">
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.mob"
+                  :errorText="formErrors.mob?'failed':''" @input="v=>item.mob=v" :hints="formErrors.mob" :check="false"
+                  label="" placeholder="MOB" />
+              </td>
+              <td class="p-2 border border-[#CACACA]">
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.denda_koreksi"
+                  :errorText="formErrors.denda_koreksi ? 'failed' : ''" @input="v => item.denda_koreksi = v"
+                  :hints="formErrors.denda_koreksi" :check="false" label="" placeholder="Denda Koreksi" />
+              </td>
+              <td class="p-2 border border-[#CACACA]">
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.materai"
+                  :errorText="formErrors.materai ? 'failed' : ''" @input="v => item.materai = v"
+                  :hints="formErrors.materai" :check="false" label="" placeholder="Materai" />
+              </td>
+              <td class="p-2 border border-[#CACACA]">
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.by_adm_nr"
+                  :errorText="formErrors.by_adm_nr ? 'failed' : ''" @input="v => item.by_adm_nr = v"
+                  :hints="formErrors.by_adm_nr" :check="false" label="" placeholder="By Adm NR" />
+              </td>
+              <td class="p-2 border border-[#CACACA]">
+                <FieldText :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.nr"
+                  :errorText="formErrors.nr ? 'failed' : ''" @input="v => item.nr = v" :hints="formErrors.nr"
+                  :check="false" label="" placeholder="NR" />
+              </td>
+              <td class="p-2 border border-[#CACACA]">
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.denda_sp"
+                  :errorText="formErrors.denda_sp ? 'failed' : ''" @input="v => item.denda_sp = v"
+                  :hints="formErrors.denda_sp" :check="false" label="" placeholder="Denda SP" />
+              </td>
+
+
               <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{readonly: !actionText, clearable:false }" class="w-full py-2 !mt-0"
                   :value="item.catatan" @input="v=>item.catatan=v" :errorText="formErrors.catatan?'failed':''"
@@ -494,7 +569,7 @@
               </td>
             </tr>
             <tr v-else class="text-center">
-              <td colspan="7" class="py-[20px]">
+              <td colspan="25" class="py-[20px]">
                 No data to show
               </td>
             </tr>

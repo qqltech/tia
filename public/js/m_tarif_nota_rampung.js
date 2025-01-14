@@ -59,6 +59,14 @@ const defaultValues = () => {
   values.tarif_strtp_stuff = 0
   values.tarif_batal_muat_pindah = 0
   values.tarif_closing_container = 0
+
+  values.tarif_mob = 0
+  values.tarif_vgm = 0
+  values.tarif_by_adm_nr = 0
+  values.tarif_materai = 0
+  values.tarif_denda_koreksi = 0
+  values.tarif_cancel_dok = 0
+  values.tarif_denda_sp = 0
 }
 
 const onReset = async (alert = false) => {

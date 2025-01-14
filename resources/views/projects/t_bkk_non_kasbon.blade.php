@@ -82,21 +82,6 @@
   <div class="p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 ">
     <!-- START COLUMN -->
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_draft"
-        :errorText="formErrors.no_draft?'failed':''" @input="v=>data.no_draft=v" :hints="formErrors.no_draft"
-        label="No. Draft" placeholder="No. Draft" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_bkk"
-        :errorText="formErrors.no_bkk?'failed':''" @input="v=>data.no_bkk=v" :hints="formErrors.no_bkk" label="No. BKK"
-        placeholder="No. BKK" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-1/2 !mt-3" :value="data.tanggal"
-        :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
-        :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
-    </div>
-    <div>
       <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
         :value="data.m_business_unit_id" @input="v=>{
             if(v){
@@ -116,6 +101,21 @@
 
               }
           }" placeholder="Pilih Business Unit" label="Business Unit" :check="true" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_draft"
+        :errorText="formErrors.no_draft?'failed':''" @input="v=>data.no_draft=v" :hints="formErrors.no_draft"
+        label="No. Draft" placeholder="No. Draft" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_bkk"
+        :errorText="formErrors.no_bkk?'failed':''" @input="v=>data.no_bkk=v" :hints="formErrors.no_bkk" label="No. BKK"
+        placeholder="No. BKK" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-1/2 !mt-3" :value="data.tanggal"
+        :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
+        :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
     </div>
     <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="v=>{
@@ -178,7 +178,7 @@
           join:true,
           // override:true,
           // where:`this.is_active=true`,
-          searchfield:'this.nomor, this.nama_coa, kategori.deskripsi, this.jenis, this.induk',
+          searchfield:'this.nomor, this.nama_coa, kategori.deskripsi, jenis.deskripsi, this.induk',
           // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili'
           notin: `this.id: ${actionText=='Edit' ? [data.m_akun_pembayaran_id] : []}`, 
         },

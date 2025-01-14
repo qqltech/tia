@@ -37,7 +37,7 @@ const table = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.no_draft, this.no_po',
+      searchfield: 'this.no_draft, this.no_bll, this.total_amt, t_buku_order.no_buku_order',
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };
@@ -627,7 +627,7 @@ async function onSave() {
   });
 
   // data.tipe_bkk = 'Non Kasbon';
-
+  data.m_coa_id = data.m_akun_pembayaran_id;
 
   // t_bll_id: data.id || 0,
 

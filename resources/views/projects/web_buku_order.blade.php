@@ -280,7 +280,7 @@ function formatDate($date){
           <td style="vertical-align: top; text-align: center;" width="5%">3.</td>
           <td style="vertical-align: top;" width="15%" >Angkutan</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="30%">-</td>
+          <td style="vertical-align: top;" width="30%">{{$n->angkutan}}</td>
 
           <td style="vertical-align: top; text-align: center;" width="5%">8.</td>
           <td style="vertical-align: top;" width="15%" >STAPEL</td>
@@ -291,7 +291,7 @@ function formatDate($date){
           <td style="vertical-align: top; text-align: center;" width="5%">4.</td>
           <td style="vertical-align: top;" width="15%" >Genset</td>
           <td style="vertical-align: top;" width="2%">:</td>
-          <td style="vertical-align: top;" width="30%">-</td>
+          <td style="vertical-align: top;" width="30%">{{$n->genzet}}</td>
 
           <td style="vertical-align: top; text-align: center;" width="5%">9.</td>
           <td style="vertical-align: top;" width="15%" >Tgl. Stempel</td>

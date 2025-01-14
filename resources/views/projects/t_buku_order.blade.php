@@ -399,6 +399,11 @@
         :check="false" label="Angkutan" placeholder="Tuliskan Angkutan" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.genzet"
+        :errorText="formErrors.genzet?'failed':''" @input="v=>values.genzet=v" :hints="formErrors.genzet"
+        :check="false" label="genzet" placeholder="Masukkan genzet" />
+    </div>
+    <div>
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.jumlah_kemasan"
         :errorText="formErrors.jumlah_kemasan?'failed':''" @input="v=>values.jumlah_kemasan=v"
         :hints="formErrors.jumlah_kemasan" :check="false" label="Jml. Kemasan" placeholder="Masukkan Jml. Kemasan" />
@@ -491,15 +496,15 @@
               No.
             </td>
             <td
-              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center  w-[15%] border bg-[#f8f8f8] border-[#CACACA]">
               Depo
             </td>
             <td
-              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center  w-[15%] border bg-[#f8f8f8] border-[#CACACA]">
               Petugas Pengkont.
             </td>
             <td
-              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center  w-[15%] border bg-[#f8f8f8] border-[#CACACA]">
               Petugas Pemasukan
             </td>
             <td
@@ -552,7 +557,7 @@
                       where:`this.is_active=true and this.group='DEPO'`
                     }
                 }" placeholder="" label="" :check="false" /> -->
-                <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="kode"
+                <!-- <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="kode"
                 :hints="formErrors.depo" :value="item.depo"
                 @input="(v)=>item.depo=v" :api="{
                             url: `${store.server.url_backend}/operation/m_general`,
@@ -582,7 +587,20 @@
                             sortable: false, resizable: true, filter: 'ColFilter',
                             cellClass: ['border-r', '!border-gray-200', 'justify-start']
                           },
-                          ]" />
+                          ]" /> -->
+
+                <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-0"
+         :value="item.depo" @input="(v)=>item.depo=v":errorText="formErrors.depo?'failed':''" :hints="formErrors.depo"
+        valueField="id" displayField="kode" :api="{
+              url: `${store.server.url_backend}/operation/m_general`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                simplest:true,
+                transform:false,
+                join:false,
+                where:`this.is_active=true and this.group='DEPO'`
+              }
+          }" placeholder="Pilih Nama Depo" label="" :check="true" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <!-- <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="nama"
@@ -627,14 +645,8 @@
                             cellClass: ['border-r', '!border-gray-200', 'justify-start']
                           }
                           ]" /> -->
-              <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
-        :value="values.m_petugas_pengkont_id" @input="v=>{
-            if(v){
-              values.m_petugas_pengkont_id=v
-            }else{
-              values.m_petugas_pengkont_id=null
-            }
-          }" :errorText="formErrors.m_petugas_pengkont_id?'failed':''" :hints="formErrors.m_petugas_pengkont_id"
+              <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-0"
+        :value="item.m_petugas_pengkont_id" @input="(v)=>item.m_petugas_pengkont_id=v" :errorText="formErrors.m_petugas_pengkont_id?'failed':''" :hints="formErrors.m_petugas_pengkont_id"
         valueField="id" displayField="nama" :api="{
               url: `${store.server.url_backend}/operation/m_kary`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -687,14 +699,8 @@
                             cellClass: ['border-r', '!border-gray-200', 'justify-start']
                           }
                           ]" /> -->
-              <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
-        :value="values.m_petugas_pemasukan_id" @input="v=>{
-            if(v){
-              values.m_petugas_pemasukan_id=v
-            }else{
-              values.m_petugas_pemasukan_id=null
-            }
-          }" :errorText="formErrors.m_petugas_pemasukan_id?'failed':''" :hints="formErrors.m_petugas_pemasukan_id"
+              <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-0"
+         :value="item.m_petugas_pemasukan_id" @input="(v)=>item.m_petugas_pemasukan_id=v":errorText="formErrors.m_petugas_pemasukan_id?'failed':''" :hints="formErrors.m_petugas_pemasukan_id"
         valueField="id" displayField="nama" :api="{
               url: `${store.server.url_backend}/operation/m_kary`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -727,7 +733,7 @@
                             where:`this.is_active=true and this.group='SEKTOR'`
                           }
                       }" placeholder="Pilih Sektor" label="" :check="false" /> -->
-              <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="deskripsi"
+              <!-- <FieldPopup label="" class="w-full py-2 !mt-0" valueField="id" displayField="deskripsi"
                 :hints="formErrors.sektor" :value="item.sektor"
                 @input="(v)=>item.sektor=v" :api="{
                             url: `${store.server.url_backend}/operation/m_general`,
@@ -757,7 +763,19 @@
                             sortable: false, resizable: true, filter: 'ColFilter',
                             cellClass: ['border-r', '!border-gray-200', 'justify-start']
                           },
-                          ]" />
+                          ]" /> -->
+              <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-0"
+         :value="item.sektor" @input="(v)=>item.sektor=v":errorText="formErrors.sektor?'failed':''" :hints="formErrors.sektor"
+        valueField="id" displayField="deskripsi" :api="{
+              url: `${store.server.url_backend}/operation/m_general`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                simplest:true,
+                transform:false,
+                join:false,
+                where:`this.is_active=true and this.group='SEKTOR'`
+              }
+          }" placeholder="Pilih Sektor" label="" :check="true" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full py-2 !mt-0" :value="item.ukuran"
