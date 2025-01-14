@@ -81,7 +81,7 @@
           :hints="formErrors.no_surat_jalan" placeholder="No. SJ" :check="false" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ disabled: true ,readonly: true}" :value="values.tanggal"
+        <FieldX class="!mt-0" :bind="{ disabled: false ,readonly: false}" :value="values.tanggal"
           :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v" :hints="formErrors.tanggal"
           placeholder="Tanggal" :check="false" type="date" />
       </div>

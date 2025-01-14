@@ -324,7 +324,7 @@ onBeforeMount(async () => {
     simplest: true,
     transform: false,
     join: false,
-    where: 'this.is_active=true'
+    where: 'this.is_active=true AND id IN (1, 2,3,4,5)'
   }).then((res) => {
     coaList.push(...res.data);
   });

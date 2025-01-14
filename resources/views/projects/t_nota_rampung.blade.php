@@ -2,9 +2,6 @@
 @if(!$req->has('id'))
 
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="p-2">
-    <h1 class="text-xl font-semibold">Nota Rampung</h1>
-  </div>
   <div class="flex justify-between items-center px-2.5 py-1">
     <!-- FILTER -->
     <!-- FILTER -->
@@ -536,16 +533,21 @@
                   :errorText="formErrors.materai ? 'failed' : ''" @input="v => item.materai = v"
                   :hints="formErrors.materai" :check="false" label="" placeholder="Materai" />
               </td>
+
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.by_adm_nr"
                   :errorText="formErrors.by_adm_nr ? 'failed' : ''" @input="v => item.by_adm_nr = v"
                   :hints="formErrors.by_adm_nr" :check="false" label="" placeholder="By Adm NR" />
               </td>
+
               <td class="p-2 border border-[#CACACA]">
-                <FieldText :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.nr"
-                  :errorText="formErrors.nr ? 'failed' : ''" @input="v => item.nr = v" :hints="formErrors.nr"
-                  :check="false" label="" placeholder="NR" />
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.nr"
+                  :errorText="formErrors.nr ? 'failed' : ''" @input="v => item.nr = v"
+                  :hints="formErrors.nr" :check="false" label="" placeholder="NR" />
               </td>
+
+             
+
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.denda_sp"
                   :errorText="formErrors.denda_sp ? 'failed' : ''" @input="v => item.denda_sp = v"

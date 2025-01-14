@@ -65,7 +65,7 @@
     <!-- Date Coloumn -->
 
     <div>
-      <FieldX :bind="{ disabled: true, readonly: true }" class="w-full !mt-3" :value="values.tgl"
+      <FieldX :bind="{ disabled: false, readonly: false }" class="w-full !mt-3" :value="values.tgl"
         :errorText="formErrors.tgl?'failed':''" @input="updateDate" :hints="formErrors.tgl" :check="false"
         label="Tanggal" placeholder="Pilih Tanggal" />
     </div>

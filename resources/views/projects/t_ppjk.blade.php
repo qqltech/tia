@@ -116,7 +116,7 @@
           }]"
         />
           
-        <FieldX :disabled="true" :bind="{ readonly: true }" class="pt-1" :value="data.tanggal" 
+        <FieldX :disabled="true" :bind="{ readonly: false }" class="pt-1" :value="data.tanggal" 
         :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal" placeholder="Tanggal" 
         :check="false"/>
 
@@ -131,7 +131,7 @@
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
               simplest:true,
-              where:`this.status = 'POST'`
+              //where:`this.status = 'POST'`
             },
             onsuccess:(response)=>{
               response.page = response.current_page
