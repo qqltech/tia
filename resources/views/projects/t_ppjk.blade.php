@@ -116,10 +116,13 @@
           }]"
         />
           
-        <FieldX :disabled="true" :bind="{ readonly: false }" class="pt-1" :value="data.tanggal" 
+        <!-- <FieldX :disabled="true" :bind="{ readonly: false }" class="pt-1" :value="data.tanggal" 
         :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal" placeholder="Tanggal" 
-        :check="false"/>
+        :check="false"/> -->
 
+        <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''" 
+          @input="v=>data.tanggal=v" :hints="formErrors.tanggal" placeholder="Masukkan Tanggal" :check="false" 
+          type="date" />
         <FieldPopup
           :bind="{ readonly: !actionText }"
           :value="data.t_buku_order_id" @input="(v)=>data.t_buku_order_id=v"
