@@ -17,9 +17,9 @@ class tbll extends Migration
             $table->string('status')->nullable();
             $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
             $table->date('tanggal');
-            $table->integer('m_coa_id')->comment('{"src":"m_perkiraan.id"}');
+            $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');
             $table->decimal('total_amt', 18, 4);
-            $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
+            // $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
             $table->text('keterangan')->nullable();
             
             $table->integer('creator_id')->nullable();

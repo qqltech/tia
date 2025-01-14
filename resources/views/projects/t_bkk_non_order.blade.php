@@ -130,16 +130,12 @@
           Authorization: `${store.user.token_type} ${store.user.token}`
         },
         params: {
-          simplest:false,
-          transform:false,
-          join:true,
-          // override:true,
-          // where:`this.is_active=true`,
-          searchfield:'this.nomor, this.nama_coa, kategori.deskripsi, jenis.deskripsi, this.induk',
-          // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili'
-          notin: `this.id: ${actionText=='Edit' ? [data.m_akun_pembayaran_id] : []}`, 
+            searchfield: 'this.nomor, this.nama_coa, kategori.deskripsi, this.jenis, this.id',
+            where: `this.is_active = true AND kategori.deskripsi = 'MODAL'` 
         },
         onsuccess: (response) => {
+          response.page = response.current_page;
+          response.hasNext = response.has_next;
           return response;
         }
       }" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }" :value="data.m_perkiraan_id"
@@ -158,36 +154,29 @@
           flex: 1,
           field: 'nomor',
           headerName: 'No. COA',
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: 'ColFilter',
           cellClass: ['border-r', '!border-gray-200', 'justify-center']
         },
         {
           headerName: 'Nama COA',
           field: 'nama_coa',
-          flex: 1,
+          flex: 2,
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: 'ColFilter',
         },
         {
           headerName: 'Kategori',
           field: 'kategori.deskripsi',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: 'ColFilter',
         },
         {
           headerName: 'Jenis',
           field: 'jenis.deskripsi',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: false,
-        },
-        {
-          headerName: 'Parent COA',
-          field: 'induk',
-          flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: 'ColFilter',
         },
       ]" />
     </div>
@@ -236,9 +225,9 @@
           'Content-Type': 'Application/json', 
           authorization: `${store.user.token_type} ${store.user.token}`
         }, params: { 
-            simplest: true, 
-            searchfield: 'this.kategori, this.debit_kredit',
-            notin: `this.id: ${detailArr.map((det)=> (det.m_coa_id))}`
+            searchfield: 'this.nomor, this.nama_coa, kategori.deskripsi, this.jenis, this.id',
+            where: `this.is_active=true`,
+            //notin: `this.id: ${detailArr.map((det)=> (det.m_coa_id))}`
             },
             onsuccess: (response) => {
               $log(response.data[0]['m_item.id'])
@@ -278,7 +267,7 @@
           field: 'nama_coa',
           cellClass: ['border-r', '!border-gray-200', 'justify-center'],
           filter: 'ColFilter',
-          flex: 1
+          flex: 2
         }, 
         {
           pinned: false,

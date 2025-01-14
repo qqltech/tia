@@ -15,7 +15,7 @@ class tblld extends Migration
             $table->integer('t_bll_id')->comment('{"fk":"t_bll.id"}');
             $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');
             $table->decimal('nominal', 18, 4);
-            $table->text('keterangan');
+            $table->text('keterangan')->nullable();
             
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

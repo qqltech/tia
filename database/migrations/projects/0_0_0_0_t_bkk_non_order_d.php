@@ -15,7 +15,7 @@ class tbkknonorderd extends Migration
             $table->integer('t_bkk_non_order_id')->comment('{"fk":"t_bkk_non_order.id"}')->nullable();
             $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');
             $table->decimal('nominal',18,4);
-            $table->string('keterangan',250);
+            $table->text('keterangan')->nullable();
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

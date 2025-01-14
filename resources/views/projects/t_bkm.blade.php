@@ -166,12 +166,13 @@
             url: `${store.server.url_backend}/operation/m_coa`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
-              simplest:true,
-              transform:false,
-              join: 'INNER JOIN kategori ON kategori.id = m_coa.kategori_id',
-              searchfield: 'nama_coa,nomor',
-              selectfield: 'nama_coa,id,nomor',
+              searchfield: 'this.nomor, this.nama_coa, kategori.deskripsi, this.jenis, this.id',
               where: `this.is_active = true AND kategori.deskripsi = 'MODAL'`
+            },
+            onsuccess(response) {
+              response.page = response.current_page;
+              response.hasNext = response.has_next;
+              return response;
             }
           }"
           placeholder="Pilih Akun Pembayaran"
@@ -189,6 +190,20 @@
             headerName:  'Kode Akun',
             sortable: false, resizable: true, filter: 'ColFilter',
             cellClass: ['border-r', '!border-gray-200', 'justify-start']
+          },
+          {
+            headerName: 'Kategori',
+            field: 'kategori.deskripsi',
+            flex: 1,
+            cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+            sortable: true, resizable: true, filter: 'ColFilter'
+          },
+          {
+            headerName: 'Jenis',
+            field: 'jenis.deskripsi',
+            flex: 1,
+            cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+            sortable: true, resizable: true, filter: 'ColFilter'
           },
           {
             flex: 1,
@@ -232,11 +247,10 @@
         url: `${store.server.url_backend}/operation/m_coa`,
           headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
           params: { 
-            simplest: false,
-            join:true,
-            searchfield:'this.nama_coa, this.nomor',
+            searchfield: 'this.nomor, this.nama_coa, kategori.deskripsi, this.jenis, this.id',
             where: `this.is_active=true`,
-            notin:detailArr.length>0?`this.id:${detailArr.map(dt=>dt.m_coa_id).join(',')}`:null },
+            //notin:detailArr.length>0?`this.id:${detailArr.map(dt=>dt.m_coa_id).join(',')}`:null 
+            },
           onsuccess:(response)=>{
             response.data = [...response.data].map((dt)=>{
               Object.keys(dt).forEach(k=>dt['cost.'+k] = dt[k])
@@ -264,14 +278,28 @@
         {
             flex: 1,
             headerName:'Kode Akun',
-            sortable: false, resizable: true, filter: false,
+            sortable: false, resizable: true, filter: 'ColFilter',
             field: 'nomor',
             cellClass: ['justify-start','!border-gray-200']
           },
           {
+            headerName: 'Kategori',
+            field: 'kategori.deskripsi',
+            flex: 1,
+            cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+            sortable: true, resizable: true, filter: 'ColFilter'
+          },
+          {
+            headerName: 'Jenis',
+            field: 'jenis.deskripsi',
+            flex: 1,
+            cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+            sortable: true, resizable: true, filter: 'ColFilter'
+          },
+          {
             flex: 1,
             headerName:'Nama Akun',
-            sortable: false, resizable: true, filter: false,
+            sortable: false, resizable: true, filter: 'ColFilter',
             field: 'nama_coa',
             cellClass: ['justify-start','!border-gray-200']
           },

@@ -28,7 +28,7 @@ class t_bll_d extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["t_bll_id","m_coa_id","nominal","keterangan"];
+    public $required    = ["t_bll_id","m_coa_id","nominal"];
     public $createable  = ["t_bll_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at"];
     public $updateable  = ["t_bll_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at"];
     public $searchable  = ["id","t_bll_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];

@@ -20,7 +20,7 @@ class t_bkk_non_order_d extends Model
     protected $fillable = ["t_bkk_non_order_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
 
     public $columns     = ["id","t_bkk_non_order_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","t_bkk_non_order_id:integer","m_coa_id:integer","nominal:decimal","keterangan:string:250","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columnsFull = ["id:bigint","t_bkk_non_order_id:integer","m_coa_id:integer","nominal:decimal","keterangan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
     public $rules       = [];
     public $joins       = ["t_bkk_non_order.id=t_bkk_non_order_d.t_bkk_non_order_id","m_coa.id=t_bkk_non_order_d.m_coa_id"];
     public $details     = [];
@@ -28,7 +28,7 @@ class t_bkk_non_order_d extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["m_coa_id","nominal","keterangan"];
+    public $required    = ["m_coa_id","nominal"];
     public $createable  = ["t_bkk_non_order_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
     public $updateable  = ["t_bkk_non_order_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
     public $searchable  = ["id","t_bkk_non_order_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];

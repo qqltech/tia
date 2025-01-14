@@ -151,7 +151,8 @@
           // transform:true,
           // join:true,
           // override:true,
-          where:`this.id NOT IN(${dataOrderId.join(', ')}) AND this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id: 0 }`,
+          //where:`this.id NOT IN(${dataOrderId.join(', ')}) AND this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id: 0 }`,
+          where:`this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id: 0 }`,
           searchfield: 't_buku_order.no_buku_order, this.no_suffix, this.no_prefix, this.jenis, jenis.deskripsi',
           // selectfield: 'this.no_id,this.no_prefix, this.nama, this.alamat_domisili' 
         },
@@ -301,7 +302,8 @@
           // transform:false,
           // join:true,
           // override:true,
-          where:`this.id NOT IN(${dataOrderId.join(', ')}) AND this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 }`,
+          //where:`this.id NOT IN(${dataOrderId.join(', ')}) AND this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 }`,
+          where:`this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 }`,
           searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi',
           // searchfield:'this.no_id, this.nip, this.nama, this.alamat_domisili',
           // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili' 

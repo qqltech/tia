@@ -627,7 +627,7 @@ async function onSave() {
   });
 
   // data.tipe_bkk = 'Non Kasbon';
-  data.m_coa_id = data.m_akun_pembayaran_id;
+  // data.m_coa_id = data.m_akun_pembayaran_id;
 
   // t_bll_id: data.id || 0,
 
