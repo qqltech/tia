@@ -333,9 +333,14 @@
       </ButtonMultiSelect>
 
       <div class="mt-4" style="overflow-x: auto; border: 1px solid #CACACA;">
-        <table class="w-[350%] table-auto border border-[#CACACA]">
+        <table class="w-[400%] table-auto border border-[#CACACA]">
           <thead>
             <tr class="border">
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[1%]">
+                #
+              </td>
+
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[1%] border bg-[#f8f8f8] border-[#CACACA]">
                 No.
@@ -347,6 +352,9 @@
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Kontainer
+              </td>
+              <td class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[4%]">
+                Sektor
               </td>
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
@@ -430,14 +438,22 @@
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Catatan
               </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Action
-              </td>
+              
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, i) in detailArr" :key="item.id" class="border-t" v-if="detailArr.length > 0">
+
+              <td class="p-2 border border-[#CACACA]">
+                <div class="flex justify-center">
+                  <button type="button" @click="removeDetail(values)" :disabled="!actionText">
+                    <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="Vector" d="M14 1H10.5L9.5 0H4.5L3.5 1H0V3H14M1 16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H11C11.5304 18 12.0391 17.7893 12.4142 17.4142C12.7893 17.0391 13 16.5304 13 16V4H1V16Z" fill="#F24E1E"/>
+                    </svg>
+                </button>
+                </div>
+              </td>
+
               <td class="p-2 text-center border border-[#CACACA]">
                 {{ i + 1 }}.
               </td>
@@ -451,6 +467,19 @@
                 <FieldX :bind="{readonly: true, clearable:false }" class="w-full py-2 !mt-0" :value="item.spek_kont"
                   @input="v=>item.spek_kont=v" :errorText="formErrors.spek_kont?'failed':''"
                   :hints="formErrors.spek_kont" placeholder="Spesifikasi Kontainer" label="" :check="false" />
+              </td>
+              <td class="p-2 border border-[#CACACA]">
+                <FieldSelect :bind="{ disabled: true, clearable:false }" class="w-full py-2 !mt-0" :value="item.sektor"
+                  @input="v=>item.sektor=v" valueField="id" displayField="deskripsi" :api="{          
+                          url: `${store.server.url_backend}/operation/m_general`,
+                          headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                          params: {
+                            simplest:true,
+                            transform:false,
+                            join:false,
+                            where:`this.is_active=true and this.group='SEKTOR'`
+                          }
+                      }" placeholder="Pilih Sektor" label="" :check="false" />
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.lolo"
@@ -541,12 +570,12 @@
               </td>
 
               <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.nr"
-                  :errorText="formErrors.nr ? 'failed' : ''" @input="v => item.nr = v"
-                  :hints="formErrors.nr" :check="false" label="" placeholder="NR" />
+                <FieldX :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.nr"
+                  :errorText="formErrors.nr ? 'failed' : ''" @input="v => item.nr = v" :hints="formErrors.nr"
+                  :check="false" label="" placeholder="NR" />
               </td>
 
-             
+
 
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.denda_sp"
@@ -560,15 +589,8 @@
                   :value="item.catatan" @input="v=>item.catatan=v" :errorText="formErrors.catatan?'failed':''"
                   :hints="formErrors.catatan" placeholder="Catatan" label="" :check="false" />
               </td>
-              <td class="p-2 border border-[#CACACA]">
-                <div class="flex justify-center">
-                  <button type="button" @click="removeDetail(values)" :disabled="!actionText">
-                    <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path id="Vector" d="M14 1H10.5L9.5 0H4.5L3.5 1H0V3H14M1 16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H11C11.5304 18 12.0391 17.7893 12.4142 17.4142C12.7893 17.0391 13 16.5304 13 16V4H1V16Z" fill="#F24E1E"/>
-                    </svg>
-                </button>
-                </div>
-              </td>
+
+              
             </tr>
             <tr v-else class="text-center">
               <td colspan="25" class="py-[20px]">

@@ -18,7 +18,7 @@ class tsuratjalan extends Migration
             
             
             $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
-            $table->date('tanggal');
+            $table->date('tanggal')->nullable();
             $table->date('tanggal_berangkat');
             $table->string('status')->default("DRAFT")->nullable();
             $table->string('tipe_surat_jalan')->nullable();

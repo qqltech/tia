@@ -65,9 +65,12 @@
     <!-- Date Coloumn -->
 
     <div>
-      <FieldX :bind="{ disabled: false, readonly: false }" class="w-full !mt-3" :value="values.tgl"
+      <!-- <FieldX :bind="{ disabled: false, readonly: false }" class="w-full !mt-3" :value="values.tgl"
         :errorText="formErrors.tgl?'failed':''" @input="updateDate" :hints="formErrors.tgl" :check="false"
-        label="Tanggal" placeholder="Pilih Tanggal" />
+        label="Tanggal" placeholder="Pilih Tanggal" /> -->
+        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl" :errorText="formErrors.tgl?'failed':''" 
+          @input="v=>values.tgl=v" :hints="formErrors.tgl" placeholder="Masukkan Tanggal" :check="false" 
+          type="date" />
     </div>
 
     <!-- Tabel POP UP SEARCH -->

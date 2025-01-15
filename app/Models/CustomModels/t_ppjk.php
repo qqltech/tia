@@ -45,7 +45,7 @@ class t_ppjk extends \App\Models\BasicModels\t_ppjk
         $status = $req->post ? "POST" : $arrayData['status'];
 
         $newData = [
-            "tanggal" => date("Y-m-d"),
+            "tanggal" => date("d/m/Y"),
             "status" => $status,
         ];
 

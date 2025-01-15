@@ -383,9 +383,9 @@
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 No. NPWP</td>
-              <td
+              <!-- <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Default</td>
+                Default</td> -->
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Status</td>
@@ -413,13 +413,13 @@
                 <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="item.no_npwp"
                   @input="v=>item.no_npwp=v" placeholder="Masukan No. NPWP" label="No. NPWP" :check="false" />
               </td>
-              <td class="p-2 text-center border border-[#CACACA]">
+              <!-- <td class="p-2 text-center border border-[#CACACA]">
                 <input
                       type="checkbox"
                       class="h-5 w-5 text-blue-500 rounded"
                       v-model="item.default"
                     >
-              </td>
+              </td> -->
               <td class="p-2 text-center border border-[#CACACA]" v-if="!item.is_edit">
                 <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-0"
                   :value="item.is_active" @input="v=>item.is_active=v" valueField="id" displayField="key"

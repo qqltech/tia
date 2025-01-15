@@ -77,7 +77,13 @@
     <div class="p-1 ">
       <div class="flex justify-center">
         <div class="grid grid-cols-3">
-          <button v-for="(item, i) in coaList" :key="i" v-show="coaList.length > 0"
+          <button v-for="(item, i) in coaListEks" :key="i" v-show="coaListEks.length > 0 && tipe_order=='Eksprot'"
+            @click="setTipeKategori(item.id)"
+            class="border-1 border-blue-500 hover:bg-blue-400 hover:text-white transition-transform duration-300 transform hover:-translate-y-0.5 shadow-xl m-2 h-[80px] w-[calc(90%)] rounded-1xl m-2 text-xl font-semibold"
+            :class="(tipe_kategori_id == item.id) ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'">
+            <span v-text="item.nama_coa"></span>
+          </button>
+          <button v-for="(item, i) in coaListImp" :key="i" v-show="coaListImp.length > 0 && tipe_order=='Import'"
             @click="setTipeKategori(item.id)"
             class="border-1 border-blue-500 hover:bg-blue-400 hover:text-white transition-transform duration-300 transform hover:-translate-y-0.5 shadow-xl m-2 h-[80px] w-[calc(90%)] rounded-1xl m-2 text-xl font-semibold"
             :class="(tipe_kategori_id == item.id) ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'">

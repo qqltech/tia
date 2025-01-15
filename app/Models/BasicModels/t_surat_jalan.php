@@ -28,7 +28,7 @@ class t_surat_jalan extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["t_buku_order_id","tanggal","tanggal_berangkat"];
+    public $required    = ["t_buku_order_id","tanggal_berangkat"];
     public $createable  = ["no_draft","no_surat_jalan","t_buku_order_id","tanggal","tanggal_berangkat","status","tipe_surat_jalan","pelabuhan","kapal","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","foto_berkas","lokasi_stuffing","depo","t_buku_order_d_npwp_id","jenis_kontainer","ukuran_kontainer","jenis_sj","is_edit_berkas"];
     public $updateable  = ["no_draft","no_surat_jalan","t_buku_order_id","tanggal","tanggal_berangkat","status","tipe_surat_jalan","pelabuhan","kapal","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","foto_berkas","lokasi_stuffing","depo","t_buku_order_d_npwp_id","jenis_kontainer","ukuran_kontainer","jenis_sj","is_edit_berkas"];
     public $searchable  = ["id","no_draft","no_surat_jalan","t_buku_order_id","tanggal","tanggal_berangkat","status","tipe_surat_jalan","pelabuhan","kapal","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","foto_berkas","lokasi_stuffing","depo","t_buku_order_d_npwp_id","jenis_kontainer","ukuran_kontainer","jenis_sj","is_edit_berkas"];

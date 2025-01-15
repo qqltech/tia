@@ -18,7 +18,8 @@ const tsId = `ts=` + (Date.parse(new Date()))
 
 const isApproval = route.query.is_approval;
 
-let coaList = reactive([]);
+let coaListEks = reactive([]);
+let coaListImp = reactive([]);
 
 const tipe_order_id = ref('');
 const tipe_order = ref('');
@@ -324,11 +325,21 @@ onBeforeMount(async () => {
     simplest: true,
     transform: false,
     join: false,
-    where: 'this.is_active=true AND id IN (1, 2,3,4,5)'
+    where: 'this.is_active=true AND id IN (99, 114, 111, 101, 121, 209, 336, 337, 125, 193)'
   }).then((res) => {
-    coaList.push(...res.data);
+    coaListEks.push(...res.data);
   });
-  console.log(coaList);
+  console.log(coaListEks);
+
+  await fetchData(dataURL, {
+    simplest: true,
+    transform: false,
+    join: false,
+    where: 'this.is_active=true AND id IN (180, 169, 209)'
+  }).then((res) => {
+    coaListImp.push(...res.data);
+  });
+  console.log(coaListImp);
 })
 
 
@@ -646,20 +657,20 @@ function setPerkiraan(id) {
   }
 }
 
-function setDetail() {
-  if (data.m_coa_id && actionText.value) {
-    const idx = coaList.findIndex(cl => cl.id == data.m_coa_id);
-    detailArr.splice(0, 100);
-    const coa = {
-      t_bon_dinas_luar_id: data.id || 0,
-      m_coa_id: coaList[idx].id,
-      nomor: coaList[idx].nomor,
-      nama_coa: coaList[idx].nama_coa,
-    }
-    detailArr.push(coa);
+// function setDetail() {
+//   if (data.m_coa_id && actionText.value) {
+//     const idx = coaListEks.findIndex(cl => cl.id == data.m_coa_id);
+//     detailArr.splice(0, 100);
+//     const coa = {
+//       t_bon_dinas_luar_id: data.id || 0,
+//       m_coa_id: coaListEks[idx].id,
+//       nomor: coaListEks[idx].nomor,
+//       nama_coa: coaListEks[idx].nama_coa,
+//     }
+//     detailArr.push(coa);
 
-  }
-}
+//   }
+// }
 
 
 async function onSave() {

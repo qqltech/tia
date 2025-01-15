@@ -50,7 +50,8 @@ onMounted(() => {
   const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
   const year = today.getFullYear();
   const formattedDate = `${day}/${month}/${year}`;
-  values.tgl_pembuatan = formattedDate;
+  values.tanggal = formattedDate;
+  values.tanggal_berangkat = formattedDate;
 })
 
 const values = reactive({

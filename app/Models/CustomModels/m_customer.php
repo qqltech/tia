@@ -40,9 +40,9 @@ class m_customer extends \App\Models\BasicModels\m_customer
         $kode = trim($arrayData["kode"]);
         $result = $model->where("kode", $kode)->first();
 
-        if ($result) {
-            return ["errors" => ["Kode Customer sudah dipakai!"]];
-        }
+        // if ($result) {
+        //     return ["errors" => ["Kode Customer sudah dipakai!"]];
+        // }
 
         $newArrayData = array_merge($arrayData, []);
         return [
@@ -124,5 +124,9 @@ class m_customer extends \App\Models\BasicModels\m_customer
             ),
             'm_customer.*'
         );
+    }
+
+    public function scopeGetCustomerNPWP($model){
+        return $model->with(['m_customer_d_npwp']);
     }
 }

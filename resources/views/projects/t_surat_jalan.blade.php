@@ -81,12 +81,12 @@
           :hints="formErrors.no_surat_jalan" placeholder="No. SJ" :check="false" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ disabled: false ,readonly: false}" :value="values.tanggal"
+        <FieldX class="!mt-0" :bind="{ disabled: !actionText}" :value="values.tanggal"
           :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v" :hints="formErrors.tanggal"
           placeholder="Tanggal" :check="false" type="date" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ disabled: true ,readonly: true}" :value="values.tanggal_berangkat"
+        <FieldX class="!mt-0" :bind="{ disabled: !actionText}" :value="values.tanggal_berangkat"
           :errorText="formErrors.tanggal_berangkat?'failed':''" @input="v=>values.tanggal_berangkat=v"
           :hints="formErrors.tanggal_berangkat" placeholder="Tanggal Berangkat" :check="false" type="date" />
       </div>

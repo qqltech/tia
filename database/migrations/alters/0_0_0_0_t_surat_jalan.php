@@ -25,6 +25,7 @@ class tsuratjalan extends Migration
             // $table->string('jenis_kontainer')->nullable();
             // $table->integer('jenis_sj')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->boolean('is_edit_berkas')->nullable()->default(0);
+            // $table->date('tanggal')->nullable()->change();
         });
     }
 }

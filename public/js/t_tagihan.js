@@ -278,7 +278,8 @@ async function generateTotal() {
       grand_total_nota_rampung: grandTotalNotaRampung
     };
     console.log(payload)
-    const dataURL = 'https://server.qqltech.com:7017/operation/t_tagihan/calculate_tagihan';
+    
+    const dataURL = `${store.server.url_backend}/operation/${endpointApi}/calculate_tagihan`; 
     const res = await fetch(dataURL, {
       method: 'POST',
       headers: {

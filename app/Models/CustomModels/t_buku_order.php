@@ -69,6 +69,7 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
 
         $newData = [
             "no_buku_order" => $formattedNoBukuOrder,
+            // "tgl" => date("d/m/Y")
         ];
 
         $newArrayData = array_merge($arrayData, $newData);
