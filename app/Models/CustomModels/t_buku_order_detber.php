@@ -9,7 +9,7 @@ class t_buku_order_detber extends \App\Models\BasicModels\t_buku_order_detber
         parent::__construct();
     }
     
-    public $fileColumns    = [ /*file_column*/ ];
+    public $fileColumns    = [ "foto_berkas" ];
 
     public $createAdditionalData = ["creator_id"=>"auth:id"];
     public $updateAdditionalData = ["last_editor_id"=>"auth:id"];

@@ -113,16 +113,16 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
 
         $totalJasa = $this->jasa($tagihanJasa,$ppn);
         $totalPpjk =  $this->ppjk($tagihanPpjk, $nominalPpjk);
-        $totalLain = $this->lain($tagihanLain)-$tarifdp;
+        $totalLain = $this->lain($tagihanLain, $ppn) - $tarifdp;
 
 
 
         return [
-            'total_kontainer' => $grandTotalKontainer,
+            'total_kontainer' => $totalKontainer + $totalJasa,
             'total_lain' => $totalLain,
-            'grand_total' => 0,
+            'grand_total' => $totalKontainer + $totalJasa + $totalLain,
             'total_ppn' => $totalKontainerPPN,
-            'total_setelah_ppn' => 0 
+            'total_setelah_ppn' => $grandTotalKontainer + $totalJasa + $totalLain
         ];
     }
 
@@ -180,13 +180,14 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $totalTagihanJasa = 0;
         foreach ($tagihan as $single) {
             if ($single['ppn']) {
-
+                $totalPPN = $single['tarif'] * ($ppn / 100);
+                $total = $single['tarif'] + $totalPPN;
                 $totalTagihanJasa += $single['tarif'];
             } else {
-
                 $totalTagihanJasa += $single['tarif'];
             }
         }
+        return $totalTagihanJasa;
     }
 
 
@@ -245,10 +246,16 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     //     return $calculateCoo;
     // }
 
-    private function lain($data){
+    private function lain($data, $ppn){
         $calculateLain = 0 ;
         foreach($data as $single){
-            $calculateLain += ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+            if(@$single['ppn']){
+                $totalPPN = $single['tarif_realisasi'] * ($ppn / 100);
+                $calculateLain += $totalPPN;
+                $calculateLain += ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+            }else{
+                $calculateLain += ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+            }
         }
         return $calculateLain;
     }

@@ -635,7 +635,7 @@ async function onSave() {
   const result = await swal.fire({
     icon: 'warning', text: 'Simpan data?', showDenyButton: true,
   });
-
+  
   // data.tipe_bkk = 'Non Kasbon';
   data.m_coa_id = 0;
 

@@ -33,18 +33,18 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         ];
     }
 
-    public function updateBefore($model, $arrayData, $metaData, $id = null)
-    {
-        $newData = [
-            "tanggal" => date("Y-m-d"),
-        ];
-        $newArrayData = array_merge($arrayData, $newData);
-        return [
-            "model" => $model,
-            "data" => $newArrayData,
-            // "errors" => ['error1']
-        ];
-    }
+    // public function updateBefore($model, $arrayData, $metaData, $id = null)
+    // {
+    //     $newData = [
+    //         "tanggal" => date("Y-m-d"),
+    //     ];
+    //     $newArrayData = array_merge($arrayData, $newData);
+    //     return [
+    //         "model" => $model,
+    //         "data" => $newArrayData,
+    //         // "errors" => ['error1']
+    //     ];
+    // }
 
     public function custom_post()
     {

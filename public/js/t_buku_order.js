@@ -111,25 +111,23 @@ const addDetailBerkas = () => {
   const newDetailBerkas = {
     nama_berkas: null,
     foto_berkas: null,
-    tgl: null,
+    tgl: new Date().toLocaleDateString('en-GB'),
     catatan: null
   };
 
   detailArrBerkas.value = [...detailArrBerkas.value, newDetailBerkas];
 };
 
-function acceptType(field) {
-  const file = values[field];
-
-  if (actionText && file) {
-    const indexFile = file.lastIndexOf('.');
-    if (indexFile !== -1) {
-      const extensionFile = file.slice(indexFile + 1).toLowerCase();
-      const isImage = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'].includes(extensionFile);
-      return isImage ? 'image/*' : 'application/pdf';
-    }
+function acceptTypeDetail(itemBerkas) {
+  const file = itemBerkas.foto_berkas
+  if (file) {
+    const indexFile = file.lastIndexOf('.')
+    const extensionFile = file.slice(indexFile + 1).toLowerCase()
+    
+    const isImage = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'].includes(extensionFile)
+    return isImage ? 'image/*' : 'application/pdf'
   }
-  return 'image/*, application/pdf';
+  return 'image/*, application/pdf'
 }
 
 const removeDetail = (index) => {

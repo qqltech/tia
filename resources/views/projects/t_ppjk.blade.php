@@ -109,11 +109,6 @@
               headerName: 'Tipe PPJK', field: 'tipe', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
               sortable: true, filter: 'ColFilter'
           }]" />
-
-    <!-- <FieldX :disabled="true" :bind="{ readonly: false }" class="pt-1" :value="data.tanggal" 
-        :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal" placeholder="Tanggal" 
-        :check="false"/> -->
-
     <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.tanggal"
       :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
       placeholder="Masukkan Tanggal" :check="false" type="date" />

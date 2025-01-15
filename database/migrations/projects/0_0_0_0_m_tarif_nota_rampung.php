@@ -30,6 +30,7 @@ class mtarifnotarampung extends Migration
             $table->decimal('tarif_batal_muat_pindah',18,4)->nullable()->default(0);
             $table->decimal('tarif_closing_container',18,4)->nullable()->default(0);
             $table->text('catatan')->nullable();
+            
             $table->decimal('tarif_mob',18,4)->nullable()->default(0);
             $table->decimal('tarif_vgm',18,4)->nullable()->default(0);
             $table->decimal('tarif_by_adm_nr',18,4)->nullable()->default(0);

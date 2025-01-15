@@ -119,8 +119,8 @@
     </div>
     <div>
       <FieldX :bind="{readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"
-        :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''" :hints="formErrors.tanggal" :check="false"
-        type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
+        @input="v=>data.tanggal=v" :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''"
+        :hints="formErrors.tanggal" :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
     </div>
     <div>
       <FieldPopup class="w-full !mt-3" :api="{

@@ -401,7 +401,7 @@
     <div>
       <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.genzet"
         :errorText="formErrors.genzet?'failed':''" @input="v=>values.genzet=v" :hints="formErrors.genzet"
-        :check="false" label="genzet" placeholder="Masukkan genzet" />
+        :check="false" label="Genzet" placeholder="Masukkan Genzet" />
     </div>
     <div>
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.jumlah_kemasan"
@@ -975,16 +975,16 @@
                 :hints="formErrors.nama_berkas" :check="false" label="" placeholder="Nama Berkas" />
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldUpload class="col-span-9 w-full !mt-3" :bind="{ readonly: !actionText, disabled: !actionText }"
-                :value="values.foto_berkas" @input="(v) => values.foto_berkas = v"
+              <FieldUpload class="w-full py-2 !mt-0" :bind="{ readonly: !actionText, disabled: !actionText }"
+                :value="itemBerkas.foto_berkas" @input="(v) => itemBerkas.foto_berkas = v"
                 :reducerDisplay="val => !val ? null : val.split(':::')[val.split(':::').length - 1]" :api="{	
-                  url: `${store.server.url_backend}/operation/t_buku_order/upload`,	
+                  url: `${store.server.url_backend}/operation/t_buku_order_detber/upload`,	
                   headers: { Authorization: `${store.user.token_type} ${store.user.token}` },	
                   params: { field: 'foto_berkas' },	
                   onsuccess: response => response,	
                   onerror: (error) => {},	
                 }" :hints="formErrors.foto_berkas" placeholder="Masukan File" fa-icon="upload"
-                :accept="acceptType('foto_berkas')" label="" :check="false" />
+                :accept="acceptTypeDetail(itemBerkas)" :maxSize="10" label="" :check="false" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldX :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="itemBerkas.tgl"

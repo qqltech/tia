@@ -103,20 +103,9 @@ onBeforeMount(async () => {
         if (!res.ok) throw new Error("Failed when trying to read data")
         const resultJson = await res.json()
         initialValues = resultJson.data
-
-        // // FETCH HEADER DATA
-        // await fetchData(dataURL, { join: false, transform: false }).then((res) => {
-        //   // default_value.data = res.data;
-        //   detailArr.push(...res.data.t_spk_bon_detail);
-        //   for (const key in res.data) {
-        //     data[key] = res.data[key];
-        //   }
-        //   //data.is_con_edit = false;
-        //   if (actionText.value === 'Copy') {
-        //     data.status = default_value.data.status;
-        //     data.is_con_edit = default_value.data.is_con_edit;
-        //   }
-        // });
+          if (actionText.value === 'Copy') {
+            initialValues.status = 'DRAFT';
+          }
 
         if (initialValues.status !== 'DRAFT') {
           actionText.value = false
@@ -324,9 +313,7 @@ const landing = reactive({
       icon: 'copy',
       title: "Copy",
       class: 'bg-gray-600 text-light-100',
-      click(row) {
-        router.push(`${route.path}/${row.id}?action=Copy&` + tsId)
-      }
+      click: row => router.push(`${route.path}/${row.id}?action=Copy&${tsId}`)
     },
     {
       icon: 'location-arrow',

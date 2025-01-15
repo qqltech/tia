@@ -81,12 +81,12 @@
           :hints="formErrors.no_surat_jalan" placeholder="No. SJ" :check="false" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ disabled: !actionText}" :value="values.tanggal"
+        <FieldX class="!mt-0" :bind="{ disabled: !actionText  || actionEditBerkas == 'EditBerkas' ,readonly: !actionText  ||  actionEditBerkas == 'EditBerkas'}" :value="values.tanggal"
           :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v" :hints="formErrors.tanggal"
           placeholder="Tanggal" :check="false" type="date" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ disabled: !actionText}" :value="values.tanggal_berangkat"
+        <FieldX class="!mt-0" :bind="{ disabled: !actionText || actionEditBerkas == 'EditBerkas' ,readonly: !actionText || actionEditBerkas == 'EditBerkas'}" :value="values.tanggal_berangkat"
           :errorText="formErrors.tanggal_berangkat?'failed':''" @input="v=>values.tanggal_berangkat=v"
           :hints="formErrors.tanggal_berangkat" placeholder="Tanggal Berangkat" :check="false" type="date" />
       </div>
@@ -100,6 +100,9 @@
           values.t_buku_order_d_npwp_id=null
           values.ukuran_kontainer=null
           values.jenis_kontainer=null
+          values.tipe_surat_jalan=null
+          values.pelabuhan=null
+          values.kapal=null
         }" :errorText="formErrors.t_buku_order_id?'failed':''" :hints="formErrors.t_buku_order_id" @update:valueFull="(dt) => {
               $log(dt)
               values.tanggal = dt.tgl
