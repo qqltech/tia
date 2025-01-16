@@ -7,6 +7,7 @@ $dataBukuOrder = \DB::select("select * ,tbo.id as t_buku_order_id, tbo.tipe_orde
 	mc.nama_perusahaan, mc.kode as kode_perusahan, mg5.deskripsi as kode_pelayaran, tbo.no_boking, tbodn.no_prefix, tbodn.no_suffix
 from t_buku_order tbo
 left join t_buku_order_d_npwp tbodn on tbodn.t_buku_order_id = tbo.id
+left join t_buku_order_d_aju tboda on tboda.t_buku_order_id = tbo.id
 left join set.m_general mg on mg.id = tbo.pelabuhan_id
 LEFT JOIN set.m_general mg2 on mg2.id = tbodn.depo
 left join set.m_general mg3 on mg3.id = tbodn.jenis 
@@ -84,7 +85,7 @@ function formatDate($date){
 
 @endphp
 <div class="container">
-  <!-- <pre>{{var_dump($detailBukuOrder)}}</pre> -->
+  <!-- <pre>{{var_dump($dataBukuOrder)}}</pre> -->
   <!-- <pre>{{$format}}</pre> -->
   
 
@@ -106,11 +107,9 @@ function formatDate($date){
   <br>
   <table style="width: 100%">
       <tr>
-          <td style="vertical-align: top; width: 50%; font-size: larger; font-weight: bold;"> AJU :
-          </td>
-          <td style="vertical-align: top; width: 50%; font-size: larger; font-weight: bold;">
-              Tgl : 
-          </td>
+          <td style="vertical-align: top; width: 50%; font-size: larger; font-weight: bold;"> AJU :</td>
+          <!-- <td style="vertical-align: top; width: 50%; font-size: larger; font-weight: bold;"> </td> -->
+          <td style="vertical-align: top; width: 50%; font-size: larger; font-weight: bold;"> Tgl :</td>
       </tr>
   </table>
   <table style="border-collapse: collapse; width: 100%">

@@ -12,7 +12,7 @@ class mcustomer extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id()->from(1);
-            $table->integer('m_customer_group_id')->comment('{"src":"m_customer_group.id"}');
+            $table->integer('m_customer_group_id')->comment('{"src":"m_customer_group.id"}')->nullable();
             $table->string('kode')->nullable();
             // $table->integer('m_lokasi_stuffing_id')->comment('{"src":"m_lokasistuffing.id"}');
             $table->string('kota', 50);

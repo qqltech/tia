@@ -15,7 +15,7 @@ class mtarifdlainlain extends Migration
             $table->integer('m_tarif_id')->comment('{"fk":"m_tarif.id"}')->nullable();
             $table->string('deskripsi');
             $table->decimal('nominal',18,4);
-
+            $table->bigInteger('satuan_id')->comment('{"src":"set.m_general.id"}')->nullable();
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

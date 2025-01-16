@@ -85,7 +85,8 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 scopes: 'NoPPJK',
-                searchfield: `m_generate_no_aju.tgl_pembuatan, this.no_aju, m_generate_no_aju.tipe `
+                searchfield: `m_generate_no_aju.tgl_pembuatan, this.no_aju, m_generate_no_aju.tipe`,
+                //selectfield:` this.id, head.tgl_pembuatan, this.no_aju, head.tipe`
               },
             onsuccess(response) {
               return { ...response, page: response.current_page, hasNext: response.has_next };
@@ -180,6 +181,7 @@
               simplest:true,
               where:`this.is_active = true`,
               scopes:'GetCustomerNPWP',
+              searchfield: `this.nama_perusahaan`
             },
             onsuccess:(response)=>{
               response.page = response.current_page

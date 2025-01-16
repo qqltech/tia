@@ -70,8 +70,8 @@
       <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:true }" :value="values.tipe_tarif"
         @input="v => values.tipe_tarif = v" :errorText="formErrors.tipe_tarif ? 'failed' : ''"
         :hints="formErrors.tipe_tarif" valueField="id" displayField="key"
-        :options="[{'id' : 'Eksport' , 'key' : 'Eksport'}, {'id' : 'Import', 'key' : 'Import'}, {'id' : 'Eksport S', 'key' : 'Eksport S'}, {'id' : 'Lokal', 'key' : 'Lokal'},{'id' : 'OL', 'key' : 'OL'},{'id' : 'OLS', 'key' : 'OLS'}]" label="Tipe Tarif"
-        placeholder="Pilih Eksport/Import" :check="true" />
+        :options="[{'id' : 'Eksport' , 'key' : 'Eksport'}, {'id' : 'Import', 'key' : 'Import'}, {'id' : 'Eksport S', 'key' : 'Eksport S'}, {'id' : 'Lokal', 'key' : 'Lokal'},{'id' : 'OL', 'key' : 'OL'},{'id' : 'OLS', 'key' : 'OLS'}]"
+        label="Tipe Tarif" placeholder="Pilih Eksport/Import" :check="true" />
     </div>
 
     <div class=" w-full !mt-3">
@@ -402,6 +402,9 @@
               Deskripsi</td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Satuan</td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Nominal</td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
@@ -417,6 +420,18 @@
               <FieldX :bind="{ readonly: !actionText }" :value="item.deskripsi"
                 :errorText="formErrors.deskripsi?'failed':''" @input="v=>item.deskripsi=v" :hints="formErrors.deskripsi"
                 label="" placeholder="Masukkan Deskripsi" :check="false" />
+            </td>
+            <td class="p-2 text-center border border-[#CACACA]">
+              <FieldSelect :bind="{ disabled: !actionText, clearable: true }" :value="values.satuan_id"
+                @input="v=>values.satuan_id=v" :errorText="formErrors.satuan_id?'failed':''"
+                :hints="formErrors.satuan_id" valueField="id" displayField="deskripsi" :api="{
+                    url: `${store.server.url_backend}/operation/m_general`,
+                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                    params: {
+                      simplest:true,
+                      where: `this.group = 'SATUAN'`
+                    }
+                }" placeholder="Pilih Salah Satu" label="" :check="true" />
             </td>
             <td class="p-2 text-center border border-[#CACACA]">
               <FieldNumber :bind="{ readonly: !actionText }" :value="item.nominal" @input="(v)=>item.nominal=v"

@@ -193,6 +193,7 @@ const removeDetail = async (index) => {
 // Table Detail Kontainer
 const initArrLL = {
   deskripsi: '',
+  satuan_id: null,
   nominal: 0,
   is_edit: true
 }

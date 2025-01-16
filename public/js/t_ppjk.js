@@ -245,10 +245,10 @@ onBeforeMount(async () => {
     // FETCH HEADER DATA
     const editedId = route.params.id;
     const dataURL = `${store.server.url_backend}/operation/${endpointApi}/${editedId}`;
-    await fetchData(dataURL, { join: false, transform: false }).then(res => {
+    await fetchData(dataURL, { join: false, transform: false, }).then(res => {
       default_value.data = res.data;
-      console.log(res.data)
-
+      console.log(res.data,'timothy')
+      
       for (const key in res.data) {
         data[key] = res.data[key];
       }

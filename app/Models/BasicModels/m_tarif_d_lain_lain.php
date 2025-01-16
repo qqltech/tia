@@ -17,21 +17,21 @@ class m_tarif_d_lain_lain extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
+    protected $fillable = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","satuan_id"];
 
-    public $columns     = ["id","m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","m_tarif_id:integer","deskripsi:string:191","nominal:decimal","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","satuan_id"];
+    public $columnsFull = ["id:bigint","m_tarif_id:integer","deskripsi:string:191","nominal:decimal","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","satuan_id:bigint"];
     public $rules       = [];
-    public $joins       = ["m_tarif.id=m_tarif_d_lain_lain.m_tarif_id"];
+    public $joins       = ["m_tarif.id=m_tarif_d_lain_lain.m_tarif_id","set.m_general.id=m_tarif_d_lain_lain.satuan_id"];
     public $details     = [];
     public $heirs       = [];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["deskripsi","nominal"];
-    public $createable  = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $updateable  = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $searchable  = ["id","m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","satuan_id"];
+    public $updateable  = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","satuan_id"];
+    public $searchable  = ["id","m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","satuan_id"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
@@ -42,5 +42,9 @@ class m_tarif_d_lain_lain extends Model
     public function m_tarif() :\BelongsTo
     {
         return $this->belongsTo('App\Models\BasicModels\m_tarif', 'm_tarif_id', 'id');
+    }
+    public function satuan() :\BelongsTo
+    {
+        return $this->belongsTo('App\Models\BasicModels\set.m_general', 'satuan_id', 'id');
     }
 }
