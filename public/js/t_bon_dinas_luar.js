@@ -44,7 +44,7 @@ const table = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.no_draft, this.total_amt, this.no_bon_dinas_luar',
+      searchfield: 'this.id, this.no_draft, this.total_amt, this.no_bon_dinas_luar, this.catatan',
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };

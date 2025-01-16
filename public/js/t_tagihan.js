@@ -168,6 +168,7 @@ async function buku(no_buku_order) {
     // Get Data Buku Order
     const dataURL = `${store.server.url_backend}/operation/t_buku_order/${no_buku_order.id}`;
     const params = {
+      join:true,
       view_tarif: true,
       transform: false,
     };
@@ -213,9 +214,10 @@ async function buku(no_buku_order) {
   }
   
  console.log(tipe_kontainer)
+
     initialValues.t_buku_order_d_npwp.forEach(item => {
       item.tarif.forEach(tarifItem => {
-        console.log('MALAS', tarifItem.lain);
+        console.log('CEK SATUAN TARIF', tarifItem.lain);
         tarifItem.lain.forEach(lainItem => {
           // Menghapus angka di belakang titik desimal
           const ubahNominal = parseFloat(lainItem.nominal).toFixed(0);

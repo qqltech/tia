@@ -113,15 +113,29 @@
     <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.tanggal"
       :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
       placeholder="Masukkan Tanggal" :check="false" type="date" />
-    <FieldPopup :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="(v)=>data.t_buku_order_id=v"
+    <FieldPopup :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="v=>{
+        if(v){
+          data.t_buku_order_id=v
+        }
+        else{
+          data.t_buku_order_id=null
+        }
+        data.kode_customer=null
+        data.no_npwp=null
+      }"
       :errorText="formErrors.t_buku_order_id?'failed':''" :hints="formErrors.t_buku_order_id" valueField="id"
-      displayField="no_buku_order" :api="{
+      displayField="no_buku_order" 
+      @update:valueFull="(dt)=>{
+        data.no_npwp = dt.m_customer.m_customer_d_npwp[0].no_npwp
+        data.kode_customer = dt.m_customer.kode
+      }"
+      :api="{
             url: `${store.server.url_backend}/operation/t_buku_order`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
               simplest:true,
-              searchfield: `this.no_buku_order, this.tgl`
-              
+              searchfield: `this.no_buku_order, this.tgl`,
+              scopes:'GetCustomerNPWP'
               //where:`this.status = 'POST'`
             },
             onsuccess:(response)=>{

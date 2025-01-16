@@ -126,6 +126,8 @@ onBeforeMount(async () => {
         delete initialValues.uid
       }
 
+      // initialValues.satuan_id = initialValues['ppn_persen.id']
+
       detailArr.value = initialValues.m_tarif_d_jasa.map(det => (
         {
           ...det, kode: det['m_jasa.kode'], nama_jasa: det['m_jasa.nama_jasa']
@@ -193,7 +195,7 @@ const removeDetail = async (index) => {
 // Table Detail Kontainer
 const initArrLL = {
   deskripsi: '',
-  satuan_id: null,
+  satuan_id: 828,
   nominal: 0,
   is_edit: true
 }

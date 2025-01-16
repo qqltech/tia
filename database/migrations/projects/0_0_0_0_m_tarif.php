@@ -22,6 +22,7 @@ class mtarif extends Migration
             $table->integer('ukuran_kontainer')->nullable();
             $table->decimal('tarif_sewa',18,2);
             $table->decimal('tarif_sewa_diskon',18,2);
+            $table->integer('satuan_id')->comment('{"src":"set.m_general.id"}');
             // $table->string('tipe_kontainer',50)->nullable();
             $table->text('catatan')->nullable();
             $table->decimal('tarif_ppjk',18,2)->nullable();

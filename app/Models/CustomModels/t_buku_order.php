@@ -329,4 +329,8 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
             ->where('status','POST');
         });
     }
+
+    public function scopeGetCustomerNPWP($model){
+        return $model->with(['m_customer.m_customer_d_npwp']);
+    }
 }

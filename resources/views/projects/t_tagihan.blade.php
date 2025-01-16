@@ -68,9 +68,9 @@
       <!-- <FieldX :bind="{ disabled: false, readonly: false }" class="w-full !mt-3" :value="values.tgl"
         :errorText="formErrors.tgl?'failed':''" @input="updateDate" :hints="formErrors.tgl" :check="false"
         label="Tanggal" placeholder="Pilih Tanggal" /> -->
-        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl" :errorText="formErrors.tgl?'failed':''" 
-          @input="v=>values.tgl=v" :hints="formErrors.tgl" placeholder="Masukkan Tanggal" :check="false" 
-          type="date" />
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl"
+        :errorText="formErrors.tgl?'failed':''" @input="v=>values.tgl=v" :hints="formErrors.tgl"
+        placeholder="Masukkan Tanggal" :check="false" type="date" />
     </div>
 
     <!-- Tabel POP UP SEARCH -->
@@ -178,32 +178,30 @@
       <div>
         <FieldNumber :bind="{ readonly: true}" class="w-full !mt-3" :value="values.total_kontainer"
           :errorText="formErrors.total_kontainer?'failed':''" @input="v=>values.total_kontainer=v"
-          :hints="formErrors.total_kontainer" label="Grand Total nota_rampung"
-          placeholder="Grand Total nota_rampung" :check="false" />
+          :hints="formErrors.total_kontainer" label="Grand Total nota_rampung" placeholder="Grand Total nota_rampung"
+          :check="false" />
       </div>
       <div>
         <FieldNumber :bind="{ readonly: true}" class="w-full !mt-3" :value="values.total_lain"
-          :errorText="formErrors.total_lain?'failed':''" @input="v=>values.total_lain=v"
-          :hints="formErrors.total_lain" label="Grand Total nota_rampung"
-          placeholder="Grand Total nota_rampung" :check="false" />
+          :errorText="formErrors.total_lain?'failed':''" @input="v=>values.total_lain=v" :hints="formErrors.total_lain"
+          label="Grand Total nota_rampung" placeholder="Grand Total nota_rampung" :check="false" />
       </div>
       <div>
         <FieldNumber :bind="{ readonly: true}" class="w-full !mt-3" :value="values.total_ppn"
-          :errorText="formErrors.total_ppn?'failed':''" @input="v=>values.total_ppn=v"
-          :hints="formErrors.total_ppn" label="Grand Total nota_rampung"
-          placeholder="Grand Total nota_rampung" :check="false" />
+          :errorText="formErrors.total_ppn?'failed':''" @input="v=>values.total_ppn=v" :hints="formErrors.total_ppn"
+          label="Grand Total nota_rampung" placeholder="Grand Total nota_rampung" :check="false" />
       </div>
       <div>
         <FieldNumber :bind="{ readonly: true}" class="w-full !mt-3" :value="values.total_setelah_ppn"
           :errorText="formErrors.total_setelah_ppn?'failed':''" @input="v=>values.total_setelah_ppn=v"
-          :hints="formErrors.total_setelah_ppn" label="Grand Total nota_rampung"
-          placeholder="Grand Total nota_rampung" :check="false" />
+          :hints="formErrors.total_setelah_ppn" label="Grand Total nota_rampung" placeholder="Grand Total nota_rampung"
+          :check="false" />
       </div>
       <div>
         <FieldNumber :bind="{ readonly: true}" class="w-full !mt-3" :value="values.total_tarif_jasa"
           :errorText="formErrors.total_tarif_jasa?'failed':''" @input="v=>values.total_tarif_jasa=v"
-          :hints="formErrors.total_tarif_jasa" label="Grand Total nota_rampung"
-          placeholder="Grand Total nota_rampung" :check="false" />
+          :hints="formErrors.total_tarif_jasa" label="Grand Total nota_rampung" placeholder="Grand Total nota_rampung"
+          :check="false" />
       </div>
     </div>
 
@@ -220,8 +218,8 @@
               }
             }" label="No.Faktur Pajak" placeholder="Pilih No.Faktur Pajak" :check="false" /> -->
       <FieldX :bind="{ readonly: false }" class="w-full !mt-3 w-full" :value="values.no_faktur_pajak"
-        :errorText="formErrors.no_faktur_pajak?'failed':''" @input="v=>values.no_faktur_pajak=v" :hints="formErrors.no_faktur_pajak"
-        label="No. Faktur Pajak" placeholder="No. Faktur Pajak" :check="false" />
+        :errorText="formErrors.no_faktur_pajak?'failed':''" @input="v=>values.no_faktur_pajak=v"
+        :hints="formErrors.no_faktur_pajak" label="No. Faktur Pajak" placeholder="No. Faktur Pajak" :check="false" />
     </div>
     <!-- TARIF COO -->
     <!-- <div>
@@ -230,7 +228,7 @@
           :hints="formErrors.tarif_coo" label="Tarif COO"
           placeholder="Tarif COO" :check="false" />
       </div> -->
-      <!-- TARIF PPJK -->
+    <!-- TARIF PPJK -->
     <!-- <div>
         <FieldNumber :bind="{ readonly: !actionText}" class="w-full !mt-3" :value="values.tarif_ppjk"
           :errorText="formErrors.tarif_ppjk?'failed':''" @input="v=>values.tarif_ppjk=v"
@@ -383,9 +381,10 @@
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <div>
-                <FieldPopup label="" placeholder="No. Buku Order"
-                  :bind="{ disabled: true, readonly: true , clearable:false }" class="w-full py-2 !mt-0" valueField="id"
-                  displayField="no_buku_order" :value="item.t_buku_order_id" @input="v=>item.t_buku_order_id=v" :api="{
+                  <FieldPopup label="" placeholder="No. Buku Order"
+                    :bind="{ disabled: true, readonly: true , clearable:false }" class="w-full py-2 !mt-0"
+                    valueField="id" displayField="no_buku_order" :value="item.t_buku_order_id"
+                    @input="v=>item.t_buku_order_id=v" :api="{
 
               url: `${store.server.url_backend}/operation/t_buku_order`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -431,7 +430,7 @@
               cellClass: ['border-r', '!border-gray-200', 'justify-start']
             }
             ]" />
-              </div>
+                </div>
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{ readonly: true }" class="w-full py-2 !mt-0" :value="item.no_prefix"
@@ -542,7 +541,7 @@
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Catatan
               </td>
-              
+
             </tr>
           </thead>
           <tbody>
@@ -584,11 +583,11 @@
                   valueField="key" displayField="key" placeholder="Satuan" label="" :check="false" />
               </td>
               <td class="p-2 border border-[#CACACA]">
-                <FieldX :bind="{ readonly: true, clearable: false }" class="w-full py-2 !mt-0"
-                  :value="item.catatan" @input="v => item.catatan = v" :errorText="formErrors.catatan ? 'failed' : ''"
+                <FieldX :bind="{ readonly: true, clearable: false }" class="w-full py-2 !mt-0" :value="item.catatan"
+                  @input="v => item.catatan = v" :errorText="formErrors.catatan ? 'failed' : ''"
                   :hints="formErrors.catatan" type="textarea" placeholder="Catatan" label="" :check="false" />
               </td>
-              
+
             </tr>
             <tr v-else class="text-center">
               <td colspan="7" class="py-[20px]">
@@ -628,13 +627,17 @@
               </td>
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                Satuan
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 QTY
               </td>
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 PPN
               </td>
-              
+
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Action
@@ -647,31 +650,45 @@
                 {{ i + 1 }}.
               </td>
 
-               <td class="p-2 border border-[#CACACA]">
+              <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{readonly: !actionText, clearable:false }" class="w-full py-2 !mt-0"
                   :value="item.keterangan" @input="v=>item.keterangan=v" :errorText="formErrors.keterangan?'failed':''"
                   :hints="formErrors.keterangan" placeholder="Keterangan" label="" :check="false" />
               </td>
-              
+
 
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber type='number' :bind="{ readonly: true, clearable:false }" class="w-full py-2 !mt-0"
-                  :value="item.nominal" @input="v=>item.nominal=v"
-                  
-                  :errorText="formErrors.nominal?'failed':''"
+                  :value="item.nominal" @input="v=>item.nominal=v" :errorText="formErrors.nominal?'failed':''"
                   :hints="formErrors.nominal" placeholder="Masukan nominal" label="" :check="false" />
               </td>
 
-               <td class="p-2 border border-[#CACACA]">
+              <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{readonly: !actionText, clearable:false }" class="w-full py-2 !mt-0"
-                  :value="item.tarif_realisasi" @input="v=>item.tarif_realisasi=v" :errorText="formErrors.tarif_realisasi?'failed':''"
-                  :hints="formErrors.tarif_realisasi"  placeholder="Masukan nominal" label="" :check="false" />
+                  :value="item.tarif_realisasi" @input="v=>item.tarif_realisasi=v"
+                  :errorText="formErrors.tarif_realisasi?'failed':''" :hints="formErrors.tarif_realisasi"
+                  placeholder="Masukan nominal" label="" :check="false" />
+              </td>
+
+              <td class="p-2 border border-[#CACACA]">
+                <FieldSelect :bind="{ disabled: true, readonly: true, clearable: true }" class="w-full !mt-0"
+                  :value="item.satuan_id" @input="v => item.satuan_id = v"
+                  :errorText="formErrors.satuan_id ? 'failed' : ''" :hints="formErrors.satuan_id" valueField="id"
+                  displayField="deskripsi" :api="{
+          url: `${store.server.url_backend}/operation/m_general`,
+          headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+          params: {
+            simplest: true,
+            transform: false,
+            join: false,
+          }
+        }" placeholder="Pilih Satuan" label="" :check="false" />
               </td>
 
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{readonly: !actionText, clearable:false }" class="w-full py-2 !mt-0"
                   :value="item.qty" @input="v=>item.qty=v" :errorText="formErrors.qty?'failed':''"
-                  :hints="formErrors.qty"  placeholder="Masukan qty" label="" :check="false" />
+                  :hints="formErrors.qty" placeholder="Masukan qty" label="" :check="false" />
               </td>
 
               <td class="p-2 text-center border border-[#CACACA]">
@@ -686,9 +703,9 @@
               </td>
 
 
-              
 
-             
+
+
               <td class="p-2 border border-[#CACACA]">
                 <div class="flex justify-center">
                   <button type="button" @click="removeDetail(i)" :disabled="!actionText" title="Hapus">
@@ -718,6 +735,3 @@
 
 @endverbatim
 @endif
-
-
-

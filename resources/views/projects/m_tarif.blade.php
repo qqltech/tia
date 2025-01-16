@@ -422,8 +422,8 @@
                 label="" placeholder="Masukkan Deskripsi" :check="false" />
             </td>
             <td class="p-2 text-center border border-[#CACACA]">
-              <FieldSelect :bind="{ disabled: !actionText, clearable: true }" :value="values.satuan_id"
-                @input="v=>values.satuan_id=v" :errorText="formErrors.satuan_id?'failed':''"
+              <FieldSelect :bind="{ disabled: !actionText, clearable: true }" :value="item.satuan_id"
+                @input="v=>item.satuan_id=v" :errorText="formErrors.satuan_id?'failed':''"
                 :hints="formErrors.satuan_id" valueField="id" displayField="deskripsi" :api="{
                     url: `${store.server.url_backend}/operation/m_general`,
                     headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},

@@ -77,7 +77,7 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
                 ->where('m_tarif_id', $item->id)->join('m_jasa','m_jasa.id','m_tarif_d_jasa.m_jasa_id')
                 ->get();
 
-            $item -> lain = \DB::table('m_tarif_d_lain_lain')
+            $item->lain = \DB::table('m_tarif_d_lain_lain')
                 ->where('m_tarif_id', $item->id)->get();
             return $item;
             });

@@ -235,7 +235,8 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                where: `this.is_active=true`
+                where: `this.is_active=true`,
+                searchfield: 'this.nip, this.kode, this.nama, this.divisi',
               }
             }" placeholder="Nama Karyawan" :check="false" :columns="[{
               headerName: 'No',
@@ -248,6 +249,13 @@
               flex: 1,
               field: 'nip',
               headerName:  'NIP',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-center']
+            },
+            {
+              flex: 1,
+              field: 'kode',
+              headerName:  'Kode',
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-center']
             },
@@ -282,7 +290,9 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                where: `this.is_active=true`
+                where: `this.is_active=true`,
+                searchfield: 'this.kode, this.nama, this.no_telp1',
+
               }
             }" placeholder="Nama Supplier" :check="false" :columns="[{
               headerName: 'No',
@@ -301,7 +311,7 @@
             {
               flex: 1,
               field: 'nama',
-              headerName:  'Nama Karyawan',
+              headerName:  'Nama Supplier',
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-center']
             },
