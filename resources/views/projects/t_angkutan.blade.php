@@ -197,7 +197,7 @@
                 No. Container
               </td>
               <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[17%] border bg-[#f8f8f8] border-[#CACACA]">
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[25%] border bg-[#f8f8f8] border-[#CACACA]">
                 Depo
               </td>
               <td
@@ -354,17 +354,30 @@
                 />
               </td>
               <td class="p-2 border border-[#CACACA]">
-                <FieldSelect :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }" class="w-full !mt-3" :value="item.waktu_out"
-                  @input="v=>{
+                <FieldSelect
+                  :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }" class="w-full !mt-3"
+                  :value="values.waktu_out" @input="v=>{
                     if(v){
                       item.waktu_out=v
                     }else{
                       item.waktu_out=null
                     }
-                  }" :errorText="formErrors.waktu_out?'failed':''" :hints="formErrors.waktu_out"
-                  valueField="id" displayField="key"
-                  :options="[{'id' : 'Pagi' , 'key' : 'Pagi'},{'id': 'Siang', 'key' : 'Siang'},{'id': 'Sore', 'key' : 'Sore'}]"
-                  placeholder="" label="" :check="false" />
+                  }"
+                  :errorText="formErrors.waktu_out?'failed':''" 
+                  :hints="formErrors.waktu_out"
+                  valueField="deskripsi" displayField="deskripsi"
+                  :api="{
+                      url: `${store.server.url_backend}/operation/m_general`,
+                      headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                      params: {
+                        simplest:true,
+                        transform:false,
+                        where:`this.group='WAKTUOUT'`,
+                        join:false
+                      }
+                  }"
+                  placeholder="" fa-icon="" :check="false"
+                />
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{ readonly: !actionText , required: false}" class="w-full !mt-3"
@@ -385,17 +398,32 @@
                 />
               </td>
               <td class="p-2 border border-[#CACACA]">
-                <FieldSelect :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }" class="w-full !mt-3" :value="item.waktu_in"
-                  @input="v=>{
+
+                <FieldSelect
+                  :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }" class="w-full !mt-3"
+                  :value="values.waktu_in"  @input="v=>{
                     if(v){
                       item.waktu_in=v
                     }else{
                       item.waktu_in=null
                     }
-                  }" :errorText="formErrors.waktu_in?'failed':''" :hints="formErrors.waktu_in"
-                  valueField="id" displayField="key"
-                  :options="[{'id' : 'Pagi' , 'key' : 'Pagi'},{'id': 'Siang', 'key' : 'Siang'},{'id': 'Sore', 'key' : 'Sore'}]"
-                  placeholder="" label="" :check="false" />
+                  }"
+                  :errorText="formErrors.waktu_in?'failed':''" 
+                  :hints="formErrors.waktu_in"
+                  valueField="deskripsi" displayField="deskripsi"
+                  :api="{
+                      url: `${store.server.url_backend}/operation/m_general`,
+                      headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                      params: {
+                        simplest:true,
+                        transform:false,
+                        where:`this.group='WAKTUIN'`,
+                        join:false
+                      }
+                  }"
+                  placeholder="" fa-icon="" :check="false"
+                />
+                
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{ readonly: !actionText , required: false}" class="w-full !mt-3"

@@ -93,7 +93,8 @@
       </div>
     </div>
     <div class="flex justify-end pt-4">
-      <RouterLink v-if="tipe_kategori_id" :to="`${$route.path}/create?${Date.parse(new Date())}&tipe_order_id=${tipe_order_id}&tipe_kategori_id=${tipe_kategori_id}`"
+      <RouterLink v-if="tipe_kategori_id"
+        :to="`${$route.path}/create?${Date.parse(new Date())}&tipe_order_id=${tipe_order_id}&tipe_kategori_id=${tipe_kategori_id}`"
         class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 mr-4">
         Create</RouterLink>
       <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" @click="isModalOpen=false; setTipeKategori('')">Cancel</button>
@@ -129,10 +130,9 @@
                 where:`this.group='TIPE ORDER'`
               }
           }" fa-icon="sort-desc" placeholder="Tipe Order" :check="false" />
-        <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }"
-          :value="data.tipe_kategori_id" @input="v=>data.tipe_kategori_id=v"
-          :errorText="formErrors.tipe_kategori_id?'failed':''" :hints="formErrors.tipe_kategori_id" valueField="id"
-          displayField="nama_coa" :api="{
+        <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="data.tipe_kategori_id"
+          @input="v=>data.tipe_kategori_id=v" :errorText="formErrors.tipe_kategori_id?'failed':''"
+          :hints="formErrors.tipe_kategori_id" valueField="id" displayField="nama_coa" :api="{
               url: `${store.server.url_backend}/operation/m_coa`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -147,19 +147,19 @@
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_draft"
         :errorText="formErrors.no_draft?'failed':''" @input="v=>data.no_draft=v" :hints="formErrors.no_draft"
         label="No. Draft" placeholder="No. Draft" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_bkk"
-        :errorText="formErrors.no_bkk?'failed':''" @input="v=>data.no_bkk=v" :hints="formErrors.no_bkk" label="No. BKK"
-        placeholder="No. BKK" :check="false" />
     </div> -->
     <div>
-      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-1/2 !mt-3" :value="data.tanggal"
-        :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
-        :check="false" type="date" label="Tanggal" placeholder="Pilih Tanggal" />
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"
+        :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v"
+        :hints="formErrors.tanggal" :check="false" type="date" label="Tanggal" placeholder="Pilih Tanggal" />
     </div>
-    <div class="w-full !mt-3">
-      <FieldPopup class="!mt-0" :bind="{ readonly: true }" :value="data.t_bkk_id" @input="v=>{
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3 pointer-events-none" :value="data.no_bkk"
+        :errorText="formErrors.no_bkk?'failed':''" @input="v=>data.no_bkk=v" :hints="formErrors.no_bkk" label="No. BKK"
+        placeholder="No. BKK" :check="false" />
+    </div>
+    <!-- <div class="w-full !mt-3">
+      <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="data.t_bkk_id" @input="v=>{
           if(v){
             data.t_bkk_id=v
           }else{
@@ -170,14 +170,18 @@
               if(dt){
             data.no_bkk=dt.no_bkk;
           }else{
-            data.no_bkk=null
+            data.no_bkk=null  
           }
             }" valueField="id" displayField="no_bkk" :api="{
               url: `${store.server.url_backend}/operation/t_bkk`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                where: `this.status!='DRAFT'`
+              },
+              onsuccess(response) {
+                response.page = response.current_page
+                response.hasNext = response.has_next
+                return response
               }
             }" placeholder="No. BKK" :check="false" :columns="[{
               headerName: 'No',
@@ -215,7 +219,7 @@
               cellClass: ['border-r', '!border-gray-200', 'justify-center']
             },
             ]" />
-    </div>
+    </div> -->
     <div>
       <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="data.total_amt"
         :errorText="formErrors.total_amt?'failed':''" @input="v=>data.total_amt=v" :hints="formErrors.total_amt"
@@ -379,7 +383,6 @@
         }, params: { 
             simplest: false, 
             searchfield: 'this.kategori, this.debit_kredit',
-            where: `this.status='POST'`,
             notin: `this.id: ${detailArr.map((det)=> (det.t_buku_order_id))}`
             },
             onsuccess: (response) => {
@@ -474,12 +477,21 @@
             <td class="p-2 border border-[#CACACA]">
               <FieldX type="textarea" :bind="{ disabled: !actionText, clearable:false }" class="w-full py-2 !mt-0"
                 :value="item.keterangan" @input="v=>item.keterangan=v" :errorText="formErrors.keterangan?'failed':''"
-                :hints="formErrors.keterangan" />
+                :hints="formErrors.keterangan" placeholder="Masukkan Keterangan" :check="false" />
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldNumber :bind="{ disabled: !actionText, clearable:false }" class="w-full py-2 !mt-0"
+              <FieldSelect class="w-full py-2 !mt-0" :bind="{ disabled: !actionText, clearable:false }"
                 :value="item.ukuran_container" @input="v=>item.ukuran_container=v"
-                :errorText="formErrors.ukuran_container?'failed':''" :hints="formErrors.ukuran_container" />
+                :errorText="formErrors.ukuran_container?'failed':''" :hints="formErrors.ukuran_container"
+                valueField="id" displayField="deskripsi" :api="{
+                    url: `${store.server.url_backend}/operation/m_general`,
+                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                    params: {
+                      simplest:true,
+                      where: `this.group = 'UKURAN KONTAINER'`
+                    }
+                }" placeholder="Pilih Salah Satu" label="" :check="true" />
+
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
               <FieldNumber :bind="{ readonly: !actionText }" class="m-0" :value="detailArr[i].sub_total"

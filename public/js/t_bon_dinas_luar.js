@@ -355,20 +355,6 @@ const setTipeKategori = (tk_id) => {
   // console.log(tk_id, tipe_kategori_id.value)
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // @else | --- FORM DATA --- |
 
 // HOT KEY (CTRL+S)

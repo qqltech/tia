@@ -28,7 +28,7 @@ class t_angkutan_d extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["free","tarif_los_cargo"];
+    public $required    = [""];
     public $createable  = ["t_angkutan_id","t_spk_id","depo","sektor","tanggal_out","jam_out","free","tarif_los_cargo","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","waktu_out","angkutan_pelabuhan","nama_angkutan_id","tanggal_in","jam_in","waktu_in","staple","pelabuhan","no_container","biaya_lain_lain","tgl_stuffing","no_angkutan","head","catatan","trip"];
     public $updateable  = ["t_angkutan_id","t_spk_id","depo","sektor","tanggal_out","jam_out","free","tarif_los_cargo","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","waktu_out","angkutan_pelabuhan","nama_angkutan_id","tanggal_in","jam_in","waktu_in","staple","pelabuhan","no_container","biaya_lain_lain","tgl_stuffing","no_angkutan","head","catatan","trip"];
     public $searchable  = ["id","t_angkutan_id","t_spk_id","depo","sektor","tanggal_out","jam_out","free","tarif_los_cargo","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","waktu_out","angkutan_pelabuhan","nama_angkutan_id","tanggal_in","jam_in","waktu_in","staple","pelabuhan","no_container","biaya_lain_lain","tgl_stuffing","no_angkutan","head","catatan","trip"];

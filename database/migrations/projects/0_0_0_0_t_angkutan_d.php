@@ -24,8 +24,8 @@ class tangkutand extends Migration
             $table->date('tanggal_in')->nullable();
             $table->time('jam_in')->nullable();
             $table->string('waktu_in',20)->nullable();
-            $table->integer('free');
-            $table->decimal('tarif_los_cargo',18,2);
+            $table->integer('free')->default(0)->nullable();
+            $table->decimal('tarif_los_cargo',18,2)->default(0)->nullable();
             $table->string('pelabuhan')->nullable();
             $table->string("angkutan_pelabuhan",40)->nullable();
             $table->integer('nama_angkutan_id')->comment('{"src":"m_supplier.id"}')->nullable();
