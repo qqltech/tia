@@ -34,8 +34,8 @@ class tspkangkutan extends Migration
             $table->integer('head')->comment('{"src":"set.m_general.id"}');
             $table->integer('chasis')->comment('{"src":"set.m_general.id"}');
             $table->integer('chasis2')->comment('{"src":"set.m_general.id"}')->nullable();
-            $table->string('dari', 50);
-            $table->string('ke', 10);
+            $table->string('dari', 100);
+            $table->string('ke', 100);
             $table->decimal('sangu',18,2)->nullable();
             $table->decimal('total_sangu',18,2)->nullable();
             $table->date('tanggal_out');

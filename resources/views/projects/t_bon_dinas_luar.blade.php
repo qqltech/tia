@@ -236,7 +236,7 @@
               params: {
                 simplest:true,
                 where: `this.is_active=true`,
-                searchfield: 'this.nip, this.kode, this.nama, this.divisi',
+                searchfield: 'this.nip, this.nama, this.divisi',
               }
             }" placeholder="Nama Karyawan" :check="false" :columns="[{
               headerName: 'No',
@@ -249,13 +249,6 @@
               flex: 1,
               field: 'nip',
               headerName:  'NIP',
-              sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-center']
-            },
-            {
-              flex: 1,
-              field: 'kode',
-              headerName:  'Kode',
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-center']
             },

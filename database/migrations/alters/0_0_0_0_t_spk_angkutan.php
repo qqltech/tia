@@ -13,7 +13,7 @@ class tspkangkutan extends Migration
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
             // $table->renameColumn('sektor','sektor1');
-            // $table->dropColumn(['jenis_container_1','jenis_container_2' ]);
+            $table->dropColumn(['dari','ke' ]);
             // $table->string('no_spk', 50)->nullable();
             // $table->integer('tipe_spk')->comment('{"src":"set.m_general.id"}')->nullable()->change();
             // $table->integer('depo')->comment('{"src":"set.m_general.id"}')->nullable()->change();
@@ -49,6 +49,8 @@ class tspkangkutan extends Migration
             // $table->integer('jenis_container_1')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->integer('jenis_container_2')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->integer('chasis2')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->string('dari', 100)->nullable();
+            $table->string('ke', 100)->nullable();
         });
 
     }
