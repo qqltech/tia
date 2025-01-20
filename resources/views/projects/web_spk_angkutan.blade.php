@@ -223,7 +223,7 @@ $temp = ' sebelas';
                 @foreach ($nospkd as $nd)
                 <tr>
                   <td
-                    style="width: 80%; border: 0.5px solid black; text-align: center; padd">
+                    style="width: 80%; border-bottom: 0.5px dashed black; text-align: left; padd">
                     {{$nd->keterangan}}
                   </td>
                 </tr>
