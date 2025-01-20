@@ -12,7 +12,7 @@ class ttagihan extends Migration
         Schema::table($this->tableName, function (Blueprint $table) {
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            // $table->dropColumn(['tarif_ppjk' ]);
+            // $table->dropColumn(['no_faktur_pajak' ]);
             // $table->decimal('grand_total',18,4)->nullable();
             // $table->decimal('total_kontainer',18,4)->nullable();
             // $table->decimal('total_lain',18,4)->nullable();
@@ -22,6 +22,7 @@ class ttagihan extends Migration
             // $table->string('tipe_tagihan')->nullable()->change();
             // $table->integer('no_faktur_pajak')->comment('{"src":"m_faktur_pajak_d.id"}')->change();
             // $table->decimal('piutang',18,4)->nullable();
+            $table->string('no_faktur_pajak')->nullable();
         });
     }
 }

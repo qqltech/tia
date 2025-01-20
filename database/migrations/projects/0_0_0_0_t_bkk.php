@@ -22,7 +22,9 @@ class tbkk extends Migration
             $table->date('tanggal');
             $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');
             $table->decimal('total_amt', 18, 4);
+            $table->integer('tipe_pembayaran')->comment('{"src":"set.m_general.id"}');
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->text('keterangan')->nullable();
             
             $table->integer('creator_id')->nullable();

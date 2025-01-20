@@ -121,7 +121,10 @@
       <div class="w-full !mt-3">
         <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:false }" :value="values.tipe_pembayaran"
           @input="v=>values.tipe_pembayaran=v" :errorText="formErrors.tipe_pembayaran?'failed':''"
-          :hints="formErrors.tipe_pembayaran" valueField="id" displayField="deskripsi" :api="{
+          :hints="formErrors.tipe_pembayaran" valueField="id" displayField="deskripsi" @update:valueFull="(response)=>{
+          $log(response)
+          values.tipe_pembayaran_deskripsi = response.deskripsi
+        }" :api="{
                 url: `${store.server.url_backend}/operation/m_general`,
                 headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                 params: {
@@ -129,8 +132,59 @@
                   where: `this.group='TIPE PEMBAYARAN'`
                 }
             }" placeholder="Pilih Tipe Pembayaran" label="Tipe Pembayaran" fa-icon="caret-down" :check="false" />
-
       </div>
+
+      <div class="w-full !mt-3" v-if="values.tipe_pembayaran_deskripsi == 'TRANSFER'">
+      <FieldPopup class="!mt-0" :bind="{ readonly: values.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
+        :value="values.m_akun_bank_id" @input="(v) => values.m_akun_bank_id = v"
+        :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
+        displayField="nama_coa" :api="{
+      url: `${store.server.url_backend}/operation/m_coa`,
+      headers: {
+        'Content-Type': 'Application/json', 
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      params: {
+        simplest: true,
+        where: `kategori.deskripsi='MODAL'`,
+        searchfield: `this.nama_coa, this.nomor`
+      },
+      onsuccess: (response) => {
+        response.page = response.current_page;
+        response.hasNext = response.has_next;
+        return response;
+      }
+    }" placeholder="Pilih Akun Bank" label="Akun Bank" fa-icon="" :check="false" :columns="[
+      {
+        headerName: 'No',
+        valueGetter: (p) => p.node.rowIndex + 1,
+        width: 60,
+        sortable: false,
+        resizable: false,
+        filter: false,
+        cellClass: ['justify-center', 'bg-gray-50']
+      },
+      {
+        flex: 1,
+        field: 'nama_coa',
+        headerName: 'Nama',
+        cellClass: ['justify-center', 'border-r', '!border-gray-200'],
+        sortable: true,
+        resizable: true,
+        filter: false,
+      },
+      {
+        flex: 1,
+        field: 'nomor',
+        headerName: 'Nomor ID',
+        cellClass: ['justify-center', 'border-r', '!border-gray-200'],
+        sortable: true,
+        resizable: true,
+        filter: false,
+      },
+    ]" />
+    </div>
+
       <div class="w-full !mt-3">
         <FieldNumber class="!mt-0" :bind="{ readonly: true }" :value="hitungTotalAmount()"
           @input="v=>values.total_amt=v" :errorText="formErrors.total_amt?'failed':''" :hints="formErrors.total_amt"

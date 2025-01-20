@@ -22,6 +22,8 @@ class tbkknonorder extends Migration
             $table->integer('m_perkiraan_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->string('tipe_bkk',30)->nullable();
             $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}');
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
+            $table->integer('tipe_pembayaran')->comment('{"src":"set.m_general.id"}');
 
             //penting
             $table->integer('creator_id')->nullable();

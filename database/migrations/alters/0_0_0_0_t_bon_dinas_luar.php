@@ -14,7 +14,8 @@ class tbondinasluar extends Migration
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
             // $table->bigInteger('t_bkk_id')->comment('{"src":"t_bkk.id"}')->nullable()->change();
-            $table->bigInteger('tipe_kategori_id')->comment('{"src":"m_coa.id"}')->change();
+            // $table->bigInteger('tipe_kategori_id')->comment('{"src":"m_coa.id"}')->change();
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
         });
     }
 }

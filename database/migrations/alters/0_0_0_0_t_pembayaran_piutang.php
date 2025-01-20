@@ -15,6 +15,7 @@ class tpembayaranpiutang extends Migration
                     //    $table->integer('customer')->unique(false)->comment('{"src":"m_customer.id"}')->change();
 
             //$table->dropColumn([ ]);
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
         });
     }
 }

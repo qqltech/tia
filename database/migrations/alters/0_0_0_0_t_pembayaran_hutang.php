@@ -14,6 +14,7 @@ class tpembayaranhutang extends Migration
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
             // $table->integer('t_rencana_pembayaran_hutang_id')->comment('{"src":"t_rencana_pembayaran_hutang.id"}')->nullable();
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
         });
     }
 }

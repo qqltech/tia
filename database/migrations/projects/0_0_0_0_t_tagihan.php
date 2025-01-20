@@ -16,7 +16,7 @@ class ttagihan extends Migration
             $table->string('no_tagihan')->nullable();
             $table->integer('no_buku_order')->comment('{"src":"t_buku_order.id"}');
             $table->integer('customer')->comment('{"src":"m_customer.id"}');
-            $table->integer('no_faktur_pajak')->comment('{"src":"m_faktur_pajak_d.id"}');
+            $table->string('no_faktur_pajak')->nullable();
             $table->string('status',10);
             $table->date('tgl');
             $table->string('tipe_tagihan')->nullable();

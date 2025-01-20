@@ -19,6 +19,8 @@ class tbkmnonorder extends Migration
             $table->date('tanggal');
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}');
+            $table->integer('tipe_pembayaran')->comment('{"src":"set.m_general.id"}');
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->decimal('total_amt',18,4);
             $table->string('no_ref',20)->nullable();
             $table->text('keterangan')->nullable();

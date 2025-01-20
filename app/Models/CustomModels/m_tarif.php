@@ -50,13 +50,13 @@ class m_tarif extends \App\Models\BasicModels\m_tarif
         ];
     }
 
-    public function createValidator(){
-        return $this->rules();
-    }
+    // public function createValidator(){
+    //     return $this->rules();
+    // }
 
-    public function updateValidator(){
-        return $this->rules();
-    }
+    // public function updateValidator(){
+    //     return $this->rules();
+    // }
     
     
 }

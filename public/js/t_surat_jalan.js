@@ -103,6 +103,7 @@ onBeforeMount(async () => {
         if (!res.ok) throw new Error("Failed when trying to read data")
         const resultJson = await res.json()
         initialValues = resultJson.data
+        
           if (actionText.value === 'Copy') {
             initialValues.status = 'DRAFT';
           }
@@ -404,7 +405,7 @@ const landing = reactive({
             icon: 'success',
             text: responseJson?.message || 'PRINTED'
           });
-          window.open(`${store.server.url_backend}/web/surat_jalan?export=pdf&size=b5&orientation=potrait&id=${row.id}`)
+          window.open(`${store.server.url_backend}/web/surat_jalan?export=pdf&size_p=137.5&size_l=107.5&orientation=potrait&id=${row.id}`)
         } catch (err) {
           isBadForm.value = true;
           swal.fire({

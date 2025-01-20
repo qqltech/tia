@@ -17,21 +17,21 @@ class t_tagihan extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","no_tagihan","no_buku_order","customer","no_faktur_pajak","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang"];
+    protected $fillable = ["no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak"];
 
-    public $columns     = ["id","no_draft","no_tagihan","no_buku_order","customer","no_faktur_pajak","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang"];
-    public $columnsFull = ["id:bigint","no_draft:string:191","no_tagihan:string:191","no_buku_order:integer","customer:integer","no_faktur_pajak:integer","status:string:10","tgl:date","tipe_tagihan:string:191","total_amount:decimal","ppn:decimal","grand_total_amount:decimal","catatan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","grand_total:decimal","total_kontainer:decimal","total_lain:decimal","total_ppn:decimal","total_setelah_ppn:decimal","total_tarif_jasa:decimal","piutang:decimal"];
+    public $columns     = ["id","no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak"];
+    public $columnsFull = ["id:bigint","no_draft:string:191","no_tagihan:string:191","no_buku_order:integer","customer:integer","status:string:10","tgl:date","tipe_tagihan:string:191","total_amount:decimal","ppn:decimal","grand_total_amount:decimal","catatan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","grand_total:decimal","total_kontainer:decimal","total_lain:decimal","total_ppn:decimal","total_setelah_ppn:decimal","total_tarif_jasa:decimal","piutang:decimal","no_faktur_pajak:string:191"];
     public $rules       = [];
-    public $joins       = ["t_buku_order.id=t_tagihan.no_buku_order","m_customer.id=t_tagihan.customer","m_faktur_pajak_d.id=t_tagihan.no_faktur_pajak"];
+    public $joins       = ["t_buku_order.id=t_tagihan.no_buku_order","m_customer.id=t_tagihan.customer"];
     public $details     = ["t_tagihan_d_lain","t_tagihan_d_tarif","t_tagihan_d_npwp"];
     public $heirs       = ["t_credit_note_d","t_pembayaran_piutang_d","t_debit_note_d","t_sub_debit_note","t_sub_credit_note"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["no_buku_order","customer","no_faktur_pajak","status","tgl","total_amount","ppn","grand_total_amount"];
-    public $createable  = ["no_draft","no_tagihan","no_buku_order","customer","no_faktur_pajak","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang"];
-    public $updateable  = ["no_draft","no_tagihan","no_buku_order","customer","no_faktur_pajak","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang"];
-    public $searchable  = ["id","no_draft","no_tagihan","no_buku_order","customer","no_faktur_pajak","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang"];
+    public $required    = ["no_buku_order","customer","status","tgl","total_amount","ppn","grand_total_amount"];
+    public $createable  = ["no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak"];
+    public $updateable  = ["no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak"];
+    public $searchable  = ["id","no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
@@ -58,9 +58,5 @@ class t_tagihan extends Model
     public function customer() :\BelongsTo
     {
         return $this->belongsTo('App\Models\BasicModels\m_customer', 'customer', 'id');
-    }
-    public function no_faktur_pajak() :\BelongsTo
-    {
-        return $this->belongsTo('App\Models\BasicModels\m_faktur_pajak_d', 'no_faktur_pajak', 'id');
     }
 }

@@ -28,7 +28,7 @@ class m_tarif_d_lain_lain extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["deskripsi","nominal"];
+    public $required    = [""];
     public $createable  = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","satuan_id"];
     public $updateable  = ["m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","satuan_id"];
     public $searchable  = ["id","m_tarif_id","deskripsi","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","satuan_id"];

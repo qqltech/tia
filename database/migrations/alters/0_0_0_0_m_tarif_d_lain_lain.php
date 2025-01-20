@@ -16,7 +16,9 @@ class mtarifdlainlain extends Migration
             // $table->renameColumn('keterangan','deskripsi');
             // $table->string("deskripsi")->nullable(0)->change();
             // $table->decimal("nominal", 18, 4)->nullable(0)->change();
-            $table->bigInteger('satuan_id')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->bigInteger('satuan_id')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->string('deskripsi')->nullable()->change();
+            $table->decimal('nominal',18,4)->nullable()->change();
         });
     }
 }

@@ -22,6 +22,7 @@ class tpembayaranhutang extends Migration
             $table->decimal('total_amt',18,4)->nullable();
             $table->boolean('include_pph');
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->integer('supplier_id')->comment('{"src":"m_supplier.id"}');
             $table->text('keterangan')->nullable();
 

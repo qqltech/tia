@@ -115,6 +115,7 @@ onBeforeMount(async () => {
       if (!response.ok) throw new Error("Failed when trying to read data");
       const resultJson = await response.json();
       initialValues = resultJson.data;
+      console.log(initialValues,'dfdfd')
       console.log(initialValues.t_pembayaran_hutang_d);
 
       if (Array.isArray(initialValues['t_pembayaran_hutang_d'])) {
@@ -123,7 +124,9 @@ onBeforeMount(async () => {
         });
       }
       initialValues.include_pph = (initialValues.include_pph === true || initialValues.include_pph === 1) ? 1 : 0;
+      initialValues.tipe_pembayaran_deskripsi = initialValues['tipe_pembayaran.deskripsi'];
       }
+      
 
       await new Promise(resolve => setTimeout(resolve, 500));
       await rencana_PH({ id: initialValues.t_rencana_pembayaran_hutang_id });

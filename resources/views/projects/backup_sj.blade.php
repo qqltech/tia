@@ -98,13 +98,13 @@ $jeniskontainer = "";
 //}
 //$format = implode(", ", $str);
 @endphp
-<div class="container" style="font-size: 4.4px;">
-  <!-- <pre>{{var_dump($nospk)}}</pre> -->
+<div class="container">
+  <!-- <pre>{{var_dump($count_spk)}}</pre> -->
   <table>
     <thead>
       <tr>
         <th colspan="2" class="underline-2"
-          style="text-decoration: underline; font-weight: bold; height:20px; text-align:left;">SURAT JALAN / PENGANTAR
+          style="text-decoration: underline; font-weight: bold; height:30px; text-align:left;">SURAT JALAN / PENGANTAR
         </th>
         <th colspan="2" style="text-align:right;">
           {{$n->no_surat_jalan}}
@@ -228,10 +228,9 @@ $jeniskontainer = "";
           <span style="font-weight: normal;">:</span>
         </td>
         <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold;">
-          {{$n->no_prefix}}{{$n->no_suffix}}
         </td>
         <td style="width: 2%; border: none;"></td>
-        <td colspan="3" style="border-left: 1px solid black;"></td>
+        <td colspan="3" style="border-left: 1px solid black;">{{$n->no_prefix}}{{$n->no_suffix}}</td>
       </tr>
       <tr>
         <td style="width: 25%;">No. Seal</td>
@@ -257,7 +256,7 @@ $jeniskontainer = "";
         <td style="width: 2%; border: none;"></td>
         <td style="width: 1%; border-left: 1px solid black;"></td>
         <td colspan="2"
-          style="border-left: 1px solid black; border-top: 1px solid black; border-right: 1px solid black; border-bottom: 1px solid black; text-align: center; font-weight: bold; font-size: 6px;">
+          style="border-left: 1px solid black; border-top: 1px solid black; border-right: 1px solid black; border-bottom: 1px solid black; text-align: center; font-weight: bold; font-size: 20pt;">
           {{$cekImp}} {{$n->jenis_sj_deskripsi}}
         </td>
       </tr>
@@ -375,6 +374,24 @@ $jeniskontainer = "";
         <td style="font-weight: bold; border: none; border-bottom: 1px solid black;">Dicetak pada tgl : {{$currentDate}}
           jam
           {{$currentTime}} Operator : DEWI-PC # dewi</td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
       </tr>
     </tbody>
   </table>

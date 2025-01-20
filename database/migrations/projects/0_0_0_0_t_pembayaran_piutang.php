@@ -20,6 +20,7 @@ class tpembayaranpiutang extends Migration
             $table->integer('tipe_pembayaran')->comment('{"src":"set.m_general.id"}');
             $table->decimal('total_amt', 18, 4)->nullable();
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->integer('customer')->comment('{"src":"m_customer.id"}');
             $table->text('catatan')->nullable();
             //penting

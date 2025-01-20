@@ -113,9 +113,9 @@
         placeholder="No. BKK" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-1/2 !mt-3" :value="data.tanggal"
-        :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
-        :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-1/2 !mt-3"
+        :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v"
+        :hints="formErrors.tanggal" :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
     </div>
     <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="v=>{
@@ -165,6 +165,80 @@
             }
             ]" />
     </div>
+
+    <div class="w-full !mt-3">
+      <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
+        valueField="id" :value="data.tipe_pembayaran" @input="(v) => data.tipe_pembayaran = v"
+        :errorText="formErrors.tipe_pembayaran ? 'failed' : ''" :hints="formErrors.tipe_pembayaran"
+        placeholder="Tipe Pembayaran" label="Tipe Pembayaran" :check="false" @update:valueFull="(response)=>{
+          $log(response)
+          data.tipe_pembayaran_deskripsi = response.deskripsi
+        }" :api="{
+      url: `${store.server.url_backend}/operation/m_general`,
+      headers: {
+        'Content-Type': 'Application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      params: {
+        join: false,
+        simplest: false,
+        selectfield: 'this.id, this.deskripsi',
+        where: `this.is_active=true and this.group='TIPE PEMBAYARAN'`
+      },
+    }" />
+    </div>
+
+    <div class="w-full !mt-3" v-if="data.tipe_pembayaran_deskripsi == 'TRANSFER'">
+      <FieldPopup class="!mt-0" :bind="{ readonly: data.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
+        :value="data.m_akun_bank_id" @input="(v) => data.m_akun_bank_id = v"
+        :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
+        displayField="nama_coa" :api="{
+      url: `${store.server.url_backend}/operation/m_coa`,
+      headers: {
+        'Content-Type': 'Application/json', 
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      params: {
+        simplest: true,
+        where: `kategori.deskripsi='MODAL'`,
+         searchfield: `this.nama_coa, this.nomor`
+      },
+      onsuccess: (response) => {
+        response.page = response.current_page;
+        response.hasNext = response.has_next;
+        return response;
+      }
+    }" placeholder="Pilih Akun Bank" label="Akun Bank" fa-icon="" :check="false" :columns="[
+      {
+        headerName: 'No',
+        valueGetter: (p) => p.node.rowIndex + 1,
+        width: 60,
+        sortable: false,
+        resizable: false,
+        filter: false,
+        cellClass: ['justify-center', 'bg-gray-50']
+      },
+      {
+        flex: 1,
+        field: 'nama_coa',
+        headerName: 'Nama',
+        cellClass: ['justify-center', 'border-r', '!border-gray-200'],
+        sortable: true,
+        resizable: true,
+        filter: false,
+      },
+      {
+        flex: 1,
+        field: 'nomor',
+        headerName: 'Nomor ID',
+        cellClass: ['justify-center', 'border-r', '!border-gray-200'],
+        sortable: true,
+        resizable: true,
+        filter: false,
+      },
+    ]" />
+    </div>
+
     <div>
       <FieldPopup class="w-full !mt-3" :api="{
         url: `${store.server.url_backend}/operation/m_coa`,

@@ -12,8 +12,9 @@ class tbkk extends Migration
         Schema::table($this->tableName, function (Blueprint $table) {
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            // $table->dropColumn(['no_reference']);
+            // $table->dropColumn(['m_coa_id']);
             // $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable()->change();
+            $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
         });
     }
 }
