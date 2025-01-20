@@ -333,4 +333,25 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
     public function scopeGetCustomerNPWP($model){
         return $model->with(['m_customer.m_customer_d_npwp']);
     }
+
+    public function scopeGetDetailNPWP($model)
+{
+    $req = app()->request;
+
+    $model->join('t_buku_order_d_npwp', 't_buku_order_d_npwp.t_buku_order_id', '=', 't_buku_order.id')
+          ->join('m_customer as cust', 'cust.id', '=', 't_buku_order.m_customer_id')
+          ->join('set.m_general as ukuran', 'ukuran.id', '=', 't_buku_order.ukuran') // Correct column name
+          ->join('set.m_general as jenis', 'jenis.id', '=', 't_buku_order.jenis');  // Correct column name
+
+    $model->select(
+        'ukuran.*',
+    'jenis.*',
+        't_buku_order.*',
+        't_buku_order_d_npwp.*',
+        'cust.*',
+        // 'ukuran.nama as ukuran_nama', // Assuming the `set.m_general` table has a `nama` column
+        // 'jenis.nama as jenis_nama'
+    );
+}
+
 }

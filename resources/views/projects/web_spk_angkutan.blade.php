@@ -89,12 +89,12 @@ $unixTime2 = strtotime($n->tanggal_out);
 $tanggal_out = date("d/m/Y", $unixTime2);
 @endphp
 
-<div class="container">
+<div class="container" style="font-size: 6px; ">
   <table>
     <tr>
-      <th class="underline-2" style="height:30px; text-align:right;">
+      <th class="underline-2" style="height: 14px; text-align:right;">
       </th>
-      <th colspan="1" class="underline-2" style="height:30px; text-align:right;">Tanggal In : {{$tanggal_in}}
+      <th colspan="1" class="underline-2" style="text-align:right;">Tanggal In : {{$tanggal_in}}
       </th>
       <th colspan="1" style="text-align:right;">Tanggal Out : {{$tanggal_out}}
       </th>
@@ -103,69 +103,67 @@ $tanggal_out = date("d/m/Y", $unixTime2);
       <td colspan="3" style="border: 1px solid black; ">
         <table>
           <tr>
-            <td style="width: 20%;">Order Angk.</td>
-            <td style="width: 2%;">
+            <td style="width: 16%;">Order Angk.</td>
+            <td style="width: 4%">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 28%; border: none; border-bottom: 1px dashed black;">{{$n->no_spk}}</td>
-            <td style="width: 2%;"></td>
-            <td style="width: 18%;">Pagi/sore</td>
-            <td style="width: 2%;">
+            <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
+            <td style="width: 9%;"></td>
+            <td style="width: 15%;">Pagi/sore</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 25%; border: none; border-bottom: 1px dashed black;">{{$n->waktu_in}}</td>
+            <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{$n->waktu_in}}</td>
           </tr>
           <tr>
-            <td style="width: 20%;">No. Angkutan</td>
-            <td style="width: 2%;">
+            <td style="width: 16%;">No. Angkutan</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 28%; border: none; border-bottom: 1px dashed black;">{{$n->head_deskripsi}} Chs-1:
+            <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->head_deskripsi}} Chs-1:
               {{$n->chasis1_deskripsi}}</td>
-            <td style="width: 2%;"></td>
-            <td style="width: 18%;">Supir</td>
-            <td style="width: 2%;">
+            <td style="width: 9%;"></td>
+            <td style="width: 15%;">Supir</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 25%; border: none; border-bottom: 1px dashed black;">{{$n->supir_nama}}</td>
+            <td style="width: 20%;"><div style="border: none; border-bottom: 0.5px dashed black;">{{{$n->supir_nama}}}</div></td>
           </tr>
           <tr>
-            <td style="width: 20%;">Rit</td>
-            <td style="width: 2%;">
+            <td style="width: 16%;">Rit</td>
+            <td style="width: 3.5%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 28%; border: none; border-bottom: 1px dashed black;">{{$n->trip_deskripsi}} Chs-2
+            <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->trip_deskripsi}} Chs-2
               {{$n->chasis1_deskripsi}}</td>
-            <td style="width: 2%;"></td>
-            <td style="width: 18%;">Cont.</td>
-            <td style="width: 2%;">
+            <td style="width: 9.5%;"></td>
+            <td style="width: 15%;">Cont.</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 20%; border: none; border-bottom: 1px dashed black;">{{$n->ukuran1_deskripsi}}</td>
-            <td style="width: 5%; border: none; border-bottom: 1px dashed black;">Ft</td>
+            <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{$n->ukuran1_deskripsi}} Ft</td>
           </tr>
           <tr>
-            <td style="width: 20%;">Sektor</td>
-            <td style="width: 2%;">
+            <td style="width: 16%;">Sektor</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 28%; border: none; border-bottom: 1px dashed black;">{{$n->sektor1_deskripsi}}
+            <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->sektor1_deskripsi}}
               {{$n->sektor2_deskripsi}}</td>
-            <td style="width: 2%;"></td>
-
+            <td style="width: 4%;"></td>
           </tr>
           <tr>
-            <td style="width: 20%;">Dari</td>
-            <td style="width: 2%;">
+            <td style="width: 16%;">Dari</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 28%; border: none; border-bottom: 1px dashed black;">{{$n->dari}}</td>
-            <td style="width: 2%;"></td>
-            <td style="width: 18%;">Ke</td>
-            <td style="width: 2%;">
+            <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{@$n->dari}}</td>
+            <td style="width: 9%;"></td>
+            <td style="width: 15%;">Ke</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
-            <td style="width: 20%; border: none; border-bottom: 1px dashed black;">{{$n->ke}}</td>
+            <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{@$n->ke}}</td>
           </tr>
           <tr style:"height:2px">
             <td></td>
@@ -183,10 +181,10 @@ $tanggal_out = date("d/m/Y", $unixTime2);
             <td style="width: 2%;">
               <span style="font-weight: normal;"></span>
             </td>
-            <td style="width: 28%; border: none; "></td>
+            <td style="width: 35%; border: none; "></td>
             <td style="width: 2%;"></td>
-            <td style="width: 18%;">Sangu.</td>
-            <td style="width: 2%;">
+            <td style="width: 15%; justify-content: center;">Sangu.</td>
+            <td style="width: 4%;">
               <span style="font-weight: normal;">:</span>
             </td>
             <td style="width: 20%; border: none;">Rp. {{number_format($n->sangu, 0, ',', '.')}}</td>

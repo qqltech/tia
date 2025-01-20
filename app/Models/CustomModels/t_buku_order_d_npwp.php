@@ -17,6 +17,7 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
     public function transformRowData( array $row )
     {
         $data = [];
+        $req = app()->request;
         if(app()->request->view_tarif){
             $getBukuOrder = t_buku_order::where('id',$row['t_buku_order_id'])->first();
             $getTarif = $this->tarif_kontainer($getBukuOrder['m_customer_id'], $row['ukuran'],strtolower($getBukuOrder['tipe_order']),$row['jenis'])->toArray();
@@ -27,6 +28,7 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
         if(app()->request->no_cont){
             $data = ["no_cont"=>$row['no_prefix'].$row['no_suffix']];
         }
+
         // if(app()->request->is_transform){
         //     $getBukuOrder = t_buku_order::where('id', $row['t_buku_order_id'])->first();
         //     $data = [

@@ -27,6 +27,8 @@ class tspkangkutan extends Migration
             $table->integer('isi_container_2')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->string('no_container_2')->nullable();
             $table->integer('trip_id')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->bigInteger('nama_customer')->nullable()->comment('{"src":"m_customer.id"}');
+            $table->bigInteger('nama_customer_2')->nullable()->comment('{"src":"m_customer.id"}');
 
             $table->date('tanggal_spk');
             $table->integer('supir')->comment('{"src":"set.m_kary.id"}');
