@@ -218,7 +218,7 @@ $temp = ' sebelas';
             <td style="width: 26.72%; text-align: center; border-right: 0.5px solid black; line-height: 10px;">
               {{$n->customer_nama_perusahaan}}
             </td>
-            <td style="width: 32%;">
+            <td style="width: 32%; ">
               <table>
                 @foreach ($nospkd as $nd)
                 <tr>
