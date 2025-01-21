@@ -96,6 +96,13 @@
             },
             {
               flex: 1,
+              field: 'kode',
+              headerName:'Kode Customer',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-center']
+            },
+            {
+              flex: 1,
               field: 'nama_perusahaan',
               headerName:  'Nama Customer',
               sortable: false, resizable: true, filter: 'ColFilter',

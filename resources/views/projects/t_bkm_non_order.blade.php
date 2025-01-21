@@ -92,8 +92,8 @@
     </div>
     <div class="w-full !mt-3">
       <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
-        valueField="id" :value="values.tipe_pembayaran_id" @input="(v) => values.tipe_pembayaran_id = v"
-        :errorText="formErrors.tipe_pembayaran_id ? 'failed' : ''" :hints="formErrors.tipe_pembayaran_id"
+        valueField="id" :value="values.tipe_pembayaran" @input="(v) => values.tipe_pembayaran = v"
+        :errorText="formErrors.tipe_pembayaran ? 'failed' : ''" :hints="formErrors.tipe_pembayaran"
         placeholder="Tipe Pembayaran" label="Tipe Pembayaran" :check="false" @update:valueFull="(response)=>{
           $log(response)
           values.tipe_pembayaran_deskripsi = response.deskripsi

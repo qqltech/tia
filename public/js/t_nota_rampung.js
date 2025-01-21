@@ -34,6 +34,19 @@ const values = reactive({
 })
 
 
+function acceptType(nameField) {
+  const file = values[nameField]
+  if (file) {
+    const indexFile = file.lastIndexOf('.')
+    const extensionFile = file.slice(indexFile + 1).toLowerCase()
+    
+    const isImage = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'].includes(extensionFile)
+    return isImage ? 'image/*' : 'application/pdf'
+  }
+  return 'image/*, application/pdf'
+}
+
+
 let tempfoto = ''
 const previewImage = (filePath) => {
   previewSrc.value = filePath;
@@ -114,9 +127,10 @@ onBeforeMount(async () => {
       const resultJson = await res.json()
       initialValues = resultJson.data
       // console.log(initialValues, "<<<<<")
-      if(actionText.value?.toLowerCase() === 'copy'){
+      if(actionText.value?.toLowerCase() === 'copy' && initialValues.foto_scn){
         delete initialValues.status,
         delete initialValues.tanggal;
+        delete initialValues.foto_scn;
       }
       if(actionText.value?.toLowerCase() === 'edit'){
         delete initialValues.tanggal;
@@ -201,6 +215,9 @@ async function hitung() {
 async function onSave() {
   try {
         values.t_nota_rampung_d = detailArr.value;
+        if(!values.foto_scn){
+            values.foto_scn = null;
+        }
         console.log('cek detail',values.t_nota_rampung_d)
         const isCreating = ['Create','Copy','Tambah'].includes(actionText.value)
         if (!isCreating) {

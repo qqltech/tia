@@ -27,7 +27,7 @@ class tnotarampung extends Migration
             $table->decimal('lolo_non_sp',18,4)->nullable();
             // $table->string('currency',20)->nullable();
             // $table->float('kurs')->default(1);
-            $table->string("foto_scn")->nullable();
+            $table->text('foto_scn')->nullable()->change();
             $table->text('catatan')->nullable();
             $table->string('no_stack',50)->nullable();
             $table->date('tgl_stack')->nullable();

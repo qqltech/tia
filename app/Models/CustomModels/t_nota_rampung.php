@@ -11,11 +11,7 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
         $this->helper = getCore("Helper");
     }
 
-    public $fileColumns = [
-        /*file_column*/
-        "foto_scn"
-
-    ];
+    public $fileColumns = ['foto_scn'];
 
     public $createAdditionalData = ["creator_id" => "auth:id"];
     public $updateAdditionalData = ["last_editor_id" => "auth:id"];
@@ -42,6 +38,16 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
 
     public function updateBefore( $model, $arrayData, $metaData, $id=null )
     {
+        // DELETE FILE BEFORE IF IT CHANGES
+        $prevData = $this->where('id', $id)->first();
+        if($prevData->foto_scn !== $arrayData['foto_scn']){
+            $file = $prevData->foto_scn;
+            $baseUrl = url('/');
+            $baseUrl = rtrim($baseUrl, '/');
+            $path = parse_url($file, PHP_URL_PATH);
+            \File::delete($path);
+        }
+
         $status = $arrayData['status'];
         $req = app()->request;
         if ($req->post){
@@ -57,6 +63,16 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
             // "errors" => ['error1']
         ];
     }
+    
+    public function deleteBefore( $model, $arrayData, $metaData, $id=null )
+    {
+        $file = $arrayData['foto_scn'];
+        $baseUrl = url('/');
+        $baseUrl = rtrim($baseUrl, '/');
+        $path = parse_url($file, PHP_URL_PATH);
+        \File::delete($path);
+    }
+    
     
 
     public function custom_post()

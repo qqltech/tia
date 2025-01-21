@@ -209,26 +209,25 @@
 
     <!-- Buat filedUpload Foto disini  -->
     <div>
-      <FieldUpload class="w-full !mt-3" :bind="{ readonly: !actionText }"
-        :reducerDisplay="(val)=>!val?null:val.split(':::')[val.split(':::').length-1]" :api="{
-      url: `${store.server.url_backend}/operation/t_nota_rampung/upload`,
-      headers: {Authorization: `${store.user.token_type} ${store.user.token}`},
-      params: { field: 'foto_scn' },
-      onsuccess: function(response){
-        // Call the preview function after a successful upload
-        previewImage(response.data.filePath);
-        return response;
-      },
-      onerror:(error)=>{
-        $log(error);
-      }
-      
-    }" accept="image/*" :value="values.foto_scn" @input="(v)=>values.foto_scn=v" :maxSize="25"
-        :hints="formErrors.foto_scn" placeholder="Upload Foto Scan" fa-icon="upload" :check="false" />
+     
 
-      <div v-if="previewSrc" class="mt-4">
+      <FieldUpload
+        class="col-span-9 w-full !mt-3"
+        :value="values.foto_scn" @input="(v)=>values.foto_scn=v" :maxSize="25"
+        :reducerDisplay="val=>!val?null:val.split(':::')[val.split(':::').length-1]"
+        :api="{
+          url: `${store.server.url_backend}/operation/t_nota_rampung/upload`,
+          headers: { Authorization: `${store.user.token_type} ${store.user.token}`},
+          params: { field: 'foto_scn' },
+          onsuccess: response=>response,
+          onerror:(error)=>{},
+         }"
+         :hints="formErrors.foto_scn" placeholder="Upload Foto Scan/Masukan File" fa-icon="upload"
+         :accept="acceptType('foto_scn')" :check="false"  
+      />
+      <!-- <div v-if="previewSrc" class="mt-4">
         <img :src="previewSrc" alt="Foto Preview" class="w-full h-auto rounded" />
-      </div>
+      </div>  -->
     </div>
 
     <div class="hidden">

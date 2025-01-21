@@ -34,6 +34,7 @@ class tnotarampung extends Migration
             // $table->date('tgl_stack')->nullable();
             // $table->string('no_eir',50)->nullable();
             // $table->date('tgl_eir')->nullable();
+            $table->text('foto_scn')->nullable()->change();
 
         });
     }
