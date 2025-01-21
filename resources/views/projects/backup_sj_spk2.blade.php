@@ -73,7 +73,6 @@ $temp = ' sebelas';
   @endphp
 
   <div class="container" style="font-size: 6px;">
-    <!-- <pre>{{var_dump($nospk)}}</pre> -->
     <table>
       <tr>
         <th class="underline-2" style="height: 14px; text-align:right;">
@@ -216,14 +215,12 @@ $temp = ' sebelas';
               <th style="width: 38%; text-align: center;">Keterangan</th>
               <th style="width: 21%; text-align: center;">Jumlah</th>
             </tr>
-            @foreach ($nospkd as $nd)
             <tr>
-              <td style="width: 20%; text-align: center; height: 25px;">{{$n->no_buku_order}}</td>
-              <td style="width: 22%;">{{$n->customer_nama_perusahaan}}</td>
-              <td style="width: 38%;">{{$nd->keterangan}}</td>
-              <td style="width: 21%; text-align: center;">Rp {{number_format($nd->nominal, 0, ',', '.')}}</td>
+              <td style="width: 20%; text-align: center; height: 25px;"></td>
+              <td style="width: 22%;"></td>
+              <td style="width: 38%;"></td>
+              <td style="width: 21%; text-align: center;"></td>
             </tr>
-            @endforeach
             <tr>
               <td style="width: 101%; text-align: right;"> Total : Rp {{number_format($n->total_sangu, 0, ',', '.');}}</td>
             </tr>

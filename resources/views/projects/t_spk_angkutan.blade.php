@@ -394,13 +394,7 @@
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
           sortable: true, resizable: true, filter: 'ColFilter',
         },
-        {
-          headerName: 'Customer',
-          field: 'nama_perusahaan',
-          flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: 'ColFilter',
-        },
+        
       ]" />
       <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
         :value="data.nama_customer" @input="v=>data.nama_customer=v"
@@ -552,13 +546,7 @@
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
           sortable: true, resizable: true, filter: 'ColFilter',
         },
-        {
-          headerName: 'Customer',
-          field: 'nama_perusahaan',
-          flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: 'ColFilter',
-        },
+        
       ]" />
       <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
         :value="data.nama_customer_2" @input="v=>data.nama_customer_2=v"
