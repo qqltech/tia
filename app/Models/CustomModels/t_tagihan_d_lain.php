@@ -11,8 +11,8 @@ class t_tagihan_d_lain extends \App\Models\BasicModels\t_tagihan_d_lain
     
     public $fileColumns    = [ /*file_column*/ ];
 
-    //public $createAdditionalData = ["creator_id"=>"auth:id"];
-    //public $updateAdditionalData = ["last_editor_id"=>"auth:id"];
+    public $createAdditionalData = ["creator_id"=>"auth:id"];
+    public $updateAdditionalData = ["last_editor_id"=>"auth:id"];
 
     
 }

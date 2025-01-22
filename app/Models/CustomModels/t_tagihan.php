@@ -80,7 +80,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     }
 
     private function IsDuplicate2($data){
-        $IdFP = $data['no_faktur_pajak'];
+        $IdFP = @$data['no_faktur_pajak'];
         $getFP = $this->where('no_faktur_pajak',$IdFP)->where('status','POST')->first();
         if($getFP){
             return true;

@@ -17,6 +17,7 @@ class ttagihandlain extends Migration
             $table->decimal('tarif_realisasi', 18, 2)->nullable();
             $table->integer('qty')->nullable();
             $table->string('keterangan');
+            $table->boolean('is_ppn')->nullable();
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();

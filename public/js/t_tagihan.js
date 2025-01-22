@@ -214,21 +214,30 @@ async function buku(no_buku_order) {
   }
   
  console.log(tipe_kontainer)
+ 
+const uniqueItems = new Map(); // Untuk menyimpan item berdasarkan ID
 
-    initialValues.t_buku_order_d_npwp.forEach(item => {
-      item.tarif.forEach(tarifItem => {
-        console.log('CEK SATUAN TARIF', tarifItem.lain);
-        tarifItem.lain.forEach(lainItem => {
-          // Menghapus angka di belakang titik desimal
-          const ubahNominal = parseFloat(lainItem.nominal).toFixed(0);
-          console.log(ubahNominal)
-          lainItem.keterangan = lainItem.deskripsi
-          lainItem.nominal = ubahNominal
-          lainItem.tarif_realisasi = ubahNominal
-          detailArr3.value.push(lainItem);
-        });
-      });
+initialValues.t_buku_order_d_npwp.forEach(item => {
+  item.tarif.forEach(tarifItem => {
+    console.log('CEK SATUAN TARIF', tarifItem.lain);
+    tarifItem.lain.forEach(lainItem => {
+      // Menghapus angka di belakang titik desimal
+      const ubahNominal = parseFloat(lainItem.nominal).toFixed(0);
+      console.log(ubahNominal);
+      lainItem.keterangan = lainItem.deskripsi;
+      lainItem.nominal = ubahNominal;
+      lainItem.tarif_realisasi = ubahNominal;
+
+      // Memeriksa apakah item sudah ada di uniqueItems
+      if (!uniqueItems.has(lainItem.id)) {
+        uniqueItems.set(lainItem.id, lainItem);
+      }
     });
+  });
+});
+
+// Mengonversi hasil dari Map ke dalam array dan menyimpannya ke detailArr3.value
+detailArr3.value = Array.from(uniqueItems.values());
 
     values.customer = initialValues.m_customer_id || '';
     values.grand_total_nota_rampung = initialValues.grand_total_nota_rampung || '';

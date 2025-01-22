@@ -22,7 +22,7 @@ class ttagihan extends Migration
             // $table->string('tipe_tagihan')->nullable()->change();
             // $table->integer('no_faktur_pajak')->comment('{"src":"m_faktur_pajak_d.id"}')->change();
             // $table->decimal('piutang',18,4)->nullable();
-            $table->string('no_faktur_pajak')->nullable();
+            // $table->string('no_faktur_pajak')->nullable()->change();
         });
     }
 }
