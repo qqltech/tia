@@ -104,6 +104,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $tarifdp = $req['total_tarif_dp'];
         $idBukuOrder = $req['t_buku_order_id'];
         $ppn = $req['ppn'];
+        $countKontainer = collect($req['detailArr'])->count();
 
         $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
 
@@ -111,7 +112,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $totalKontainerPPN = $totalKontainer * ($ppn / 100);
         $grandTotalKontainer = $totalKontainer + $totalKontainerPPN;
 
-        $totalJasa = $this->jasa($tagihanJasa,$ppn);
+        $totalJasa = $this->jasa($tagihanJasa,$ppn,$countKontainer);
         $totalPpjk =  $this->ppjk($tagihanPpjk, $nominalPpjk);
         $totalLain = $this->lain($tagihanLain, $ppn) - $tarifdp;
 
@@ -175,16 +176,16 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         return $calculateTotalKontainer;
     }
 
-    private function jasa($tagihan, $ppn)
+    private function jasa($tagihan, $ppn, $count)
     {
         $totalTagihanJasa = 0;
         foreach ($tagihan as $single) {
             if ($single['ppn']) {
                 $totalPPN = $single['tarif'] * ($ppn / 100);
                 $total = $single['tarif'] + $totalPPN;
-                $totalTagihanJasa += $single['tarif'];
+                $totalTagihanJasa += $single['tarif'] * $count;
             } else {
-                $totalTagihanJasa += $single['tarif'];
+                $totalTagihanJasa += $single['tarif'] * $count;
             }
         }
         return $totalTagihanJasa;
@@ -229,7 +230,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     // }
 
     private function ppjk($ppjk,$tarif){
-        $calculatePpjk = 0 ;
+        $calculatePpjk = 0;
         $collect = collect($ppjk);
         $count = $collect->count();
         $calculatePpjk = $tarif * $count;
