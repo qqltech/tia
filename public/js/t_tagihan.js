@@ -355,7 +355,7 @@ onBeforeMount(async () => {
       for (const key in initialValues) {
         values[key] = initialValues[key];
       }
-
+        console.log("TARIF TAGIHAN",initialValues.t_tagihan_d_lain)
 
       await new Promise(resolve => setTimeout(resolve, 500));
       await buku({ id: initialValues.no_buku_order });

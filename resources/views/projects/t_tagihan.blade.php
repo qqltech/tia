@@ -695,7 +695,7 @@
                 <input
                   type="checkbox"
                   class="h-5 w-5 text-blue-500 rounded"
-                  v-model="item.ppn"
+                  v-model="item.is_ppn"
                   :true-value="true"
                   :false-value="false"
                   :disabled="!actionText"
