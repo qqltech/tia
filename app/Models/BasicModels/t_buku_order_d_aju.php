@@ -20,7 +20,7 @@ class t_buku_order_d_aju extends Model
     protected $fillable = ["t_buku_order_id","t_ppjk_id","m_customer_id","tanggal","peb_pib","tanggal_peb_pib","no_sppb","tanggal_sppb","creator_id","last_editor_id","delete_id","delete_at"];
 
     public $columns     = ["id","t_buku_order_id","t_ppjk_id","m_customer_id","tanggal","peb_pib","tanggal_peb_pib","no_sppb","tanggal_sppb","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","t_buku_order_id:integer","t_ppjk_id:integer","m_customer_id:integer","tanggal:date","peb_pib:integer","tanggal_peb_pib:date","no_sppb:string:20","tanggal_sppb:date","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columnsFull = ["id:bigint","t_buku_order_id:integer","t_ppjk_id:integer","m_customer_id:integer","tanggal:date","peb_pib:string:191","tanggal_peb_pib:date","no_sppb:string:20","tanggal_sppb:date","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime"];
     public $rules       = [];
     public $joins       = ["t_buku_order.id=t_buku_order_d_aju.t_buku_order_id","t_ppjk.id=t_buku_order_d_aju.t_ppjk_id","m_customer.id=t_buku_order_d_aju.m_customer_id"];
     public $details     = [];

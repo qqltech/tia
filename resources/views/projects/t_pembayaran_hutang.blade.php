@@ -314,7 +314,7 @@
     </div>
 
     <div class="w-full !mt-3">
-      <FieldPopup class="!mt-0" displayField="nama_supplier" valueField="m_supplier_id"
+      <FieldPopup class="!mt-0" displayField="nama" valueField="id"
         :bind="{ readonly: !actionText}" :value="values.supplier_id"
         @input="(v)=>values.supplier_id=v" :errorText="formErrors.supplier_id?'failed':''"
         :hints="formErrors.supplier_id" placeholder="Pilih Supplier" label="Supplier" :check='false' :api="{
@@ -329,7 +329,7 @@
               //where:`this.t_rencana_pembayaran_hutang_id = ${values.t_rencana_pembayaran_hutang_id}`,
               //scopes: 'GetRph',
               //rp_hutang_id: `${values.t_rencana_pembayaran_hutang_id}`,
-              searchfield:'this.nama_coa , this.nomor',
+              searchfield:'this.nama, this.alamat, this.negara, this.kode',
             },
           }" :columns="[{
             headerName: 'No',
@@ -340,7 +340,7 @@
           },
           {
             flex: 1,
-            field: 'nama_supplier',
+            field: 'nama',
             headerName: 'Nama Supplier',
             cellClass: ['justify-center', 'border-r', '!border-gray-200',],
             sortable: true,

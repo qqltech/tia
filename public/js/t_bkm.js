@@ -109,6 +109,8 @@ onBeforeMount(async () => {
       const resultJson = await res.json();
       initialValues = resultJson.data;
 
+      initialValues.tipe_pembayaran_deskripsi = initialValues['tipe_pembayaran.deskripsi'];
+
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;
       }

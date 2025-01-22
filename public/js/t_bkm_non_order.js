@@ -108,6 +108,8 @@ onBeforeMount(async () => {
       if (!res.ok) throw new Error("Failed when trying to read data");
       const resultJson = await res.json();
       initialValues = resultJson.data;
+      
+      initialValues.tipe_pembayaran_deskripsi = initialValues['tipe_pembayaran.deskripsi'];
 
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;

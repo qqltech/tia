@@ -392,6 +392,8 @@ onBeforeMount(async () => {
       for (const key in res.data) {
         data[key] = res.data[key];
       }
+      data.tipe_pembayaran_deskripsi = data['tipe_pembayaran.deskripsi'];
+
       if (actionText.value == 'Copy') {
         data.no_draft = default_value.data.no_draft;
         data.no_bkk = default_value.data.no_bkk;

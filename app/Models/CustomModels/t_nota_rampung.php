@@ -40,13 +40,27 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
     {
         // DELETE FILE BEFORE IF IT CHANGES
         $prevData = $this->where('id', $id)->first();
-        if($prevData->foto_scn !== $arrayData['foto_scn']){
+        if($prevData->foto_scn != $arrayData['foto_scn']){
             $file = $prevData->foto_scn;
             $baseUrl = url('/');
             $baseUrl = rtrim($baseUrl, '/');
             $path = parse_url($file, PHP_URL_PATH);
             \File::delete($path);
         }
+
+        // if(@$arrayData['foto_scn'] == null || !@$arrayData['foto_scn']){
+        //     $prevData = $this->where('id', $id)->first();
+        //     $this->where('id', $id)->update([
+        //         "foto_scn" => null
+        //     ]);
+        //     if($prevData->foto_scn != null){
+        //         $file = $prevData->foto_scn;
+        //         $baseUrl = url('/');
+        //         $baseUrl = rtrim($baseUrl, '/');
+        //         $path = parse_url($file, PHP_URL_PATH);
+        //         \File::delete($path);
+        //     }
+        // }
 
         $status = $arrayData['status'];
         $req = app()->request;

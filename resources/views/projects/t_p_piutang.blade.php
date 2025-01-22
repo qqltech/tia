@@ -82,11 +82,17 @@
             detailArr = [];
           }
         }" displayField="nama_perusahaan" :api="{
-              url: `${store.server.url_backend}/operation/m_customer`,
-              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-              params: {
-                simplest:true,
-              }
+          url: `${store.server.url_backend}/operation/m_customer`,
+          headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+          params: {
+          simplest:true,
+          searchfield:'this.kode, this.nama_perusahaan'
+          },
+          onsuccess: (response) => {
+            response.page = response.current_page;
+            response.hasNext = response.has_next;
+            return response;
+            }
             }" placeholder="Customer" :check="false" :columns="[{
               headerName: 'No',
               valueGetter:(p)=>p.node.rowIndex + 1,
@@ -111,41 +117,32 @@
 
       </div>
       <div class="w-full !mt-3">
-        <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:false }"
-          :value="values.m_akun_pembayaran_id" @input="v=>values.m_akun_pembayaran_id=v"
-          :errorText="formErrors.m_akun_pembayaran_id?'failed':''" :hints="formErrors.m_akun_pembayaran_id"
-          valueField="id" displayField="nama_coa" :api="{
-                url: `${store.server.url_backend}/operation/m_coa`,
-                headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-                params: {
-                  simplest:true,
-                  transform:false,
-                  join:false
-                }
-            }" placeholder="Pilih Akun Pembayaran" label="Akun Pembayaran" fa-icon="caret-down" :check="false" />
-
-      </div>
-      <div class="w-full !mt-3">
-        <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:false }" :value="values.tipe_pembayaran"
-          @input="v=>values.tipe_pembayaran=v" :errorText="formErrors.tipe_pembayaran?'failed':''"
-          :hints="formErrors.tipe_pembayaran" valueField="id" displayField="deskripsi" @update:valueFull="(response)=>{
+        <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
+          valueField="id" :value="values.tipe_pembayaran" @input="(v) => values.tipe_pembayaran = v"
+          :errorText="formErrors.tipe_pembayaran ? 'failed' : ''" :hints="formErrors.tipe_pembayaran"
+          placeholder="Tipe Pembayaran" label="Tipe Pembayaran" :check="false" @update:valueFull="(response)=>{
           $log(response)
           values.tipe_pembayaran_deskripsi = response.deskripsi
         }" :api="{
-                url: `${store.server.url_backend}/operation/m_general`,
-                headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-                params: {
-                  simplest:true,
-                  where: `this.group='TIPE PEMBAYARAN'`
-                }
-            }" placeholder="Pilih Tipe Pembayaran" label="Tipe Pembayaran" fa-icon="caret-down" :check="false" />
+      url: `${store.server.url_backend}/operation/m_general`,
+      headers: {
+        'Content-Type': 'Application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      params: {
+        join: false,
+        simplest: false,
+        selectfield: 'this.id, this.deskripsi',
+        where: `this.is_active=true and this.group='TIPE PEMBAYARAN'`
+      },
+    }" />
       </div>
 
-      <div class="w-full !mt-3" v-if="values.tipe_pembayaran_deskripsi == 'TRANSFER'">
-      <FieldPopup class="!mt-0" :bind="{ readonly: values.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
-        :value="values.m_akun_bank_id" @input="(v) => values.m_akun_bank_id = v"
-        :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
-        displayField="nama_coa" :api="{
+      <div class="w-full !mt-3" v-if="values.tipe_pembayaran_deskripsi === 'TRANSFER'">
+        <FieldPopup class="!mt-0" :bind="{ readonly: values.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
+          :value="values.m_akun_bank_id" @input="(v) => values.m_akun_bank_id = v"
+          :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
+          displayField="nama_coa" :api="{
       url: `${store.server.url_backend}/operation/m_coa`,
       headers: {
         'Content-Type': 'Application/json', 
@@ -154,7 +151,7 @@
       params: {
         simplest: true,
         where: `kategori.deskripsi='MODAL'`,
-        searchfield: `this.nama_coa, this.nomor`
+         searchfield: `this.nama_coa, this.nomor`
       },
       onsuccess: (response) => {
         response.page = response.current_page;
@@ -190,7 +187,24 @@
         filter: false,
       },
     ]" />
-    </div>
+      </div>
+
+      <div class="w-full !mt-3">
+        <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:false }"
+          :value="values.m_akun_pembayaran_id" @input="v=>values.m_akun_pembayaran_id=v"
+          :errorText="formErrors.m_akun_pembayaran_id?'failed':''" :hints="formErrors.m_akun_pembayaran_id"
+          valueField="id" displayField="nama_coa" :api="{
+                url: `${store.server.url_backend}/operation/m_coa`,
+                headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                params: {
+                  simplest:true,
+                  transform:false,
+                  join:false
+                }
+            }" placeholder="Pilih Akun Pembayaran" label="Akun Pembayaran" fa-icon="caret-down" :check="false" />
+
+      </div>
+
 
       <div class="w-full !mt-3">
         <FieldNumber class="!mt-0" :bind="{ readonly: true }" :value="hitungTotalAmount()"
@@ -220,7 +234,8 @@
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: { 
               simplest: true,
-              notin: `this.id: ${detailArr.map(det => det.id + ', ')}`,
+              //notin: `this.id: ${detailArr.map(det => det.id + ', ')}`,
+              notin:detailArr.length>0?`this.id:${detailArr.map(dt=>dt.id).join(',')}`:null,
               where: `this.customer = ${values.customer}` 
             },
             onsuccess:(response)=>{

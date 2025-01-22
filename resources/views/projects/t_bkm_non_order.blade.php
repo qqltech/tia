@@ -90,11 +90,12 @@
         :errorText="formErrors.no_ref?'failed':''" @input="v=>values.no_ref=v"
         :hints="formErrors.no_ref" label="No. Referensi" placeholder="No. Referensi" :check="false" />
     </div>
+
     <div class="w-full !mt-3">
-      <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
-        valueField="id" :value="values.tipe_pembayaran" @input="(v) => values.tipe_pembayaran = v"
-        :errorText="formErrors.tipe_pembayaran ? 'failed' : ''" :hints="formErrors.tipe_pembayaran"
-        placeholder="Tipe Pembayaran" label="Tipe Pembayaran" :check="false" @update:valueFull="(response)=>{
+        <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
+          valueField="id" :value="values.tipe_pembayaran" @input="(v) => values.tipe_pembayaran = v"
+          :errorText="formErrors.tipe_pembayaran ? 'failed' : ''" :hints="formErrors.tipe_pembayaran"
+          placeholder="Tipe Pembayaran" label="Tipe Pembayaran" :check="false" @update:valueFull="(response)=>{
           $log(response)
           values.tipe_pembayaran_deskripsi = response.deskripsi
         }" :api="{
@@ -110,13 +111,13 @@
         where: `this.is_active=true and this.group='TIPE PEMBAYARAN'`
       },
     }" />
-    </div>
+      </div>
 
-    <div class="w-full !mt-3" v-if="values.tipe_pembayaran_deskripsi == 'TRANSFER'">
-      <FieldPopup class="!mt-0" :bind="{ readonly: values.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
-        :value="values.m_akun_bank_id" @input="(v) => values.m_akun_bank_id = v"
-        :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
-        displayField="nama_coa" :api="{
+      <div class="w-full !mt-3" v-if="values.tipe_pembayaran_deskripsi === 'TRANSFER'">
+        <FieldPopup class="!mt-0" :bind="{ readonly: values.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
+          :value="values.m_akun_bank_id" @input="(v) => values.m_akun_bank_id = v"
+          :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
+          displayField="nama_coa" :api="{
       url: `${store.server.url_backend}/operation/m_coa`,
       headers: {
         'Content-Type': 'Application/json', 
@@ -161,7 +162,7 @@
         filter: false,
       },
     ]" />
-    </div>
+      </div>
     <div>
       <FieldPopup 
           label="Akun Pembayaran"

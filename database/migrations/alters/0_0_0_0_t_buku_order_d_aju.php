@@ -18,6 +18,8 @@ class tbukuorderdaju extends Migration
             // $table->string('no_sppb',20)->nullable()->change();
             // $table->date('tanggal_sppb')->nullable()->change();
             // table->integer('no_ppjk')->comment('{"src":"t_ppjk.id"}')->nullable();
+            $table->string('peb_pib')->change();
+
         });
     }
 }

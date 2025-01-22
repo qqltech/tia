@@ -144,6 +144,8 @@ onBeforeMount(async () => {
           grand_total_amount: parseFloat(dt['t_tagihan.grand_total_amount']),
           pph_value: dt['pph.deskripsi2']
         }))
+        console.log(initialValues);
+        initialValues.tipe_pembayaran_deskripsi = initialValues['tipe_pembayaran.deskripsi'];
 
     } catch (err) {
       isBadForm.value = true
