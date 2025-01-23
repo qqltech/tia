@@ -122,7 +122,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
             'total_kontainer' => $totalKontainer + $totalJasa['total'],
             'total_lain' => $totalLainArray['total_non_ppn'],
             'grand_total' => $totalKontainer + $totalJasa['total'] + $totalLainArray['total_non_ppn'],
-            'total_ppn' => $totalKontainerPPN + $totalJasa['total_ppn'], $totalLainArray['total_ppn'],
+            'total_ppn' => $totalKontainerPPN + $totalJasa['total_ppn'] + $totalLainArray['total_ppn'],
             'total_setelah_ppn' => $grandTotalKontainer + $totalJasa['total'] + $totalLainArray['total']
         ];
     }

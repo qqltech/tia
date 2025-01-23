@@ -593,7 +593,7 @@
                   v-model="item.is_ppn"
                   :true-value="true"
                   :false-value="false"
-                  :disabled="!actionText"
+                  :disabled="true"
                 />
               </td>
               <td class="p-2 border border-[#CACACA]">
