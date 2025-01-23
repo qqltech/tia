@@ -87,6 +87,7 @@ const addDetail1 = () => {
   const tempItem = {
     tarif: 0,
     satuan: 0,
+    is_ppn:false,
   };
   detailArr1.value = [...detailArr1.value, tempItem];
 };
@@ -104,7 +105,7 @@ const addDetail2 = () => {
 const detailArr3 = ref([]);
 const addDetail3 = () => {
   const tempItem = {
-    ppn: false,
+    is_ppn: false,
     nominal: 0,
     tarif_realisasi: 0,
     qty: 0

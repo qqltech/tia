@@ -538,6 +538,10 @@
                 Tarif
               </td>
               <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[10%]">
+                PPN
+              </td>
+              <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Catatan
               </td>
@@ -581,6 +585,16 @@
                 <FieldNumber :bind="{ readonly: true, clearable: false }" class="w-full py-2 !mt-0" :value="item.tarif"
                   @input="v => item.tarif = v" :errorText="formErrors.tarif ? 'failed' : ''" :hints="formErrors.tarif"
                   valueField="key" displayField="key" placeholder="Satuan" label="" :check="false" />
+              </td>
+              <td class="p-2 text-center border border-[#CACACA]">
+                <input
+                  type="checkbox"
+                  class="h-5 w-5 text-blue-500 rounded"
+                  v-model="item.is_ppn"
+                  :true-value="true"
+                  :false-value="false"
+                  :disabled="!actionText"
+                />
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{ readonly: true, clearable: false }" class="w-full py-2 !mt-0" :value="item.catatan"

@@ -112,18 +112,18 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $totalKontainerPPN = $totalKontainer * ($ppn / 100);
         $grandTotalKontainer = $totalKontainer + $totalKontainerPPN;
 
-        $totalJasa = $this->jasa($tagihanJasa,$ppn,$countKontainer);
+        $totalJasa = $this->jasa($tagihanJasa, $ppn, $countKontainer);
         $totalPpjk =  $this->ppjk($tagihanPpjk, $nominalPpjk);
-        $totalLain = $this->lain($tagihanLain, $ppn) - $tarifdp;
-
+        $totalLainArray = $this->lain($tagihanLain, $ppn); 
+        $totalLain = $totalLainArray['total'] - $tarifdp;
 
 
         return [
-            'total_kontainer' => $totalKontainer + $totalJasa,
-            'total_lain' => $totalLain,
-            'grand_total' => $totalKontainer + $totalJasa + $totalLain,
-            'total_ppn' => $totalKontainerPPN,
-            'total_setelah_ppn' => $grandTotalKontainer + $totalJasa + $totalLain
+            'total_kontainer' => $totalKontainer + $totalJasa['total'],
+            'total_lain' => $totalLainArray['total_non_ppn'],
+            'grand_total' => $totalKontainer + $totalJasa['total'] + $totalLainArray['total_non_ppn'],
+            'total_ppn' => $totalKontainerPPN + $totalJasa['total_ppn'], $totalLainArray['total_ppn'],
+            'total_setelah_ppn' => $grandTotalKontainer + $totalJasa['total'] + $totalLainArray['total']
         ];
     }
 
@@ -179,16 +179,35 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     private function jasa($tagihan, $ppn, $count)
     {
         $totalTagihanJasa = 0;
-        foreach ($tagihan as $single) {
-            if ($single['ppn']) {
-                $totalPPN = $single['tarif'] * ($ppn / 100);
-                $total = $single['tarif'] + $totalPPN;
-                $totalTagihanJasa += $single['tarif'] * $count;
-            } else {
-                $totalTagihanJasa += $single['tarif'] * $count;
-            }
+        $grandTotalPpn = 0;
+        $totalNotPpn = 0;
+
+        foreach($tagihan as $single) {
+            $totalPpn = 0;
+            $totalJasa = 0;
+                if (@$single['is_ppn']) {
+                
+                    $totalPpn = $single['tarif'] * ($ppn / 100);
+                    $grandTotalPpn += $totalPpn;
+
+                    $totalJasa = $single['tarif'] * $count;
+                    $totalNotPpn += $totalJasa;
+
+                    $totalTagihanJasa += $totalJasa + $totalPpn; 
+
+                } else {
+                    $totalJasa = $single['tarif'] * $count;
+
+                    $totalNotPpn += $totalJasa;
+                    $totalTagihanJasa += $totalJasa;
+                }
         }
-        return $totalTagihanJasa;
+
+        return [
+            'total_ppn' => $grandTotalPpn,
+            'total_non_ppn' => $totalNotPpn,
+            'total' => $totalTagihanJasa,
+        ];
     }
 
 
@@ -248,17 +267,35 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     // }
 
     private function lain($data, $ppn){
-        $calculateLain = 0 ;
+        $calculateLain = 0;
+        $grandTotalPpn = 0;
+        $totalNotPpn = 0;
+
         foreach($data as $single){
-            if(@$single['ppn']){
-                $totalPPN = $single['tarif_realisasi'] * ($ppn / 100);
-                $calculateLain += $totalPPN;
+            if(@$single['is_ppn']){
+                $totalPpn = 0;
+                $totalPpn = $single['tarif_realisasi'] * ($ppn / 100);
+                $grandTotalPpn += $totalPpn;
+                
                 $calculateLain += ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+                $totalNotPpn += $calculateLain;
+
+                $calculateLain += $totalPpn;
+
             }else{
-                $calculateLain += ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+                $totalLain = ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+
+                $totalNotPpn += $totalLain;
+                $calculateLain += $totalLain;
+
             }
         }
-        return $calculateLain;
+
+        return [
+            'total_ppn' => $grandTotalPpn,
+            'total_non_ppn' => $totalNotPpn,
+            'total' => $calculateLain,
+        ];
     }
 
     public function custom_post()
