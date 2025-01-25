@@ -73,7 +73,17 @@ class t_ppjk extends \App\Models\BasicModels\t_ppjk
     public function custom_post()
     {
         $id = request("id");
+        $getData = $this->where('id',$id)->first();
+        $noBukuOrder = t_buku_order::where('id',$getData->t_buku_order_id)->first();
+
+        $no_ppjk_update = m_generate_no_aju_d::where('id',$getData->no_ppjk_id)
+        ->update([
+            "is_active"=> false,
+            "referensi" => $noBukuOrder->no_buku_order
+        ]);
+
         $status = $this->where("id", $id)->update(["status" => "POST"]);
+        
         return ["success" => true];
     }
 }

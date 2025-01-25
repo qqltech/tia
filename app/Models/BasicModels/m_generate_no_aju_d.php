@@ -17,10 +17,10 @@ class m_generate_no_aju_d extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at"];
+    protected $fillable = ["m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at","referensi"];
 
-    public $columns     = ["id","m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","m_generate_no_aju_id:bigint","no_aju:string:100","is_active:boolean","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","referensi"];
+    public $columnsFull = ["id:bigint","m_generate_no_aju_id:bigint","no_aju:string:100","is_active:boolean","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","referensi:string:191"];
     public $rules       = [];
     public $joins       = ["m_generate_no_aju.id=m_generate_no_aju_d.m_generate_no_aju_id"];
     public $details     = [];
@@ -29,9 +29,9 @@ class m_generate_no_aju_d extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["is_active"];
-    public $createable  = ["m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at"];
-    public $updateable  = ["m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at"];
-    public $searchable  = ["id","m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at"];
+    public $createable  = ["m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at","referensi"];
+    public $updateable  = ["m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at","referensi"];
+    public $searchable  = ["id","m_generate_no_aju_id","no_aju","is_active","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","referensi"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

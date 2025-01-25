@@ -201,14 +201,14 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                where:`this.group='TIPE PEMBAYARAN'`
+                where:`this.group='TIPE PEMBAYARAN INV'`
               }
           }" @update:valueFull="(response) => {
             $log(response.id);
       }" label="Tipe Pembayaran" fa-icon="sort-desc" placeholder="Pilih Tipe Pembayaran" :check="false" />
     </div>
     <div>
-      <FieldPopup class="w-full !mt-3" :api="{
+      <FieldPopup class="w-full !mt-3" v-if="data.tipe_pembayaran_id == 839":api="{
         url: `${store.server.url_backend}/operation/m_coa`,
         headers: {
           'Content-Type': 'Application/json',

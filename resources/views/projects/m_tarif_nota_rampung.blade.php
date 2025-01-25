@@ -147,6 +147,24 @@
             }" />
     </div>
 
+    <!-- Tipe Tarif Container Coloumn -->
+    <div>
+      <FieldSelect :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.tipe_tarif"
+        @input="v=>values.tipe_tarif=v" :errorText="formErrors.tipe_tarif ? 'failed' : ''"
+        :hints="formErrors.tipe_tarif" valueField="id" displayField="deskripsi" placeholder="Pilih Tipe Tarif"
+        label="Tipe Tarif" :check="false" 
+         :api="{
+              url: `${store.server.url_backend}/operation/m_general`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                //tambahkan Params where ke group jenis kontainer , 
+                where:
+                `this.group = 'TIPE TARIF NOTA RAMPUNG' AND this.is_active = 'true' `,
+                searchfield: 'this.deskripsi'
+              },
+            }" />
+    </div>
+
     <!-- Tarif LoLo Coloumn -->
     <div>
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_lolo"
@@ -271,6 +289,13 @@
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_denda_sp"
         :errorText="formErrors.tarif_denda_sp?'failed':''" @input="v=>values.tarif_denda_sp=v"
         :hints="formErrors.tarif_denda_sp" label="Tarif Denda SP" placeholder="Tarif Denda SP" :check="false" />
+    </div>
+
+    <!-- Tarif Behandle Coloumn -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_behandle"
+        :errorText="formErrors.tarif_behandle?'failed':''" @input="v=>values.tarif_behandle=v"
+        :hints="formErrors.tarif_behandle" label="Tarif Behandle" placeholder="Tarif Behandle" :check="false" />
     </div>
 
     <!-- Catatan Column -->

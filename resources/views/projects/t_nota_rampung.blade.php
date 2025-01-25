@@ -64,6 +64,28 @@
         :hints="formErrors.no_nota_rampung" label="No. Nota Rampung" placeholder="No. Nota Rampung" :check="false" />
     </div>
     <div>
+      <FieldSelect
+      class="w-full !mt-3"
+        :bind="{ disabled: !actionText, clearable:false, readonly:!actionText }"
+        :value="values.tipe_nota_rampung" @input="v=>values.tipe_nota_rampung=v"
+        :errorText="formErrors.tipe_nota_rampung?'failed':''" 
+        :hints="formErrors.tipe_nota_rampung"
+        valueField="id" displayField="deskripsi"
+        :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              transform:false,
+              join:false,
+              where: `this.group = 'TIPE TARIF NOTA RAMPUNG' AND this.is_active = 'true' `,
+            }
+        }"
+        placeholder="Tipe Nota Rampung" fa-icon="" :check="false"
+      />
+      
+    </div>
+    <div>
       <FieldPopup label="No. Buku Order" class="w-full !mt-3" valueField="id" displayField="no_buku_order"
         :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v" @update:valueFull="(data)=>{
         
@@ -430,7 +452,11 @@
               </td>
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                DENDAA SP
+                DENDA SP
+              </td>
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                BEHANDLE
               </td>
 
               <td
@@ -580,6 +606,12 @@
                 <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.denda_sp"
                   :errorText="formErrors.denda_sp ? 'failed' : ''" @input="v => item.denda_sp = v"
                   :hints="formErrors.denda_sp" :check="false" label="" placeholder="Denda SP" />
+              </td>
+
+              <td class="p-2 border border-[#CACACA]">
+                <FieldNumber :bind="{ readonly: !actionText }" class="w-full py-2 !mt-0" :value="item.behandle"
+                  :errorText="formErrors.behandle ? 'failed' : ''" @input="v => item.behandle = v"
+                  :hints="formErrors.behandle" :check="false" label="" placeholder="Behandle" />
               </td>
 
 

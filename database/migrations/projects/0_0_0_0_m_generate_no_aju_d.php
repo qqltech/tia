@@ -15,6 +15,7 @@ class mgeneratenoajud extends Migration
             $table->bigInteger('m_generate_no_aju_id')->comment('{"fk":"m_generate_no_aju.id"}')->nullable();
             $table->string('no_aju',100)->nullable();
             $table->boolean('is_active')->default(1);
+            $table->string('referensi')->nullable();
 
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

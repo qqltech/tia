@@ -86,6 +86,7 @@
               params: {
                 scopes: 'NoPPJK',
                 searchfield: `m_generate_no_aju.tgl_pembuatan, this.no_aju, m_generate_no_aju.tipe`,
+                where: `this.is_active = true`
                 //selectfield:` this.id, head.tgl_pembuatan, this.no_aju, head.tipe`
               },
             onsuccess(response) {

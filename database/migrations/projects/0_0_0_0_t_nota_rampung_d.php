@@ -40,6 +40,7 @@ class tnotarampungd extends Migration
             $table->decimal('by_adm_nr',18,4)->nullable();
             $table->string('nr')->nullable();
             $table->decimal('denda_sp',18,4)->nullable();
+            $table->decimal('behandle',18,4)->nullable();
             //penting
             $table->integer("creator_id")->nullable();
             $table->integer("last_editor_id")->nullable();

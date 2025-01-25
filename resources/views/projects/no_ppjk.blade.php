@@ -76,7 +76,7 @@
             type="month" 
           />
         </div>
-        <div class="w-full !mt-3">
+        <div class="w-full !mt-3 pointer-events-none">
           <FieldX 
             class="!mt-0" 
             :bind="{ readonly: true}" 
@@ -111,7 +111,7 @@
           />
         </div>
         <div class="w-full !mt-3">
-          <FieldX class="!mt-0" :bind="{ readonly: true }" 
+          <FieldX class="!mt-0" :bind="{ readonly: data.tipe !== 'LAIN-LAIN' }" 
             :value="data.kode" :errorText="formErrors.kode?'failed':''"
             @input="v=>data.kode=v" :hints="formErrors.kode" 
             placeholder="Prefix" :check="false"
@@ -187,12 +187,13 @@
               </td>
               <td class="p-2 text-center border border-[#CACACA]">
                 <FieldSelect 
-                  :bind="{ disabled: true, clearable: false}" 
+                  :bind="{ disabled: !actionText || item.referensi !== null, clearable: false}" 
                   :value="item.is_active" :errorText="formErrors.is_active?'failed':''"
                   @input="v=>item.is_active=v" :hints="formErrors.is_active" 
+                  valueField="id" displayField="key"
                   :options="[{'id' : 1 , 'key' : 'OPEN'},{'id': 0, 'key' : 'CLOSE'}]"
                   label=""
-                  placeholder="Status" :check="false"
+                  placeholder="Status" :check="true"
                 />
               </td>
               <!-- <td class="p-2 border border-[#CACACA] text-center">

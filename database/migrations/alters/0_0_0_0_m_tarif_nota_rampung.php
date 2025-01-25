@@ -20,7 +20,8 @@ class mtarifnotarampung extends Migration
             // $table->decimal('tarif_denda_koreksi',18,4)->nullable()->default(0);
             // $table->decimal('tarif_cancel_dok',18,4)->nullable()->default(0);
             // $table->decimal('tarif_denda_sp',18,4)->nullable()->default(0);
-
+            // $table->decimal('tarif_behandle',18,4)->nullable()->default(0);
+            // $table->integer('tipe_tarif')->comment('{"src":"set.m_general.id"}')->nullable();
         });
     }
 }

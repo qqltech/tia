@@ -24,7 +24,7 @@ class t_purchase_order extends Model
     public $rules       = [];
     public $joins       = ["m_supplier.id=t_purchase_order.m_supplier_id","set.m_general.id=t_purchase_order.termin","set.m_general.id=t_purchase_order.ppn","set.m_business_unit.id=t_purchase_order.tipe_po"];
     public $details     = ["t_purchase_order_d"];
-    public $heirs       = ["t_lpb","t_purchase_invoice","t_purchase_invoice_d"];
+    public $heirs       = ["t_purchase_invoice","t_lpb","t_purchase_invoice_d"];
     public $detailsChild= [];
     public $detailsHeirs= ["t_lpb_d","t_purchase_invoice_d"];
     public $unique      = [];

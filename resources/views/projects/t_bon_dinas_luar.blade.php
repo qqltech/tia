@@ -49,7 +49,7 @@
     <div class="flex items-center gap-x-4">
       <button class="border border-blue-600 
       text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
-      transition-colors duration-300" @click="openModal('320', 'Eksprot')">Create New Eksport</button>
+      transition-colors duration-300" @click="openModal('320', 'Eksport')">Create New Eksport</button>
 
       <button class="border border-blue-600 
       text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
@@ -77,7 +77,7 @@
     <div class="p-1 ">
       <div class="flex justify-center">
         <div class="grid grid-cols-3">
-          <button v-for="(item, i) in coaListEks" :key="i" v-show="coaListEks.length > 0 && tipe_order=='Eksprot'"
+          <button v-for="(item, i) in coaListEks" :key="i" v-show="coaListEks.length > 0 && tipe_order=='Eksport'"
             @click="setTipeKategori(item.id)"
             class="border-1 border-blue-500 hover:bg-blue-400 hover:text-white transition-transform duration-300 transform hover:-translate-y-0.5 shadow-xl m-2 h-[80px] w-[calc(90%)] rounded-1xl m-2 text-xl font-semibold"
             :class="(tipe_kategori_id == item.id) ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'">
@@ -383,7 +383,7 @@
         }, params: { 
             simplest: false, 
             searchfield: 'this.kategori, this.debit_kredit',
-            notin: `this.id: ${detailArr.map((det)=> (det.t_buku_order_id))}`
+            // notin: `this.id: ${detailArr.map((det)=> (det.t_buku_order_id))}`
             },
             onsuccess: (response) => {
               $log(response.data[0]['m_item.id'])
@@ -452,10 +452,10 @@
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Keterangan
             </td>
-            <td
+            <!-- <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Ukuran Container
-            </td>
+            </td> -->
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Sub Total
@@ -479,7 +479,7 @@
                 :value="item.keterangan" @input="v=>item.keterangan=v" :errorText="formErrors.keterangan?'failed':''"
                 :hints="formErrors.keterangan" placeholder="Masukkan Keterangan" :check="false" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <!-- <td class="p-2 border border-[#CACACA]">
               <FieldSelect class="w-full py-2 !mt-0" :bind="{ disabled: !actionText, clearable:false }"
                 :value="item.ukuran_container" @input="v=>item.ukuran_container=v"
                 :errorText="formErrors.ukuran_container?'failed':''" :hints="formErrors.ukuran_container"
@@ -492,7 +492,7 @@
                     }
                 }" placeholder="Pilih Salah Satu" label="" :check="true" />
 
-            </td>
+            </td> -->
             <td class="p-1 text-center border border-[#CACACA]">
               <FieldNumber :bind="{ readonly: !actionText }" class="m-0" :value="detailArr[i].sub_total"
                 :errorText="formErrors.sub_total?'failed':''" @input="v=>detailArr[i].sub_total=v"

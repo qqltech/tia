@@ -17,10 +17,10 @@ class t_bon_dinas_luar_d extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["t_bon_dinas_luar_id","t_buku_order_id","keterangan","ukuran_container","sub_total","creator_id","last_editor_id","deleted_id","deleted_at"];
+    protected $fillable = ["t_bon_dinas_luar_id","t_buku_order_id","keterangan","sub_total","creator_id","last_editor_id","deleted_id","deleted_at"];
 
-    public $columns     = ["id","t_bon_dinas_luar_id","t_buku_order_id","keterangan","ukuran_container","sub_total","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","t_bon_dinas_luar_id:bigint","t_buku_order_id:bigint","keterangan:text","ukuran_container:integer","sub_total:decimal","creator_id:bigint","last_editor_id:bigint","deleted_id:bigint","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","t_bon_dinas_luar_id","t_buku_order_id","keterangan","sub_total","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
+    public $columnsFull = ["id:bigint","t_bon_dinas_luar_id:bigint","t_buku_order_id:bigint","keterangan:text","sub_total:decimal","creator_id:bigint","last_editor_id:bigint","deleted_id:bigint","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
     public $rules       = [];
     public $joins       = ["t_bon_dinas_luar.id=t_bon_dinas_luar_d.t_bon_dinas_luar_id","t_buku_order.id=t_bon_dinas_luar_d.t_buku_order_id"];
     public $details     = [];
@@ -28,10 +28,10 @@ class t_bon_dinas_luar_d extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["t_buku_order_id","ukuran_container","sub_total"];
-    public $createable  = ["t_bon_dinas_luar_id","t_buku_order_id","keterangan","ukuran_container","sub_total","creator_id","last_editor_id","deleted_id","deleted_at"];
-    public $updateable  = ["t_bon_dinas_luar_id","t_buku_order_id","keterangan","ukuran_container","sub_total","creator_id","last_editor_id","deleted_id","deleted_at"];
-    public $searchable  = ["id","t_bon_dinas_luar_id","t_buku_order_id","keterangan","ukuran_container","sub_total","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
+    public $required    = ["t_buku_order_id","sub_total"];
+    public $createable  = ["t_bon_dinas_luar_id","t_buku_order_id","keterangan","sub_total","creator_id","last_editor_id","deleted_id","deleted_at"];
+    public $updateable  = ["t_bon_dinas_luar_id","t_buku_order_id","keterangan","sub_total","creator_id","last_editor_id","deleted_id","deleted_at"];
+    public $searchable  = ["id","t_bon_dinas_luar_id","t_buku_order_id","keterangan","sub_total","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

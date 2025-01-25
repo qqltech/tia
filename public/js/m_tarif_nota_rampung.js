@@ -67,6 +67,7 @@ const defaultValues = () => {
   values.tarif_denda_koreksi = 0
   values.tarif_cancel_dok = 0
   values.tarif_denda_sp = 0
+  values.tarif_behandle = 0
 }
 
 const onReset = async (alert = false) => {

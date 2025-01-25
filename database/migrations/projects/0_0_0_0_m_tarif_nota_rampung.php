@@ -17,6 +17,7 @@ class mtarifnotarampung extends Migration
             $table->integer('kode_pelabuhan')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('ukuran_container')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('jenis_container')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->integer('tipe_tarif')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->decimal('tarif_lolo',18,4)->nullable()->default(0);
             $table->decimal('tarif_m2',18,4)->nullable()->default(0);
             $table->decimal('tarif_m3',18,4)->nullable()->default(0);
@@ -37,6 +38,9 @@ class mtarifnotarampung extends Migration
             $table->decimal('tarif_materai',18,4)->nullable()->default(0);
             $table->decimal('tarif_denda_koreksi',18,4)->nullable()->default(0);
             $table->decimal('tarif_denda_sp',18,4)->nullable()->default(0);
+            $table->decimal('tarif_behandle',18,4)->nullable()->default(0);
+
+            $table->integer('tipe_tarif')->comment('{"src":"set.m_general.id"}')->nullable();
 
 
             //penting

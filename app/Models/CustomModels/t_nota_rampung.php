@@ -148,7 +148,9 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
     public function custom_calculate($req){
         $grandTotal = 0;
         $pelabuhan = $req['pelabuhan'];
+        $tipe_nota_rampung = $req['tipe_nota_rampung'];
         $arrayContainer = $req['t_nota_rampung_d'];
+
         // trigger_error(json_encode($req));
         foreach ($arrayContainer as $single){    
             
@@ -156,10 +158,12 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
             $getTarif = m_tarif_nota_rampung::join('set.m_general as pl', 'pl.id','m_tarif_nota_rampung.kode_pelabuhan')
             ->join('set.m_general as uk','uk.id','m_tarif_nota_rampung.ukuran_container')
             ->join('set.m_general as jk','jk.id','m_tarif_nota_rampung.jenis_container')
-            ->select('m_tarif_nota_rampung.*','pl.deskripsi','uk.id','jk.id')
+            ->join('set.m_general as tnr','tnr.id','m_tarif_nota_rampung.tipe_tarif')
+            ->select('m_tarif_nota_rampung.*','pl.deskripsi','uk.id','jk.id','tnr.id')
             ->where('pl.deskripsi',$req['pelabuhan'])
             ->where('uk.id',$single['ukuran'])
             ->where('jk.id',$single['jenis'])
+            ->where('tnr.id',$tipe_nota_rampung)
             ->first();
             
             if(!$getTarif) continue;
@@ -184,6 +188,7 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
             $grandTotal += $getTarif['tarif_materai'] * ($single['materai'] ?? 0);
             $grandTotal += $getTarif['tarif_by_adm_nr'] * ($single['by_adm_nr'] ?? 0);
             $grandTotal += $getTarif['tarif_denda_sp'] * ($single['denda_sp'] ?? 0);
+            $grandTotal += $getTarif['tarif_behandle'] * ($single['behandle'] ?? 0);
 
         }
         $grandTotal += $req['lolo_non_sp'] ?? 0;

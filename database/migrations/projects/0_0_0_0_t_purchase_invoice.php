@@ -20,7 +20,7 @@ class tpurchaseinvoice extends Migration
             $table->integer('t_po_id')->comment('{"src":"t_purchase_order.id"}');
             $table->integer('m_faktur_pajak_d_id')->comment('{"src":"m_faktur_pajak_d.id"}');
 
-            // $table->integer('tipe_pembayaran_id')->comment('{"src":"set.m_general.id"}');
+            $table->integer('tipe_pembayaran_id')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('m_supplier_id')->comment('{"src":"m_supplier.id"}');
             $table->integer('t_lpb_id')->comment('{"src":"t_lpb.id"}');
 
