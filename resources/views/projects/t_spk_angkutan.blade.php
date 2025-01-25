@@ -132,7 +132,7 @@
     <div>
       <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.depo"
         @input="v=>data.depo=v" :errorText="formErrors.depo?'failed':''" :hints="formErrors.depo" valueField="id"
-        displayField="deskripsi" :api="{
+        displayField="kode" :api="{
               url: `${store.server.url_backend}/operation/m_general`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -256,7 +256,7 @@
           }" label="Sektor 1" placeholder="Pilih Sektor 1" fa-icon="sort-desc" :check="false" />
 
 
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.sektor2"
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true, hidden:true}" :value="data.sektor2"
         @input="v=>data.sektor2=v" :errorText="formErrors.sektor2?'failed':''" :hints="formErrors.sektor2"
         valueField="id" displayField="deskripsi" :api="{
               url: `${store.server.url_backend}/operation/m_general`,
@@ -265,7 +265,7 @@
                 simplest:true,
                 where:`this.group='SEKTOR'`
               }
-          }" label="Sektor 2" placeholder="Pilih Sektor 2" fa-icon="sort-desc" :check="false" />
+          }" label="Sektor 2" placeholder="Pilih Sektor 2" fa-icon="" :check="false" />
     </div>
 
     <div>
