@@ -253,7 +253,7 @@ $temp = ' sebelas';
   </head>
 
   <body class="continuous_form">
-    <section class="sheet padding-3mm">
+    <section class="sheet padding-3mm" style="padding-right: 25px;">
       <!-- <pre>{{var_dump($nospk)}}</pre> -->
       <table style="width:100%;">
         &nbsp;
