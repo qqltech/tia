@@ -72,226 +72,380 @@ $temp = ' sebelas';
   $tanggal_out = date("d/m/Y", $unixTime2);
   @endphp
 
-  <div class="container" style="font-size: 6px;">
-    <!-- <pre>{{var_dump($nospk)}}</pre> -->
-    <table>
-      <tr>
-        <th class="underline-2" style="height: 14px; text-align:right;">
-        </th>
-        <th colspan="1" class="underline-2" style="text-align:right;">Tanggal In : {{$tanggal_in}}
-        </th>
-        <th colspan="1" style="text-align:right;">Tanggal Out : {{$tanggal_out}}
-        </th>
-      </tr>
-      <tr>
-        <td colspan="3" style="border: 0.5px solid black; ">
-          <table>
-            <tr>
-              <td style="width: 16%;">Order Angk.</td>
-              <td style="width: 4%">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
-              <td style="width: 9%;"></td>
-              <td style="width: 15%;">Pagi/sore</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{$n->waktu_in}}</td>
-            </tr>
-            <tr>
-              <td style="width: 16%;">No. Angkutan</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->head_deskripsi}} Chs-1:
-                {{$n->chasis1_deskripsi}}</td>
-              <td style="width: 9%;"></td>
-              <td style="width: 15%;">Supir</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 20%; border-bottom: 0.5px dashed black; white-space: nowrap;">{{{$n->supir_nama}}}</td>
-            </tr>
-            <tr>
-              <td style="width: 16%;">Rit</td>
-              <td style="width: 3.5%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->trip_deskripsi}} Chs-2
-                {{$n->chasis1_deskripsi}}</td>
-              <td style="width: 9.5%;"></td>
-              <td style="width: 15%;">Cont.</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{$n->ukuran1_deskripsi}} Ft</td>
-            </tr>
-            <tr>
-              <td style="width: 16%;">Sektor</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->sektor1_deskripsi}}
-                {{$n->sektor2_deskripsi}}</td>
-              <td style="width: 4%;"></td>
-            </tr>
-            <tr>
-              <td style="width: 16%;">Dari</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{@$n->dari}}</td>
-              <td style="width: 9%;"></td>
-              <td style="width: 15%;">Ke</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{@$n->ke}}</td>
-            </tr>
-            <tr style:"height:2px">
-              <td></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+  <!DOCTYPE html>
+  <html>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- <title>DOT MATRIX</title> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Set page size here: A5, A4 or A3 -->
+    <!-- Set also "landscape" if you need -->
+    <style>
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      ul li {
+        position: relative;
+        padding-left: 15px;
+      }
+
+      ul li::before {
+        content: "-";
+        position: absolute;
+        left: 0;
+      }
+
+      @page {
+        margin: 0;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .sheet {
+        margin: 0;
+        overflow: hidden;
+        position: relative;
+        box-sizing: border-box;
+        page-break-after: always;
+      }
+
+      /** Paper sizes **/
+      body.A3 .sheet {
+        width: 297mm;
+        height: 419mm;
+      }
+
+      body.A3.landscape .sheet {
+        width: 420mm;
+        height: 296mm;
+      }
+
+      body.A4 .sheet {
+        width: 210mm;
+        height: 296mm;
+      }
+
+      body.A4.landscape .sheet {
+        width: 297mm;
+        height: 209mm;
+      }
+
+      body.A5 .sheet {
+        width: 148mm;
+        height: 209mm;
+      }
+
+      body.A5.landscape .sheet {
+        width: 210mm;
+        height: 147mm;
+      }
+
+      body.continuous_form .sheet {
+        width: 105mm;
+        height: 135mm;
+      }
+
+      body.continuous_form.landscape .sheet {
+        width: 105mm;
+        height: 135mm;
+      }
+
+      /** Padding area **/
+      .sheet.padding-3mm {
+        padding: 3mm;
+      }
+
+      .sheet.padding-5mm {
+        padding: 5mm;
+      }
+
+      .sheet.padding-7mm {
+        padding: 7mm;
+      }
+
+      .sheet.padding-10mm {
+        padding: 10mm;
+      }
+
+      .sheet.padding-15mm {
+        padding: 15mm;
+      }
+
+      .sheet.padding-20mm {
+        padding: 20mm;
+      }
+
+      .sheet.padding-25mm {
+        padding: 25mm;
+      }
+
+      /** For screen preview **/
+      @media screen {
+        body {
+          background: #e0e0e0;
+        }
+
+        .sheet {
+          background: white;
+          box-shadow: 0 0.5mm 2mm rgba(0, 0, 0, 0.3);
+          margin: 5mm;
+        }
+      }
+
+      /** Fix for Chrome issue #273306 **/
+      @media print {
+        body.A3.landscape {
+          width: 420mm;
+        }
+
+        body.A3,
+        body.A4.landscape {
+          width: 297mm;
+        }
+
+        body.A4,
+        body.A5.landscape {
+          width: 210mm;
+        }
+
+        body.A5 {
+          width: 148mm;
+        }
+      }
+
+      @page {
+        size: continuous_form;
+      }
+
+      table {
+        border-collapse: collapse;
+      }
+
+      table,
+      td,
+      th {
+        /* border: 0.5px solid black; */
+       /*  padding-top: 0px;  */
+       
+      }
+
+      tr {
+        height: 20px;
+      }
+
+      table {
+        table-layout: fixed;
+        font-size: 12px;
+        /* font-family: 'Courier New', monospace; */
+        font-family: sans-serif;
+        /* font-family: monospace; */
+        /* font-family: monako; */
+        /* font-family: arial; */
+      }
+    </style>
+  </head>
+
+  <body class="continuous_form">
+    <section class="sheet padding-3mm">
+      <!-- <pre>{{var_dump($nospk)}}</pre> -->
+      <table style="width:100%;">
+        &nbsp;
+        <tr>
+          <th style="width:50%;  font-size: 11px; text-align:left;">Tanggal In : {{$tanggal_in}}
+          </th>
+          <th style="width:50%; font-size: 11px; text-align:right;">Tanggal Out : {{$tanggal_out}}
+          </th>
+        </tr>
+        <tr>
+          <td colspan="2" style="border: 0.5px solid black; ">
+            <table style="width:99%;font-size:11px">
+              <tr>
+                <td style="width: 20%; ">Order Angk.</td>
+                <td style="width: 4%">:</td>
+                <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
+                <td style="width: 9%;"></td>
+                <td style="width: 15%;">Pagi/sore</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{$n->waktu_in}}</td>
+              </tr>
+              <tr>
+                <td style="width: 16%; ">No. Angkutan</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->head_deskripsi}} Chs-1:
+                  {{$n->chasis1_deskripsi}}</td>
+                <td style="width: 9%;"></td>
+                <td style="width: 15%;">Supir</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 20%; border-bottom: 0.5px dashed black;">{{{$n->supir_nama}}}
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 16%;">Rit</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->trip_deskripsi}} Chs-2
+                  {{$n->chasis1_deskripsi}}</td>
+                <td style="width: 9%;"></td>
+                <td style="width: 15%;">Cont.</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{$n->ukuran1_deskripsi}} Ft
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 16%;">Sektor</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->sektor1_deskripsi}}
+                  {{$n->sektor2_deskripsi}}</td>
+                <td style="width: 4%;"></td>
+              </tr>
+              <tr>
+                <td style="width: 16%;">Dari</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{@$n->dari}}</td>
+                <td style="width: 9%;"></td>
+                <td style="width: 15%;">Ke</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 20%; border: none; border-bottom: 0.5px dashed black;">{{@$n->ke}}</td>
+              </tr>
+              <tr style:"height:2px">
+                <td></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
 
 
-      <tr>
-        <td colspan="3" style="border: 0.5px solid black; ">
-          <table>
-            <tr>
-              <td style="width: 20%;"></td>
-              <td style="width: 2%;">
-                <span style="font-weight: normal;"></span>
-              </td>
-              <td style="width: 35%; border: none; "></td>
-              <td style="width: 2%;"></td>
-              <td style="width: 15%; line-height:15px">Sangu.</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal; line-height:15px;">:</span>
-              </td>
-              <td style="width: 20%; line-height:15px; border: none;">Rp. {{number_format($n->sangu, 0, ',', '.')}}</td>
+        <tr>
+          <td colspan="3" style="border: 0.5px solid black; ">
+            <table>
+              <tr>
+                <td style="width: 20%;"></td>
+                <td style="width: 2%;">
+                  <span style="font-weight: normal;"></span>
+                </td>
+                <td style="width: 35%; border: none; "></td>
+                <td style="width: 15%;">Sangu&nbsp;&nbsp;&nbsp;:</td>
+                <td style="width: 20%; border: none;">Rp. {{number_format($n->sangu, 0, ',', '.')}}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="border: 0.5px solid black; ">
+            <table>
+              <tr>
+                <td style="width: 25%;">LAIN-LAIN</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 70%;">{{$n->catatan}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="border: 0.5px solid black;">
+          </td>
+        <tr>
+          <td colspan="3"
+            style="border-left: 0.5px solid black; border-right: 0.5px solid black; border-bottom: 0.5px solid black; padding: 4px;">
+            <table cellspacing="0" cellpadding="3" border="0.5"
+              style="width: 100%; border-collapse: collapse; font-size: 10px;">
+              <tr>
+                <th style="width: 25%; text-align: center; border: 0.5px solid black;">Order</th>
+                <th style="width: 35%; text-align: center; border: 0.5px solid black;">Exp / Imp</th>
+                <th style="width: 20%; text-align: center; border: 0.5px solid black;">Keterangan</th>
+                <th style="width: 20%; text-align: center; border: 0.5px solid black;">Jumlah</th>
+              </tr>
+              @foreach ($nospkd as $nd)
+              <tr>
+                <td style="width: 25%; text-align: center; border: 0.5px solid black;">{{$n->no_buku_order}}</td>
+                <td style="width: 35%; text-align: center; border: 0.5px solid black;">
+                  {{$n->customer_nama_perusahaan}}
+                </td>
+                <td style="width: 20%; text-align: center; border: 0.5px solid black;">{{$nd->keterangan}}</td>
+                <td style="width: 20%; text-align: center; border: 0.5px solid black;">Rp {{number_format($nd->nominal,
+                  0, ',', '.')}}</td>
+              </tr>
+              @endforeach
+              <tr>
+                <td colspan="4"
+                  style="border-left: 0.5px solid black; border-bottom: 0.5px solid black; border-right: 0.5px solid black; text-align: right;">
+                  Total :
+                  <span style="padding: 4px;">Rp {{number_format($n->total_sangu, 0, ',', '.');}}</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        </tr>
+        <tr>
+        <td colspan="4">
+          <table style="width: 100%; font-size: 11px;">
+              <span style=" font-weight:600; font-size: 11px;">Terbilang</span>
+              <br>
+              <span style="width: 100%; font-size: 11px;"># {{ucfirst(trim(terbilang($n->total_sangu)))}} #</span>
+            <tr style="height:2px">
+              <td></td>
             </tr>
-            <tr style:"height:2px">
+            <tr>
+              <td style="width: 5%; text-align: center;">Admin / Kasir</td>
+              <td style="width: 5%; text-align: center;">Sopir</td>
+              <td style="width: 5%; text-align: center;">Pengebon,</td>
+            </tr>
+            <tr>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="text-align: center; width: 5%;">
+                (Kusmiati)
+              </td>
+              <td style="text-align: center; width: 5%;">
+                ({{$n->supir_nama}})
+              </td>
+              <td style="text-align: center; width: 5%;">
+                (Budi)
+              </td>
+            </tr>
+            <tr>
               <td></td>
             </tr>
           </table>
+            <tr style="width: 100%; font-size: 10px;">
+              <td style="width:100%; font-weight: bold; border-bottom: 0.5px solid black; white-space: nowrap;">Dicetak pada
+                tgl : {{$currentDate}} jam {{$currentTime}} Operator : DEWI-PC # dewi</td>
+              <td style=" border-bottom: 0.5px solid black; "></td>
+            </tr>
         </td>
-      </tr>
-      <tr>
-        <td colspan="3" style="border: 0.5px solid black; ">
-          <table>
-            <tr style:"height:2px">
-              <td></td>
-            </tr>
-            <tr>
-              <td style="width: 16%;">LAIN-LAIN</td>
-              <td style="width: 4%;">
-                <span style="font-weight: normal;">:</span>
-              </td>
-              <td style="width: 70%;">{{$n->catatan}}</td>
-            </tr>
-            <tr style:"height:2px">
-              <td></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <th colspan="3"
-          style="height: 10px; border-bottom: 0.5px solid black; border-left: 0.5px solid black; border-right: 0.5px solid black;">
-        </th>
-      </tr>
-    <tbody>
-      <tr>
-        <td style="width: 100%; border-right: 0.5px solid black; border-left: 0.5px solid black; padding: 10px;"></td>
-      </tr>
-      <tr>
-        <td style="width: 100%; padding: 5px; border-right: 0.5px solid black; border-left: 0.5px solid black;">
-          <table cellspacing="0" cellpadding="3" border="0.5" style="width: 98%; text-align: center;">
-            <tr>
-              <th style="width: 20%; text-align: center;">Order</th>
-              <th style="width: 22%; text-align: center;">Exp / Imp</th>
-              <th style="width: 38%; text-align: center;">Keterangan</th>
-              <th style="width: 21%; text-align: center;">Jumlah</th>
-            </tr>
-            @foreach ($nospkd as $nd)
-            <tr>
-              <td style="width: 20%; text-align: center; height: 25px;">{{$n->no_buku_order}}</td>
-              <td style="width: 22%;">{{$n->customer_nama_perusahaan}}</td>
-              <td style="width: 38%;">{{$nd->keterangan}}</td>
-              <td style="width: 21%; text-align: center;">Rp {{number_format($nd->nominal, 0, ',', '.')}}</td>
-            </tr>
-            @endforeach
-            <tr>
-              <td style="width: 101%; text-align: right;"> Total : Rp {{number_format($n->total_sangu, 0, ',', '.');}}</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td style="border-left: 0.5px solid black; border-right: 0.5px solid black; border-bottom: 0.5px solid black;"></td>
-      </tr>
-      <tr>
-        <td></td>
-      </tr>
-      <tr>
-        <td colspan="3">
-          <table>
-            <tr>
-              <td style="width: 20%; font-weight:600; line-height: 10px; ">Terbilang</td>
-            </tr>
-            <tr>
-              <td style="width: 97%;"># {{ucfirst(trim(terbilang($n->total_sangu)))}} #</td>
-            </tr>
-            <tr style:"height:2px">
-              <td></td>
-            </tr>
-            <br>
-            <tr>
-              <td style="text-align: center; width: 10%;">Admin / Kasir</td>
-              <td style="text-align: center; width: 38%;">Sopir</td>
-              <td style="text-align: center; width: 10%;">Pengebon,</td>
-            </tr>
-            <tr>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-            </tr>
-            <tr>
-              <td style="text-align: center; width: 10%;">
-                (&nbsp; Kusmiati &nbsp;)
-              </td>
-              <td style="text-align: center; width: 38%;">
-                (&nbsp; {{$n->supir_nama}} &nbsp;)
-              </td>
-              <td style="text-align: center; width: 9%;">
-                (&nbsp; Budi &nbsp;)
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-            </tr>
-            <tr>
-              <td style="width: 60%; font-weight: bold; border: none; border-bottom: 0.5px solid black;">Dicetak pada
-                tgl :
-                {{$currentDate}}
-                jam
-                {{$currentTime}} Operator : DEWI-PC # dewi</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+        </tr>
+      </table>
+      
+    </section>
+  </body>
 
-    </table>
-  </div>
+  </html>
 
   @endforeach

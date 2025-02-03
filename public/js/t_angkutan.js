@@ -232,7 +232,7 @@ onBeforeMount(async () => {
       initialValues = resultJson.data;
       initialValues.pph = initialValues.pph == 1 ? true : false;
 
-      console.log(initialValues.jenis_barang)
+      console.log(initialValues,'aaa')
 
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;

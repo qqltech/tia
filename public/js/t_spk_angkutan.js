@@ -246,7 +246,7 @@ const table = reactive({
             icon: 'success',
             text: responseJson?.message || 'PRINTED'
           });
-          window.open(`${store.server.url_backend}/web/spk_angkutan?export=pdf&size_p=137.5&size_l=107.5&orientation=potrait&id=${row.id}`)
+          window.open(`${store.server.url_backend}/web/spk_angkutan?id=${row.id}`)
         } catch (err) {
           isBadForm.value = true;
           swal.fire({

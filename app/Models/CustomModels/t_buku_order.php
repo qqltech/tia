@@ -154,6 +154,8 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
         return t_dp_penjualan::where('t_buku_order_id',$bukuOrderID)->where('status','POST')->first();
     }
 
+    
+
     public function transformRowData( array $row )
     {
         $data = [];
@@ -163,7 +165,7 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
             // $getNotaRampung = $notaRampung->grand_total($row['id']);
             // $tarif = $this->getTarif($row['m_customer.id']);
             $data = [
-                'tarif_dp' => $tarifDP
+                'tarif_dp' => $tarifDP,
             ];
 
             // foreach($tarif as $single){
@@ -335,7 +337,7 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
     }
 
     public function scopeGetDetailNPWP($model)
-{
+    {
     $req = app()->request;
 
     $model->join('t_buku_order_d_npwp', 't_buku_order_d_npwp.t_buku_order_id', '=', 't_buku_order.id')
@@ -352,6 +354,6 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
         // 'ukuran.nama as ukuran_nama', // Assuming the `set.m_general` table has a `nama` column
         // 'jenis.nama as jenis_nama'
     );
-}
+    }
 
 }

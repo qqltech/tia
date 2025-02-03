@@ -258,7 +258,7 @@
               </td>
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
-                Angk. Pelabuhan
+                Kapal
               </td>
               <td
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
@@ -304,7 +304,7 @@
                   }"
                   :errorText="formErrors.depo?'failed':''" 
                   :hints="formErrors.depo"
-                  valueField="id" displayField="deskripsi"
+                  valueField="id" displayField="kode"
                   :api="{
                       url: `${store.server.url_backend}/operation/m_general`,
                       headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -488,9 +488,28 @@
                 />
               </td>
               <td class="p-2 border border-[#CACACA]">
-                <FieldX :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) }" class="w-full !mt-3" :value="item.pelabuhan"
+                <FieldSelect
+                  :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) }" class="w-full !mt-3"
+                  :value="item.pelabuhan" @input="v=>item.pelabuhan=v"
+                  :errorText="formErrors.pelabuhan?'failed':''" 
+                  :hints="formErrors.pelabuhan"
+                  valueField="id" displayField="kode"
+                  :api="{
+                      url: `${store.server.url_backend}/operation/m_general`,
+                      headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                      params: {
+                        simplest:true,
+                        transform:false,
+                        where:`this.group='PELABUHAN'`,
+                        join:false
+                      }
+                  }"
+                  placeholder="" label="" fa-icon="" :check="false"
+                />
+                
+                <!-- <FieldX :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) }" class="w-full !mt-3" :value="item.pelabuhan"
                   :errorText="formErrors.pelabuhan?'failed':''" @input="v=>item.pelabuhan=v" :hints="formErrors.pelabuhan"
-                  :check="false" label="" placeholder="" />
+                  :check="false" label="" placeholder="" /> -->
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) }" class="w-full !mt-3" :value="item.angkutan_pelabuhan"

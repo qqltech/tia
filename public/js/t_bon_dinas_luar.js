@@ -352,7 +352,7 @@ const openModal = (to_id, to) => {
 
 const setTipeKategori = (tk_id) => {
   tipe_kategori_id.value = tk_id;
-  // console.log(tk_id, tipe_kategori_id.value)
+  console.log("RRRRRRR", tk_id, tipe_kategori_id.value)
 }
 
 // @else | --- FORM DATA --- |

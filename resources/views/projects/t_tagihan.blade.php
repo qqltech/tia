@@ -261,11 +261,12 @@
     Generate total
   </button>
       <!-- <span>Total = {{ formatCurrency(values.total_amount) }}</span> -->
-      <span>Total Jasa Kontainer = {{ formatCurrency(values.total_kontainer) }}</span>
-      <span>Total PPN = {{ formatCurrency(values.total_ppn) }}</span>
-      <span>Total Setelah PPN = {{ formatCurrency(values.grand_total_amount) }}</span>
-      <span>Total Tarif Lain = {{ formatCurrency(values.total_lain) }}</span>
-      <span>Total Tarif DP = {{ formatCurrency(values.total_tarif_dp) || '0'}} </span>
+      <span>Total Jasa Cont + PPJK = {{ formatCurrency(values.total_jasa_cont_ppjk) || 0 }}</span>
+      <span>Total Lain2 PPN = {{ formatCurrency(values.total_lain2) || 0 }}</span>
+      <span>Total PPN = {{ formatCurrency(values.total_ppn) || 0}}</span>
+      <span>Total Jasa Tia = {{ formatCurrency(values.total_jasa_tia) || 0 }}</span>
+      <span>Total Total Lain2 = {{ formatCurrency(values.total_lain2) || 0 }} </span>
+      <span>Total Grand Total = {{ formatCurrency(values.grand_total) || 0 }} </span>
     </div>
 
 
@@ -331,6 +332,14 @@
         @click="activeTabIndex = 3"
       >
         Tarif Lain-Lain
+      </button>
+
+      <button
+        class="block w-full flex items-center justify-center border-b-2 border-gray-100 p-3 hover:border-blue-600 hover:text-blue-600 duration-300"
+        :class="{'border-blue-600 text-blue-600 font-bold': activeTabIndex === 4}"
+        @click="activeTabIndex = 4"
+      >
+        Detail AJU
       </button>
     </div>
 
@@ -740,6 +749,98 @@
         </table>
       </div>
     </div>
+    <!-- Detail Aju -->
+    <div class="<md:col-span-1 col-span-3 p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 " v-if="activeTabIndex === 4">
+    <div class="overflow-x-auto <md:col-span-1 col-span-3">
+      <table class="w-[150%] lg:w-full overflow-x-auto table-auto border border-[#CACACA] mt-4">
+        <thead>
+          <tr class="border">
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
+              No.
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] w-[20%] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Customer
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] w-[10%] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              No. AJU
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] w-[10%] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Tgl. AJU
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] w-[10%] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              PEB/PIB
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] w-[10%] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Tgl PEB/PIB
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] w-[10%] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              No. SPPB
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(itemAju, i) in detailArrAju" :key="itemAju.id" class="border-t" v-if="detailArrAju.length > 0">
+            <td class="p-2 text-center border border-[#CACACA]">
+              {{ i + 1 }}.
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldSelect :bind="{ disabled: !actionText, clearable:false }" class="w-full py-2 !mt-0"
+                :value="itemAju.m_customer_id" @input="v=>itemAju.m_customer_id=v"
+                :errorText="formErrors.m_customer_id?'failed':''" :hints="formErrors.m_customer_id" valueField="id"
+                displayField="nama_perusahaan" :api="{          
+                            url: `${store.server.url_backend}/operation/m_customer`,
+                            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                            params: {
+                              simplest:true,
+                              //transform:false,
+                              //join:false,
+                              //where:`this.is_active=true and this.group='JENIS KONTAINER'`
+                            }
+                        }" placeholder="Pilih Customer" label="" :check="false" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true }" class="w-full py-2 !mt-0" :value="itemAju.no_ppjk"
+                :errorText="formErrors.no_ppjk?'failed':''" @input="v=>itemAju.no_ppjk=v" :hints="formErrors.no_ppjk"
+                :check="false" label="" placeholder="No. AJU" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true }" class="w-full py-2 !mt-0" :value="itemAju.tanggal"
+                :errorText="formErrors.tanggal?'failed':''" @input="v=>itemAju.tanggal=v" :hints="formErrors.tanggal"
+                :check="false" label="" placeholder="Tgl. AJU" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true }" class="w-full py-2 !mt-0" :value="itemAju.peb_pib"
+                :errorText="formErrors.peb_pib?'failed':''" @input="v=>itemAju.peb_pib=v" :hints="formErrors.peb_pib"
+                :check="false" label="" placeholder="No. PEB/PIB" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true }" class="w-full py-2 !mt-0" :value="itemAju.tanggal_peb_pib"
+                :errorText="formErrors.tanggal_peb_pib?'failed':''" @input="v=>itemAju.tanggal_peb_pib=v"
+                :hints="formErrors.tanggal_peb_pib" :check="false" label="" placeholder="tgl. PEB/PIB" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true }" class="w-full py-2 !mt-0" :value="itemAju.no_sppb"
+                :errorText="formErrors.no_sppb?'failed':''" @input="v=>itemAju.no_sppb=v" :hints="formErrors.no_sppb"
+                :check="false" label="" placeholder="No. SPPB" />
+            </td>
+          </tr>
+          <tr v-else class="text-center">
+            <td colspan="7" class="py-[20px]">
+              No data to show
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 
   </div>
 

@@ -19,7 +19,7 @@ const tsId = `ts=` + (Date.parse(new Date()))
 // ENDPOINT API
 const endpointApi = 'm_faktur_pajak'
 onBeforeMount(() => {
-    document.title = 'Faktur Pajak'
+  document.title = 'Faktur Pajak'
 })
 
 let initialValues = {}
@@ -27,94 +27,94 @@ let initialValues = {}
 
 // TABLE
 const landing = reactive({
-    api: {
-        url: `${store.server.url_backend}/operation/m_faktur_pajak_d`,
-        headers: {
-            'Content-Type': 'application/json',
-            authorization: `${store.user.token_type} ${store.user.token}`,
-        },
-        params: {
-            scopes: 'NoFaktur',
-            simplest: true,
-            searchfield: `m_faktur_pajak.start_date, m_faktur_pajak.end_date, this.no_faktur_pajak`
-        },
-        onsuccess(response) {
-            return { ...response, page: response.current_page, hasNext: response.has_next };
-        },
+  api: {
+    url: `${store.server.url_backend}/operation/m_faktur_pajak_d`,
+    headers: {
+      'Content-Type': 'application/json',
+      authorization: `${store.user.token_type} ${store.user.token}`,
     },
-    columns: [
-        {
-            headerName: 'No', valueGetter: ({ node }) => node.rowIndex + 1, width: 60,
-            cellClass: ['justify-center', 'bg-gray-50', 'border-r', '!border-gray-200']
-        },
-        {
-            headerName: 'Tanggal Awal', field: 'start_date', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
-            sortable: true, filter: 'ColFilter'
-        },
-        {
-            headerName: 'Tanggal Akhir', field: 'end_date', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
-            sortable: true, filter: 'ColFilter'
-        },
-        {
-            headerName: 'No. Faktur Pajak', field: 'no_faktur_pajak', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
-            sortable: true, filter: 'ColFilter'
-        }
-    ],
-    actions: [{
-            title: 'Read', icon: 'eye', class: 'bg-green-600 text-light-100',
-            click: row => router.push(`${route.path}/${row.m_faktur_pajak_id}?${tsId}`)
-        }
-    ],
+    params: {
+      scopes: 'NoFaktur',
+      simplest: true,
+      searchfield: `m_faktur_pajak.start_date, m_faktur_pajak.end_date, this.no_faktur_pajak`
+    },
+    onsuccess(response) {
+      return { ...response, page: response.current_page, hasNext: response.has_next };
+    },
+  },
+  columns: [
+    {
+      headerName: 'No', valueGetter: ({ node }) => node.rowIndex + 1, width: 60,
+      cellClass: ['justify-center', 'bg-gray-50', 'border-r', '!border-gray-200']
+    },
+    {
+      headerName: 'Tanggal Awal', field: 'start_date', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      sortable: true, filter: 'ColFilter'
+    },
+    {
+      headerName: 'Tanggal Akhir', field: 'end_date', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      sortable: true, filter: 'ColFilter'
+    },
+    {
+      headerName: 'No. Faktur Pajak', field: 'no_faktur_pajak', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      sortable: true, filter: 'ColFilter'
+    }
+  ],
+  actions: [{
+    title: 'Read', icon: 'eye', class: 'bg-green-600 text-light-100',
+    click: row => router.push(`${route.path}/${row.m_faktur_pajak_id}?${tsId}`)
+  }
+  ],
 });
 
 // DELETE DATA
 async function deleteData(row) {
-    const result = await swal.fire({
-        icon: 'warning',
-        text: 'Hapus Data Terpilih?',
-        confirmButtonText: 'Yes',
-        showDenyButton: true,
+  const result = await swal.fire({
+    icon: 'warning',
+    text: 'Hapus Data Terpilih?',
+    confirmButtonText: 'Yes',
+    showDenyButton: true,
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    isRequesting.value = true;
+
+    const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/${row.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
     });
 
-    if (!result.isConfirmed) return;
-
-    try {
-        isRequesting.value = true;
-
-        const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/${row.id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `${store.user.token_type} ${store.user.token}`,
-            },
-        });
-
-        if (!res.ok) {
-            const resultJson = await res.json();
-            throw new Error(resultJson.message || 'Failed when trying to remove data');
-        }
-
-        apiTable.value.reload();
-    } catch (err) {
-        isBadForm.value = true;
-        swal.fire({ icon: 'error', text: err.message });
-    } finally {
-        isRequesting.value = false;
+    if (!res.ok) {
+      const resultJson = await res.json();
+      throw new Error(resultJson.message || 'Failed when trying to remove data');
     }
+
+    apiTable.value.reload();
+  } catch (err) {
+    isBadForm.value = true;
+    swal.fire({ icon: 'error', text: err.message });
+  } finally {
+    isRequesting.value = false;
+  }
 }
 
 // FILTER
 const filterButton = ref(null);
 function filterShowData(params) {
-    filterButton.value = filterButton.value === params ? null : params;
-    table.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
-    apiTable.value.reload();
+  filterButton.value = filterButton.value === params ? null : params;
+  table.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
+  apiTable.value.reload();
 }
 
 onActivated(() => {
-    if (apiTable.value && route.query.reload) {
-        apiTable.value.reload();
-    }
+  if (apiTable.value && route.query.reload) {
+    apiTable.value.reload();
+  }
 });
 
 
@@ -122,22 +122,22 @@ onActivated(() => {
 
 // HOT KEY (CTRL+S)
 const handleKeyDown = (event) => {
-    if (event?.ctrlKey && event?.key === 's' && actionText.value) {
-        event.preventDefault();
-        onSave();
-    }
+  if (event?.ctrlKey && event?.key === 's' && actionText.value) {
+    event.preventDefault();
+    onSave();
+  }
 }
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);
-  
+
   const today = new Date();
   // Format tanggal sesuai dengan "dd-mm-yyyy"
   const day = String(today.getDate()).padStart(2, '0');
   const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
   const year = today.getFullYear();
   const formattedDate = `${day}/${month}/${year}`;
-  data.tgl_pembuatan = formattedDate; 
+  data.tgl_pembuatan = formattedDate;
 });
 
 onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
@@ -152,52 +152,52 @@ const is_generate = ref(false);
 
 // GET DATA FROM API
 onBeforeMount(async () => {
-    if (!isRead) return;
+  if (!isRead) return;
 
-    try {
-        const editedId = route.params.id;
-        const dataURL = `${store.server.url_backend}/operation/${endpointApi}/${editedId}`;
-        isRequesting.value = true;
+  try {
+    const editedId = route.params.id;
+    const dataURL = `${store.server.url_backend}/operation/${endpointApi}/${editedId}`;
+    isRequesting.value = true;
 
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `${store.user.token_type} ${store.user.token}`,
-        };
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `${store.user.token_type} ${store.user.token}`,
+    };
 
-        const fetchData = async (url, params = {}) => {
-            const queryString = new URLSearchParams(params).toString();
-            const response = await fetch(`${url}?${queryString}`, { headers });
-            return response.json();
-        };
+    const fetchData = async (url, params = {}) => {
+      const queryString = new URLSearchParams(params).toString();
+      const response = await fetch(`${url}?${queryString}`, { headers });
+      return response.json();
+    };
 
-        const resData = await fetchData(dataURL, { join: false, transform: false });
-        data.prefix = resData.data.prefix;
-        data.no_awal = resData.data.no_awal;
-        data.no_akhir = resData.data.no_akhir;
-        data.tgl_pembuatan = resData.data.tgl_pembuatan;
-        data.start_date = resData.data.start_date;
-        data.end_date = resData.data.end_date;
+    const resData = await fetchData(dataURL, { join: false, transform: false });
+    data.prefix = resData.data.prefix;
+    data.no_awal = resData.data.no_awal;
+    data.no_akhir = resData.data.no_akhir;
+    data.tgl_pembuatan = resData.data.tgl_pembuatan;
+    data.start_date = resData.data.start_date;
+    data.end_date = resData.data.end_date;
 
-        
-        initialValues = resData.data
-        console.log(initialValues)
-        initialValues.m_faktur_pajak_d?.forEach((items)=>{  
-          if(actionText.value?.toLowerCase() === 'copy' && items.uid){
-            delete items.uid
-          }    
-          items.is_active = items.is_active ? 'OPEN' : 'CLOSE'
-          // items.is_primary = items.is_primary ? 1 : 0
-          detailArr.value = [items, ...detailArr.value]
-        })
 
-    } catch (err) {
-        isBadForm.value = true;
-        swal.fire({
-            icon: 'error', text: err, allowOutsideClick: false, confirmButtonText: 'Kembali',
-        }).then(() => { router.back() });
-    } finally {
-        isRequesting.value = false;
-    }
+    initialValues = resData.data
+    console.log(initialValues)
+    initialValues.m_faktur_pajak_d?.forEach((items) => {
+      if (actionText.value?.toLowerCase() === 'copy' && items.uid) {
+        delete items.uid
+      }
+      items.is_active = items.is_active ? 'OPEN' : 'CLOSE'
+      // items.is_primary = items.is_primary ? 1 : 0
+      detailArr.value = [items, ...detailArr.value]
+    })
+
+  } catch (err) {
+    isBadForm.value = true;
+    swal.fire({
+      icon: 'error', text: err, allowOutsideClick: false, confirmButtonText: 'Kembali',
+    }).then(() => { router.back() });
+  } finally {
+    isRequesting.value = false;
+  }
 });
 
 function generateDetail() {
@@ -269,7 +269,7 @@ function generateDetail() {
 // ACTION BUTTON
 const onReset = async (alert = false) => {
   let next = false
-  if(alert){
+  if (alert) {
     swal.fire({
       icon: 'warning',
       text: 'Anda yakin akan mereset data ini?',
@@ -283,9 +283,9 @@ const onReset = async (alert = false) => {
           start_date: '',
           end_date: ''
         };
-        
-      detailArr.value = [];
-        
+
+        detailArr.value = [];
+
         for (const key in newValues) {
           if (newValues.hasOwnProperty(key)) {
             data[key] = newValues[key];
@@ -295,18 +295,18 @@ const onReset = async (alert = false) => {
       }
     })
   }
-  
-  setTimeout(()=>{
+
+  setTimeout(() => {
     // defaultValues() 
   }, 100)
 }
 
 function onBack() {
-    router.replace('/' + modulPath)
+  router.replace('/' + modulPath)
 }
 
-async function onPost(){
-  
+async function onPost() {
+
 }
 
 async function onSave() {

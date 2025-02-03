@@ -66,7 +66,7 @@
     </template>
   </TableApi>
 </div>
-<div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+<div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto max-h-[450px]">
   <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">

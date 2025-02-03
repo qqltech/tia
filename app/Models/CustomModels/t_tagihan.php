@@ -274,12 +274,13 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         foreach($data as $single){
             if(@$single['is_ppn']){
                 $totalPpn = 0;
-                $totalPpn = $single['tarif_realisasi'] * ($ppn / 100);
+                $totalPpn = $single['tarif_realisasi'] * ($ppn / 100) * $single['qty'];;
                 $grandTotalPpn += $totalPpn;
                 
-                $calculateLain += ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
-                $totalNotPpn += $calculateLain;
-
+                $totalLain = ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+                $totalNotPpn += $calculateLain;	                
+                
+                $calculateLain += $totalLain;
                 $calculateLain += $totalPpn;
 
             }else{

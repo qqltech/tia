@@ -98,90 +98,90 @@ $jeniskontainer = "";
 //}
 //$format = implode(", ", $str);
 @endphp
-<div class="container" style="font-size: 4.4px;">
+<div class="container" style="font-size: 5.3px;">
   <!-- <pre>{{var_dump($nospk)}}</pre> -->
-  <table>
+  <table >
     <thead>
       <tr>
         <th colspan="2" class="underline-2"
           style="text-decoration: underline; font-weight: bold; height:20px; text-align:left;">SURAT JALAN / PENGANTAR
         </th>
         <th colspan="2" style="text-align:right;">
-          {{$n->no_surat_jalan}}
+          {{$n->no_surat_jalan}} 
         </th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td style="width: 25%;">No. Order</td>
+        <td style="width: 23%;">No. Order</td>
         <td style="width: 75%;">
           <span style="font-weight: normal;">:</span>
-          <span style="font-weight: bold;">{{$n->no_buku_order}}</span>
+          <span style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$n->no_buku_order}}</span>
         </td>
       </tr>
       <tr>
-        <td style="width: 25%;">Tgl. Berangkat</td>
+        <td style="width: 23%;">Tgl. Berangkat</td>
         <td style="width: 75%;">
           <span style="font-weight: normal;">:</span>
-          <span style="font-weight: bold;">{{$tanggal_berangkat}}</span>
+          <span style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$tanggal_berangkat}}</span>
         </td>
       </tr>
       <tr>
-        <td style="width: 25%;">Kepada Yth</td>
+        <td style="width: 23%;">Kepada Yth</td>
         <td style="width: 75%;">
-          <span style="font-weight: normal;">: {{$n->nama_perusahaan}}</span>
+          <span style="font-weight: normal;">: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$n->nama_perusahaan}}</span>
         </td>
       </tr>
       <tr>
-        <td style="width: 25%">Alamat</td>
+        <td style="width: 23%">Alamat</td>
         <td style="width: 75%;">
           <span style="font-weight: normal;">:</span>
-          <span style="font-weight: bold;">{{$n->alamat}}</span>
+          <span style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$n->alamat}}</span>
         </td>
       </tr>
       <tr>
-        <td style="border: none; border-bottom: 1px solid black; width: 100%;"></td>
+        <td style="border: none; border-bottom: 0.5px solid black; width: 100%;"></td>
       </tr>
       <tr>
-        <td style="border: none; border-bottom: 1px solid black; width: 100%;"></td>
+        <td style="border: none; border-bottom: 0.5px solid black; width: 100%;"></td>
       </tr>
       <tr>
         <td></td>
       </tr>
       <tr>
-        <td style="width: 25%;">Nama Angk.</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">Nama Angk.</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 72%; border: none; border-bottom: 1px solid black;">{{$n->angkutan}}</td>
+        <td style="width: 72%; border: none; border-bottom: 0.5px solid black;">{{$n->angkutan}}</td>
       </tr>
       <tr>
-        <td style="width: 25%;">No. Polisi</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">No. Polisi</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 72%; border: none; border-bottom: 1px solid black;"></td>
+        <td style="width: 72%; border: none; border-bottom: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%;">Pelabuhan</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">Pelabuhan</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 72%; border: none; border-bottom: 1px solid black;">{{$n->pelabuhan}}</td>
+        <td style="width: 72%; border: none; border-bottom: 0.5px solid black;">{{$n->pelabuhan}}</td>
       </tr>
       <tr>
-        <td style="width: 25%;">Depo</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">Depo</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 72%; border: none; border-bottom: 1px solid black;">{{$n->depo_tsj}}</td>
+        <td style="width: 72%; border: none; border-bottom: 0.5px solid black;">{{$n->depo_tsj}}</td>
       </tr>
       <tr>
-        <td style="width: 25%;">Kapal</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">Kapal</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 72%; border: none; border-bottom: 1px solid black;">{{$n->kapal}}</td>
+        <td style="width: 72%; border: none; border-bottom: 0.5px solid black;">{{$n->kapal}}</td>
       </tr>
       <tr>
         <td></td>
@@ -190,11 +190,11 @@ $jeniskontainer = "";
   <table border="0" style="border-collapse: collapse; width: 100%;">
     <thead>
       <tr>
-        <th colspan="3" style="height: 10px; border-top: 1px solid black; border-right: 1px solid black;"></th>
-        <th colspan="2" style="height: 10px; border-top: 1px solid black;"></th>
+        <th colspan="3" style="height: 10px; border-top: 0.5px solid black; border-right: 0.5px solid black;"></th>
+        <th colspan="2" style="height: 10px; border-top: 0.5px solid black;"></th>
       </tr>
       <tr>
-        <th colspan="3" style="text-align: center; border-right: 1px solid black; border-left: none;">
+        <th colspan="3" style="text-align: center; border-right: 0.5px solid black; border-left: none;">
           <span>Keterangan</span>
         </th>
         <th colspan="2" style="text-align: center; border-right: none; border-left: none;">
@@ -202,45 +202,43 @@ $jeniskontainer = "";
         </th>
       </tr>
       <tr>
-        <th colspan="3" style="height: 10px; border-bottom: 1px solid black; border-right: 1px solid black;"></th>
-        <th colspan="2" style="height: 10px; border-bottom: 1px solid black;"></th>
+        <th colspan="3" style="height: 10px; border-bottom: 0.5px solid black; border-right: 0.5px solid black;"></th>
+        <th colspan="2" style="height: 10px; border-bottom: 0.5px solid black;"></th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td colspan="3" style="border-right: 1px solid black;"></td>
-        <td colspan="2" style="border-left: 1px solid black;">
+        <td colspan="3" style="border-right: 0.5px solid black;"></td>
+        <td colspan="2" style="border-left: 0.5px solid black;">
           {{$n->jenis_barang}}
         </td>
       </tr>
       <tr>
-        <td style="width: 25%;">Type Cont</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">Type Cont</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold;">1x{{$n->ukuran_kontainer}} {{$n->singkatan_jenis}}</td>
+        <td style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold;">1x{{$n->ukuran_kontainer}} {{$n->singkatan_jenis}}</td>
         <td style="width: 2%; border: none;"></td>
-        <td colspan="2" style="border-left: 1px solid black;"></td>
+        <td colspan="2" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%;">No. Cont</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">No. Cont</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold;">
-          {{$n->no_prefix}}{{$n->no_suffix}}
-        </td>
+        <td style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold;">{{$n->no_prefix}}{{$n->no_suffix}}</td>
         <td style="width: 2%; border: none;"></td>
-        <td colspan="3" style="border-left: 1px solid black;"></td>
+        <td colspan="3" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%;">No. Seal</td>
-        <td style="width: 3%;">
+        <td style="width: 23%;">No. Seal</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold;"></td>
+        <td style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold;"></td>
         <td style="width: 2%; border: none;"></td>
-        <td colspan="2" style="border-left: 1px solid black;"></td>
+        <td colspan="2" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
         <td style="width: 25%;"></td>
@@ -248,77 +246,77 @@ $jeniskontainer = "";
         </td>
         <td style="width: 30%; border: none;"></td>
         <td style="width: 2%; border: none;"></td>
-        <td colspan="2" style="border-left: 1px solid black;"></td>
+        <td colspan="2" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
         <td style="width: 25%;"></td>
         <td style="width: 3%;"></td>
         <td style="width: 30%; border: none;"></td>
         <td style="width: 2%; border: none;"></td>
-        <td style="width: 1%; border-left: 1px solid black;"></td>
+        <td style="width: 1%; border-left: 0.5px solid black;"></td>
         <td colspan="2"
-          style="border-left: 1px solid black; border-top: 1px solid black; border-right: 1px solid black; border-bottom: 1px solid black; text-align: center; font-weight: bold; font-size: 6px;">
+          style="border-left: 0.5px solid black; border-top: 0.5px solid black; border-right: 0.5px solid black; border-bottom: 0.5px solid black; text-align: center; font-weight: bold; font-size: 6px;">
           {{$cekImp}} {{$n->jenis_sj_deskripsi}}
         </td>
       </tr>
       <tr>
-        <td style="width: 25%;"></td>
-        <td style="width: 3%;">
+        <td style="width: 23%;"></td>
+        <td style="width: 5%;">
         </td>
         <td style="width: 30%; border: none;"></td>
         <td style="width: 2%; border: none;"></td>
-        <td colspan="2" style="border-left: 1px solid black;"></td>
+        <td colspan="2" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%; border-left: 1px solid black; border-top: 1px solid black;">NW</td>
-        <td style="width: 3%;  border-top: 1px solid black">
-          <span style="font-weight: normal;  border-top: 1px solid black;">:</span>
+        <td style="width: 23%; border-left: 0.5px solid black; border-top: 0.5px solid black;">NW</td>
+        <td style="width: 5%;  border-top: 0.5px solid black">
+          <span style="font-weight: normal;  border-top: 0.5px solid black;">:</span>
         </td>
         <td
-          style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold; border-top: 1px solid black;">{{$n->nw}}</td>
-        <td style="width: 1.25%; border: none;  border-top: 1px solid black; border-right: 1px solid black;"></td>
-        <td style="width: 0.75%; border: none;  border-right: 1px solid black;"></td>
-        <td colspan="3" style="border-left: 1px solid black;"></td>
+          style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold; border-top: 0.5px solid black;">{{$n->nw}}</td>
+        <td style="width: 1.25%; border: none;  border-top: 0.5px solid black; border-right: 0.5px solid black;"></td>
+        <td style="width: 0.75%; border: none;  border-right: 0.5px solid black;"></td>
+        <td colspan="3" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%; border-left: 1px solid black;">GW</td>
-        <td style="width: 3%;">
+        <td style="width: 23%; border-left: 0.5px solid black;">GW</td>
+        <td style="width: 5%;">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold;">{{$n->gw}}</td>
-        <td style="width: 1.25%; border: none; border-right: 1px solid black;"></td>
-        <td style="width: 0.75%; border: none;  border-right: 1px solid black;"></td>
-        <td colspan="3" style="border-left: 1px solid black;"></td>
+        <td style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold;">{{$n->gw}}</td>
+        <td style="width: 1.25%; border: none; border-right: 0.5px solid black;"></td>
+        <td style="width: 0.75%; border: none;  border-right: 0.5px solid black;"></td>
+        <td colspan="3" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%; border-left: 1px solid black;">TARE</td>
-        <td style="width: 3%;  ">
+        <td style="width: 23%; border-left: 0.5px solid black;">TARE</td>
+        <td style="width: 5%;  ">
           <span style="font-weight: normal;">:</span>
         </td>
-        <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold; "></td>
-        <td style="width: 1.25%; border: none; border-right: 1px solid black;"></td>
-        <td style="width: 0.75%; border: none; border-right: 1px solid black; "></td>
-        <td colspan="3" style="border-left: 1px solid black;"></td>
+        <td style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold; "></td>
+        <td style="width: 1.25%; border: none; border-right: 0.5px solid black;"></td>
+        <td style="width: 0.75%; border: none; border-right: 0.5px solid black; "></td>
+        <td colspan="3" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%; border-left: 1px solid black;  border-bottom: 1px solid black;"></td>
-        <td style="width: 3%;   border-bottom: 1px solid black;">
-          <span style="font-weight: normal; border-bottom: 1px solid black;"></span>
+        <td style="width: 23%; border-left: 0.5px solid black;  border-bottom: 0.5px solid black;"></td>
+        <td style="width: 5%;   border-bottom: 0.5px solid black;">
+          <span style="font-weight: normal; border-bottom: 0.5px solid black;"></span>
         </td>
-        <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold; "></td>
-        <td style="width: 1.25%; border: none; border-right: 1px solid black; border-bottom: 1px solid black;"></td>
-        <td style="width: 0.75%; border: none; border-right: 1px solid black; "></td>
-        <td colspan="3" style="border-left: 1px solid black;"></td>
+        <td style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold; "></td>
+        <td style="width: 1.25%; border: none; border-right: 0.5px solid black; border-bottom: 0.5px solid black;"></td>
+        <td style="width: 0.75%; border: none; border-right: 0.5px solid black; "></td>
+        <td colspan="3" style="border-left: 0.5px solid black;"></td>
       </tr>
       <tr>
-        <td style="width: 25%;  border-bottom: 1px solid black;"></td>
-        <td style="width: 3%;   border-bottom: 1px solid black;">
-          <span style="font-weight: normal; border-bottom: 1px solid black;"></span>
+        <td style="width: 23%;  border-bottom: 0.5px solid black;"></td>
+        <td style="width: 5%;   border-bottom: 0.5px solid black;">
+          <span style="font-weight: normal; border-bottom: 0.5px solid black;"></span>
         </td>
-        <td style="width: 30%; border: none; border-bottom: 1px solid black; font-weight: bold; "></td>
-        <td style="width: 1.25%; border: none; border-bottom: 1px solid black;"></td>
-        <td style="width: 0.75%; border: none; border-right: 1px solid black; border-bottom: 1px solid black;"></td>
-        <td style="width: 40%; border: none; border-bottom: 1px solid black;"></td>
+        <td style="width: 30%; border: none; border-bottom: 0.5px solid black; font-weight: bold; "></td>
+        <td style="width: 1.25%; border: none; border-bottom: 0.5px solid black;"></td>
+        <td style="width: 0.75%; border: none; border-right: 0.5px solid black; border-bottom: 0.5px solid black;"></td>
+        <td style="width: 40%; border: none; border-bottom: 0.5px solid black;"></td>
       </tr>
       <tr>
         <td style="width: 100%">Barang-barang tersebut diatas harap diterima dengan baik.</td>
@@ -357,7 +355,7 @@ $jeniskontainer = "";
         <td></td>
       </tr>
       <tr>
-        <td style="border: none; border-bottom: 1px solid black; width: 100%;">PERHATIAN :</td>
+        <td style="border: none; border-bottom: 0.5px solid black; width: 100%;">PERHATIAN :</td>
       </tr>
       <tr>
         <td></td>
@@ -372,7 +370,7 @@ $jeniskontainer = "";
         <td></td>
       </tr>
       <tr>
-        <td style="font-weight: bold; border: none; border-bottom: 1px solid black;">Dicetak pada tgl : {{$currentDate}}
+        <td style="font-weight: bold; border: none; border-bottom: 0.5px solid black;">Dicetak pada tgl : {{$currentDate}}
           jam
           {{$currentTime}} Operator : DEWI-PC # dewi</td>
       </tr>

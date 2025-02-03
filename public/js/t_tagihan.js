@@ -16,6 +16,8 @@ const apiTable = ref(null)
 const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
 const modalOpen = ref(false)
+// Detail AJU
+const detailArrAju = ref([])
 const activeTabIndex = ref(0)
 // ------------------------------ PERSIAPAN
 const endpointApi = 't_tagihan'
@@ -118,6 +120,9 @@ const removeDetail = (index) => {
 }
 
 
+
+
+
 const detailArrOpen = ref([]);
 const addDetailOpen = (detail) => {
   const tempItem = {
@@ -172,6 +177,7 @@ async function buku(no_buku_order) {
       join:true,
       view_tarif: true,
       transform: false,
+      scopes: 'withDetailAju',
     };
     const fixedParams = new URLSearchParams(params);
     const res = await fetch(dataURL + '?' + fixedParams, {
@@ -183,6 +189,14 @@ async function buku(no_buku_order) {
     if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
     const resultJson = await res.json();
     const initialValues = resultJson.data;
+
+    // Menambahkan Data Ke Detail AJU
+      initialValues.relation_ppjk?.forEach((itemAju) => {
+        itemAju['t_ppjk_id'] = itemAju['id']
+        itemAju['peb_pib'] = itemAju['no_peb_pib']
+        itemAju['no_ppjk'] = itemAju['no_aju']
+        detailArrAju.value = [itemAju, ...detailArrAju.value];
+      });
     
     values.total_tarif_dp = initialValues?.tarif_dp?.total_amount || 0;
     const tipe_kontainer = initialValues.tipe || 0;

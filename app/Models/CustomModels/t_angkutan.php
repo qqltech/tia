@@ -73,15 +73,16 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
     public function custom_Party2($id)
     {
         $container = \DB::table("t_buku_order_d_npwp")
-            ->select(\DB::raw('COUNT("ukuran") as jumlah,ukuran'))
+            ->leftJoin('set.m_general as mg','mg.id','t_buku_order_d_npwp.ukuran')
+            ->select(\DB::raw('COUNT("ukuran") as jumlah,mg.deskripsi as ukuran_value'))
             ->where("t_buku_order_id", $id)
-            ->groupBy("ukuran")
+            ->groupBy("ukuran_value")
             ->get();
 
         $str = [];
         $count = 0;
         foreach ($container as $cont) {
-            $str[$count] = $cont->jumlah . "x" . $cont->ukuran;
+            $str[$count] = $cont->jumlah . "x" . $cont->ukuran_value;
             $count += 1;
         }
         $format = implode(", ", $str);
@@ -215,10 +216,12 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
         if($is_stuple == true){
             if($week > 0){     
                 if($jam_in >= $time_12 && $jam_out >= $time_12){
-                    $getStaple = strval($this->minusDate($tanggal_in, $tanggal_out) - (3*$week));
+                    $result = strval($this->minusDate($tanggal_in, $tanggal_out) - (3*$week));
+                    $getStaple = $result > 0 ? $result : 0;
                 }
                 else if($jam_in < $time_12 && $jam_out > $time_8){
-                    $getStaple = strval($this->minusDate($tanggal_in, $tanggal_out) - (4*$week));
+                    $result = strval($this->minusDate($tanggal_in, $tanggal_out) - (4*$week));
+                    $getStaple = $result > 0 ? $result : 0;
                 }
                 else{
                     $getStaple = "-";
@@ -226,19 +229,30 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             }
             else{
                 if($jam_out > $time_12 && $jam_in <= $time_12 || $jam_out <= $time_12 && $jam_in <= $time_12 ){
-                $getStaple = strval($this->minusDate($tanggal_in, $tanggal_out) - 3);
+                    $result = strval($this->minusDate($tanggal_in, $tanggal_out) - 3);
+                    $getStaple = $result > 0 ? $result : 0;
                 }
                 else if($jam_out > $time_12 && $jam_in > $time_12 || $jam_out <= $time_12 && $jam_in > $time_12){
-                    $getStaple = strval($this->minusDate($tanggal_in, $tanggal_out) - 2);
+                    $result = strval($this->minusDate($tanggal_in, $tanggal_out) - 2);
+                    $getStaple = $result > 0 ? $result : 0;
                 }
+                else{
+                    $getStaple = "-";
+                }
+                
             }
         }
         else{
             if($jam_out > $time_12 && $jam_in <= $time_12 || $jam_out <= $time_12 && $jam_in <= $time_12 ){
-                $getStaple = strval($this->minusDate($tanggal_in, $tanggal_out) - 3);
+                $result = strval($this->minusDate($tanggal_in, $tanggal_out));
+                $getStaple = $result > 0 ? $result : 0;
             }
             else if($jam_out > $time_12 && $jam_in > $time_12 || $jam_out <= $time_12 && $jam_in > $time_12){
-                $getStaple = strval($this->minusDate($tanggal_in, $tanggal_out) - 2);
+                $result = strval($this->minusDate($tanggal_in, $tanggal_out));
+                $getStaple = $result > 0 ? $result : 0;
+            }
+            else{
+                $getStaple = "-";
             }
         }
         return ['staple_result'=>$getStaple,
@@ -274,6 +288,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
 
     public function updateBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $party = $this->custom_Party2($arrayData["t_buku_order_id"]);
         $status = $arrayData['status'];
         $req = app()->request;
         if ($req->post) {
@@ -281,6 +296,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
         }
         $newData = [
             "status" => $status,
+            "party" => $party,
         ];
         $newArrayData  = array_merge( $arrayData,$newData );
         return [
