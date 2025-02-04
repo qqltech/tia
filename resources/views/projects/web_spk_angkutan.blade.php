@@ -264,7 +264,7 @@ $temp = ' sebelas';
           </th>
         </tr>
         <tr>
-          <td colspan="2" style="border: 0.5px solid black; ">
+          <td colspan="2" style="border: 0.5px solid black;">
             <table style="width:99%;font-size:11px">
               <tr>
                 <td style="width: 20%; ">Order Angk.</td>

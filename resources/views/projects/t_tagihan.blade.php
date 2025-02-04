@@ -260,12 +260,12 @@
       <button @click="generateTotal" v-show="actionText" class="p-1 bg-green-500 text-lg text-white rounded-xl font-semibold">
     Generate total
   </button>
-      <!-- <span>Total = {{ formatCurrency(values.total_amount) }}</span> -->
+
       <span>Total Jasa Cont + PPJK = {{ formatCurrency(values.total_jasa_cont_ppjk) || 0 }}</span>
-      <span>Total Lain2 PPN = {{ formatCurrency(values.total_lain2) || 0 }}</span>
+      <span>Total Lain2 PPN = {{ formatCurrency(values.total_lain2_ppn) || 0 }}</span>
       <span>Total PPN = {{ formatCurrency(values.total_ppn) || 0}}</span>
-      <span>Total Jasa Tia = {{ formatCurrency(values.total_jasa_tia) || 0 }}</span>
-      <span>Total Total Lain2 = {{ formatCurrency(values.total_lain2) || 0 }} </span>
+      <span>Total Jasa Tia = {{ formatCurrency(values.total_jasa_angkutan) || 0 }}</span>
+      <span>Total Total Lain2 = {{ formatCurrency(values.total_lain_non_ppn) || 0 }} </span>
       <span>Total Grand Total = {{ formatCurrency(values.grand_total) || 0 }} </span>
     </div>
 

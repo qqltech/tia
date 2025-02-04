@@ -50,13 +50,12 @@ function closeModal(i) {
 
 const values = reactive({
   status: "DRAFT",
-  total_amount: 0,
-  grand_total_amount: 0,
-  grand_total_nota_rampung: 0,
-  total_kontainer: 0,
-  total_lain: 0,
+  total_jasa_cont_ppjk: 0,
+  total_lain2_ppn: 0,
   total_ppn: 0,
-  ppn: 0,
+  total_jasa_angkutan: 0,
+  total_lain_non_ppn: 0,
+  grand_total: 0,
   tgl: new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
 });
 
@@ -89,7 +88,7 @@ const addDetail1 = () => {
   const tempItem = {
     tarif: 0,
     satuan: 0,
-    is_ppn:false,
+    is_ppn: false,
   };
   detailArr1.value = [...detailArr1.value, tempItem];
 };
@@ -116,7 +115,7 @@ const addDetail3 = () => {
 };
 
 const removeDetail = (index) => {
-  detailArr3.value.splice(index,1)
+  detailArr3.value.splice(index, 1)
 }
 
 
@@ -174,7 +173,7 @@ async function buku(no_buku_order) {
     // Get Data Buku Order
     const dataURL = `${store.server.url_backend}/operation/t_buku_order/${no_buku_order.id}`;
     const params = {
-      join:true,
+      join: true,
       view_tarif: true,
       transform: false,
       scopes: 'withDetailAju',
@@ -191,68 +190,68 @@ async function buku(no_buku_order) {
     const initialValues = resultJson.data;
 
     // Menambahkan Data Ke Detail AJU
-      initialValues.relation_ppjk?.forEach((itemAju) => {
-        itemAju['t_ppjk_id'] = itemAju['id']
-        itemAju['peb_pib'] = itemAju['no_peb_pib']
-        itemAju['no_ppjk'] = itemAju['no_aju']
-        detailArrAju.value = [itemAju, ...detailArrAju.value];
-      });
-    
+    initialValues.relation_ppjk?.forEach((itemAju) => {
+      itemAju['t_ppjk_id'] = itemAju['id']
+      itemAju['peb_pib'] = itemAju['no_peb_pib']
+      itemAju['no_ppjk'] = itemAju['no_aju']
+      detailArrAju.value = [itemAju, ...detailArrAju.value];
+    });
+
     values.total_tarif_dp = initialValues?.tarif_dp?.total_amount || 0;
     const tipe_kontainer = initialValues.tipe || 0;
 
-  if (Array.isArray(initialValues['t_buku_order_d_npwp'])) {
-  initialValues['t_buku_order_d_npwp'].forEach((detail) => {
-    detail.no_buku_order = initialValues.id;
-    detail.tipe = tipe_kontainer; 
-    detailArr.value.push(detail);
+    if (Array.isArray(initialValues['t_buku_order_d_npwp'])) {
+      initialValues['t_buku_order_d_npwp'].forEach((detail) => {
+        detail.no_buku_order = initialValues.id;
+        detail.tipe = tipe_kontainer;
+        detailArr.value.push(detail);
 
-    if (Array.isArray(detail.tarif) && detail.tarif.length > 0) {
-      detail.tarif.forEach((tarif) => {
-        if (Array.isArray(tarif.jasa)) {
-          tarif.jasa.forEach((jasa) => {
-            jasa.satuan = jasa.satuan || 0;
-            jasa.tarif = jasa.tarif === undefined || jasa.tarif === null ? 0 : parseFloat(jasa.tarif);
+        if (Array.isArray(detail.tarif) && detail.tarif.length > 0) {
+          detail.tarif.forEach((tarif) => {
+            if (Array.isArray(tarif.jasa)) {
+              tarif.jasa.forEach((jasa) => {
+                jasa.satuan = jasa.satuan || 0;
+                jasa.tarif = jasa.tarif === undefined || jasa.tarif === null ? 0 : parseFloat(jasa.tarif);
 
-            const existingIndex = detailArr1.value.findIndex(item => item.id === jasa.id);
-            if (existingIndex > -1) {
-              detailArr1.value[existingIndex] = jasa;
-            } else {
-              detailArr1.value.push(jasa);
-              console.log('DATA JASA', detailArr1.value);
+                const existingIndex = detailArr1.value.findIndex(item => item.id === jasa.id);
+                if (existingIndex > -1) {
+                  detailArr1.value[existingIndex] = jasa;
+                } else {
+                  detailArr1.value.push(jasa);
+                  console.log('DATA JASA', detailArr1.value);
+                }
+              });
             }
           });
         }
       });
     }
-  });
-  }
-  
- console.log(tipe_kontainer)
- 
-const uniqueItems = new Map(); // Untuk menyimpan item berdasarkan ID
 
-initialValues.t_buku_order_d_npwp.forEach(item => {
-  item.tarif.forEach(tarifItem => {
-    console.log('CEK SATUAN TARIF', tarifItem.lain);
-    tarifItem.lain.forEach(lainItem => {
-      // Menghapus angka di belakang titik desimal
-      const ubahNominal = parseFloat(lainItem.nominal).toFixed(0);
-      console.log(ubahNominal);
-      lainItem.keterangan = lainItem.deskripsi;
-      lainItem.nominal = ubahNominal;
-      lainItem.tarif_realisasi = ubahNominal;
+    console.log(tipe_kontainer)
 
-      // Memeriksa apakah item sudah ada di uniqueItems
-      if (!uniqueItems.has(lainItem.id)) {
-        uniqueItems.set(lainItem.id, lainItem);
-      }
+    const uniqueItems = new Map(); // Untuk menyimpan item berdasarkan ID
+
+    initialValues.t_buku_order_d_npwp.forEach(item => {
+      item.tarif.forEach(tarifItem => {
+        console.log('CEK SATUAN TARIF', tarifItem.lain);
+        tarifItem.lain.forEach(lainItem => {
+          // Menghapus angka di belakang titik desimal
+          const ubahNominal = parseFloat(lainItem.nominal).toFixed(0);
+          console.log(ubahNominal);
+          lainItem.keterangan = lainItem.deskripsi;
+          lainItem.nominal = ubahNominal;
+          lainItem.tarif_realisasi = ubahNominal;
+
+          // Memeriksa apakah item sudah ada di uniqueItems
+          if (!uniqueItems.has(lainItem.id)) {
+            uniqueItems.set(lainItem.id, lainItem);
+          }
+        });
+      });
     });
-  });
-});
 
-// Mengonversi hasil dari Map ke dalam array dan menyimpannya ke detailArr3.value
-detailArr3.value = Array.from(uniqueItems.values());
+    // Mengonversi hasil dari Map ke dalam array dan menyimpannya ke detailArr3.value
+    detailArr3.value = Array.from(uniqueItems.values());
 
     values.customer = initialValues.m_customer_id || '';
     values.grand_total_nota_rampung = initialValues.grand_total_nota_rampung || '';
@@ -294,18 +293,18 @@ async function generateTotal() {
     const payload = {
       detailArr: detailArr.value,
       detailArr1: detailArr1.value,
-      detailArr2: detailArr2.value,
+      detailArr2: detailArrAju.value,
       detailArr3: detailArr3.value,
       t_buku_order_id: values.no_buku_order,
       tarif_coo: values.tarif_coo || 0,
       tarif_ppjk: values.tarif_ppjk || 0,
       ppn: values.ppn || false,
-      total_tarif_dp: values.total_tarif_dp || 0 ,
+      total_tarif_dp: values.total_tarif_dp || 0,
       grand_total_nota_rampung: grandTotalNotaRampung
     };
     console.log(payload)
-    
-    const dataURL = `${store.server.url_backend}/operation/${endpointApi}/calculate_tagihan`; 
+
+    const dataURL = `${store.server.url_backend}/operation/${endpointApi}/calculate_tagihan`;
     const res = await fetch(dataURL, {
       method: 'POST',
       headers: {
@@ -317,18 +316,19 @@ async function generateTotal() {
     if (!res.ok) throw new Error('Failed to generate total.');
     const hasil = await res.json();
     console.log(hasil)
-    values.total_amount = hasil.grand_total || 0;
-    values.grand_total_amount = hasil.total_setelah_ppn || 0;
-    values.total_kontainer = hasil.total_kontainer || 0;
-      values.total_lain = hasil.total_lain  || 0 ;
-        values.total_ppn = hasil.total_ppn || 0 ;
-        total_tarif_dp: values.total_tarif_dp || 0 ,
 
-          swal.fire({
-            icon: 'success',
-            text: 'Total Berhasil Di Generated',
-            confirmButtonText: 'OK',
-          });
+    values.grand_total = hasil.grand_total || 0;
+    values.total_jasa_cont_ppjk = hasil.total_jasa_cont_ppjk || 0;
+    values.total_lain2_ppn = hasil.total_lain2_ppn || 0;
+    values.total_ppn = hasil.total_ppn || 0;
+    values.total_jasa_angkutan = hasil.total_jasa_angkutan || 0;
+    values.total_lain_non_ppn = hasil.total_lain_non_ppn || 0;
+
+    swal.fire({
+      icon: 'success',
+      text: 'Total Berhasil Di Generated',
+      confirmButtonText: 'OK',
+    });
   } catch (err) {
     console.error(err);
     swal.fire({
@@ -358,7 +358,7 @@ onBeforeMount(async () => {
       if (!res.ok) throw new Error("Failed when trying to read data");
       const resultJson = await res.json();
       initialValues = resultJson.data;
-      
+
       if (actionText.value?.toLowerCase() === 'copy') {
         delete initialValues.status;
         delete initialValues.tgl;
@@ -370,11 +370,11 @@ onBeforeMount(async () => {
       for (const key in initialValues) {
         values[key] = initialValues[key];
       }
-        console.log("TARIF TAGIHAN",initialValues.t_tagihan_d_lain)
+      console.log("TARIF TAGIHAN", initialValues.t_tagihan_d_lain)
 
       await new Promise(resolve => setTimeout(resolve, 500));
       await buku({ id: initialValues.no_buku_order });
-            detailArr3.value = initialValues.t_tagihan_d_lain || [];
+      detailArr3.value = initialValues.t_tagihan_d_lain || [];
     } catch (err) {
       isBadForm.value = true;
       swal.fire({
