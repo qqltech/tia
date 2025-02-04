@@ -196,19 +196,23 @@
             }" placeholder="Pilih Jenis Sektor" label="Sektor" :check="true" />
     </div>
     <div class=" w-full !mt-3">
-      <FieldNumber class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tarif_sewa || 0"
+      <FieldNumber class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tarif_sewa"
         @input="(v)=>values.tarif_sewa=v" :errorText="formErrors.tarif_sewa?'failed':''" :hints="formErrors.tarif_sewa"
         placeholder="Tarif Jasa EMKL" :check="false" />
     </div>
     <div class=" w-full !mt-3">
-      <FieldNumber class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tarif_sewa_diskon || 0"
-        @input="(v)=>values.tarif_sewa_diskon=v" :errorText="formErrors.tarif_sewa_diskon?'failed':''"
-        :hints="formErrors.tarif_sewa_diskon" placeholder="Tarif Jasa EMKL Kontainer 2" :check="false" />
+      <FieldNumber class="!mt-0" :bind="{ readonly: (!values.tarif_sewa) || !actionText }"
+        :value="values.tarif_sewa_diskon" @input="(v)=>values.tarif_sewa_diskon=v"
+        :errorText="formErrors.tarif_sewa_diskon?'failed':''" :hints="formErrors.tarif_sewa_diskon"
+        placeholder="Tarif Jasa EMKL Kontainer 2" :check="false" />
     </div>
     <div class=" w-full !mt-3">
-      <FieldNumber class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tarif_ppjk || 0"
-        @input="(v)=>values.tarif_ppjk=v" :errorText="formErrors.tarif_ppjk?'failed':''" :hints="formErrors.tarif_ppjk"
-        placeholder="Tarif PPJK" :check="false" />
+      <FieldNumber class="!mt-0" :bind="{ 
+          readonly: actionText === 'Edit' ? false : actionText === 'Copy' ? true : values.is_in_tarif === undefined ? true : 
+            values.is_in_tarif ? true :  
+              values.tarif_sewa_diskon ? false : true
+        }" :value="values.tarif_ppjk" @input="(v)=>values.tarif_ppjk=v" :errorText="formErrors.tarif_ppjk?'failed':''"
+        :hints="formErrors.tarif_ppjk" placeholder="Tarif PPJK" :check="false" />
     </div>
     <div class="w-full !mt-3">
       <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.catatan"
@@ -419,8 +423,8 @@
             </td>
             <td class="p-2 text-center border border-[#CACACA]">
               <FieldSelect :bind="{ disabled: !actionText, clearable: true }" :value="item.satuan_id"
-                @input="v=>item.satuan_id=v" :errorText="formErrors.satuan_id?'failed':''" :hints="formErrors.satuan_id"
-                valueField="id" displayField="deskripsi" :api="{
+                @input="v=>item.satuan_id=v" :errorText="formErrors.satuan_id?'failed':''"
+                :hints="formErrors.satuan_id" valueField="id" displayField="deskripsi" :api="{
                     url: `${store.server.url_backend}/operation/m_general`,
                     headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                     params: {

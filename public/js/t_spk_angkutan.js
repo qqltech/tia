@@ -38,6 +38,7 @@ const table = reactive({
     params: {
       simplest: true,
       searchfield: 'this.no_spk, tipe_spk.deskripsi, supir.nama, sektor1.deskripsi, this.total_sangu',
+      getNoBukuOrder:true
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };
@@ -64,6 +65,26 @@ const table = reactive({
     {
       headerName: 'Tipe SPK',
       field: 'tipe_spk.deskripsi',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
+    },
+    {
+      headerName: 'No. Order 1',
+      field: 't_detail_npwp_container_1.no_buku_order',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
+    },
+    {
+      headerName: 'No. Order 2',
+      field: 't_detail_npwp_container_2.no_buku_order',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
@@ -394,7 +415,7 @@ onBeforeMount(async () => {
       isRequesting.value = true;
 
       // FETCH HEADER DATA
-      await fetchData(dataApprovalURL, { join: false, transform: false }).then((res) => {
+      await fetchData(dataApprovalURL, { join: true, transform: false }).then((res) => {
         trx_id = res.data.trx_id;
         console.log(res, trx_id);
       });

@@ -20,6 +20,24 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     public $createAdditionalData = ["creator_id" => "auth:id"];
     public $updateAdditionalData = ["last_editor_id" => "auth:id"];
 
+    public function transformRowData( array $row )
+    {
+        $req = app()->request;
+        $data=[];
+        if($req->getNoBukuOrder){
+        $result1 = t_buku_order::where('id',$row['t_detail_npwp_container_1.t_buku_order_id'])->first();
+        $result2 = t_buku_order::where('id',$row['t_detail_npwp_container_2.t_buku_order_id'])->first();
+        // trigger_error(json_encode($result1));
+        $data=[
+            't_detail_npwp_container_1.no_buku_order'=>@$result1['no_buku_order'],
+            't_detail_npwp_container_2.no_buku_order'=>@$result2['no_buku_order']
+            ];
+        }
+        
+        return array_merge( $row, $data );
+    }
+    
+
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
         

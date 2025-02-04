@@ -43,6 +43,8 @@ const changedValues = []
 
 let values = reactive({
   is_active: true,
+  tarif_sewa_diskon: 0,
+  tarif_ppjk: 0,
   is_in_tarif: false
 })
 
