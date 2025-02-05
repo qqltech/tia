@@ -332,6 +332,15 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
         });
     }
 
+    public function scopeNotDuplicateForAngkutan($model){
+        return $model->whereNotIn('t_buku_order.id', function ($query){
+            $query->select('t_buku_order_id')
+            ->from('t_angkutan')
+            ->where('status','POST')
+            ->orWhere('status','DRAFT');
+        });
+    }
+
     public function scopeGetCustomerNPWP($model){
         return $model->with(['m_customer.m_customer_d_npwp']);
     }

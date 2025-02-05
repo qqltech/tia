@@ -459,7 +459,7 @@ onBeforeMount(async () => {
       where: `this.id=${data.t_detail_npwp_container_2_id}`
     }).then(res => {
       if (res.data.length !== 0) {
-        data.ukuran_container_2 = res.data[0]['ukuran'];
+        data.ukuran_container_2 = res.data[0]['ukuran.deskripsi'];
         data.jenis_container_2 = res.data[0]['jenis.deskripsi'];
         data.tipe_container_2 = res.data[0]['tipe.deskripsi'];
         data.no_prefix_2 = res.data[0]['no_prefix'];

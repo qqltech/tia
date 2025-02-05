@@ -105,9 +105,12 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
         $result = \DB::table('t_buku_order_d_npwp as tbodn')
         ->leftJoin('t_buku_order as tbo', 'tbo.id', '=', 'tbodn.t_buku_order_id')
         ->leftJoin('t_spk_angkutan as tsa', 'tsa.t_detail_npwp_container_1_id', '=', 'tbodn.id')
+        ->leftJoin('t_spk_angkutan as tsa2', 'tsa2.t_detail_npwp_container_2_id', '=', 'tbodn.id')
         ->leftJoin('set.m_general as mg', 'mg.id', '=', 'tbo.pelabuhan_id')
         ->leftJoin('set.m_general as mg2','mg2.id', '=', 'tsa.head')
         ->leftJoin('set.m_general as mg3','mg3.id', '=', 'tsa.trip_id')
+        ->leftJoin('set.m_general as mg4','mg4.id', '=', 'tsa2.head')
+        ->leftJoin('set.m_general as mg5','mg5.id', '=', 'tsa2.trip_id')
         ->select(
             'tbo.id as buku_order_id',
             'tbo.nama_kapal','tbo.tanggal_pengkont',
@@ -115,12 +118,78 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             'tbodn.t_buku_order_id',
             'tbo.pelabuhan_id',
             'tbodn.no_prefix', 'tbodn.no_suffix',
-            'tsa.*','tsa.trip_id as trip', 'tsa.catatan as spk_catatan','mg.deskripsi as nama_pelabuhan', 'mg2.deskripsi as head_desc', 'mg3.deskripsi as trip_desc',
+            // 'tsa.*','tsa.trip_id as trip', 'tsa.catatan as spk_catatan',
+            'mg.deskripsi as nama_pelabuhan',
+            // 'mg2.deskripsi as head_desc', 'mg3.deskripsi as trip_desc',
+            // 'mg4.deskripsi as head_desc', 'mg5.deskripsi as trip_desc',
+
             \DB::raw("CONCAT(tbodn.no_prefix, '-', tbodn.no_suffix) as no_container"),
-            \DB::raw("COALESCE(tsa.no_spk, 'Angkutan Luar') as no_spk_new"),
-            \DB::raw("to_char(tsa.tanggal_in,'DD/MM/YYYY') as tanggal_in_new"),
-            \DB::raw("to_char(tsa.tanggal_out,'DD/MM/YYYY') as tanggal_out_new"),
+            // \DB::raw("COALESCE(tsa.no_spk, 'Angkutan Luar') as no_spk_new"),
+            // \DB::raw("to_char(tsa.tanggal_in,'DD/MM/YYYY') as tanggal_in_new"),
+            // \DB::raw("to_char(tsa.tanggal_out,'DD/MM/YYYY') as tanggal_out_new"),
             \DB::raw("to_char(tbo.tanggal_pengkont,'DD/MM/YYYY') as tanggal_pengkont_new"),
+            // Menentukan no_spk_new berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
+            // Memilih head_desc berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
+            \DB::raw("
+                CASE 
+                    WHEN tsa.no_spk IS NOT NULL THEN mg2.deskripsi 
+                    WHEN tsa2.no_spk IS NOT NULL THEN mg4.deskripsi 
+                    ELSE mg2.deskripsi 
+                END AS head_desc
+            "),
+            // Memilih trip_desc berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
+            \DB::raw("
+                CASE 
+                    WHEN tsa.no_spk IS NOT NULL THEN mg3.deskripsi 
+                    WHEN tsa2.no_spk IS NOT NULL THEN mg5.deskripsi 
+                    ELSE mg3.deskripsi 
+                END AS trip_desc
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa.no_spk IS NOT NULL THEN tsa.no_spk 
+                    WHEN tsa2.no_spk IS NOT NULL THEN tsa2.no_spk 
+                    ELSE 'Angkutan Luar' 
+                END AS no_spk_new
+            "),
+
+            // Menentukan tanggal_in_new berdasarkan kondisi tsa.tanggal_in dan tsa2.tanggal_in
+            \DB::raw("
+                CASE 
+                    WHEN tsa.tanggal_in IS NOT NULL THEN to_char(tsa.tanggal_in, 'DD/MM/YYYY')
+                    WHEN tsa2.tanggal_in IS NOT NULL THEN to_char(tsa2.tanggal_in, 'DD/MM/YYYY')
+                    ELSE NULL
+                END AS tanggal_in_new
+            "),
+            // Menentukan tanggal_out_new berdasarkan kondisi tsa.tanggal_out dan tsa2.tanggal_out
+            \DB::raw("
+                CASE 
+                    WHEN tsa.tanggal_out IS NOT NULL THEN to_char(tsa.tanggal_out, 'DD/MM/YYYY')
+                    WHEN tsa2.tanggal_out IS NOT NULL THEN to_char(tsa2.tanggal_out, 'DD/MM/YYYY')
+                    ELSE NULL
+                END AS tanggal_out_new
+            "),
+            \DB::raw("
+            CASE 
+                WHEN tsa2.no_spk IS NULL THEN tsa.trip_id 
+                WHEN tsa.no_spk IS NULL THEN tsa2.trip_id 
+                ELSE tsa.trip_id 
+            END AS trip
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL THEN tsa.catatan 
+                    WHEN tsa.no_spk IS NULL THEN tsa2.catatan 
+                    ELSE tsa.catatan 
+                END AS spk_catatan
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL THEN tsa.* 
+                    WHEN tsa.no_spk IS NULL THEN tsa2.* 
+                    ELSE tsa.* 
+                END
+            ")
         )
         ->where('tbo.id', $id)
         ->where(function($query) {
@@ -130,9 +199,6 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
         ->get();
 
         return $result;
-
-
-
     }
 
     public function scopeGetById($model)
