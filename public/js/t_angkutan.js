@@ -93,7 +93,7 @@ async function addDetail() {
                 biaya_lain_lain: parseFloat(item['total_sangu']),
                 tgl_stuffing: item['tanggal_pengkont_new'],
                 
-                pelabuhan: item['nama_pelabuhan'],
+                pelabuhan: item['pelabuhan_id'],
                 nama_angkutan_id: item['m_supplier_id'],
                 // staple: staple
                 custom_stuple: values['custom_stuple'],

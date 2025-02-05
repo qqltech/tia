@@ -36,6 +36,7 @@ class tangkutand extends Migration
             // $table->integer('trip')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->integer('free')->default(0)->nullable()->change();
             // $table->decimal('tarif_los_cargo',18,2)->default(0)->nullable()->change();
+            // $table->bigInteger('pelabuhan')->comment('{"src":"set.m_general.id"}')->nullable();
         });
     }
 }

@@ -113,6 +113,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             'tbo.nama_kapal','tbo.tanggal_pengkont',
             'tbodn.id as buku_order_detail_id',
             'tbodn.t_buku_order_id',
+            'tbo.pelabuhan_id',
             'tbodn.no_prefix', 'tbodn.no_suffix',
             'tsa.*','tsa.trip_id as trip', 'tsa.catatan as spk_catatan','mg.deskripsi as nama_pelabuhan', 'mg2.deskripsi as head_desc', 'mg3.deskripsi as trip_desc',
             \DB::raw("CONCAT(tbodn.no_prefix, '-', tbodn.no_suffix) as no_container"),
