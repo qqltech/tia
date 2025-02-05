@@ -81,7 +81,7 @@
               params: {
                 simplest:true,
                 //selectfield: 'id,no_buku_order,tgl',
-                scopes:'NotDuplicateForAngkutan',
+               // scopes:'NotDuplicateForAngkutan',
                 searchfield: 'this.no_buku_order, this.tgl'
               }
             }" placeholder="Pilih No. Buku Order" :check="false" :columns="[{
@@ -315,13 +315,13 @@
             <td class="p-2 border border-[#CACACA]">
               <FieldSelect
                 :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }"
-                class="w-full !mt-3" :value="values.waktu_out" @input="v=>{
+                class="w-full !mt-3" :value="item.waktu_out" @input="v=>{
                     if(v){
                       item.waktu_out=v
                     }else{
                       item.waktu_out=null
                     }
-                  }" :errorText="formErrors.waktu_out?'failed':''" :hints="formErrors.waktu_out" valueField="deskripsi"
+                  }" :errorText="formErrors.waktu_out?'failed':''" :hints="formErrors.waktu_out" valueField="id"
                 displayField="deskripsi" :api="{
                       url: `${store.server.url_backend}/operation/m_general`,
                       headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -349,13 +349,13 @@
 
               <FieldSelect
                 :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }"
-                class="w-full !mt-3" :value="values.waktu_in" @input="v=>{
+                class="w-full !mt-3" :value="item.waktu_in" @input="v=>{
                     if(v){
                       item.waktu_in=v
                     }else{
                       item.waktu_in=null
                     }
-                  }" :errorText="formErrors.waktu_in?'failed':''" :hints="formErrors.waktu_in" valueField="deskripsi"
+                  }" :errorText="formErrors.waktu_in?'failed':''" :hints="formErrors.waktu_in" valueField="id"
                 displayField="deskripsi" :api="{
                       url: `${store.server.url_backend}/operation/m_general`,
                       headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},

@@ -41,9 +41,9 @@ class tspkangkutan extends Migration
             $table->decimal('sangu',18,2)->nullable();
             $table->decimal('total_sangu',18,2)->nullable();
             $table->date('tanggal_out');
-            $table->string('waktu_out',10);
+            $table->bigInteger('waktu_out')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->date('tanggal_in');
-            $table->string('waktu_in',10);
+            $table->bigInteger('waktu_in')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->text('catatan')->nullable();
             $table->integer('m_supplier_id')->comment('{"src":"m_supplier.id"}')->nullable();
             $table->integer('creator_id')->nullable();

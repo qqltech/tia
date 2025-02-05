@@ -12,7 +12,7 @@ class tangkutand extends Migration
         Schema::table($this->tableName, function (Blueprint $table) {
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            // $table->dropColumn(['pelabuhan' ]);
+            // $table->dropColumn(['angkutan_pelabuhan' ]);
             //  $table->decimal('tarif_los_cargo',18,2)->change();
             // $table->integer('t_spk_id')->comment('{"src":"t_spk_angkutan.id"}')->nullable()->change();
             // $table->string('waktu_out',20)->nullable();
@@ -37,6 +37,9 @@ class tangkutand extends Migration
             // $table->integer('free')->default(0)->nullable()->change();
             // $table->decimal('tarif_los_cargo',18,2)->default(0)->nullable()->change();
             // $table->bigInteger('pelabuhan')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->bigInteger('waktu_out')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->bigInteger('waktu_in')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->integer('angkutan_pelabuhan')->comment('{"src":"m_supplier.id"}')->nullable();
         });
     }
 }

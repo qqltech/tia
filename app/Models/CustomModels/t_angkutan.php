@@ -102,6 +102,9 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
         // ->where('tsa.status', 'POST')
         // ->orderBy('tsa.t_buku_order_1_id', 'asc')
         // ->get();
+        $nama_angkutan_tia=\DB::table('m_supplier as ms')->where('ms.nama','TIA SENTOSA MAKMUR')->first();
+        // trigger_error(json_encode($nama_angkutan_tia->id));
+
         $result = \DB::table('t_buku_order_d_npwp as tbodn')
         ->leftJoin('t_buku_order as tbo', 'tbo.id', '=', 'tbodn.t_buku_order_id')
         ->leftJoin('t_spk_angkutan as tsa', 'tsa.t_detail_npwp_container_1_id', '=', 'tbodn.id')
@@ -128,13 +131,13 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             // \DB::raw("to_char(tsa.tanggal_in,'DD/MM/YYYY') as tanggal_in_new"),
             // \DB::raw("to_char(tsa.tanggal_out,'DD/MM/YYYY') as tanggal_out_new"),
             \DB::raw("to_char(tbo.tanggal_pengkont,'DD/MM/YYYY') as tanggal_pengkont_new"),
-            // Menentukan no_spk_new berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
+            
             // Memilih head_desc berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
             \DB::raw("
                 CASE 
                     WHEN tsa.no_spk IS NOT NULL THEN mg2.deskripsi 
                     WHEN tsa2.no_spk IS NOT NULL THEN mg4.deskripsi 
-                    ELSE mg2.deskripsi 
+                    ELSE NULL
                 END AS head_desc
             "),
             // Memilih trip_desc berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
@@ -142,9 +145,10 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
                 CASE 
                     WHEN tsa.no_spk IS NOT NULL THEN mg3.deskripsi 
                     WHEN tsa2.no_spk IS NOT NULL THEN mg5.deskripsi 
-                    ELSE mg3.deskripsi 
+                    ELSE NULL
                 END AS trip_desc
             "),
+            // Menentukan no_spk_new berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
             \DB::raw("
                 CASE 
                     WHEN tsa.no_spk IS NOT NULL THEN tsa.no_spk 
@@ -173,23 +177,72 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             CASE 
                 WHEN tsa2.no_spk IS NULL THEN tsa.trip_id 
                 WHEN tsa.no_spk IS NULL THEN tsa2.trip_id 
-                ELSE tsa.trip_id 
+                ELSE NULL 
             END AS trip
+            "),
+            // Memilih head berdasarkan kondisi tsa.head dan tsa2.head
+            \DB::raw("
+                CASE 
+                    WHEN tsa.no_spk IS NOT NULL THEN tsa.head 
+                    WHEN tsa2.no_spk IS NOT NULL THEN tsa2.head 
+                    ELSE NULL
+                END AS head
             "),
             \DB::raw("
                 CASE 
                     WHEN tsa2.no_spk IS NULL THEN tsa.catatan 
                     WHEN tsa.no_spk IS NULL THEN tsa2.catatan 
-                    ELSE tsa.catatan 
+                    ELSE NULL
                 END AS spk_catatan
             "),
             \DB::raw("
                 CASE 
-                    WHEN tsa2.no_spk IS NULL THEN tsa.* 
-                    WHEN tsa.no_spk IS NULL THEN tsa2.* 
-                    ELSE tsa.* 
-                END
-            ")
+                    WHEN tsa2.no_spk IS NULL THEN tsa.id
+                    WHEN tsa.no_spk IS NULL THEN tsa2.id 
+                    ELSE NULL
+                END AS id
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL THEN tsa.depo
+                    WHEN tsa.no_spk IS NULL THEN tsa2.depo
+                    ELSE NULL
+                END AS depo
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL THEN tsa.sektor1
+                    WHEN tsa.no_spk IS NULL THEN tsa2.sektor1 
+                    ELSE NULL
+                END AS sektor
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL THEN tsa.waktu_out
+                    WHEN tsa.no_spk IS NULL THEN tsa2.waktu_out
+                    ELSE NULL
+                END AS waktu_out
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL THEN tsa.waktu_in
+                    WHEN tsa.no_spk IS NULL THEN tsa2.waktu_in
+                    ELSE NULL
+                END AS waktu_in
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL THEN tsa.total_sangu
+                    WHEN tsa.no_spk IS NULL THEN tsa2.total_sangu
+                    ELSE NULL
+                END AS total_sangu
+            "),
+            \DB::raw("
+                CASE 
+                    WHEN tsa2.no_spk IS NULL AND tsa.no_spk IS NULL THEN NULL
+                    ELSE $nama_angkutan_tia->id
+                END AS m_supplier_id
+            "),
         )
         ->where('tbo.id', $id)
         ->where(function($query) {

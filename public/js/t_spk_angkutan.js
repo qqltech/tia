@@ -351,7 +351,7 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
-  data: { status: 'DRAFT', is_con_edit: false, waktu_out: 'Sore', waktu_in: 'Pagi', total_bon_tambahan: 0 },
+  data: { status: 'DRAFT', is_con_edit: false, total_bon_tambahan: 0 },
   detail: []
 }
 

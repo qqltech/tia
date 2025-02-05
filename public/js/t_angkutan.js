@@ -34,7 +34,7 @@ onBeforeUnmount(()=>{
 
 const handleKeyDown = (event) => {
   console.log(event)
-  if (event?.ctrlKey && event?.key === 's') {
+  if (event?.ctrlKey && event?.key === 's' && actionText?.value) {
     event.preventDefault(); // Prevent the default behavior (e.g., saving the page)
     onSave();
   }
@@ -95,6 +95,7 @@ async function addDetail() {
                 
                 pelabuhan: item['pelabuhan_id'],
                 nama_angkutan_id: item['m_supplier_id'],
+                angkutan_pelabuhan: item['m_supplier_id'],
                 // staple: staple
                 custom_stuple: values['custom_stuple'],
                 trip_desc: item['trip_desc']??'-',
@@ -232,7 +233,7 @@ onBeforeMount(async () => {
       initialValues = resultJson.data;
       initialValues.pph = initialValues.pph == 1 ? true : false;
 
-      console.log(initialValues,'aaa')
+      console.log(initialValues.t_angkutan_d,'t_angkutan_d')
 
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;

@@ -20,14 +20,14 @@ class tangkutand extends Migration
             $table->integer('trip')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->date('tanggal_out')->nullable();
             $table->time('jam_out')->nullable();
-            $table->string('waktu_out',20)->nullable();
+            $table->bigInteger('waktu_out')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->date('tanggal_in')->nullable();
             $table->time('jam_in')->nullable();
-            $table->string('waktu_in',20)->nullable();
+            $table->bigInteger('waktu_in')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('free')->default(0)->nullable();
             $table->decimal('tarif_los_cargo',18,2)->default(0)->nullable();
             $table->bigInteger('pelabuhan')->comment('{"src":"set.m_general.id"}')->nullable();
-            $table->string("angkutan_pelabuhan",40)->nullable();
+            $table->integer('angkutan_pelabuhan')->comment('{"src":"m_supplier.id"}')->nullable();
             $table->integer('nama_angkutan_id')->comment('{"src":"m_supplier.id"}')->nullable();
             $table->string('staple')->nullable();
             $table->string('no_container')->nullable();

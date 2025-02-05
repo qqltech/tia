@@ -112,21 +112,50 @@
       <FieldX :bind="{ readonly: !actionText}" class="w-full !mt-3" :value="data.tanggal_out"
         :errorText="formErrors.tanggal_out?'failed' :''" @input="v=>data.tanggal_out=v" :hints="formErrors.tanggal_out"
         :check="false" type="date" label="Tanggal Out" placeholder="Pilih Tanggal Out" />
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.waktu_out"
-        @input="v=>data.waktu_out=v" :errorText="formErrors.waktu_out?'failed':''" :hints="formErrors.waktu_out"
-        valueField="id" displayField="key" :options="[{'id' : 'Pagi', 'key' : 'Pagi'},
-      {'id' : 'Siang', 'key' : 'Siang'},
-      {'id' : 'Sore', 'key' : 'Sore'}]" placeholder="Pilih Waktu Out" label="Waktu Out" :check="false" />
+      <FieldSelect
+      class="w-full !mt-3"
+        :bind="{ disabled: !actionText, clearable:true, readonly:!actionText }"
+        :value="data.waktu_out" @input="v=>data.waktu_out=v"
+        :errorText="formErrors.waktu_out?'failed':''" 
+        :hints="formErrors.waktu_out"
+        valueField="id" displayField="deskripsi"
+        :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              transform:false,
+              join:false,
+              where:`this.group='WAKTUOUT'`,
+            }
+        }"
+        placeholder="Pilih Waktu Out" label="Waktu Out" :check="false"
+      />
+      
     </div>
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
       <FieldX :bind="{ readonly: !actionText}" class="w-full !mt-3" :value="data.tanggal_in"
         :errorText="formErrors.tanggal_in?'failed' :''" @input="v=>data.tanggal_in=v" :hints="formErrors.tanggal_in"
         :check="false" type="date" label="Tanggal In" placeholder="Pilih Tanggal In" />
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.waktu_in"
-        @input="v=>data.waktu_in=v" :errorText="formErrors.waktu_in?'failed':''" :hints="formErrors.waktu_in"
-        valueField="id" displayField="key" :options="[{'id' : 'Pagi', 'key' : 'Pagi'},
-      {'id' : 'Siang', 'key' : 'Siang'},
-      {'id' : 'Sore', 'key' : 'Sore'}]" placeholder="Pilih Waktu In" label="Waktu In" :check="false" />
+      <FieldSelect
+      class="w-full !mt-3"
+        :bind="{ disabled: !actionText, clearable:true, readonly:!actionText }"
+        :value="data.waktu_in" @input="v=>data.waktu_in=v"
+        :errorText="formErrors.waktu_in?'failed':''" 
+        :hints="formErrors.waktu_in"
+        valueField="id" displayField="deskripsi"
+        :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              transform:false,
+              join:false,
+              where:`this.group='WAKTUIN'`,
+            }
+        }"
+        placeholder="Pilih Waktu In" label="Waktu In" :check="false"
+      />
     </div>
 
     <div>
