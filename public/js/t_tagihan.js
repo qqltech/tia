@@ -56,6 +56,7 @@ const values = reactive({
   total_jasa_angkutan: 0,
   total_lain_non_ppn: 0,
   grand_total: 0,
+  tarif_dp : 0,
   tgl: new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
 });
 
@@ -136,23 +137,27 @@ function openDetail(id) {
 }
 
 async function buku(no_buku_order) {
-  detailArr.value = [];
-  detailArr1.value = [];
-  detailArr2.value = [];
-  detailArr3.value = [];
-  detailArrOpen.value = [];
-  values.grand_total_nota_rampung = 0;
-
   if (!no_buku_order || !no_buku_order.id) {
+    // Reset detail arrays
+    detailArr.value = [];
+    detailArr1.value = [];
+    detailArr2.value = [];
+    detailArr3.value = [];
+    detailArrOpen.value = [];
+    detailArrAju.value = [];
+    
+    // Reset values
     values.customer = '';
     values.ppn = 0;
     values.total_amount = 0;
     values.grand_total_amount = 0;
+    values.grand_total_nota_rampung = 0;
+
     return;
   }
 
   try {
-    // Get data General Kontainer
+    // Fetch General Container Data
     const dataURL1 = `${store.server.url_backend}/operation/m_general`;
     isRequesting.value = true;
     const params1 = {
@@ -169,8 +174,6 @@ async function buku(no_buku_order) {
     if (!res1.ok) throw new Error("Gagal saat mencoba membaca data");
     const resultJson1 = await res1.json();
     const deskripsiKeys = Array.isArray(resultJson1.data) ? resultJson1.data.map(item => item.deskripsi) : [];
-
-    // Get Data Buku Order
     const dataURL = `${store.server.url_backend}/operation/t_buku_order/${no_buku_order.id}`;
     const params = {
       join: true,
@@ -188,18 +191,23 @@ async function buku(no_buku_order) {
     if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
     const resultJson = await res.json();
     const initialValues = resultJson.data;
+    console.log('TARIF DP', initialValues.tarif_dp);
+    detailArr.value = [];
+    detailArr1.value = [];
+    detailArr2.value = [];
+    detailArr3.value = [];
+    detailArrOpen.value = [];
+    detailArrAju.value = [];
 
-    // Menambahkan Data Ke Detail AJU
     initialValues.relation_ppjk?.forEach((itemAju) => {
-      itemAju['t_ppjk_id'] = itemAju['id']
-      itemAju['peb_pib'] = itemAju['no_peb_pib']
-      itemAju['no_ppjk'] = itemAju['no_aju']
+      itemAju['t_ppjk_id'] = itemAju['id'];
+      itemAju['peb_pib'] = itemAju['no_peb_pib'];
+      itemAju['no_ppjk'] = itemAju['no_aju'];
       detailArrAju.value = [itemAju, ...detailArrAju.value];
     });
 
     values.total_tarif_dp = initialValues?.tarif_dp?.total_amount || 0;
     const tipe_kontainer = initialValues.tipe || 0;
-
     if (Array.isArray(initialValues['t_buku_order_d_npwp'])) {
       initialValues['t_buku_order_d_npwp'].forEach((detail) => {
         detail.no_buku_order = initialValues.id;
@@ -226,43 +234,30 @@ async function buku(no_buku_order) {
         }
       });
     }
-
-    console.log(tipe_kontainer)
-
-    const uniqueItems = new Map(); // Untuk menyimpan item berdasarkan ID
-
+    const uniqueItems = new Map(); 
     initialValues.t_buku_order_d_npwp.forEach(item => {
       item.tarif.forEach(tarifItem => {
-        console.log('CEK SATUAN TARIF', tarifItem.lain);
         tarifItem.lain.forEach(lainItem => {
-          // Menghapus angka di belakang titik desimal
           const ubahNominal = parseFloat(lainItem.nominal).toFixed(0);
-          console.log(ubahNominal);
           lainItem.keterangan = lainItem.deskripsi;
           lainItem.nominal = ubahNominal;
           lainItem.tarif_realisasi = ubahNominal;
-
-          // Memeriksa apakah item sudah ada di uniqueItems
           if (!uniqueItems.has(lainItem.id)) {
             uniqueItems.set(lainItem.id, lainItem);
           }
         });
       });
     });
-
-    // Mengonversi hasil dari Map ke dalam array dan menyimpannya ke detailArr3.value
     detailArr3.value = Array.from(uniqueItems.values());
-
     values.customer = initialValues.m_customer_id || '';
     values.grand_total_nota_rampung = initialValues.grand_total_nota_rampung || '';
-
-
 
     if (Array.isArray(initialValues['t_buku_order_d_aju'])) {
       initialValues['t_buku_order_d_aju'].forEach((detail) => {
         detailArr2.value.push(detail);
       });
     }
+
   } catch (err) {
     isBadForm.value = true;
     swal.fire({
@@ -278,7 +273,10 @@ async function buku(no_buku_order) {
   }
 }
 
-// POST GENERATE TOTAL
+
+
+
+
 async function generateTotal() {
   if (!values.no_buku_order) {
     swal.fire({
@@ -342,7 +340,6 @@ async function generateTotal() {
 
 onBeforeMount(async () => {
   if (isRead) {
-    // READ DATA
     try {
       const editedId = route.params.id;
       const dataURL = `${store.server.url_backend}/operation/${endpointApi}/${editedId}`;

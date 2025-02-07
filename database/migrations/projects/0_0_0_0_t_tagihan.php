@@ -22,21 +22,21 @@ class ttagihan extends Migration
             $table->string('tipe_tagihan')->nullable();
             $table->decimal('total_amount',18,4);
             $table->decimal('ppn',18,4);
-            $table->decimal('grand_total_amount',18,4);
             $table->decimal('piutang',18,4)->nullable();
             // $table->decimal('tarif_coo',18,4);
             // $table->decimal('tarif_ppjk',18,4);
             $table->decimal('grand_total',18,4)->nullable();
-            $table->decimal('total_kontainer',18,4)->nullable();
-            $table->decimal('total_lain',18,4)->nullable();
-            $table->decimal('total_ppn',18,4)->nullable();
-            $table->decimal('total_setelah_ppn',18,4)->nullable();
-            $table->decimal('total_tarif_jasa',18,4)->nullable();
+            
             $table->text('catatan')->nullable();
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();
             $table->timestamp('delete_at')->nullable();
+
+            $table->decimal('total_jasa_cont_ppjk',18,4)->nullable();
+            $table->decimal('total_lain2_ppn',18,4)->nullable();
+            $table->decimal('total_jasa_angkutan',18,4)->nullable();
+            $table->decimal('total_lain_non_ppn',18,4)->nullable();
             $table->timestamps();
         });
 

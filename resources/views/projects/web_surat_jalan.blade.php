@@ -46,6 +46,19 @@ $cekImp = "IMP";
 else if ($n->tipe_surat_jalan == "EKSPORT"){
 $cekImp = "EXP";
 }
+else if ($n->tipe_surat_jalan == "EKSPORT S"){
+$cekImp = "EXP";
+}
+else if ($n->tipe_surat_jalan == "LOKAL"){
+$cekImp = "OL";
+}
+else if ($n->tipe_surat_jalan == "OL"){
+$cekImp = "OL";
+}
+else if ($n->tipe_surat_jalan == "OLS"){
+$cekImp = "OL";
+}
+
 
 //cek jenis container
 $jeniskontainer = "";

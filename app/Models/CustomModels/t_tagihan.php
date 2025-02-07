@@ -100,7 +100,6 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $tagihanJasa = $req['detailArr1'];
         $tagihanPpjk = $req['detailArr2'];
         $tagihanLain = $req['detailArr3'];
-        // $tagihanCoo = $req['tarif_coo'];
         $tarifdp = $req['total_tarif_dp'];
         $idBukuOrder = $req['t_buku_order_id'];
         $ppn = $req['ppn'];
@@ -113,18 +112,18 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $grandTotalKontainer = $totalKontainer + $totalKontainerPPN;
 
         $totalJasa = $this->jasa($tagihanJasa, $ppn, $countKontainer);
-        $totalPpjk =  $this->ppjk($tagihanPpjk, $nominalPpjk);
+        $totalPpjk =  $this->ppjk($tagihanPpjk, $nominalPpjk, $ppn);
         $totalLainArray = $this->lain($tagihanLain, $ppn); 
         $totalLain = $totalLainArray['total'] - $tarifdp;
 
 
         return [
-            'total_jasa_cont_ppjk' => 100,
-            'total_lain2_ppn' => 150,
-            'total_ppn' => 200,
-            'total_jasa_angkutan' => 300,
-            'total_lain_non_ppn' => 500,
-            'grand_total' => 600,
+            'total_jasa_cont_ppjk' => $totalKontainer + $totalPpjk['total_non_ppn'],
+            'total_lain2_ppn' => $totalLainArray['total_ppn'],
+            'total_ppn' => $totalKontainerPPN + $totalJasa['total_ppn'] + $totalLainArray['total_ppn'] + $totalPpjk['total_ppn'] ,
+            'total_jasa_angkutan' => $totalJasa['total_non_ppn'],
+            'total_lain_non_ppn' => $totalLainArray['total_non_ppn'],
+            'grand_total' => $grandTotalKontainer + $totalJasa['total'] + $totalPpjk['total'] + $totalLain,
         ];
     }
 
@@ -249,12 +248,21 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     //     return $harga;
     // }
 
-    private function ppjk($ppjk,$tarif){
+    private function ppjk($ppjk,$tarif,$ppn){
         $calculatePpjk = 0;
+        $grandTotalPpn = 0;
+        $totalNotPpn = 0;
+
         $collect = collect($ppjk);
         $count = $collect->count();
-        $calculatePpjk = $tarif * $count;
-        return $calculatePpjk;
+        $totalNotPpn = $tarif * $count;
+        $grandTotalPpn = $tarif * $count * ($ppn / 100);
+        $calculatePpjk = $totalNotPpn + $grandTotalPpn;
+        return [
+            'total_ppn' => $grandTotalPpn,
+            'total_non_ppn' => $totalNotPpn,
+            'total' => $calculatePpjk,
+        ];
     }
 
     // private function coo($coo,$idBukuOrder){

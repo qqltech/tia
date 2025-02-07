@@ -1,3 +1,5 @@
+<!-- TGL BACKUP 6 Februari 2025 -->
+
 @php
 $req = app()->request;
 
@@ -70,9 +72,6 @@ $temp = ' sebelas';
 
   $unixTime2 = strtotime($n->tanggal_out);
   $tanggal_out = date("d/m/Y", $unixTime2);
-  $countNo = 1;
-
-
   @endphp
 
   <!DOCTYPE html>
@@ -235,8 +234,8 @@ $temp = ' sebelas';
       td,
       th {
         /* border: 0.5px solid black; */
-        /*  padding-top: 0px;  */
-
+       /*  padding-top: 0px;  */
+       
       }
 
       tr {
@@ -245,7 +244,7 @@ $temp = ' sebelas';
 
       table {
         table-layout: fixed;
-        font-size: 11px;
+        font-size: 12px;
         /* font-family: 'Courier New', monospace; */
         font-family: sans-serif;
         /* font-family: monospace; */
@@ -270,7 +269,7 @@ $temp = ' sebelas';
           <td colspan="2" style="border: 0.5px solid black;">
             <table style="width:99%;font-size:11px">
               <tr>
-                <td style="width: 20%; ">No. SPK</td>
+                <td style="width: 20%; ">Order Angk.</td>
                 <td style="width: 4%">:</td>
                 <td style="width: 30%; border: none; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
                 <td style="width: 9%;"></td>
@@ -344,74 +343,89 @@ $temp = ' sebelas';
           <td colspan="3" style="border: 0.5px solid black; ">
             <table>
               <tr>
-                <td style="width: 15%; text-align: left;">Sangu&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;Rp.
-                  {{number_format($n->sangu, 0, ',', '.')}}</td>
+                <td style="width: 20%;"></td>
+                <td style="width: 2%;">
+                  <span style="font-weight: normal;"></span>
+                </td>
+                <td style="width: 35%; border: none; "></td>
+                <td style="width: 15%;">Sangu&nbsp;&nbsp;&nbsp;:</td>
+                <td style="width: 20%; border: none;">Rp. {{number_format($n->sangu, 0, ',', '.')}}
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
-      </table>
-      </td>
-      </tr>
-      <tr>
-        <td colspan="3" style="border: 0.5px solid black; ">
-          <table>
-            <tr>
-              <td style="width: 100%;">TAMBAHAN BIAYA LAIN-LAIN&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;{{$n->catatan}}</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <td colspan="3"
-        style="border-left: 0.5px solid black; border-right: 0.5px solid black; border-bottom: 0.5px solid black; padding: 4px;">
-        <table cellspacing="0" cellpadding="3" border="0.5"
-          style="width: 100%; border-collapse: collapse; font-size: 10px;">
-          <tr>
-            <th style="width: 10%; text-align: center; border: 0.5px solid black;">No.</th>
-            <th style="width: 60%; text-align: center; border: 0.5px solid black;">Keterangan</th>
-            <th style="width: 30%; text-align: center; border: 0.5px solid black;">Jumlah</th>
-          </tr>
-          @foreach ($nospkd as $nd)
-          <tr>
-            <td style="width: 10%; text-align: center; border: 0.5px solid black;">{{$countNo++}}</td>
-            <td style="width: 60%; text-align: center; border: 0.5px solid black;">{{$nd->keterangan}}</td>
-            <td style="width: 30%; text-align: center; border: 0.5px solid black;">Rp {{number_format($nd->nominal,
-              0, ',', '.')}}</td>
-          </tr>
-          @endforeach
-          <tr>
-            <td colspan="4"
-              style="border-left: 0.5px solid black; border-bottom: 0.5px solid black; border-right: 0.5px solid black; text-align: right;">
-              Total :
-              <span style="padding: 4px;">Rp {{number_format($n->total_sangu, 0, ',', '.');}}</span>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3"
-              style="border-left: 0.5px solid black; border-bottom: 0.5px solid black; border-right: 0.5px solid black; font-weight: normal;">
-              Terbilang&nbsp;:
-              <span style="border-bottom: 0.5px solid black; font-weight: bold;" >{{ucfirst(trim(terbilang($n->total_sangu)))}}</span>
-            </td>
-          </tr>
-        </table>
-      </td>
-      <tr>
+        <tr>
+          <td colspan="3" style="border: 0.5px solid black; ">
+            <table>
+              <tr>
+                <td style="width: 25%;">LAIN-LAIN</td>
+                <td style="width: 4%;">
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="width: 70%;">{{$n->catatan}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="border: 0.5px solid black;">
+          </td>
+        <tr>
+          <td colspan="3"
+            style="border-left: 0.5px solid black; border-right: 0.5px solid black; border-bottom: 0.5px solid black; padding: 4px;">
+            <table cellspacing="0" cellpadding="3" border="0.5"
+              style="width: 100%; border-collapse: collapse; font-size: 10px;">
+              <tr>
+                <th style="width: 25%; text-align: center; border: 0.5px solid black;">Order</th>
+                <th style="width: 35%; text-align: center; border: 0.5px solid black;">Exp / Imp</th>
+                <th style="width: 20%; text-align: center; border: 0.5px solid black;">Keterangan</th>
+                <th style="width: 20%; text-align: center; border: 0.5px solid black;">Jumlah</th>
+              </tr>
+              @foreach ($nospkd as $nd)
+              <tr>
+                <td style="width: 25%; text-align: center; border: 0.5px solid black;">{{$n->no_buku_order}}</td>
+                <td style="width: 35%; text-align: center; border: 0.5px solid black;">
+                  {{$n->customer_nama_perusahaan}}
+                </td>
+                <td style="width: 20%; text-align: center; border: 0.5px solid black;">{{$nd->keterangan}}</td>
+                <td style="width: 20%; text-align: center; border: 0.5px solid black;">Rp {{number_format($nd->nominal,
+                  0, ',', '.')}}</td>
+              </tr>
+              @endforeach
+              <tr>
+                <td colspan="4"
+                  style="border-left: 0.5px solid black; border-bottom: 0.5px solid black; border-right: 0.5px solid black; text-align: right;">
+                  Total :
+                  <span style="padding: 4px;">Rp {{number_format($n->total_sangu, 0, ',', '.');}}</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        </tr>
+        <tr>
         <td colspan="4">
           <table style="width: 100%; font-size: 11px;">
-            <tr>
-              <td>Mengetahui,</td>
+              <span style=" font-weight:600; font-size: 11px;">Terbilang</span>
+              <br>
+              <span style="width: 100%; font-size: 11px;"># {{ucfirst(trim(terbilang($n->total_sangu)))}} #</span>
+            <tr style="height:2px">
+              <td></td>
             </tr>
             <tr>
-              <td style="width: 5%;">Admin / Kasir</td>
-              <td style="width: 5%; padding-left: 35px;">Sopir</td>
+              <td style="width: 5%; text-align: center;">Admin / Kasir</td>
+              <td style="width: 5%; text-align: center;">Sopir</td>
               <td style="width: 5%; text-align: center;">Pengebon,</td>
             </tr>
             <tr>
               <td></td>
             </tr>
             <tr>
-              <td style="width: 5%; padding-left: 6px;">
+              <td style="text-align: center; width: 5%;">
                 (Kusmiati)
               </td>
-              <td style="padding-left: 8px; width: 5%;">
+              <td style="text-align: center; width: 5%;">
                 ({{$n->supir_nama}})
               </td>
               <td style="text-align: center; width: 5%;">
@@ -422,15 +436,15 @@ $temp = ' sebelas';
               <td></td>
             </tr>
           </table>
-      <tr style="width: 100%; font-size: 10px;">
-        <td style="width:100%; font-weight: bold; border-bottom: 0.5px solid black; white-space: nowrap;">Dicetak pada
-          tgl : {{$currentDate}} jam {{$currentTime}} Operator : DEWI-PC # dewi</td>
-        <td style=" border-bottom: 0.5px solid black; "></td>
-      </tr>
-      </td>
-      </tr>
+            <tr style="width: 100%; font-size: 10px;">
+              <td style="width:100%; font-weight: bold; border-bottom: 0.5px solid black; white-space: nowrap;">Dicetak pada
+                tgl : {{$currentDate}} jam {{$currentTime}} Operator : DEWI-PC # dewi</td>
+              <td style=" border-bottom: 0.5px solid black; "></td>
+            </tr>
+        </td>
+        </tr>
       </table>
-
+      
     </section>
   </body>
 

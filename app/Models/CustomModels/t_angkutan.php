@@ -120,7 +120,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             'tbodn.id as buku_order_detail_id',
             'tbodn.t_buku_order_id',
             'tbo.pelabuhan_id',
-            'tbodn.no_prefix', 'tbodn.no_suffix',
+            'tbodn.no_prefix', 'tbodn.no_suffix','tbodn.depo as depo',
             // 'tsa.*','tsa.trip_id as trip', 'tsa.catatan as spk_catatan',
             'mg.deskripsi as nama_pelabuhan',
             // 'mg2.deskripsi as head_desc', 'mg3.deskripsi as trip_desc',
@@ -202,13 +202,13 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
                     ELSE NULL
                 END AS id
             "),
-            \DB::raw("
-                CASE 
-                    WHEN tsa2.no_spk IS NULL THEN tsa.depo
-                    WHEN tsa.no_spk IS NULL THEN tsa2.depo
-                    ELSE NULL
-                END AS depo
-            "),
+            // \DB::raw("
+            //     CASE 
+            //         WHEN tsa2.no_spk IS NULL THEN tsa.depo
+            //         WHEN tsa.no_spk IS NULL THEN tsa2.depo
+            //         ELSE NULL
+            //     END AS depo
+            // "),
             \DB::raw("
                 CASE 
                     WHEN tsa2.no_spk IS NULL THEN tsa.sektor1
@@ -237,17 +237,19 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
                     ELSE NULL
                 END AS total_sangu
             "),
-            \DB::raw("
-                CASE 
-                    WHEN tsa2.no_spk IS NULL AND tsa.no_spk IS NULL THEN NULL
-                    ELSE $nama_angkutan_tia->id
-                END AS m_supplier_id
-            "),
+            // \DB::raw("
+            //     CASE 
+            //         WHEN tsa2.no_spk IS NULL AND tsa.no_spk IS NULL THEN NULL
+            //         ELSE $nama_angkutan_tia->id
+            //     END AS m_supplier_id
+            // "),
         )
         ->where('tbo.id', $id)
         ->where(function($query) {
             $query->where('tsa.status', 'APPROVED')
-                ->orWhereNull('tsa.status');
+                ->orWhereNull('tsa.status')
+                ->orWhere('tsa2.status', 'APPROVED')
+                ->orWhereNull('tsa2.status');
         })
         ->get();
 

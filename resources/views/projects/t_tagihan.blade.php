@@ -262,11 +262,12 @@
   </button>
 
       <span>Total Jasa Cont + PPJK = {{ formatCurrency(values.total_jasa_cont_ppjk) || 0 }}</span>
-      <span>Total Lain2 PPN = {{ formatCurrency(values.total_lain2_ppn) || 0 }}</span>
+      <span>Total Lain2 (PPN) = {{ formatCurrency(values.total_lain2_ppn) || 0 }}</span>
       <span>Total PPN = {{ formatCurrency(values.total_ppn) || 0}}</span>
-      <span>Total Jasa Tia = {{ formatCurrency(values.total_jasa_angkutan) || 0 }}</span>
-      <span>Total Total Lain2 = {{ formatCurrency(values.total_lain_non_ppn) || 0 }} </span>
+      <span>Total Jasa Tia (ANGK) = {{ formatCurrency(values.total_jasa_angkutan) || 0 }}</span>
+      <span>Total Total Lain2 (NON PPN) = {{ formatCurrency(values.total_lain_non_ppn) || 0 }} </span>
       <span>Total Grand Total = {{ formatCurrency(values.grand_total) || 0 }} </span>
+      <span>Tarif Dp= {{ formatCurrency(values.tarif_dp) || 0 }} </span>
     </div>
 
 
@@ -791,7 +792,7 @@
               {{ i + 1 }}.
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldSelect :bind="{ disabled: !actionText, clearable:false }" class="w-full py-2 !mt-0"
+              <FieldSelect :bind="{ disabled: true, clearable:false, readonly:true }" class="w-full py-2 !mt-0"
                 :value="itemAju.m_customer_id" @input="v=>itemAju.m_customer_id=v"
                 :errorText="formErrors.m_customer_id?'failed':''" :hints="formErrors.m_customer_id" valueField="id"
                 displayField="nama_perusahaan" :api="{          

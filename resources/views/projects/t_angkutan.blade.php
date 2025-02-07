@@ -152,7 +152,7 @@
           Add to List
         </button>
 
-    <div style="overflow-x: auto; width: 1100px; border: 1px solid #CACACA;">
+    <div style="overflow-x: auto; width: 100%; border: 1px solid #CACACA;">
       <table class="w-[230%] table-auto border border-[#CACACA]">
         <thead>
           <tr class="border">
