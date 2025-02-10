@@ -30,7 +30,7 @@ class tbukuorder extends Migration
             $table->time('jam_closing_cont')->nullable();
             $table->string('no_bl',50)->nullable()->default('-');
             $table->date('tanggal_bl')->nullable();
-            $table->string('no_invoice',50)->nullable()->default('-');
+            $table->string('no_invoice',250)->nullable()->default('-')->change();
             $table->date('tanggal_invoice')->nullable();
             $table->date('tanggal_pengkont')->nullable(); 
             $table->date('tanggal_pemasukan')->nullable();

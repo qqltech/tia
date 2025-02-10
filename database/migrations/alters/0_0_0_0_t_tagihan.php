@@ -27,6 +27,7 @@ class ttagihan extends Migration
             // $table->decimal('total_lain2_ppn',18,4)->nullable();
             // $table->decimal('total_jasa_angkutan',18,4)->nullable();
             // $table->decimal('total_lain_non_ppn',18,4)->nullable();
+            // $table->date('tgl_nota')->nullable();
         });
     }
 }

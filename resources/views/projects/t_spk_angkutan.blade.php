@@ -191,9 +191,11 @@
           // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili' 
         },
         onsuccess: (response) => {
+          response.page = response.current_page
+          response.hasNext = response.has_next
           return response;
         }
-      }" displayField="deskripsi" valueField="id" :bind="{ readonly: !actionText }" :value="data.head"
+      }" displayField="kode" valueField="id" :bind="{ readonly: !actionText }" :value="data.head"
         @input="(v)=>data.head=v" @update:valueFull="(response)=>{
         $log(response);
       }" :errorText="formErrors.head?'failed':''" class="w-full !mt-3" :hints="formErrors.head" placeholder="Head"
@@ -300,7 +302,7 @@
     <div>
       <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.trip_id"
         @input="v=>data.trip_id=v" :errorText="formErrors.trip_id?'failed':''" :hints="formErrors.trip" valueField="id"
-        displayField="deskripsi" :api="{
+        displayField="kode" :api="{
               url: `${store.server.url_backend}/operation/m_general`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -428,7 +430,7 @@
       <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
         :value="data.nama_customer" @input="v=>data.nama_customer=v"
         :errorText="formErrors.nama_customer?'failed':''" :hints="formErrors.nama_customer" valueField="id"
-        displayField="nama_perusahaan" :api="{
+        displayField="kode" :api="{
               url: `${store.server.url_backend}/operation/m_customer`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -580,7 +582,7 @@
       <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
         :value="data.nama_customer_2" @input="v=>data.nama_customer_2=v"
         :errorText="formErrors.nama_customer_2?'failed':''" :hints="formErrors.nama_customer_2" valueField="id"
-        displayField="nama_perusahaan" :api="{
+        displayField="kode" :api="{
               url: `${store.server.url_backend}/operation/m_customer`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {

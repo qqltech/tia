@@ -68,6 +68,11 @@
         placeholder="Masukkan Tanggal" :check="false" type="date" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_nota"
+        :errorText="formErrors.tgl_nota?'failed':''" @input="v=>values.tgl_nota=v" :hints="formErrors.tgl_nota"
+        placeholder="Masukkan Tanggal Nota" :check="false" type="date" />
+    </div>
+    <div>
       <FieldPopup label="No. Buku Order" :bind="{ readonly: !actionText , clearable: true }" class="w-full !mt-3"
         valueField="id" displayField="no_buku_order" :value="values.no_buku_order" @input="(v)=> values.no_buku_order=v"
         @update:valueFull="buku" :api="{

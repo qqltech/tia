@@ -26,6 +26,7 @@ class ttagihan extends Migration
             // $table->decimal('tarif_coo',18,4);
             // $table->decimal('tarif_ppjk',18,4);
             $table->decimal('grand_total',18,4)->nullable();
+            $table->date('tgl_nota')->nullable();
             
             $table->text('catatan')->nullable();
             $table->integer('creator_id')->nullable();

@@ -30,6 +30,18 @@ const values = reactive({
       is_active : true
 })
 
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+const handleKeyDown = (event) => {
+  if (event?.ctrlKey && event?.key === 's' && actionText.value ) {
+    event.preventDefault();
+    onSave();
+  }
+}
+
+
 onBeforeMount(async () => {
   // tampilkan default company dengan store user comp.nama
   values.company = store.user.data?.company

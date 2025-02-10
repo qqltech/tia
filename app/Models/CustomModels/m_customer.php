@@ -37,9 +37,16 @@ class m_customer extends \App\Models\BasicModels\m_customer
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
-        $kode = trim($arrayData["kode"]);
-        $result = $model->where("kode", $kode)->first();
 
+        $kode = trim($arrayData["kode"]);
+        $kodeBeforeUpdate = trim($model->kode);
+        $result = $model->where("kode", $kode)->first();
+        // trigger_error(json_encode($kode));
+        if($kode != $kodeBeforeUpdate){
+            if ($result) {
+                return ["errors" => ["Kode Customer sudah dipakai!"]];
+            }
+        }
         // if ($result) {
         //     return ["errors" => ["Kode Customer sudah dipakai!"]];
         // }

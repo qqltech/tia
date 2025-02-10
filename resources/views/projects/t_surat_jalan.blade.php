@@ -107,7 +107,7 @@
               $log(dt)
               values.tanggal = dt.tgl
               values.tipe_surat_jalan = dt.tipe_order
-              values.pelabuhan = dt['pelabuhan.deskripsi']
+              values.pelabuhan = dt['pelabuhan.kode']
               values.kapal = dt.nama_kapal
               values.tipe_kontainer = dt.tipe_kontainer
             }" valueField="id" displayField="no_buku_order" :api="{
