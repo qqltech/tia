@@ -14,7 +14,7 @@ class t_surat_jalan extends \App\Models\BasicModels\t_surat_jalan
     }
 
     public $fileColumns = [
-        "foto_berkas",
+        "foto_berkas","foto_surat_jalan"
     ];
 
     public $createAdditionalData = ["creator_id" => "auth:id"];

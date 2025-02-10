@@ -20,6 +20,7 @@ class tangkutan extends Migration
             $table->date("tanggal")->nullable();
             $table->string("party")->nullable();
             $table->boolean('custom_stuple')->nullable()->default(0);
+            
             //penting
             $table->integer("creator_id")->nullable();
             $table->integer("last_editor_id")->nullable();

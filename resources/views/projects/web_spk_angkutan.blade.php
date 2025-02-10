@@ -267,7 +267,7 @@ $temp = ' sebelas';
   </head>
 
   <body class="continuous_form">
-    <section class="sheet padding-3mm" style="padding-right: 25px;">
+    <section class="sheet padding-3mm" style="padding-right: 30px;">
       <!-- <pre>{{var_dump($nospk)}}</pre> -->
       <table style="width:100%;">
         &nbsp;
@@ -290,7 +290,7 @@ $temp = ' sebelas';
                 <td style="width: 3%;">
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 20%; border-bottom: 0.5px dashed black;">{{$n->waktu_out_deskripsi}}/{{$n->waktu_in_deskripsi}}</td>
+                <td style="width: 20%; border-bottom: 0.5px dashed black;">{{$n->waktu_out_deskripsi??'-'}} / {{$n->waktu_in_deskripsi??'-'}}</td>
               </tr>
               <tr>
                 <td>HEAD</td>
@@ -306,7 +306,7 @@ $temp = ' sebelas';
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order}} - {{$n->customer_kode}}
+                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order}} / {{$n->customer_kode}}
                 </td>
               </tr>
               <tr>
@@ -323,7 +323,7 @@ $temp = ' sebelas';
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order2}} - {{$n->customer_kode2}}
+                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order2}} / {{$n->customer_kode2}}
                 </td>
               </tr>
               <tr>
@@ -419,7 +419,7 @@ $temp = ' sebelas';
             <td colspan="3"
               style="border-left: 0.5px solid black; border-bottom: 0.5px solid black; border-right: 0.5px solid black; font-weight: normal;">
               Terbilang&nbsp;:
-              <span style="border-bottom: 0.5px solid black; font-weight: bold;" >{{ucfirst(trim(terbilang($n->total_sangu)))}}</span>
+              <span style="border-bottom: 0.5px solid black; font-weight: bold;" >{{ucfirst(trim(terbilang($n->total_sangu)))}} rupiah</span>
             </td>
           </tr>
         </table>

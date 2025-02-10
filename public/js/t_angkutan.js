@@ -83,6 +83,7 @@ async function addDetail() {
                 t_spk_id: item['id'],
                 no_spk: item['no_spk_new'],
                 no_container: item['no_container'],
+                ukuran:item['ukuran_cont_id'],
                 sektor: item['sektor'],
                 tanggal_out: item['tanggal_out_new'],
                 waktu_out: item['waktu_out'],
@@ -100,7 +101,7 @@ async function addDetail() {
                 custom_stuple: values['custom_stuple'],
                 trip_desc: item['trip_desc']??'-',
                 trip: item['trip'],
-                head_desc: item['head_desc']??'-',
+                head_desc: item['head_kode']??'-',
                 head: item['head'],
                 catatan: item['spk_catatan']
             };
@@ -219,7 +220,7 @@ onBeforeMount(async () => {
       const dataURL = `${store.server.url_backend}/operation/${endpointApi}/${editedId}`;
       isRequesting.value = true;
 
-      const params = {transform: false, scopes: 'GetById'};
+      const params = {transform: false, scopes: 'GetById', getCodeCustomer: true};
       const fixedParams = new URLSearchParams(params);
       const res = await fetch(dataURL + '?' + fixedParams, {
         headers: {
@@ -232,8 +233,8 @@ onBeforeMount(async () => {
       const resultJson = await res.json();
       initialValues = resultJson.data;
       initialValues.pph = initialValues.pph == 1 ? true : false;
-
-      console.log(initialValues.t_angkutan_d,'t_angkutan_d')
+      initialValues.code_customer = initialValues.kode_cust;
+      console.log(initialValues)
 
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;
@@ -241,6 +242,7 @@ onBeforeMount(async () => {
       
       // Menambahkan Data Ke Array
       initialValues.t_angkutan_d?.forEach((item) => {
+        console.log(initialValues.t_angkutan_d,'aaaaaa')
         if (actionText.value?.toLowerCase() === 'copy') {
           delete item.uid;
           initialValues.status = 'DRAFT'
@@ -249,7 +251,8 @@ onBeforeMount(async () => {
         
         item['custom_stuple'] = initialValues['custom_stuple']
         item['no_spk'] = item['t_spk.no_spk']
-        item['head_desc'] = item['head.deskripsi']??'-'
+        item['ukuran'] = item['ukuran.id']
+        item['head_desc'] = item['head.kode']??'-'
         item['trip_desc'] = item['trip.deskripsi']??'-'
         item['staple'] = item['staple'] == null ? '-' : item['staple']
         detailArr.value = [item, ...detailArr.value]
@@ -537,7 +540,8 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.no_draft, this.no_angkutan, t_buku_order.no_buku_order, this.party, this.status'
+      searchfield: 'this.no_draft, this.no_angkutan, t_buku_order.no_buku_order, this.party, this.status',
+      getCodeCustomer: true
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -579,6 +583,17 @@ const landing = reactive({
   {
     headerName:'No. Buku Order',
     field: 't_buku_order.no_buku_order',
+    filter: true,
+    sortable: true,
+    flex:1,
+    filter: 'ColFilter',
+    resizable: true,
+    wrapText:true,
+    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+  },
+  {
+    headerName:'Kode Customer',
+    field: 'kode_cust',
     filter: true,
     sortable: true,
     flex:1,

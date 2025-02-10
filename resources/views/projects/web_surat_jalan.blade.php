@@ -17,7 +17,8 @@ left join \"set\".m_general mg2 on tbodn.jenis = mg2.id
 where tsj.id = ? and tsa.status = 'APPROVED'",[$req['id']]);*/
 
 $nospk = \DB::select("SELECT tsj.*, tsj.depo as depo_tsj, UPPER(mg3.deskripsi) as jenis_sj_deskripsi, tbo.*, mc.*,
-tbodn.*, mg2.deskripsi as deskripsi_jenis, mg2.deskripsi2 as singkatan_jenis
+tbodn.*, mg2.deskripsi as deskripsi_jenis, mg2.deskripsi2 as singkatan_jenis, tsj.nw as tsj_nw, tsj.gw as tsj_gw, tsj.no_seal as tsj_no_seal, tsj.tare as tsj_tare,
+tsj.lokasi_stuffing as tsj_lokasi_stuffing
 FROM t_surat_jalan tsj
 LEFT JOIN t_buku_order tbo ON tsj.t_buku_order_id = tbo.id
 LEFT JOIN m_customer mc ON tbo.m_customer_id = mc.id
@@ -47,16 +48,16 @@ else if ($n->tipe_surat_jalan == "EKSPORT"){
 $cekImp = "EXP";
 }
 else if ($n->tipe_surat_jalan == "EKSPORT S"){
-$cekImp = "EXP";
+$cekImp = "EXPS";
 }
 else if ($n->tipe_surat_jalan == "LOKAL"){
-$cekImp = "OL";
+$cekImp = "LOCAL";
 }
 else if ($n->tipe_surat_jalan == "OL"){
 $cekImp = "OL";
 }
 else if ($n->tipe_surat_jalan == "OLS"){
-$cekImp = "OL";
+$cekImp = "OLS";
 }
 
 
@@ -331,9 +332,9 @@ $jeniskontainer = "SPC";
         </tr>
         <tr>
           <td>Alamat</td>
-          <td colspan="2">
+          <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="font-weight: bold;">&nbsp;&nbsp;{{$n->alamat}}</span>
+            <span style="font-weight: bold; border-bottom: 0.5px solid black; padding-right: 90px;">&nbsp;&nbsp;{{$n->tsj_lokasi_stuffing}}</span>
           </td>
         </tr>
         <td>
@@ -344,7 +345,7 @@ $jeniskontainer = "SPC";
           <td>Nama Angk.</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->angkutan}}</span>
+            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;"></span>
           </td>
         </tr>
         <tr>
@@ -417,7 +418,9 @@ $jeniskontainer = "SPC";
           <td>No. Seal</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;"></span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+              {{$n->tsj_no_seal}}
+            </span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
         </tr>
@@ -437,7 +440,7 @@ $jeniskontainer = "SPC";
           <td colspan="3" style="border-top: 0.5px solid black">
             <span style="font-weight: normal;">:</span>
             <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
-              {{$n->nw}}
+              {{$n->tsj_nw}}
             </span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
@@ -447,7 +450,7 @@ $jeniskontainer = "SPC";
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
             <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
-              {{$n->gw}}
+              {{$n->tsj_gw}}
             </span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
@@ -456,7 +459,9 @@ $jeniskontainer = "SPC";
           <td style="border-left: 0.5px solid black;">TARE</td>
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;"></span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+              {{$n->tsj_tare}}
+            </span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
         </tr>

@@ -15,6 +15,7 @@ class tangkutand extends Migration
             $table->integer('t_angkutan_id')->comment('{"fk":"t_angkutan.id"}')->nullable();
             $table->integer('t_spk_id')->comment('{"src":"t_spk_angkutan.id"}')->nullable();
             $table->integer('depo')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->integer('ukuran')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('sektor')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('head')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('trip')->comment('{"src":"set.m_general.id"}')->nullable();

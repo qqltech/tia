@@ -81,14 +81,17 @@
           :hints="formErrors.no_surat_jalan" placeholder="No. SJ" :check="false" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ disabled: !actionText  || actionEditBerkas == 'EditBerkas' ,readonly: !actionText  ||  actionEditBerkas == 'EditBerkas'}" :value="values.tanggal"
-          :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v" :hints="formErrors.tanggal"
-          placeholder="Tanggal" :check="false" type="date" />
+        <FieldX class="!mt-0"
+          :bind="{ disabled: !actionText  || actionEditBerkas == 'EditBerkas' ,readonly: !actionText  ||  actionEditBerkas == 'EditBerkas'}"
+          :value="values.tanggal" :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v"
+          :hints="formErrors.tanggal" placeholder="Tanggal" :check="false" type="date" />
       </div>
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ disabled: !actionText || actionEditBerkas == 'EditBerkas' ,readonly: !actionText || actionEditBerkas == 'EditBerkas'}" :value="values.tanggal_berangkat"
-          :errorText="formErrors.tanggal_berangkat?'failed':''" @input="v=>values.tanggal_berangkat=v"
-          :hints="formErrors.tanggal_berangkat" placeholder="Tanggal Berangkat" :check="false" type="date" />
+        <FieldX class="!mt-0"
+          :bind="{ disabled: !actionText || actionEditBerkas == 'EditBerkas' ,readonly: !actionText || actionEditBerkas == 'EditBerkas'}"
+          :value="values.tanggal_berangkat" :errorText="formErrors.tanggal_berangkat?'failed':''"
+          @input="v=>values.tanggal_berangkat=v" :hints="formErrors.tanggal_berangkat" placeholder="Tanggal Berangkat"
+          :check="false" type="date" />
       </div>
       <div class="w-full !mt-3">
         <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="values.t_buku_order_id" @input="v=>{
@@ -236,11 +239,31 @@
         <FieldX class="!mt-0" :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
           :value="values.lokasi_stuffing" @input="v=>values.lokasi_stuffing=v"
           :errorText="formErrors.lokasi_stuffing?'failed':''" :hints="formErrors.lokasi_stuffing"
-          placeholder="Lokasi Stuffing" :check="false" />
+          placeholder="Lokasi Stuffing" type="textarea" :check="false" />
       </div>
       <div class="w-full !mt-3">
         <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.depo" @input="v=>values.depo=v"
           :errorText="formErrors.depo?'failed':''" :hints="formErrors.depo" placeholder="Depo" :check="false" />
+      </div>
+      <div class="w-full !mt-3">
+        <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.nw" @input="v=>values.nw=v"
+          :errorText="formErrors.nw?'failed':''" :hints="formErrors.nw" placeholder="Masukkan NW" placeholder="NW"
+          :check="false" />
+      </div>
+      <div class="w-full !mt-3">
+        <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.gw" @input="v=>values.gw=v"
+          :errorText="formErrors.gw?'failed':''" :hints="formErrors.gw" placeholder="Masukkan GW" placeholder="GW"
+          :check="false" />
+      </div>
+      <div class="w-full !mt-3">
+        <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.no_seal" @input="v=>values.no_seal=v"
+          :errorText="formErrors.no_seal?'failed':''" :hints="formErrors.no_seal" placeholder="Masukkan No. Seal"
+          placeholder="No. Seal" :check="false" />
+      </div>
+      <div class="w-full !mt-3">
+        <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tare" @input="v=>values.tare=v"
+          :errorText="formErrors.tare?'failed':''" :hints="formErrors.tare" placeholder="Masukkan TARE"
+          placeholder="TARE" :check="false" />
       </div>
       <div class="w-full !mt-3">
         <FieldUpload :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
@@ -257,6 +280,23 @@
             },
            }" :hints="formErrors.foto_berkas" :errorText="formErrors.foto_berkas?'failed':''" label="Foto Berkas"
           placeholder="Foto Berkas" accept="image/*" :check="false" />
+      </div>
+      <div class="w-full !mt-3">
+        <FieldUpload :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
+          class="!mt-0" :value="values.foto_surat_jalan" @input="(v)=>values.foto_surat_jalan=v" :maxSize="10"
+          :reducerDisplay="val=>!val?null:val.split(':::')[val.split(':::').length-1]" :api="{
+            url: `${store.server.url_backend}/operation${endpointApi}/upload`,
+            headers: { Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: { field: 'foto_surat_jalan' },
+            onsuccess: response=> {
+              return response
+            },
+            onerror:(error)=>{
+              swal.fire({ icon: 'error', text: error });
+            },
+           }" :hints="formErrors.foto_surat_jalan" :errorText="formErrors.foto_surat_jalan?'failed':''"
+          label="Foto Berkas" placeholder="Upload file (jpg, png, pdf, xls, doc, etc.)"
+          accept=".jpg,.jpeg,.png,.gif,.pdf,.xls,.xlsx,.doc,.docx,.csv" :check="false" />
       </div>
       <div class="w-full !mt-3">
         <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.catatan"

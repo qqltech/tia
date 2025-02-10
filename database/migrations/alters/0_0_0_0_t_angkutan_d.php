@@ -40,6 +40,7 @@ class tangkutand extends Migration
             // $table->bigInteger('waktu_out')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->bigInteger('waktu_in')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->integer('angkutan_pelabuhan')->comment('{"src":"m_supplier.id"}')->nullable();
+            // $table->integer('ukuran')->comment('{"src":"set.m_general.id"}')->nullable();
         });
     }
 }

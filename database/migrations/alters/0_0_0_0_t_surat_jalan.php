@@ -26,6 +26,11 @@ class tsuratjalan extends Migration
             // $table->integer('jenis_sj')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->boolean('is_edit_berkas')->nullable()->default(0);
             // $table->date('tanggal')->nullable()->change();
+            // $table->string('nw')->nullable();
+            // $table->string('gw')->nullable();
+            // $table->string('no_seal')->nullable();
+            // $table->string('tare')->nullable();
+            // $table->string('foto_surat_jalan')->nullable();
         });
     }
 }

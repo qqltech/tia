@@ -75,6 +75,7 @@
         :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v" @update:valueFull="(v)=>{
               detailArr = []
               values['custom_stuple'] = v['m_customer.custom_stuple']
+              values.code_customer = v['m_customer.kode']
             }" :api="{
               url: `${store.server.url_backend}/operation/t_buku_order`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -106,6 +107,11 @@
               cellClass: ['border-r', '!border-gray-200', 'justify-center']
             }
             ]" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="values.code_customer"
+        :errorText="formErrors.code_customer?'failed':''" @input="v=>values.code_customer=v" :hints="formErrors.code_customer" :check="false"
+        label="Kode Customer" placeholder="Kode Customer" />
     </div>
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="values.party"
@@ -167,6 +173,10 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
               No. Container
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
+              Ukuran
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[25%] border bg-[#f8f8f8] border-[#CACACA]">
@@ -262,6 +272,27 @@
                 class="w-full !mt-3" :value="item.no_container" :errorText="formErrors.no_container?'failed':''"
                 @input="v=>item.no_container=v" :hints="formErrors.no_container" :check="false" label=""
                 placeholder="" />
+            </td>
+            <td class="p-2 border border-[#CACACA]" style="min-width: 150px !important;">
+              <FieldSelect
+                :bind="{ disabled:true, readonly:true }"
+                class="w-full !mt-3" :value="item.ukuran" @input="v=>{
+                    if(v){
+                      item.ukuran=v
+                    }else{
+                      item.ukuran=null
+                    }
+                  }" :errorText="formErrors.ukuran?'failed':''" :hints="formErrors.ukuran" valueField="id"
+                displayField="deskripsi" :api="{
+                      url: `${store.server.url_backend}/operation/m_general`,
+                      headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                      params: {
+                        simplest:true,
+                        transform:false,
+                        join:false,
+                        where:`this.is_active=true and this.group='UKURAN KONTAINER'`
+                      }
+                  }" placeholder="" label="" :check="false" />
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 150px !important;">
               <FieldSelect
@@ -405,7 +436,8 @@
                       headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                       params: {
                         transform:false,
-                        where:`this.is_active=true and lower(jenis.deskripsi)='angkutan'`
+                        where:`this.is_active=true and lower(jenis.deskripsi)='angkutan'`,
+                        //searchfield:'this.id, this.kode'
                       }
                   }" placeholder="" label="" :check="false" />
             </td>

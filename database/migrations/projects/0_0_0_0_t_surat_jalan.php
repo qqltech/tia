@@ -15,8 +15,6 @@ class tsuratjalan extends Migration
 
             $table->string('no_draft',40)->nullable();
             $table->string('no_surat_jalan',40)->nullable();
-            
-            
             $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
             $table->date('tanggal')->nullable();
             $table->date('tanggal_berangkat');
@@ -29,10 +27,16 @@ class tsuratjalan extends Migration
             $table->string('kapal')->nullable();
             $table->text('catatan')->nullable();
             $table->string('foto_berkas')->nullable();
+            $table->string('foto_surat_jalan')->nullable();
             $table->integer('ukuran_kontainer')->nullable();
             $table->string('jenis_kontainer')->nullable();
             $table->integer('jenis_sj')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->boolean('is_edit_berkas')->nullable()->default(0);
+            $table->string('nw')->nullable();
+            $table->string('gw')->nullable();
+            $table->string('no_seal')->nullable();
+            $table->string('tare')->nullable();
+
             //penting
             $table->integer("creator_id")->nullable();
             $table->integer("last_editor_id")->nullable();

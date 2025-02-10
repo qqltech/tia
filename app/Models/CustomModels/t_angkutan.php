@@ -18,14 +18,25 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
     public $createAdditionalData = ["creator_id" => "auth:id"];
     public $updateAdditionalData = ["last_editor_id" => "auth:id"];
 
-    // public function transformRowData(array $row)
-    // {
-    //     $party = $this->custom_Party($row["t_buku_order_id"]);
-    //     $newData = [
-    //         "party_fly" => $party,
-    //     ];
-    //     return array_merge($row, $newData);
-    // }
+    public function transformRowData(array $row)
+    {
+        // $party = $this->custom_Party($row["t_buku_order_id"]);
+        // $newData = [
+        //     "party_fly" => $party,
+        // ];
+
+        $req = app()->request;
+        if($req->getCodeCustomer){
+            
+            $id_cust = $row['t_buku_order.m_customer_id'];
+            
+            $result = m_customer::where('id',$id_cust)->first();
+            // trigger_error(json_encode($result));
+            $row['kode_cust']= $result->kode;
+        }
+
+        return array_merge($row,[]);
+    }
 
     // private function custom_Party($id)
     // {
@@ -114,6 +125,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
         ->leftJoin('set.m_general as mg3','mg3.id', '=', 'tsa.trip_id')
         ->leftJoin('set.m_general as mg4','mg4.id', '=', 'tsa2.head')
         ->leftJoin('set.m_general as mg5','mg5.id', '=', 'tsa2.trip_id')
+        ->leftJoin('set.m_general as mg6','mg6.id', '=', 'tbodn.ukuran')
         ->select(
             'tbo.id as buku_order_id',
             'tbo.nama_kapal','tbo.tanggal_pengkont',
@@ -121,6 +133,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             'tbodn.t_buku_order_id',
             'tbo.pelabuhan_id',
             'tbodn.no_prefix', 'tbodn.no_suffix','tbodn.depo as depo',
+            'tbodn.ukuran as ukuran_cont_id',
             // 'tsa.*','tsa.trip_id as trip', 'tsa.catatan as spk_catatan',
             'mg.deskripsi as nama_pelabuhan',
             // 'mg2.deskripsi as head_desc', 'mg3.deskripsi as trip_desc',
@@ -135,10 +148,10 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             // Memilih head_desc berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
             \DB::raw("
                 CASE 
-                    WHEN tsa.no_spk IS NOT NULL THEN mg2.deskripsi 
-                    WHEN tsa2.no_spk IS NOT NULL THEN mg4.deskripsi 
+                    WHEN tsa.no_spk IS NOT NULL THEN mg2.kode 
+                    WHEN tsa2.no_spk IS NOT NULL THEN mg4.kode 
                     ELSE NULL
-                END AS head_desc
+                END AS head_kode
             "),
             // Memilih trip_desc berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
             \DB::raw("

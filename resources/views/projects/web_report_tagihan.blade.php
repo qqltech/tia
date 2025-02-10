@@ -200,6 +200,9 @@
      <td style="text-align: left; padding: 10px; width: 60%;font-size: 7px; font-style:italic; font-weight:bold;text-decoration: underline; ">
      IMP-1 Dicetak pada tanggal:15/05/2024 jam 13:49:50 - Opr:UMI#25
      </td>
+     <td style="text-align: right; padding: 10px; width: 35% ; font-size: 7px; ">
+      (Arie Sutandio)
+    </td>
   </tr>
 </table>  
 
@@ -241,18 +244,76 @@
   </tr>
 </table>
 
-<table border="1" cellspacing="0" cellpadding="10";>
+<table border="1" cellspacing="2" cellpadding="10" style="font-size: 10px; width: 80%;">
   <tr>
-    <td style="text-align: left;width: 20%;">DESCRIPTION</td>
-		<td style="text-align: left;width: 20%";><center>Qty</center></td>
-    <td style="text-align: left;width: 20%">Amount</td>
-		<td style="text-align: left;width: 20%" colspan="1"><center>Total</center></td>
+    <td style="text-align: left; width: 30%;">DESCRIPTION</td>
+    <td style="text-align: center; width: 10%;">Qty</td>
+    <td style="text-align: right; width: 30%;">Amount</td>
+    <td style="text-align: right; width: 30%;" colspan="1">Total</td>
     <td></td>
   </tr>
   <tr>
-    <td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px"> Biaya Angkutan (kwt) </td>
-    <td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px width: 20%;">1</td>
-		<td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px width: 20%";><center>Rp.1.550.000</center></td>
-    <td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px width: 20%";>Rp.1.550.000</td>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; text-align: left; font-style: italic; ">Biaya Angkutan (kwt)</td>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; text-align: center; font-style: italic; ">1</td>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; text-align: right;"> Rp. 1.550.000,00</td>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; text-align: right;  font-style: italic; ">Rp.1.550.000,00</td>
+    <td></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; width:50%; text-align: right; font-weight: Bold;" > TOTAL RP. 
+    </td>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; width:29.5%; text-align: right;">
+      13.899.473,00,00
+    </td>
+    <td style="left; text-align: right; width:15%">Mengetahui :</td>
+  </tr>
+</table>
+
+<table>
+  <tr> <td style="border-style: solid; border-width: 0px 1px 1px 1px; width:50%; text-align: right; font-weight: Bold;" >  Uang Muka Tanggal RP. 
+    </td>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; width:29.5%; text-align: right;">0,00</td>
+  </tr>
+</table>
+
+<table>
+  <tr> <td style="border-style: solid; border-width: 0px 1px 1px 1px; width:50%; text-align: right; font-weight: Bold;" >  KURANG - BAYAR RP. 
+    </td>
+    <td style="border-style: solid; border-width: 0px 1px 1px 1px; width:29.5%; text-align: right;">13.899.437,00</td>
+    <td style="left; text-align: right; width:15%">(...................)</td>
+  </tr>
+</table>
+
+<table>
+   <tr>
+     <td style="text-align: left; padding: 10px; width: 15% ; font-style:italic; ">
+      TERBILANG 
+      </td>
+     <td style="text-align: left; padding: 10px; width: 3% ; ">
+      : 
+     </td>
+     <td style="text-align: left; padding: 10px; width: 80% ; font-style:italic; font-weight:bold;text-decoration: underline; ">
+      # Tiga Belas Juta Delapan Ratus Sembilan Puluh Sembilan Ribu Empat Ratus Tiga Puluh Tujuh Rupiah #
+     </td> 
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td>
+      Pembayaran ditranferke Rek. : <br>
+      BCA.<br>
+      A/N : ARIE SUTANDIIO <br>
+      A/C : 187.099.1009
+    </td>
+  </tr>
+
+  <tr>
+     <td style="text-align: left; padding: 10px; width: 60%;font-size: 7px; font-style:italic; font-weight:bold; ">
+     IMP-1 Dicetak pada tanggal:15/05/2024 jam 13:49:50 - Opr:UMI#25
+    </td>
   </tr>
 </table>

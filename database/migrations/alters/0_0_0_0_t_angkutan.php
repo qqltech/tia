@@ -12,9 +12,10 @@ class tangkutan extends Migration
         Schema::table($this->tableName, function (Blueprint $table) {
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            // $table->dropColumn(['custom_stuple']);
+            // $table->dropColumn(['code_customer']);
             // $table->boolean('custom_stuple')->nullable()->default(0)->change();
             // $table->boolean('custom_stuple')->nullable()->default(0);
+            // $table->string('code_customer')->nullable();
         });
     }
 }
