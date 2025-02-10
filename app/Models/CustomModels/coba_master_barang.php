@@ -101,5 +101,57 @@ class coba_master_barang extends \App\Models\BasicModels\coba_master_barang
         }
     }
 
+    public function custom_calculateBarang($req)
+    {
+       $data = $req->input('data');
 
+       if (!$data) {
+            $data = \DB::table('coba_master_barang')->get()->toArray();
+       }
+
+       if (empty($data)) {
+        return [
+                'Barang tidak ada'
+            ];
+        }
+
+        $jumlahBarang = count($data);
+
+        $namaBarang = array_filter(array_column($data, 'nama_barang'));
+
+        $uniqueBarang = count(array_unique($namaBarang));
+
+        return [
+            'total barang' => $jumlahBarang,
+            'total barang unik' => $uniqueBarang
+        ];
+    }
+
+    public function custom_getBarangBySatuan($req)
+    {
+        $namaSatuan = ($req->input('nama_satuan'));
+
+        $barang = \DB::table('coba_master_barang')
+            ->join('coba_satuan', 'coba_satuan.id_barang', '=', 'coba_master_barang.id')
+            ->where('coba_satuan.nama_satuan', 'ILIKE', $namaSatuan) // Case-insensitive untuk PostgreSQL
+            ->select(
+                'coba_master_barang.nama_barang',
+                'coba_master_barang.img_url',
+                'coba_master_barang.qty',
+            )
+            ->get();
+
+        if ($barang->isEmpty()) {
+            return response()->json([
+                'message' => 'Barang dengan nama satuan tersebut tidak ditemukan',
+                'data' => []
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Berikut adalah barang yang memiliki nama satuan "' . $namaSatuan . '":',
+            'data' => $barang
+        ], 200);
+        // trigger_error(json_encode($data));
+    }  
 }

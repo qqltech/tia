@@ -65,7 +65,7 @@ onBeforeUnmount(()=>{
 })
 
 const handleKeyDown = (event) => {
-  if (event?.ctrlKey && event?.key === 's') {
+  if (event?.ctrlKey && event?.key === 's' && actionText.value) {
     event.preventDefault(); 
     onSave();
   }

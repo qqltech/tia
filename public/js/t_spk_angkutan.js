@@ -534,6 +534,7 @@ function onBack() {
 async function onSave() {
   // console.log(data, detailArr);
   // console.log('ini panjangggg', detailArr.length);
+
   const result = await swal.fire({
     icon: 'warning', text: 'Simpan data?', showDenyButton: true,
   });
@@ -541,6 +542,23 @@ async function onSave() {
   if (!result.isConfirmed) return;
 
   try {
+    let next = true
+    if(!data.waktu_out){
+      swal.fire({
+        icon: 'warning',
+        text: `Waktu Out harus diisi`
+      })
+      next = false
+      return
+    }
+    if(!data.waktu_in){
+      swal.fire({
+        icon: 'warning',
+        text: `Waktu In harus diisi`
+      })
+      next = false
+      return
+    }
 
 
     const isCreating = ['Create', 'Copy'].includes(actionText.value);

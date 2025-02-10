@@ -152,6 +152,13 @@ async function buku(no_buku_order) {
     values.total_amount = 0;
     values.grand_total_amount = 0;
     values.grand_total_nota_rampung = 0;
+    values.total_jasa_cont_ppjk=0;
+    values.total_lain2_ppn=0;
+    values.total_jasa_angkutan=0;
+    values.total_lain_non_ppn=0;
+    values.grand_total=0;
+    values.total_setelah_ppn=0;
+    values.total_ppn=0;
 
     return;
   }
@@ -550,7 +557,7 @@ const landing = reactive({
       title: "Cetak",
       class: 'bg-gray-600 text-light-100',
       click(row) {
-        window.open(`${store.server.url_backend}/web/surat_jalan?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
+        window.open(`${store.server.url_backend}/web/report_tagihan?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
       }
     },
     {
@@ -619,7 +626,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.modul, this.submodul, this.menu, this.path, this.icon, this.sequence, this.is_active'
+      searchfield: 'this.no_draft, this.no_tagihan, no_buku_order.no_buku_order, customer.nama_perusahaan, this.catatan'
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -691,20 +698,20 @@ const landing = reactive({
     wrapText: true,
     cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
-  {
-    headerName: 'No.Faktur Pajak',
-    field: 'no_faktur_pajak.no_faktur_pajak',
-    filter: true,
-    sortable: true,
-    flex: 1,
-    filter: 'ColFilter',
-    resizable: true,
-    wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
-  },
+  // {
+  //   headerName: 'No.Faktur Pajak',
+  //   field: 'no_faktur_pajak.no_faktur_pajak',
+  //   filter: true,
+  //   sortable: true,
+  //   flex: 1,
+  //   filter: 'ColFilter',
+  //   resizable: true,
+  //   wrapText: true,
+  //   cellClass: ['border-r', '!border-gray-200', 'justify-start']
+  // },
   {
     headerName: 'Total',
-    field: 'grand_total_amount',
+    field: 'grand_total',
     filter: true,
     sortable: true,
     flex: 1,
@@ -713,7 +720,7 @@ const landing = reactive({
     wrapText: true,
     cellClass: ['border-r', '!border-gray-200', 'justify-start'],
     valueFormatter: (params) => {
-      // Format the value as Rupiah
+
       if (params.value) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
       }

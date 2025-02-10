@@ -38,7 +38,7 @@ onBeforeUnmount(()=>{
 
 const handleKeyDown = (event) => {
   console.log(event)
-  if (event?.ctrlKey && event?.key === 's') {
+  if (event?.ctrlKey && event?.key === 's' && actionText.value) {
     event.preventDefault(); // Prevent the default behavior (e.g., saving the page)
     onSave();
   }
