@@ -46,6 +46,10 @@ const table = reactive({
             cellClass: ['justify-center', 'bg-gray-50', 'border-r', '!border-gray-200']
         },
         {
+            headerName: 'Business Unit', field: 'bu.nama', flex : 2, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+            sortable: true, filter: 'ColFilter'
+        },
+        {
             headerName: 'NIP', field: 'nip', flex : 2, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
             sortable: true, filter: 'ColFilter'
         },

@@ -3,11 +3,16 @@ $req = app()->request;
 
 $nospk = \DB::select("SELECT tsa.*,
 mg1.kode as chasis1_kode, mg2.kode as chasis2_kode, mg3.deskripsi as ukuran1_deskripsi,
-mk.nama as supir_nama,
+mk.nama as supir_nama, mk.nip as supir_nip,
 
 
 tbo.no_buku_order as no_buku_order,
 mcu.nama_perusahaan as customer_nama_perusahaan,
+mcu.kode as customer_kode,
+
+tbo2.no_buku_order as no_buku_order2,
+mcu2.nama_perusahaan as customer_nama_perusahaan2,
+mcu2.kode as customer_kode2,
 
 
 
@@ -24,6 +29,10 @@ left join \"set\".m_kary mk on tsa.supir = mk.id
 left join t_buku_order_d_npwp tbod on tsa.t_detail_npwp_container_1_id = tbod.id
 left join t_buku_order tbo on tbod.t_buku_order_id = tbo.id
 left join m_customer mcu on tbo.m_customer_id = mcu.id
+
+left join t_buku_order_d_npwp tbod2 on tsa.t_detail_npwp_container_2_id = tbod2.id
+left join t_buku_order tbo2 on tbod2.t_buku_order_id = tbo2.id
+left join m_customer mcu2 on tbo2.m_customer_id = mcu2.id
 
 left join \"set\".m_general mg3 on tbod.ukuran = mg3.id
 left join \"set\".m_general mg4 on tsa.head = mg4.id
@@ -274,8 +283,8 @@ $temp = ' sebelas';
               <tr>
                 <td style="width: 10%; ">No. SPK</td>
                 <td style="width: 3%">:</td>
-                <td style="width: 9%; border: none; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
-                <td style="width: 14%;"></td>
+                <td style="width: 9%; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
+                <td style="width: 14%; border-bottom: 0.5px dashed black;"></td>
                 <td style="width: 4%;"></td>
                 <td style="width: 10%;">Pagi/sore</td>
                 <td style="width: 3%;">
@@ -297,7 +306,7 @@ $temp = ' sebelas';
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black;">no order & kode customer
+                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order}} - {{$n->customer_kode}}
                 </td>
               </tr>
               <tr>
@@ -306,7 +315,7 @@ $temp = ' sebelas';
                   <span style="font-weight: normal;">:</span>
                 </td>
                 <td style="border-bottom: 0.5px dashed black;">
-                  {{{$n->supir_nama}}}
+                  {{{$n->supir_nip}}}
                  </td>
                 <td style="border-bottom: 0.5px dashed black;">Chs-2: {{$n->chasis2_kode}}</td>
                 <td></td>
@@ -314,7 +323,7 @@ $temp = ' sebelas';
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black;">no order & kode customer
+                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order2}} - {{$n->customer_kode2}}
                 </td>
               </tr>
               <tr>
@@ -323,28 +332,36 @@ $temp = ' sebelas';
                   <span style="font-weight: normal;">:</span>
                 </td>
                 <td style="border-bottom: 0.5px dashed black;">{{$n->trip_kode}}</td>
+                <td style="border-bottom: 0.5px dashed black;"></td>
+                <td></td>
+                <td>CONT</td>
+                <td>
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="border-bottom: 0.5px dashed black;">{{$n->ukuran1_deskripsi}} Ft</td>
               </tr>
               <tr>
                 <td>Sektor</td>
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 30%; border-bottom: 0.5px dashed black;">{{$n->sektor1_deskripsi}}
+                <td style="border-bottom: 0.5px dashed black;">{{$n->sektor1_deskripsi}}
                 </td>
-                <td style="width: 4%;"></td>
+                <td style="border-bottom: 0.5px dashed black;"></td>
               </tr>
               <tr>
-                <td style="width: 16%;">Dari</td>
-                <td style="width: 4%;">
+                <td>Dari</td>
+                <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 30%; border-bottom: 0.5px dashed black;">{{@$n->dari}}</td>
-                <td style="width: 9%;"></td>
-                <td style="width: 15%;">Ke</td>
-                <td style="width: 4%;">
+                <td style="border-bottom: 0.5px dashed black;">{{@$n->dari}}</td>
+                <td style="border-bottom: 0.5px dashed black;"></td>
+                <td></td>
+                <td>Ke</td>
+                <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 20%; border-bottom: 0.5px dashed black;">{{@$n->ke}}</td>
+                <td style="border-bottom: 0.5px dashed black;">{{@$n->ke}}</td>
               </tr>
               <tr style:"height:2px">
                 <td></td>
@@ -422,6 +439,9 @@ $temp = ' sebelas';
               <td></td>
             </tr>
             <tr>
+              <td></td>
+            </tr>
+            <tr>
               <td style="width: 5%; padding-left: 6px;">
                 (Kusmiati)
               </td>
@@ -432,10 +452,8 @@ $temp = ' sebelas';
                 (Budi)
               </td>
             </tr>
-            <tr>
-              <td></td>
-            </tr>
           </table>
+          <br>
       <tr style="width: 100%; font-size: 10px;">
         <td style="width:100%; font-weight: bold; border-bottom: 0.5px solid black; white-space: nowrap;">Dicetak pada
           tgl : {{$currentDate}} jam {{$currentTime}} Operator : DEWI-PC # dewi</td>

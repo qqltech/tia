@@ -561,14 +561,6 @@ const landing = reactive({
       }
     },
     {
-      icon: 'table',
-      title: "Unduh Excel",
-      class: 'bg-gray-600 text-light-100',
-      click(row) {
-        window.open(`${store.server.url_backend}/web/report_tagihan?export=excel&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
-      }
-    },
-    {
       icon: 'location-arrow',
       title: "Post Data",
       class: 'bg-rose-700 rounded-lg text-white',

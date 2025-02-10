@@ -12,7 +12,7 @@ class mkary extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id()->from(1);
-            $table->bigInteger('m_bu_id')->comment('{"src":"set.m_business_unit.id"}')->nullable(false);
+            $table->integer('bu_id')->comment('{"src":"set.m_business_unit.id"}')->nullable();
             $table->string('nip',20)->nullable();	           
             $table->string('nama', 100);
             $table->string('no_id', 100);

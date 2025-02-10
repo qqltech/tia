@@ -49,7 +49,8 @@ class mkary extends Migration
             // $table->string('foto_kk')->nullable(true)->change();
             // $table->string('foto_bpjs_ks')->nullable(true)->change();
             // $table->string('foto_bpjs_ktj')->nullable(true)->change();
-            $table->integer('piutang_id')->comment('{"src":"m_coa.id"}')->nullable();
+            // $table->integer('piutang_id')->comment('{"src":"m_coa.id"}')->nullable();
+            // $table->integer('bu_id')->comment('{"src":"set.m_business_unit.id"}')->change()->nullable();
         });
     }
 }

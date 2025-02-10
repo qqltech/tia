@@ -18,7 +18,7 @@ const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
 
 const isApproval = route.query.is_approval;
-
+// console.log(store.user.data['name'],'user aaaa');
 // ENDPOINT API
 const endpointApi = 't_spk_angkutan'
 onBeforeMount(() => {

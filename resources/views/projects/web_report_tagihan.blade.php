@@ -21,7 +21,7 @@
 <table>
   <!-- NOTA NO -->
   <tr>
-    <td style="text-align: left; padding: 10px; width: 25% ; ">
+    <td style="text-align: left; padding: 10px; width: 23% ; ">
       NOTA NO. <br>
     IMPORTIR
     </td>
@@ -47,7 +47,7 @@
   <!-- END TANGGAL -->
   <br>
   <tr>
-    <td style="text-align: left; padding: 10px; width: 25% ; ">
+    <td style="text-align: left; padding: 10px; width: 23% ; ">
       LOKASI BONGKAR <br>
     PARTY<br>
     Jenis Barang
@@ -64,7 +64,7 @@
     </td>
   </tr>
   <tr>
-    <td style="text-align: left; padding: 10px; width: 25% ; ">
+    <td style="text-align: left; padding: 10px; width: 23% ; ">
       EX KAPAL <br>
     DARI
     </td>
@@ -87,7 +87,7 @@
     </td>
   </tr>
   <tr>
-    <td style="text-align: left; padding: 10px; width: 25% ; ">
+    <td style="text-align: left; padding: 10px; width: 23% ; ">
       B/L NO. <br>
     CONT.NO
     </td>
@@ -192,22 +192,67 @@
       : 
      </td>
      <td style="text-align: left; padding: 10px; width: 60% ; font-style:italic; font-weight:bold;text-decoration: underline; ">
-      # Tujuh Juta Delapan Puluh Ribu Sembilan Ratus Empat 
+      # Tujuh Juta Delapan Puluh Ribu Sembilan Ratus Empat rupiah saja #
      </td> 
   </tr>
-  <tr>  
-    <td style="text-align: left; padding: 10px; width: 20%;">
-    </td>
-    <td> rupiah saja #</td>
-  </tr>
-  <tr>
-    <td style="text-align: left; padding: 10px; width: 18%;">
-    </td>
-    <td>Surabaya</td>
-  </tr>
+
   <tr>
      <td style="text-align: left; padding: 10px; width: 60%;font-size: 7px; font-style:italic; font-weight:bold;text-decoration: underline; ">
      IMP-1 Dicetak pada tanggal:15/05/2024 jam 13:49:50 - Opr:UMI#25
      </td>
+  </tr>
+</table>  
+
+<hr>
+<!-- Lampiran Biaya  -->
+<table>
+  <tr>
+    <td style="text-align: left; text-align: center; padding: 10px; width: 100%; font-weight: bold; text-decoration: underline; ">
+     LAMPIRAN BIAYA (REIMBURSED)
+    </td>
+  </tr>
+</table>
+
+<br><br>
+
+<table>
+  <tr>
+   <td style="text-align: left; padding: 10px; width: 23% ; ">
+      TANGGAL <br>
+      EX Nota
+   </td>
+   <td style="text-align: left; padding: 10px; width: 3% ; ">
+      : <br>
+      :
+   </td>
+   <td style="text-align: left; padding: 10px; width: 35% ; ">
+      01 Apr 24 <br>
+      119/IMP/III/24
+   </td>
+     <td style="text-align: left; padding: 10px; width: 10%; font-size: 10px ; font-style:italic;  font-weight:bold;">
+      EX No FP
+    </td>
+   <td style="text-align: left; padding: 10px; width: 3% ; ">
+      :
+    </td>
+    <td style="text-align: left; font-size: 10px; font-style:italic;  font-weight:bold;">
+      010.004-24.458929
+    </td>
+  </tr>
+</table>
+
+<table border="1" cellspacing="0" cellpadding="10";>
+  <tr>
+    <td style="text-align: left;width: 20%;">DESCRIPTION</td>
+		<td style="text-align: left;width: 20%";><center>Qty</center></td>
+    <td style="text-align: left;width: 20%">Amount</td>
+		<td style="text-align: left;width: 20%" colspan="1"><center>Total</center></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px"> Biaya Angkutan (kwt) </td>
+    <td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px width: 20%;">1</td>
+		<td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px width: 20%";><center>Rp.1.550.000</center></td>
+    <td style="text-align: left; border-style: dotted dashed solid double; font-style:italic; font-size: 7px width: 20%";>Rp.1.550.000</td>
   </tr>
 </table>
