@@ -272,52 +272,61 @@ $temp = ' sebelas';
           <td colspan="2" style="border: 0.5px solid black;">
             <table style="width:99%;font-size:10px">
               <tr>
-                <td style="width: 15%; ">No. SPK</td>
+                <td style="width: 10%; ">No. SPK</td>
                 <td style="width: 3%">:</td>
-                <td style="width: 10%; border: none; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
-                <td style="width: 20%;"></td>
-                <td style="width: 13%;">Pagi/sore</td>
-                <td style="width: 4%;">
+                <td style="width: 9%; border: none; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
+                <td style="width: 14%;"></td>
+                <td style="width: 4%;"></td>
+                <td style="width: 10%;">Pagi/sore</td>
+                <td style="width: 3%;">
                   <span style="font-weight: normal;">:</span>
                 </td>
                 <td style="width: 20%; border-bottom: 0.5px dashed black;">{{$n->waktu_out_deskripsi}}/{{$n->waktu_in_deskripsi}}</td>
               </tr>
               <tr>
-                <td style="width: 20%; ">HEAD</td>
-                <td style="width: 4%;">
+                <td>HEAD</td>
+                <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 15%; border-bottom: 0.5px dashed black;">
+                <td style="border-bottom: 0.5px dashed black;">
                   {{$n->head_kode}}
                 </td>
                 <td style="border-bottom: 0.5px dashed black;">Chs-1: {{$n->chasis1_kode}}</td>
-                <td style="width: 15%;">ORD 1</td>
-                <td style="width: 4%;">
+                <td></td>
+                <td>ORD 1</td>
+                <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 20%; border-bottom: 0.5px dashed black;">no order & kode customer
+                <td style="border-bottom: 0.5px dashed black;">no order & kode customer
                 </td>
               </tr>
               <tr>
-                <td style="width: 16%;">Rit</td>
-                <td style="width: 4%;">
+                <td>SUPIR</td>
+                <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 30%; border-bottom: 0.5px dashed black;">
-                  Chs-2: {{$n->chasis2_kode}}<br>
-                  {{$n->trip_kode}}
+                <td style="border-bottom: 0.5px dashed black;">
+                  {{{$n->supir_nama}}}
                  </td>
-                <td style="width: 9%;"></td>
-                <td style="width: 15%;">Cont.</td>
-                <td style="width: 4%;">
+                <td style="border-bottom: 0.5px dashed black;">Chs-2: {{$n->chasis2_kode}}</td>
+                <td></td>
+                <td>ORD 2</td>
+                <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 20%; border-bottom: 0.5px dashed black;">{{@$n->ukuran1_deskripsi}} Ft
+                <td style="border-bottom: 0.5px dashed black;">no order & kode customer
                 </td>
               </tr>
               <tr>
-                <td style="width: 16%;">Sektor</td>
-                <td style="width: 4%;">
+                <td>TRIP</td>
+                <td>
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="border-bottom: 0.5px dashed black;">{{$n->trip_kode}}</td>
+              </tr>
+              <tr>
+                <td>Sektor</td>
+                <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
                 <td style="width: 30%; border-bottom: 0.5px dashed black;">{{$n->sektor1_deskripsi}}

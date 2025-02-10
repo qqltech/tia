@@ -72,7 +72,7 @@
                 selectfield:`this.id, this.kode, this.nama`
               }
           }" placeholder="Business Unit" :check="false" fa-icon="sort-desc" />
-      <FieldX :bind="{ readonly: true }" class="pt-1" :value="data.nip" :errorText="formErrors.nip?'failed':''"
+      <FieldX :bind="{ readonly: !actionText, disabled:!actionText }" class="pt-1" :value="data.nip" :errorText="formErrors.nip?'failed':''"
         @input="v=>data.nip=v" :hints="formErrors.nip" placeholder='NIP' :check="false" />
       <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.nama" :errorText="formErrors.nama?'failed':''"
         @input="v=>data.nama=v" :hints="formErrors.nama" placeholder="Nama" :check="false" />

@@ -153,10 +153,12 @@
           }
           values.ukuran_kontainer=null
           values.jenis_kontainer=null
+          values.depo=null
         }" :errorText="formErrors.t_buku_order_d_npwp_id?'failed':''" :hints="formErrors.t_buku_order_d_npwp_id"
           @update:valueFull="(dt) => {
             values.ukuran_kontainer = dt['ukuran.deskripsi']
             values.jenis_kontainer = dt['jenis.deskripsi']
+            values.depo = dt['depo.kode']
           }" valueField="id" displayField="no_cont" :api="{
               url: `${store.server.url_backend}/operation/t_buku_order_d_npwp`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
