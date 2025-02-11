@@ -56,12 +56,18 @@ const landing = reactive({
       sortable: true, filter: 'ColFilter'
     },
     {
-      headerName: 'Tipe PPJK', field: 'tipe', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
-      sortable: true, filter: 'ColFilter', cellRenderer: ({ value }) =>
+      headerName: 'Tipe PPJK',
+      field: 'tipe',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      sortable: true,
+      filter: 'ColFilter',
+      cellRenderer: ({ value }) =>
         value === 'IMPORT'
-
           ? '<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">IMPORT</span>'
-          : '<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">EXPORT</span>'
+          : value === 'EXPORT'
+            ? '<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">EXPORT</span>'
+            : '<span class="text-amber-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">LAIN-LAIN</span>'
     }
   ],
   actions: [{
@@ -69,7 +75,7 @@ const landing = reactive({
     click: row => router.push(`${route.path}/${row.m_generate_no_aju_id}?${tsId}`)
   },
   {
-    title: 'Edit', icon: 'edit', class: 'bg-blue-600 text-light-100', 
+    title: 'Edit', icon: 'edit', class: 'bg-blue-600 text-light-100',
     // show: value => value.status === 'DRAFT',
     click: row => router.push(`${route.path}/${row.m_generate_no_aju_id}?action=Edit&${tsId}`)
   },
@@ -328,6 +334,10 @@ async function onSave() {
     // if (data.status === 'OPEN') {
     //   data.status = 1;
     // }
+    data['m_generate_no_aju_d'].forEach(item => {
+      item.is_active = item.is_active ? 1 : 0; // Konversi ke true/false
+    });
+
 
 
     // Simpan perubahan data detailArr

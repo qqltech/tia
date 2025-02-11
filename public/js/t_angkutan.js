@@ -234,7 +234,7 @@ onBeforeMount(async () => {
       initialValues = resultJson.data;
       initialValues.pph = initialValues.pph == 1 ? true : false;
       initialValues.code_customer = initialValues.kode_cust;
-      console.log(initialValues)
+      console.log(initialValues.t_angkutan_d,'t_angkutan_d')
 
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;

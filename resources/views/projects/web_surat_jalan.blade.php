@@ -293,7 +293,7 @@ $jeniskontainer = "SPC";
 
     table {
       table-layout: fixed;
-      font-size: 11px;
+      font-size: 10px;
       /* font-family: 'Courier New', monospace; */
       font-family: sans-serif;
       /* font-family: monospace; */
@@ -305,7 +305,7 @@ $jeniskontainer = "SPC";
 
 <body class="continuous_form">
   <!-- Lembar 1 -->
-  <section class="sheet padding-3mm" style="padding-right: 21px; padding-top: 21px; page-break-after: always;">
+  <section class="sheet padding-3mm" style="padding-right: 32px; padding-top: 21px; page-break-after: always;">
     <!-- <pre>{{var_dump($nospk)}}</pre> -->
     <table style="width:100%;">
       <thead>
@@ -344,53 +344,54 @@ $jeniskontainer = "SPC";
           <td>Alamat</td>
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="font-weight: bold; border-bottom: 0.5px solid black; padding-right: 90px;">&nbsp;&nbsp;{{$n->tsj_lokasi_stuffing}}</span>
+            <span style="font-weight: bold;">&nbsp;&nbsp;{{$n->tsj_lokasi_stuffing}}</span>
+            <span style="border-bottom: 0.5px solid black; width: 96%; display: block; margin-left: 11px;"></span>
           </td>
         </tr>
         <td>
-          <span style="display: inline-block; width: 360px; border-bottom: 0.5px solid black;"></span>
-          <span style="display: inline-block; width: 360px; border-bottom: 0.5px solid black;"></span>
+          <span style="display: inline-block; width: 352px; border-bottom: 0.5px solid black;"></span>
+          <span style="display: inline-block; width: 352px; border-bottom: 0.5px solid black;"></span>
         </td>
         <tr>
           <td>Nama Angk.</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;"></span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;"></span>
           </td>
         </tr>
         <tr>
           <td>No. Polisi</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">&nbsp;</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">&nbsp;</span>
           </td>
         </tr>
         <tr>
           <td>Pelabuhan</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->pelabuhan}}</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">{{$n->pelabuhan}}</span>
           </td>
         </tr>
         <tr>
           <td>Depo</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->depo_tsj}}</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">{{$n->depo_tsj}}</span>
           </td>
         </tr>
         <tr>
           <td>Kapal</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->kapal}}</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">{{$n->kapal}}</span>
           </td>
         </tr>
         <td>
           <span></span>
         </td>
     </table>
-    <table border="0" style="width: 100%; border: 0.5px solid black;">
+    <table border="0" style="width: 99.75%; border: 0.5px solid black;">
       <thead style="border: 0.5px solid black;">
         <tr>
           <th colspan="4" style="text-align: center; border-right: 0.5px solid black;">
@@ -412,7 +413,7 @@ $jeniskontainer = "SPC";
           <td>Type Cont</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">1x{{$n->ukuran_kontainer}} {{$n->singkatan_jenis}}</span>
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">1x{{$n->ukuran_kontainer}} {{$n->singkatan_jenis}}</span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
         </tr>
@@ -420,7 +421,7 @@ $jeniskontainer = "SPC";
           <td>No. Cont</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">{{$n->no_prefix}}{{$n->no_suffix}}</span>
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">{{$n->no_prefix}}{{$n->no_suffix}}</span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
         </tr>
@@ -428,7 +429,7 @@ $jeniskontainer = "SPC";
           <td>No. Seal</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_no_seal}}
             </span>
           </td>
@@ -441,12 +442,12 @@ $jeniskontainer = "SPC";
           <td style="width: 2%; border: none;"></td>
           <td style="width: 1%; border-left: 0.5px solid black;"></td>
           @if($n->jenis_sj_kode == "CONTAINER PP")
-            <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 14px; 
+            <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 12px; 
             vertical-align: middle; padding: 5px;">
               {{$cekImp}} EMPTY
             </td>
           @else
-            <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 14px; 
+            <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 12px; 
             vertical-align: middle; padding: 5px;">
               {{$cekImp}} {{$n->jenis_sj_deskripsi}}
             </td>
@@ -456,7 +457,7 @@ $jeniskontainer = "SPC";
           <td style="border-left: 0.5px solid black; border-top: 0.5px solid black;">NW</td>
           <td colspan="3" style="border-top: 0.5px solid black">
             <span style="font-weight: normal;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_nw}}
             </span>
           </td>
@@ -466,7 +467,7 @@ $jeniskontainer = "SPC";
           <td style="border-left: 0.5px solid black;">GW</td>
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_gw}}
             </span>
           </td>
@@ -476,7 +477,7 @@ $jeniskontainer = "SPC";
           <td style="border-left: 0.5px solid black;">TARE</td>
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_tare}}
             </span>
           </td>
@@ -598,7 +599,7 @@ $jeniskontainer = "SPC";
 
   @if($n->jenis_sj_kode == "CONTAINER PP")
   <!-- Lembar 2 -->
-  <section class="sheet padding-3mm" style="padding-right: 21px; padding-top: 21px;">
+  <section class="sheet padding-3mm" style="padding-right: 32px; padding-top: 21px;">
     <!-- <pre>{{var_dump($nospk)}}</pre> -->
     <table style="width:100%;">
       <thead>
@@ -637,53 +638,54 @@ $jeniskontainer = "SPC";
           <td>Alamat</td>
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="font-weight: bold; border-bottom: 0.5px solid black; padding-right: 90px;">&nbsp;&nbsp;{{$n->tsj_lokasi_stuffing}}</span>
+            <span style="font-weight: bold;">&nbsp;&nbsp;{{$n->tsj_lokasi_stuffing}}</span>
+            <span style="border-bottom: 0.5px solid black; width: 96%; display: block; margin-left: 11px;"></span>
           </td>
         </tr>
         <td>
-          <span style="display: inline-block; width: 360px; border-bottom: 0.5px solid black;"></span>
-          <span style="display: inline-block; width: 360px; border-bottom: 0.5px solid black;"></span>
+          <span style="display: inline-block; width: 352px; border-bottom: 0.5px solid black;"></span>
+          <span style="display: inline-block; width: 352px; border-bottom: 0.5px solid black;"></span>
         </td>
         <tr>
           <td>Nama Angk.</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;"></span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;"></span>
           </td>
         </tr>
         <tr>
           <td>No. Polisi</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">&nbsp;</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">&nbsp;</span>
           </td>
         </tr>
         <tr>
           <td>Pelabuhan</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->pelabuhan}}</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">{{$n->pelabuhan}}</span>
           </td>
         </tr>
         <tr>
           <td>Depo</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->depo_tsj}}</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">{{$n->depo_tsj}}</span>
           </td>
         </tr>
         <tr>
           <td>Kapal</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->kapal}}</span>
+            <span style="display: inline-block; width: 252.5px; border-bottom: 0.5px solid black; margin-left: 5px;">{{$n->kapal}}</span>
           </td>
         </tr>
         <td>
           <span></span>
         </td>
     </table>
-    <table border="0" style="width: 100%; border: 0.5px solid black;">
+    <table border="0" style="width: 99.75%; border: 0.5px solid black;">
       <thead style="border: 0.5px solid black;">
         <tr>
           <th colspan="4" style="text-align: center; border-right: 0.5px solid black;">
@@ -705,7 +707,7 @@ $jeniskontainer = "SPC";
           <td>Type Cont</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">1x{{$n->ukuran_kontainer}} {{$n->singkatan_jenis}}</span>
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">1x{{$n->ukuran_kontainer}} {{$n->singkatan_jenis}}</span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
         </tr>
@@ -713,7 +715,7 @@ $jeniskontainer = "SPC";
           <td>No. Cont</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">{{$n->no_prefix}}{{$n->no_suffix}}</span>
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">{{$n->no_prefix}}{{$n->no_suffix}}</span>
           </td>
           <td colspan="2" style="border-left: 0.5px solid black;"></td>
         </tr>
@@ -721,7 +723,7 @@ $jeniskontainer = "SPC";
           <td>No. Seal</td>
           <td colspan="3">
             <span style="font-weight: normal; white-space: nowrap;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_no_seal}}
             </span>
           </td>
@@ -733,7 +735,7 @@ $jeniskontainer = "SPC";
           <td style="width: 30%; border: none;"></td>
           <td style="width: 2%; border: none;"></td>
           <td style="width: 1%; border-left: 0.5px solid black;"></td>
-          <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 14px; 
+          <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 12px; 
            vertical-align: middle; padding: 5px;">
             {{$cekImp}} FULL
           </td>
@@ -742,7 +744,7 @@ $jeniskontainer = "SPC";
           <td style="border-left: 0.5px solid black; border-top: 0.5px solid black;">NW</td>
           <td colspan="3" style="border-top: 0.5px solid black">
             <span style="font-weight: normal;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_nw}}
             </span>
           </td>
@@ -752,7 +754,7 @@ $jeniskontainer = "SPC";
           <td style="border-left: 0.5px solid black;">GW</td>
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_gw}}
             </span>
           </td>
@@ -762,7 +764,7 @@ $jeniskontainer = "SPC";
           <td style="border-left: 0.5px solid black;">TARE</td>
           <td colspan="3">
             <span style="font-weight: normal;">:</span>
-            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+            <span style="display: inline-block; width: 123px; border-bottom: 0.5px solid black; font-weight: bold;">
               {{$n->tsj_tare}}
             </span>
           </td>

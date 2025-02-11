@@ -18,7 +18,9 @@ mcu2.kode as customer_kode2,
 
 mg8.deskripsi as sektor1_deskripsi, mg9.deskripsi as sektor2_deskripsi,
 mg5.kode as trip_kode, mg4.kode as head_kode, mg10.deskripsi as waktu_in_deskripsi,
-mg11.deskripsi as waktu_out_deskripsi
+mg11.deskripsi as waktu_out_deskripsi,
+mg12.deskripsi as isi_container_1_deskripsi,
+mg13.deskripsi as isi_container_2_deskripsi
 
 
 FROM t_spk_angkutan tsa
@@ -43,6 +45,8 @@ left join \"set\".m_general mg8 on tsa.sektor1 = mg8.id
 left join \"set\".m_general mg9 on tsa.sektor2 = mg9.id
 left join \"set\".m_general mg10 on tsa.waktu_in = mg10.id
 left join \"set\".m_general mg11 on tsa.waktu_out = mg11.id
+left join \"set\".m_general mg12 on tsa.isi_container_1 = mg12.id
+left join \"set\".m_general mg13 on tsa.isi_container_2 = mg13.id
 
 
 
@@ -75,13 +79,32 @@ $temp = ' sebelas';
   $temp=terbilang((int)($number / 100)) . ' ratus' . terbilang($number % 100); } elseif ($number < 2000) {
   $temp=' seribu' . terbilang($number - 1000); } elseif ($number < 1000000) { $temp=terbilang((int)($number / 1000))
   . ' ribu' . terbilang($number % 1000); } elseif ($number < 1000000000) { $temp=terbilang((int)($number / 1000000))
-  . ' juta' . terbilang($number % 1000000); } return $temp; } @endphp @foreach ($nospk as $n) @php
+  . ' juta' . terbilang($number % 1000000); } return $temp; } @endphp 
+  
+  @foreach ($nospk as $n) @php
   $unixTime1=strtotime($n->tanggal_in);
   $tanggal_in = date("d/m/Y", $unixTime1);
 
   $unixTime2 = strtotime($n->tanggal_out);
   $tanggal_out = date("d/m/Y", $unixTime2);
   $countNo = 1;
+
+  $resultIsiContainer1="";
+  $cekIsiContainer1 = $n->isi_container_1_deskripsi;
+  if($cekIsiContainer1 =="EMPTY"){
+    $resultIsiContainer1 = "E";
+  } 
+  else if($cekIsiContainer1 =="FULL"){
+    $resultIsiContainer1="F";
+  }
+
+  $resultIsiContainer2="";
+  $cekIsiContainer2 = $n->isi_container_2_deskripsi;
+  if($cekIsiContainer2 =="EMPTY"){
+    $resultIsiContainer2="E";
+  }else if($cekIsiContainer2 =="FULL"){
+    $resultIsiContainer2="F";
+  }
 
 
   @endphp
@@ -283,7 +306,7 @@ $temp = ' sebelas';
               <tr>
                 <td style="width: 10%; ">No. SPK</td>
                 <td style="width: 3%">:</td>
-                <td style="width: 9%; border-bottom: 0.5px dashed black;">{{$n->no_spk}}</td>
+                <td style="width: 9%; border-bottom: 0.5px dashed black; font-size: 13px;">{{$n->no_spk}}</td>
                 <td style="width: 14%; border-bottom: 0.5px dashed black;"></td>
                 <td style="width: 4%;"></td>
                 <td style="width: 10%;">Pagi/sore</td>
@@ -306,7 +329,7 @@ $temp = ' sebelas';
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order}} / {{$n->customer_kode}}
+                <td style="border-bottom: 0.5px dashed black; line-height: 15px; font-size: 11px;">{{$n->no_buku_order}} / {{$resultIsiContainer1}} /{{$n->customer_kode}}
                 </td>
               </tr>
               <tr>
@@ -323,7 +346,7 @@ $temp = ' sebelas';
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black;">{{$n->no_buku_order2}} / {{$n->customer_kode2}}
+                <td style="border-bottom: 0.5px dashed black; line-height: 15px; font-size: 11px;">{{$n->no_buku_order2}} / {{$resultIsiContainer2}} /{{$n->customer_kode2}}
                 </td>
               </tr>
               <tr>
@@ -333,12 +356,6 @@ $temp = ' sebelas';
                 </td>
                 <td style="border-bottom: 0.5px dashed black;">{{$n->trip_kode}}</td>
                 <td style="border-bottom: 0.5px dashed black;"></td>
-                <td></td>
-                <td>CONT</td>
-                <td>
-                  <span style="font-weight: normal;">:</span>
-                </td>
-                <td style="border-bottom: 0.5px dashed black;">{{$n->ukuran1_deskripsi}} Ft</td>
               </tr>
               <tr>
                 <td>Sektor</td>
@@ -348,14 +365,19 @@ $temp = ' sebelas';
                 <td style="border-bottom: 0.5px dashed black;">{{$n->sektor1_deskripsi}}
                 </td>
                 <td style="border-bottom: 0.5px dashed black;"></td>
+                <td></td>
+                <td>CONT</td>
+                <td>
+                  <span style="font-weight: normal;">:</span>
+                </td>
+                <td style="border-bottom: 0.5px dashed black;">{{$n->ukuran1_deskripsi}} Ft</td>
               </tr>
               <tr>
                 <td>Dari</td>
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black;">{{@$n->dari}}</td>
-                <td style="border-bottom: 0.5px dashed black;"></td>
+                <td colspan="2" style="border-bottom: 0.5px dashed black;">{{@$n->dari}}</td>
                 <td></td>
                 <td>Ke</td>
                 <td>
@@ -410,7 +432,7 @@ $temp = ' sebelas';
           @endforeach
           <tr>
             <td colspan="4"
-              style="border-left: 0.5px solid black; border-bottom: 0.5px solid black; border-right: 0.5px solid black; text-align: right;">
+              style="border-left: 0.5px solid black; border-bottom: 0.5px solid black; border-right: 0.5px solid black; text-align: right; font-size: 12px;">
               Total :
               <span style="padding: 4px;">Rp {{number_format($n->total_sangu, 0, ',', '.');}}</span>
             </td>

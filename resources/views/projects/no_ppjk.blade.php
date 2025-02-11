@@ -16,6 +16,11 @@
         : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
           EXPORT
         </button>
+        <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
+        <button @click="filterShowData('LAIN-LAIN')" :class="filterButton === 'LAIN-LAIN' ? 'bg-amber-600 text-white hover:bg-amber-600' 
+        : 'border border-amber-600 text-amber-600 bg-white hover:bg-amber-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
+          LAIN-LAIN
+        </button>
       </div>
     </div>
 
