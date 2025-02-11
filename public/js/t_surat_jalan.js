@@ -106,6 +106,8 @@ onBeforeMount(async () => {
         
           if (actionText.value === 'Copy') {
             initialValues.status = 'DRAFT';
+            initialValues.no_surat_jalan = null;
+            initialValues.no_draft = null;
           }
 
         if (initialValues.status !== 'DRAFT') {

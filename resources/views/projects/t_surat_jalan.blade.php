@@ -118,6 +118,7 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
+                searchfield: 'this.no_buku_order, m_customer.nama_perusahaan'
               },
               onsuccess: response=> {
                 response.page = response.current_page

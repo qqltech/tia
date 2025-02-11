@@ -348,11 +348,12 @@
           Authorization: `${store.user.token_type} ${store.user.token}`
         },
         params: {
+          transform: true,
           getCustomer:true,
-          //scopes:'GetDetailNPWP',
+          //scopes:'getCodeCustomer',
           simplest:false,
           where:`this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id : 0}`,
-          searchfield: 'no_buku_order, this.no_suffix, this.no_prefix, this.jenis, jenis.deskripsi, nama_perusahaan'
+          searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi'
         },
         onsuccess: (response) => {
           response.page = response.current_page
@@ -425,7 +426,13 @@
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
           sortable: true, resizable: true, filter: 'ColFilter',
         },
-        
+        {
+          headerName: 'Kode Customer',
+          field: 't_buku_order.m_customer_kode',
+          flex: 1,
+          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          sortable: true, resizable: true, filter: 'ColFilter',
+        }
       ]" />
       <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
         :value="data.nama_customer" @input="v=>data.nama_customer=v"
@@ -434,10 +441,9 @@
               url: `${store.server.url_backend}/operation/m_customer`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
-                simplest:true,
-                //where:`this.group='ISI CONTAINER'`
+                simplest:true
               }
-          }" label="Nama Customer" fa-icon="" placeholder="" :check="false" />
+          }" label="Kode Customer" fa-icon="" placeholder="" :check="false" />
     </div>
 
     <div class="grid grid-cols-2 gap-y-2 gap-x-2">
@@ -501,11 +507,12 @@
           Authorization: `${store.user.token_type} ${store.user.token}`
         },
         params: {
-          //getCustomer:true,
-          //scopes:'GetDetailNPWP',
+          transform: true,
+          getCustomer:true,
+          //scopes:'getCodeCustomer',
           simplest:false,
           //where:`this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 }`,
-          searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi, this.nama_perusahaan'
+          searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi'
         },
         onsuccess: (response) => {
           response.page = response.current_page
@@ -577,7 +584,13 @@
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
           sortable: true, resizable: true, filter: 'ColFilter',
         },
-        
+        {
+          headerName: 'Kode Customer',
+          field: 't_buku_order.m_customer_kode',
+          flex: 1,
+          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          sortable: true, resizable: true, filter: 'ColFilter',
+        }
       ]" />
       <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
         :value="data.nama_customer_2" @input="v=>data.nama_customer_2=v"

@@ -153,13 +153,13 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
                     ELSE NULL
                 END AS head_kode
             "),
-            // Memilih trip_desc berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
+            // Memilih trip_kode berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
             \DB::raw("
                 CASE 
-                    WHEN tsa.no_spk IS NOT NULL THEN mg3.deskripsi 
-                    WHEN tsa2.no_spk IS NOT NULL THEN mg5.deskripsi 
+                    WHEN tsa.no_spk IS NOT NULL THEN mg3.kode 
+                    WHEN tsa2.no_spk IS NOT NULL THEN mg5.kode 
                     ELSE NULL
-                END AS trip_desc
+                END AS trip_kode
             "),
             // Menentukan no_spk_new berdasarkan kondisi tsa.no_spk dan tsa2.no_spk
             \DB::raw("

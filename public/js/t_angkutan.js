@@ -99,7 +99,7 @@ async function addDetail() {
                 angkutan_pelabuhan: item['m_supplier_id'],
                 // staple: staple
                 custom_stuple: values['custom_stuple'],
-                trip_desc: item['trip_desc']??'-',
+                trip_desc: item['trip_kode']??'-',
                 trip: item['trip'],
                 head_desc: item['head_kode']??'-',
                 head: item['head'],
@@ -253,7 +253,7 @@ onBeforeMount(async () => {
         item['no_spk'] = item['t_spk.no_spk']
         item['ukuran'] = item['ukuran.id']
         item['head_desc'] = item['head.kode']??'-'
-        item['trip_desc'] = item['trip.deskripsi']??'-'
+        item['trip_desc'] = item['trip.kode']??'-'
         item['staple'] = item['staple'] == null ? '-' : item['staple']
         detailArr.value = [item, ...detailArr.value]
       });

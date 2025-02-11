@@ -69,6 +69,16 @@ const table = reactive({
       filter: 'ColFilter',
     },
     {
+      headerName: 'Business Unit',
+      field: 'tipe_po.nama',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
+    },
+    {
       headerName: 'No. PO',
       field: 'no_po',
       flex: 1,

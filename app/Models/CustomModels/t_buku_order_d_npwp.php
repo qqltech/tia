@@ -28,6 +28,10 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
         if(app()->request->no_cont){
             $data = ["no_cont"=>$row['no_prefix'].$row['no_suffix']];
         }
+        if(app()->request->getCustomer){
+            $result = m_customer::where('id',$row['t_buku_order.m_customer_id'])->first();
+            $row['t_buku_order.m_customer_kode'] = $result->kode;
+        }
 
         // if(app()->request->is_transform){
         //     $getBukuOrder = t_buku_order::where('id', $row['t_buku_order_id'])->first();
@@ -120,4 +124,23 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
         ->get();
     }
     
+
+    public function scopegetCodeCustomer($model){
+        return $model
+        ->leftJoin('t_buku_order as tb','tb.id','t_buku_order_d_npwp.t_buku_order_id')
+        ->leftJoin('m_customer as mc','mc.id','tb.m_customer_id')
+        ->leftjoin('set.m_general as mg','mg.id','t_buku_order_d_npwp.ukuran')
+        ->leftjoin('set.m_general as mg2','mg2.id','t_buku_order_d_npwp.jenis')
+        ->select(
+            'tb.id',
+            'tb.no_buku_order as t_buku_order.no_buku_order',
+            't_buku_order_d_npwp.no_prefix',
+            't_buku_order_d_npwp.no_suffix',
+            'mg.deskripsi as ukuran.deskripsi',
+            'mg2.deskripsi as jenis.deskripsi',
+            'mc.kode as m_customer.kode',
+            'tb.m_customer_id as t_buku_order.m_customer_id'
+            )
+        ;
+    }
 }

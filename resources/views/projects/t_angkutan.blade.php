@@ -176,6 +176,10 @@
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
+              Trip
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
               Ukuran
             </td>
             <td
@@ -248,10 +252,6 @@
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
-              Trip
-            </td>
-            <td
-              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
               Catatan
             </td>
           </tr>
@@ -272,6 +272,11 @@
                 class="w-full !mt-3" :value="item.no_container" :errorText="formErrors.no_container?'failed':''"
                 @input="v=>item.no_container=v" :hints="formErrors.no_container" :check="false" label=""
                 placeholder="" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="item.trip_desc"
+                :errorText="formErrors.trip_desc?'failed':''" @input="v=>item.trip_desc=v" :hints="formErrors.trip_desc"
+                :check="false" label="" placeholder="" />
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 150px !important;">
               <FieldSelect
@@ -497,11 +502,6 @@
             <td class="p-2 border border-[#CACACA]">
               <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="item.head_desc"
                 :errorText="formErrors.head_desc?'failed':''" @input="v=>item.head_desc=v" :hints="formErrors.head_desc"
-                :check="false" label="" placeholder="" />
-            </td>
-            <td class="p-2 border border-[#CACACA]">
-              <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="item.trip_desc"
-                :errorText="formErrors.trip_desc?'failed':''" @input="v=>item.trip_desc=v" :hints="formErrors.trip_desc"
                 :check="false" label="" placeholder="" />
             </td>
             <td class="p-2 border border-[#CACACA]">

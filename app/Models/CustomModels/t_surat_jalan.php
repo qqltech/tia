@@ -38,14 +38,20 @@ class t_surat_jalan extends \App\Models\BasicModels\t_surat_jalan
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $result = m_general::where('id',$arrayData['jenis_sj'])->first();
+        $tipe_surat_jalan = $arrayData['tipe_surat_jalan'];
+        $no_surat_jalan=$this->checkTypeOfSJ($tipe_surat_jalan,$result->kode);
+        // trigger_error(json_encode($no_surat_jalan));
+
         $status = "DRAFT";
         $req = app()->request;
         if($req->post){
             $status = "POST";
         }
+
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft Surat Jalan"),
-            "no_surat_jalan" => $this->helper->generateNomor("Surat Jalan"),
+            // "no_surat_jalan" => $this->helper->generateNomor($no_surat_jalan),
             "status" => $status,
         ];
         $newArrayData = array_merge($arrayData, $newData);
@@ -58,12 +64,18 @@ class t_surat_jalan extends \App\Models\BasicModels\t_surat_jalan
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        
+        // $result = m_general::where('id',$arrayData['jenis_sj'])->first();
+        // $tipe_surat_jalan = $arrayData['tipe_surat_jalan'];
+        // $no_surat_jalan=$this->checkTypeOfSJ($tipe_surat_jalan,$result->kode);
+
         $req = app()->request;
         $status = $req->post ? "POST" : $arrayData['status'];
         
         $newData = [
             "tanggal" => date("Y-m-d"),
-            "status" => $status
+            "status" => $status,
+            // "no_surat_jalan" => $this->helper->generateNomor($no_surat_jalan),
         ];
         $newArrayData = array_merge($arrayData, $newData);
         return [
@@ -72,10 +84,68 @@ class t_surat_jalan extends \App\Models\BasicModels\t_surat_jalan
             // "errors" => ['error1']
         ];
     }
+
+    public function checkTypeOfSJ($tipe,$jenis){
+
+        //SJ IMPORT
+        if($tipe == "IMPORT" && $jenis == "CONTAINER EMPTY"){
+            $no_surat_jalan = "Surat Jalan Import Empty";
+        }
+        else if($tipe == "IMPORT" && $jenis == "CONTAINER FULL"){
+            $no_surat_jalan = "Surat Jalan Import Full";
+        }
+        else if($tipe == "IMPORT" && $jenis == "CONTAINER PP"){
+            $no_surat_jalan = "Surat Jalan Import PP";
+        }
+        //SJ EXPORT & EXPORT S
+        else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER EMPTY"){
+            $no_surat_jalan = "Surat Jalan Export Empty";
+        }
+        else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER FULL"){
+            $no_surat_jalan = "Surat Jalan Export Full";
+        }
+        else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER PP"){
+            $no_surat_jalan = "Surat Jalan Export PP";
+        }
+        //SJ OL & OLS
+        else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER EMPTY"){
+            $no_surat_jalan = "Surat Jalan OL Empty";
+        }
+        else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER FULL"){
+            $no_surat_jalan = "Surat Jalan OL Full";
+        }
+        else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER PP"){
+            $no_surat_jalan = "Surat Jalan OL PP";
+        }
+        //SJ LOKAL
+        else if(($tipe == "LOKAL") && $jenis == "CONTAINER EMPTY"){
+            $no_surat_jalan = "Surat Jalan Lokal Empty";
+        }
+        else if(($tipe == "LOKAL") && $jenis == "CONTAINER FULL"){
+            $no_surat_jalan = "Surat Jalan Lokal Full";
+        }
+        else if(($tipe == "LOKAL") && $jenis == "CONTAINER PP"){
+            $no_surat_jalan = "Surat Jalan Lokal PP";
+        }
+        else{
+            $no_surat_jalan = "Surat Jalan";
+        }
+        return $no_surat_jalan;
+    }
+
     public function custom_post()
     {
         $id = request("id");
-        $status = $this->where("id", $id)->update(["status" => "POST"]);
+        $getSJ = t_surat_jalan::where('id',$id)->first();
+        $tipe_surat_jalan = $getSJ->tipe_surat_jalan;
+        $result = m_general::where('id',$getSJ->jenis_sj)->first();
+        $no_surat_jalan=$this->checkTypeOfSJ($tipe_surat_jalan,$result->kode);
+    
+        // trigger_error(json_encode($getSJ));
+        $status = $this->where("id", $id)->update([
+            "status" => "POST",
+            "no_surat_jalan" => $this->helper->generateNomor($no_surat_jalan)
+            ]);
         return ["success" => true];
     }
 

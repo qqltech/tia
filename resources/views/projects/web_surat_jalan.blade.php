@@ -16,8 +16,9 @@ left join \"set\".m_general mg on tsa.isi_container_1 = mg.id
 left join \"set\".m_general mg2 on tbodn.jenis = mg2.id
 where tsj.id = ? and tsa.status = 'APPROVED'",[$req['id']]);*/
 
-$nospk = \DB::select("SELECT tsj.*, tsj.depo as depo_tsj, UPPER(mg3.deskripsi) as jenis_sj_deskripsi, tbo.*, mc.*,
-tbodn.*, mg2.deskripsi as deskripsi_jenis, mg2.deskripsi2 as singkatan_jenis, tsj.nw as tsj_nw, tsj.gw as tsj_gw, tsj.no_seal as tsj_no_seal, tsj.tare as tsj_tare,
+$nospk = \DB::select("SELECT tsj.*, tsj.depo as depo_tsj, UPPER(mg3.deskripsi) as jenis_sj_deskripsi,mg3.kode as jenis_sj_kode, tbo.*, mc.*,
+tbodn.*, mg2.deskripsi as deskripsi_jenis, mg2.deskripsi2 as singkatan_jenis, tsj.nw as tsj_nw, tsj.gw as tsj_gw,
+tsj.no_seal as tsj_no_seal, tsj.tare as tsj_tare,
 tsj.lokasi_stuffing as tsj_lokasi_stuffing
 FROM t_surat_jalan tsj
 LEFT JOIN t_buku_order tbo ON tsj.t_buku_order_id = tbo.id
@@ -51,7 +52,7 @@ else if ($n->tipe_surat_jalan == "EKSPORT S"){
 $cekImp = "EXPS";
 }
 else if ($n->tipe_surat_jalan == "LOKAL"){
-$cekImp = "LOCAL";
+$cekImp = "LOKAL";
 }
 else if ($n->tipe_surat_jalan == "OL"){
 $cekImp = "OL";
@@ -121,7 +122,7 @@ $jeniskontainer = "SPC";
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- <title>DOT MATRIX</title> -->
+  <title>SURAT JALAN / PENGANTAR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Set page size here: A5, A4 or A3 -->
   <!-- Set also "landscape" if you need -->
@@ -261,6 +262,14 @@ $jeniskontainer = "SPC";
       body.A5 {
         width: 148mm;
       }
+
+      body.continuous_form {
+        width: 105mm;
+      }
+
+      body.continuous_form.landscape {
+        width: 135mm;
+      }
     }
 
     @page {
@@ -295,6 +304,300 @@ $jeniskontainer = "SPC";
 </head>
 
 <body class="continuous_form">
+  <!-- Lembar 1 -->
+  <section class="sheet padding-3mm" style="padding-right: 21px; padding-top: 21px; page-break-after: always;">
+    <!-- <pre>{{var_dump($nospk)}}</pre> -->
+    <table style="width:100%;">
+      <thead>
+        <tr>
+          <th colspan="2" class="underline-2"
+            style="text-decoration: underline; font-weight: bold; height:20px; text-align:left;">SURAT JALAN / PENGANTAR
+          </th>
+          <th colspan="2" style="text-align:right;">
+            {{$n->no_surat_jalan}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>No. Order</td>
+          <td colspan="2">
+            <span style="font-weight: normal;">:</span>
+            <span style="font-weight: bold;">&nbsp;&nbsp;{{$n->no_buku_order}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Tgl. Berangkat</td>
+          <td colspan="2">
+            <span style="font-weight: normal;">:</span>
+            <span style="font-weight: bold;">&nbsp;&nbsp;{{$tanggal_berangkat}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Kepada Yth</td>
+          <td colspan="2">
+            <span style="font-weight: normal;">:</span>
+            <span style="font-weight: normal;">&nbsp;&nbsp;{{$n->nama_perusahaan}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Alamat</td>
+          <td colspan="3">
+            <span style="font-weight: normal;">:</span>
+            <span style="font-weight: bold; border-bottom: 0.5px solid black; padding-right: 90px;">&nbsp;&nbsp;{{$n->tsj_lokasi_stuffing}}</span>
+          </td>
+        </tr>
+        <td>
+          <span style="display: inline-block; width: 360px; border-bottom: 0.5px solid black;"></span>
+          <span style="display: inline-block; width: 360px; border-bottom: 0.5px solid black;"></span>
+        </td>
+        <tr>
+          <td>Nama Angk.</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>No. Polisi</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">&nbsp;</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Pelabuhan</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->pelabuhan}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Depo</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->depo_tsj}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Kapal</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 262px; border-bottom: 0.5px solid black;">{{$n->kapal}}</span>
+          </td>
+        </tr>
+        <td>
+          <span></span>
+        </td>
+    </table>
+    <table border="0" style="width: 100%; border: 0.5px solid black;">
+      <thead style="border: 0.5px solid black;">
+        <tr>
+          <th colspan="4" style="text-align: center; border-right: 0.5px solid black;">
+            <span>Keterangan</span>
+          </th>
+          <th colspan="4" style="text-align: center;">
+            Jenis Barang
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" style="border-right: 0.5px solid black;"></td>
+          <td colspan="4" style="border-left: 0.5px solid black;">
+            &nbsp;&nbsp;&nbsp;&nbsp;{{$n->jenis_barang}}
+          </td>
+        </tr>
+        <tr>
+          <td>Type Cont</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">1x{{$n->ukuran_kontainer}} {{$n->singkatan_jenis}}</span>
+          </td>
+          <td colspan="2" style="border-left: 0.5px solid black;"></td>
+        </tr>
+        <tr>
+          <td>No. Cont</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">{{$n->no_prefix}}{{$n->no_suffix}}</span>
+          </td>
+          <td colspan="2" style="border-left: 0.5px solid black;"></td>
+        </tr>
+        <tr>
+          <td>No. Seal</td>
+          <td colspan="3">
+            <span style="font-weight: normal; white-space: nowrap;">:</span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+              {{$n->tsj_no_seal}}
+            </span>
+          </td>
+          <td colspan="2" style="border-left: 0.5px solid black;"></td>
+        </tr>
+        <tr>
+          <td style="width: 25%;"></td>
+          <td style="width: 3%;"></td>
+          <td style="width: 30%; border: none;"></td>
+          <td style="width: 2%; border: none;"></td>
+          <td style="width: 1%; border-left: 0.5px solid black;"></td>
+          @if($n->jenis_sj_kode == "CONTAINER PP")
+            <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 14px; 
+            vertical-align: middle; padding: 5px;">
+              {{$cekImp}} EMPTY
+            </td>
+          @else
+            <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 14px; 
+            vertical-align: middle; padding: 5px;">
+              {{$cekImp}} {{$n->jenis_sj_deskripsi}}
+            </td>
+          @endif
+        </tr>
+        <tr>
+          <td style="border-left: 0.5px solid black; border-top: 0.5px solid black;">NW</td>
+          <td colspan="3" style="border-top: 0.5px solid black">
+            <span style="font-weight: normal;">:</span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+              {{$n->tsj_nw}}
+            </span>
+          </td>
+          <td colspan="2" style="border-left: 0.5px solid black;"></td>
+        </tr>
+        <tr>
+          <td style="border-left: 0.5px solid black;">GW</td>
+          <td colspan="3">
+            <span style="font-weight: normal;">:</span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+              {{$n->tsj_gw}}
+            </span>
+          </td>
+          <td colspan="2" style="border-left: 0.5px solid black;"></td>
+        </tr>
+        <tr>
+          <td style="border-left: 0.5px solid black;">TARE</td>
+          <td colspan="3">
+            <span style="font-weight: normal;">:</span>
+            <span style="display: inline-block; width: 125px; border-bottom: 0.5px solid black; font-weight: bold;">
+              {{$n->tsj_tare}}
+            </span>
+          </td>
+          <td colspan="2" style="border-left: 0.5px solid black;"></td>
+        </tr>
+        <tr>
+          <td style="border-left: 0.5px solid black; border-bottom: 0.5px solid black;"></td>
+          <td style="border-bottom: 0.5px solid black;">
+            <span style="font-weight: normal; border-bottom: 0.5px solid black;"></span>
+          </td>
+          <td style="border: none; border-bottom: 0.5px solid black; font-weight: bold; "></td>
+          <td style="border: none; border-right: 0.5px solid black; border-bottom: 0.5px solid black;">
+          </td>
+          <td style="border: none;"></td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 0.5px solid black;"></td>
+          <td style="border-bottom: 0.5px solid black;">
+            <span style="font-weight: normal; border-bottom: 0.5px solid black;"></span>
+          </td>
+          <td style="border: none; border-bottom: 0.5px solid black; font-weight: bold; "></td>
+          <td style="border: none; border-bottom: 0.5px solid black;"></td>
+          <td style="border: none; border-bottom: 0.5px solid black;">
+          </td>
+          <td colspan="3" style="border: none; border-bottom: 0.5px solid black;"></td>
+        </tr>
+    </table>
+    <table style="width: 100%">
+      <tr>
+        <td colspan="3">Barang-barang tersebut diatas harap diterima dengan baik.</td>
+      </tr>
+      <tr>
+        <td style="text-align: center; ">Penerima,</td>
+        <td style="text-align: center; ">Pembawa,</td>
+        <td style="text-align: center; ">Pengirim,</td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td style="text-align: center;">
+          (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+        </td>
+        <td style="text-align: center;">
+          (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+        </td>
+        <td style="text-align: center;">
+          (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: center;">Nama Terang</td>
+        <td style="text-align: center;">Nama Terang</td>
+        <td style="text-align: center;">Nama Terang</td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="3" style="font-weight: bold; border: none; border-bottom: 0.5px solid black;">Dicetak pada tgl :
+          {{$currentDate}}
+          jam
+          {{$currentTime}} Operator : DEWI-PC # dewi</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+  @if($n->jenis_sj_kode == "CONTAINER PP")
+  <!-- Lembar 2 -->
   <section class="sheet padding-3mm" style="padding-right: 21px; padding-top: 21px;">
     <!-- <pre>{{var_dump($nospk)}}</pre> -->
     <table style="width:100%;">
@@ -432,7 +735,7 @@ $jeniskontainer = "SPC";
           <td style="width: 1%; border-left: 0.5px solid black;"></td>
           <td colspan="2" style="border: 0.5px solid black; text-align: center; font-weight: bold; font-size: 14px; 
            vertical-align: middle; padding: 5px;">
-            {{$cekImp}} {{$n->jenis_sj_deskripsi}}
+            {{$cekImp}} FULL
           </td>
         </tr>
         <tr>
@@ -507,23 +810,32 @@ $jeniskontainer = "SPC";
       </tr>
       <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
       </tr>
       <tr>
@@ -547,14 +859,17 @@ $jeniskontainer = "SPC";
       </tr>
       <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
       </tr>
       <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
-      </tr><tr>
+      </tr>
+      <tr>
         <td></td>
       </tr>
       <tr>
@@ -566,6 +881,7 @@ $jeniskontainer = "SPC";
       </tbody>
     </table>
   </section>
+  @endif
 </body>
 
 </html>
