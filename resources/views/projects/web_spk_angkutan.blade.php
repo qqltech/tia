@@ -79,9 +79,7 @@ $temp = ' sebelas';
   $temp=terbilang((int)($number / 100)) . ' ratus' . terbilang($number % 100); } elseif ($number < 2000) {
   $temp=' seribu' . terbilang($number - 1000); } elseif ($number < 1000000) { $temp=terbilang((int)($number / 1000))
   . ' ribu' . terbilang($number % 1000); } elseif ($number < 1000000000) { $temp=terbilang((int)($number / 1000000))
-  . ' juta' . terbilang($number % 1000000); } return $temp; } @endphp 
-  
-  @foreach ($nospk as $n) @php
+  . ' juta' . terbilang($number % 1000000); } return $temp; } @endphp @foreach ($nospk as $n) @php
   $unixTime1=strtotime($n->tanggal_in);
   $tanggal_in = date("d/m/Y", $unixTime1);
 
@@ -92,18 +90,18 @@ $temp = ' sebelas';
   $resultIsiContainer1="";
   $cekIsiContainer1 = $n->isi_container_1_deskripsi;
   if($cekIsiContainer1 =="EMPTY"){
-    $resultIsiContainer1 = "E";
-  } 
+  $resultIsiContainer1 = "E";
+  }
   else if($cekIsiContainer1 =="FULL"){
-    $resultIsiContainer1="F";
+  $resultIsiContainer1="F";
   }
 
   $resultIsiContainer2="";
   $cekIsiContainer2 = $n->isi_container_2_deskripsi;
   if($cekIsiContainer2 =="EMPTY"){
-    $resultIsiContainer2="E";
+  $resultIsiContainer2="E";
   }else if($cekIsiContainer2 =="FULL"){
-    $resultIsiContainer2="F";
+  $resultIsiContainer2="F";
   }
 
 
@@ -255,6 +253,14 @@ $temp = ' sebelas';
         body.A5 {
           width: 148mm;
         }
+
+        body.continuous_form {
+          width: 105mm;
+        }
+
+        body.continuous_form.landscape {
+          width: 135mm;
+        }
       }
 
       @page {
@@ -274,7 +280,7 @@ $temp = ' sebelas';
       }
 
       tr {
-        height: 20px;
+        height: 9px;
       }
 
       table {
@@ -313,7 +319,8 @@ $temp = ' sebelas';
                 <td style="width: 3%;">
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="width: 20%; border-bottom: 0.5px dashed black;">{{$n->waktu_out_deskripsi??'-'}} / {{$n->waktu_in_deskripsi??'-'}}</td>
+                <td style="width: 20%; border-bottom: 0.5px dashed black;">{{$n->waktu_out_deskripsi??'-'}} /
+                  {{$n->waktu_in_deskripsi??'-'}}</td>
               </tr>
               <tr>
                 <td>HEAD</td>
@@ -329,7 +336,8 @@ $temp = ' sebelas';
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black; line-height: 15px; font-size: 11px;">{{$n->no_buku_order}} / {{$resultIsiContainer1}} /{{$n->customer_kode}}
+                <td style="border-bottom: 0.5px dashed black; line-height: 15px; font-size: 11px;">{{$n->no_buku_order}}
+                  / {{$resultIsiContainer1}} /{{$n->customer_kode}}
                 </td>
               </tr>
               <tr>
@@ -339,14 +347,15 @@ $temp = ' sebelas';
                 </td>
                 <td style="border-bottom: 0.5px dashed black;">
                   {{{$n->supir_nip}}}
-                 </td>
+                </td>
                 <td style="border-bottom: 0.5px dashed black;">Chs-2: {{$n->chasis2_kode}}</td>
                 <td></td>
                 <td>ORD 2</td>
                 <td>
                   <span style="font-weight: normal;">:</span>
                 </td>
-                <td style="border-bottom: 0.5px dashed black; line-height: 15px; font-size: 11px;">{{$n->no_buku_order2}} / {{$resultIsiContainer2}} /{{$n->customer_kode2}}
+                <td style="border-bottom: 0.5px dashed black; line-height: 15px; font-size: 11px;">
+                  {{$n->no_buku_order2}} / {{$resultIsiContainer2}} /{{$n->customer_kode2}}
                 </td>
               </tr>
               <tr>
@@ -456,6 +465,9 @@ $temp = ' sebelas';
               <td style="width: 5%;">Admin / Kasir</td>
               <td style="width: 5%; padding-left: 35px;">Sopir</td>
               <td style="width: 5%; text-align: center;">Pengebon,</td>
+            </tr>
+            <tr>
+              <td></td>
             </tr>
             <tr>
               <td></td>

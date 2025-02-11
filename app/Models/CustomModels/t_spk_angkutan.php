@@ -41,14 +41,12 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
         
-        $kode = trim($arrayData["kode"]);
-        $result = $model->where("kode", $kode)->first();
+        // $kode = trim($arrayData["kode"]);
+        // $result = $model->where("kode", $kode)->first();
 
-        if ($result) {
-            return ["errors" => ["Kode Customer sudah dipakai!"]];
-        }
-
-
+        // if ($result) {
+        //     return ["errors" => ["Kode Customer sudah dipakai!"]];
+        // }
         $getid = $this->get_supplier();
         // $checkDataExist1 = $this->where('t_detail_npwp_container_1_id', $arrayData['t_detail_npwp_container_1_id'])->count();
         // $checkDataExist2 = $this->where('t_detail_npwp_container_2_id', $arrayData['t_detail_npwp_container_2_id'])->count();

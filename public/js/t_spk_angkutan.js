@@ -239,7 +239,7 @@ const table = reactive({
       icon: 'print',
       title: "Cetak",
       class: 'bg-amber-600 text-light-100',
-      show: (row) => row['status'] !== 'DRAFT',
+      show: (row) => row['status'] == 'APPROVED' || row['status'] == 'PRINTED',
       async click(row) {
         try {
           const dataURL = `${store.server.url_backend}/operation/t_spk_angkutan/print?id=${row.id}`;
@@ -439,6 +439,8 @@ onBeforeMount(async () => {
       if (actionText.value === 'Copy') {
         data.status = default_value.data.status;
         data.is_con_edit = default_value.data.is_con_edit;
+        data.no_spk = null;
+
       }
     });
 
@@ -778,7 +780,7 @@ async function progress(status) {
         })
       }
       isRequesting.value = false;
-      router.replace('/' + modulPath);
+      router.replace('/' + 'notifikasi');
     }
   })
 }
