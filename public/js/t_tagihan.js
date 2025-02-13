@@ -120,9 +120,6 @@ const removeDetail = (index) => {
 }
 
 
-
-
-
 const detailArrOpen = ref([]);
 const addDetailOpen = (detail) => {
   const tempItem = {
@@ -227,7 +224,7 @@ async function buku(no_buku_order) {
               tarif.jasa.forEach((jasa) => {
                 jasa.satuan = jasa.satuan || 0;
                 jasa.tarif = jasa.tarif === undefined || jasa.tarif === null ? 0 : parseFloat(jasa.tarif);
-
+                jasa.is_ppn = jasa.ppn;
                 const existingIndex = detailArr1.value.findIndex(item => item.id === jasa.id);
                 if (existingIndex > -1) {
                   detailArr1.value[existingIndex] = jasa;

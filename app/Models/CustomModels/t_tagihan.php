@@ -94,38 +94,38 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         return $this->belongsTo(Tarif::class, 'm_tarif_id');
     }
 
-    public function custom_calculate_tagihan($req){
-        // return $req;
-        $tagihanKontainer = $req['detailArr'];
-        $tagihanJasa = $req['detailArr1'];
-        $tagihanPpjk = $req['detailArr2'];
-        $tagihanLain = $req['detailArr3'];
-        $tarifdp = $req['total_tarif_dp'];
-        $idBukuOrder = $req['t_buku_order_id'];
-        $ppn = $req['ppn'];
-        $countKontainer = collect($req['detailArr'])->count();
+    // public function custom_calculate_tagihan($req){
+    //     // return $req;
+    //     $tagihanKontainer = $req['detailArr'];
+    //     $tagihanJasa = $req['detailArr1'];
+    //     $tagihanPpjk = $req['detailArr2'];
+    //     $tagihanLain = $req['detailArr3'];
+    //     $tarifdp = $req['total_tarif_dp'];
+    //     $idBukuOrder = $req['t_buku_order_id'];
+    //     $ppn = $req['ppn'];
+    //     $countKontainer = collect($req['detailArr'])->count();
 
-        $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
+    //     $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
 
-        $totalKontainer = $this->kontainer($tagihanKontainer);
-        $totalKontainerPPN = $totalKontainer * ($ppn / 100);
-        $grandTotalKontainer = $totalKontainer + $totalKontainerPPN;
+    //     $totalKontainer = $this->kontainer($tagihanKontainer);
+    //     $totalKontainerPPN = $totalKontainer * ($ppn / 100);
+    //     $grandTotalKontainer = $totalKontainer + $totalKontainerPPN;
 
-        $totalJasa = $this->jasa($tagihanJasa, $ppn, $countKontainer);
-        $totalPpjk =  $this->ppjk($tagihanPpjk, $nominalPpjk, $ppn);
-        $totalLainArray = $this->lain($tagihanLain, $ppn); 
-        $totalLain = $totalLainArray['total'] - $tarifdp;
+    //     $totalJasa = $this->jasa($tagihanJasa, $ppn, $countKontainer);
+    //     $totalPpjk =  $this->ppjk($tagihanPpjk, $nominalPpjk, $ppn);
+    //     $totalLainArray = $this->lain($tagihanLain, $ppn); 
+    //     $totalLain = $totalLainArray['total'] - $tarifdp;
 
 
-        return [
-            'total_jasa_cont_ppjk' => $totalKontainer + $totalPpjk['total_non_ppn'],
-            'total_lain2_ppn' => $totalLainArray['total_ppn'],
-            'total_ppn' => $totalKontainerPPN + $totalJasa['total_ppn'] + $totalLainArray['total_ppn'] + $totalPpjk['total_ppn'] ,
-            'total_jasa_angkutan' => $totalJasa['total_non_ppn'],
-            'total_lain_non_ppn' => $totalLainArray['total_non_ppn'],
-            'grand_total' => $grandTotalKontainer + $totalJasa['total'] + $totalPpjk['total'] + $totalLain,
-        ];
-    }
+    //     return [
+    //         'total_jasa_cont_ppjk' => $totalKontainer + $totalPpjk['total_non_ppn'],
+    //         'total_lain2_ppn' => $totalLainArray['total_ppn'],
+    //         'total_ppn' => $totalKontainerPPN + $totalJasa['total_ppn'] + $totalLainArray['total_ppn'] + $totalPpjk['total_ppn'] ,
+    //         'total_jasa_angkutan' => $totalJasa['total_non_ppn'],
+    //         'total_lain_non_ppn' => $totalLainArray['total_non_ppn'],
+    //         'grand_total' => $grandTotalKontainer + $totalJasa['total'] + $totalPpjk['total'] + $totalLain,
+    //     ];
+    // }
 
 
     private function kontainer($data){
@@ -275,30 +275,86 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     //     return $calculateCoo;
     // }
 
-    private function lain($data, $ppn){
+    // private function lain($data, $ppn){
+    //     $calculateLain = 0;
+    //     $grandTotalPpn = 0;
+    //     $totalNotPpn = 0;
+
+    //     foreach($data as $single){
+    //         if(@$single['is_ppn']){
+    //             $totalPpn = 0;
+    //             $totalPpn = $single['tarif_realisasi'] * ($ppn / 100) * $single['qty'];;
+    //             $grandTotalPpn += $totalPpn;
+                
+    //             $totalLain = ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+    //             $totalNotPpn += $calculateLain;	                
+                
+    //             $calculateLain += $totalLain;
+    //             $calculateLain += $totalPpn;
+
+    //         }else{
+    //             $totalLain = ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+
+    //             $totalNotPpn += $totalLain;
+    //             $calculateLain += $totalLain;
+
+    //         }
+    //     }
+
+    //     return [
+    //         'total_ppn' => $grandTotalPpn,
+    //         'total_non_ppn' => $totalNotPpn,
+    //         'total' => $calculateLain,
+    //     ];
+    // }
+
+    // coba function-custom dan function-lain
+    public function custom_calculate_tagihan($req){
+        $tagihanKontainer = $req['detailArr'];
+        $tagihanJasa = $req['detailArr1'];
+        $tagihanPpjk = $req['detailArr2'];
+        $tagihanLain = $req['detailArr3'];
+        $tarifdp = $req['total_tarif_dp'];
+        $idBukuOrder = $req['t_buku_order_id'];
+        $ppn = $req['ppn'];
+        $countKontainer = collect($req['detailArr'])->count();
+        
+        $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
+        
+        $totalKontainer = $this->kontainer($tagihanKontainer);
+        $totalJasa = $this->jasa($tagihanJasa, $ppn, $countKontainer);
+        $totalPpjk = $this->ppjk($tagihanPpjk, $nominalPpjk, $ppn);
+        $totalLainArray = $this->lain($tagihanLain, $ppn); 
+        $totalLain = $totalLainArray['total'] - $tarifdp;
+        
+        // Menghitung Total PPN 
+        $totalLainPPN = $totalLainArray['total_ppn'];
+        $totalPPN = ($totalLainPPN * ($ppn / 100)) + ($totalKontainer * ($ppn / 100)) + ($totalPpjk['total_non_ppn'] * ($ppn / 100));
+        
+        return [
+            'total_jasa_cont_ppjk' => $totalKontainer + $totalPpjk['total_non_ppn'],
+            'total_lain2_ppn' => $totalLainPPN,
+            'total_ppn' => $totalPPN + $totalJasa['total_ppn'],
+            'total_jasa_angkutan' => $totalJasa['total_non_ppn'],
+            'total_lain_non_ppn' => $totalLainArray['total_non_ppn'],
+            'grand_total' => $totalKontainer + $totalPpjk['total_non_ppn'] + $totalLain + $totalPPN + $totalJasa['total'],
+        ];
+    }
+
+    private function lain($data, $ppn){ 
         $calculateLain = 0;
         $grandTotalPpn = 0;
         $totalNotPpn = 0;
 
         foreach($data as $single){
-            if(@$single['is_ppn']){
-                $totalPpn = 0;
-                $totalPpn = $single['tarif_realisasi'] * ($ppn / 100) * $single['qty'];;
-                $grandTotalPpn += $totalPpn;
-                
-                $totalLain = ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
-                $totalNotPpn += $calculateLain;	                
-                
-                $calculateLain += $totalLain;
-                $calculateLain += $totalPpn;
-
-            }else{
-                $totalLain = ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
-
+            $totalLain = ($single['tarif_realisasi'] ?? 0) * ($single['qty'] ?? 0);
+            
+            if(!empty($single['is_ppn'])) { // PPN (true)
+                $grandTotalPpn += $totalLain; // Simpan total Lain yang terkena PPN
+            } else { // PPN (false)
                 $totalNotPpn += $totalLain;
-                $calculateLain += $totalLain;
-
             }
+            $calculateLain += $totalLain;
         }
 
         return [

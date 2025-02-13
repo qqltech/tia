@@ -21,12 +21,6 @@
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           IN APPROVAL
         </button>
-        <!-- <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('In Process')" :class="filterButton === 'In Process' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
-          : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          In Process
-        </button> -->
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
         <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
           : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
@@ -447,9 +441,6 @@
     </div>
 
     <div class="grid grid-cols-2 gap-y-2 gap-x-2">
-      <!-- <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.no_container_1"
-        @input="v=>data.no  _container_1=v" :errorText="formErrors.no_container_1?'failed':''"
-        :hints="formErrors.no_container_1" placeholder="No. Container 1" :check="false" /> -->
       <FieldX :bind="{ readonly: !actionText && (!actionSingleEdit || data.is_con_edit == true) }" class="w-full !mt-3"
         :value="data.no_prefix_1" @input="v=>data.no_prefix_1=v" :errorText="formErrors.no_prefix_1?'failed':''"
         :hints="formErrors.no_prefix_1" placeholder="No. Prefix 1" :check="false" />
@@ -600,15 +591,11 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                //where:`this.group='ISI CONTAINER'`
               }
           }" label="Nama Customer" fa-icon="" placeholder="" :check="false" />
     </div>
 
     <div class="grid grid-cols-2 gap-y-2 gap-x-2">
-      <!-- <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.no_container_2"
-        @input="v=>data.no_container_2=v" :errorText="formErrors.no_container_2?'failed':''"
-        :hints="formErrors.no_container_2" placeholder="No. Container 2" :check="false" /> -->
       <FieldX :bind="{ readonly: !actionText && (!actionSingleEdit || data.is_con_edit == true) }" class="w-full !mt-3"
         :value="data.no_prefix_2" @input="v=>data.no_prefix_2=v" :errorText="formErrors.no_prefix_2?'failed':''"
         :hints="formErrors.no_prefix_2" placeholder="No. Prefix 2" :check="false" />
@@ -629,26 +616,6 @@
         :hints="formErrors.jenis_container_2" label="Jenis Container 2" placeholder="Jenis Container 2"
         :check="false" />
     </div>
-
-
-
-
-
-
-    <!-- <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.ukuran_container_2"
-        @input="v=>data.ukuran_container_2=v" :errorText="formErrors.ukuran_container_2?'failed':''"
-        :hints="formErrors.ukuran_container_2" label="Ukuran Container 2" placeholder="Ukuran Container 2" :check="false" />
-    </div> -->
-
-
-
-
-
-
-
-
-
     <div>
       <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.dari" @input="v=>data.dari=v"
         :errorText="formErrors.dari?'failed':''" :hints="formErrors.dari" placeholder="Dari" :check="false" />
@@ -684,10 +651,6 @@
         :check="false" />
     </div>
     <div>
-      <!-- <FieldNumber type="number" :bind="{ readonly: true }" class="w-full !mt-3" :value="data.total_sangu"
-        @input="v=>data.total_sangu=v" :errorText="formErrors.total_sangu?'failed':''" :hints="formErrors.total_sangu"
-        placeholder="Total Sangu" label="Total Sangu" :check="false" label-class="{ fontSize: '40px', fontWeight: 'bold' }"/> -->
-      <!-- <number type="number" class="w-full !mt-3" style="font-size: 20px; font-weight: bold;">{{ formatCurrency(parseFloat(data.total_sangu)) }}</number> -->
       <p type="number" class="w-full !mt-3" style="font-size: 20px; font-weight: bold;">Total Sangu : Rp. {{
         data.total_sangu_tampil }}</p>
     </div>
@@ -714,12 +677,6 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Nominal</td>
-            <!-- <td
-              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-              Trip</td> -->
-            <!-- <td
-              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-              Catatan</td> -->
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               Action</td>
@@ -740,23 +697,6 @@
                 :errorText="formErrors.nominal?'failed':''" @input="v=>detailArr[i].nominal=v"
                 :hints="formErrors.nominal" label="" placeholder="Nominal" :check="false" />
             </td>
-            <!-- <div>
-              <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="detailArr[i].trip_id"
-                @input="v=>detailArr[i].trip_id=v" :errorText="formErrors.trip_id?'failed':''" :hints="formErrors.trip"
-                valueField="id" displayField="deskripsi" :api="{
-              url: `${store.server.url_backend}/operation/m_general`,
-              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-              params: {
-                simplest:true,
-                where:`this.group='TRIP SPK ANGKUTAN'`
-              }
-          }" label="Trip" placeholder="Pilih trip" fa-icon="sort-desc" :check="false" />
-            </div> -->
-            <!-- <td class="p-2 text-center border border-[#CACACA]">
-              <FieldX :bind="{ readonly: !actionText }" :value="detailArr[i].catatan"
-                :errorText="formErrors.catatan?'failed':''" @input="v=>detailArr[i].catatan=v"
-                :hints="formErrors.catatan" label="" placeholder="catatan" :check="false" />
-            </td> -->
             <td class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailBon(i)" :disabled="!actionText">
@@ -783,9 +723,6 @@
       :value="data.total_bon_tambahan" @input="v=>data.total_bon_tambahan=v"
       :errorText="formErrors.total_bon_tambahan?'failed':''" :hints="formErrors.total_bon_tambahan"
       placeholder="Total Bon Tambahan" label="Total Bon Tambahan" :check="false" />
-    <!-- <FieldNumber type="number" :bind="{ readonly: !actionText }" :value="detailArr[i].nominal"
-      :errorText="formErrors.nominal?'failed':''" @input="v=>detailArr[i].nominal=v" :hints="formErrors.nominal"
-      label="" placeholder="Nominal" :check="false" /> -->
   </div>
   <!-- ACTION BUTTON FORM -->
   <hr v-show="actionText" />
