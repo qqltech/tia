@@ -85,6 +85,7 @@ const addDetail = () => {
 
 // Detail Tarif jasa
 const detailArr1 = ref([]);
+
 const addDetail1 = () => {
   const tempItem = {
     tarif: 0,
@@ -178,6 +179,7 @@ async function buku(no_buku_order) {
     if (!res1.ok) throw new Error("Gagal saat mencoba membaca data");
     const resultJson1 = await res1.json();
     const deskripsiKeys = Array.isArray(resultJson1.data) ? resultJson1.data.map(item => item.deskripsi) : [];
+    // FECTH BUKU ORDER
     const dataURL = `${store.server.url_backend}/operation/t_buku_order/${no_buku_order.id}`;
     const params = {
       join: true,
@@ -195,7 +197,8 @@ async function buku(no_buku_order) {
     if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
     const resultJson = await res.json();
     const initialValues = resultJson.data;
-    console.log('TARIF DP', initialValues.tarif_dp);
+    console.log('DATA BUKU ORDER',initialValues)
+
     detailArr.value = [];
     detailArr1.value = [];
     detailArr2.value = [];
@@ -212,6 +215,7 @@ async function buku(no_buku_order) {
 
     values.total_tarif_dp = initialValues?.tarif_dp?.total_amount || 0;
     const tipe_kontainer = initialValues.tipe || 0;
+
     if (Array.isArray(initialValues['t_buku_order_d_npwp'])) {
       initialValues['t_buku_order_d_npwp'].forEach((detail) => {
         detail.no_buku_order = initialValues.id;
@@ -238,6 +242,7 @@ async function buku(no_buku_order) {
         }
       });
     }
+
     const uniqueItems = new Map(); 
     initialValues.t_buku_order_d_npwp.forEach(item => {
       item.tarif.forEach(tarifItem => {
@@ -376,6 +381,8 @@ onBeforeMount(async () => {
       await new Promise(resolve => setTimeout(resolve, 500));
       await buku({ id: initialValues.no_buku_order });
       detailArr3.value = initialValues.t_tagihan_d_lain || [];
+
+      
     } catch (err) {
       isBadForm.value = true;
       swal.fire({

@@ -108,6 +108,7 @@
         :hints="formErrors.t_spk_angkutan_id" @update:valueFull="(res)=>{
           // getTarifPremi(res);
         if(res){
+          $log(res)
           getTarifPremi(res.t_detail_npwp_container_1_id, res.t_detail_npwp_container_2_id);
           getDetailNPWPContainer(res.t_detail_npwp_container_1_id, res.t_detail_npwp_container_2_id);
           data.no_container = (res['no_container_1'] ?? '-') +', ' + (res['no_container_2'] ?? '-');
@@ -115,7 +116,7 @@
           data.waktu_out = res.waktu_out;
           data.no_bon_sementara = res.no_bon_sementara;
           data.tanggal_bon = res.tanggal_bon;
-
+          data.head_deskripsi2 = res['head.deskripsi2']
           data.tanggal_in = res.tanggal_in;
           data.waktu_in = res.waktu_in;
           // data.ukuran_container = (res['t_detail_npwp_container_1.ukuran'] ?? '-')+', '+ (res['t_detail_npwp_container_2.ukuran'] ?? '-');
@@ -214,9 +215,9 @@
         placeholder="Masukan No. Order" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_angkutan" @input="v=>data.no_angkutan=v"
-        :errorText="formErrors.no_angkutan?'failed':''" :hints="formErrors.no_angkutan" label="No. Angkutan"
-        placeholder="Masukan No. Angkutan" :check="false" />
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.head_deskripsi2" @input="v=>data.head_deskripsi2=v"
+        :errorText="formErrors.head_deskripsi2?'failed':''" :hints="formErrors.head_deskripsi2" label="No. Head"
+        placeholder="Masukan No. Head" :check="false" />
     </div>
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
       <FieldX :bind="{ disabled: true, readonly: true }" class="w-full !mt-3" :value="data.tanggal_out"

@@ -24,7 +24,7 @@ class m_lokasistuffing extends Model
     public $rules       = [];
     public $joins       = [];
     public $details     = [];
-    public $heirs       = ["t_spk_lain"];
+    public $heirs       = [];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

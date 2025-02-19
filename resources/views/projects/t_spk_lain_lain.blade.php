@@ -70,47 +70,91 @@
   <div class="pt-2 pb-4 px-4 grid grid-cols-3 gap-y-2 gap-x-4 items-start">
     <!-- col-span-2 -->
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.kode" @input="v=>data.kode=v"
-        :errorText="formErrors.kode?'failed':''" :hints="formErrors.kode" label="kode" placeholder="Kode"
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_draft" @input="v=>data.no_draft=v"
+        :errorText="formErrors.no_draft?'failed':''" :hints="formErrors.no_draft" label="No. Draft"
+        placeholder="Auto Generate" :check="false" />
+    </div>
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ readonly: true, disabled: true, clearable:true }" :value="data.status"
+        @input="v=>data.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status" valueField="id"
+        displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
+      {'id' : 'POSTED' , 'key' : 'POSTED'},
+      {'id' : 'IN PROCESS' , 'key' : 'IN PROCESS'},
+      {'id' : 'COMPLETE' , 'key' : 'COMPLETE'}]" placeholder="Pilih Status" fa-icon="sort-desc" label="Status"
         :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.no_spk" @input="v=>data.no_spk=v"
-        :errorText="formErrors.no_spk?'failed':''" :hints="formErrors.no_spk" placeholder="Nomor SPK" :check="false" />
+      <FieldX :bind="{ readonly: true, disabled: true }" class="w-full !mt-3" :value="data.no_spk" @input="v=>data.no_spk=v"
+        :errorText="formErrors.no_spk?'failed':''" :hints="formErrors.no_spk" placeholder="Nomor SPK Lain-Lain"
+        :check="false" />
     </div>
     <div>
-      <FieldPopup class="w-full !mt-3" :api="{
-        url: `${store.server.url_backend}/operation/t_buku_order_d_npwp`,
-        headers: {
-          'Content-Type': 'Application/json',
-          Authorization: `${store.user.token_type} ${store.user.token}`
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tanggal" @input="v=>data.tanggal=v"
+        :errorText="formErrors.tanggal?'failed':''" :hints="formErrors.tanggal" type="date"
+        placeholder="Tanggal SPK Lain-Lain" :check="false" />
+    </div>
+    <div>
+      <FieldPopup :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.genzet"
+        @input="(v)=>data.genzet=v" :errorText="formErrors.genzet?'failed':''" :hints="formErrors.genzet"
+        valueField="id" displayField="nama" :api="{
+          url:  `${store.server.url_backend}/operation/m_supplier`,
+          headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+          params: {
+            simplest:true,
+          }
+        }" placeholder="Genzet" :check="false" :columns="[{
+          headerName: 'No',
+          valueGetter:(p)=>p.node.rowIndex + 1,
+          width: 60,
+          sortable: false, resizable: false, filter: false,
+          cellClass: ['justify-center', 'bg-gray-50']
         },
-        params: {
-          simplest:false,
-          // transform:false,
-          // join:true,
-          // override:true,
-          // where:`this.is_active=true`,
-          // searchfield:'this.no_id, this.nip, this.nama, this.alamat_domisili',
-          // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili' 
-        },
-        onsuccess: (response) => {
-          return response;
-        }
-      }" displayField="t_buku_order.no_buku_order" valueField="id" :bind="{ readonly: !actionText }"
-        :value="data.buku_order_id" @input="(v)=>data.buku_order_id=v" @update:valueFull="(response)=>{
-        if(response == null) {
-          data.ukuran_container_1 = '';
-          data.tipe_container_1 = ''
-          data.t_buku_order_1_id = '';
-        } else {
-          data.ukuran_container_1=response['ukuran.deskripsi'];
-          data.tipe_container_1=response['tipe.deskripsi'];
-          data.t_buku_order_1_id = response.t_buku_order_id;
-        }
-      }" :errorText="formErrors.buku_order_id?'failed':''" class="w-full !mt-3" :hints="formErrors.buku_order_id"
-        placeholder="No. Order 1" :check='false' :columns="[
         {
+          flex: 1,
+          field: 'kode',
+          headerName:  'Kode Supplier',
+          sortable: false, resizable: true, filter: 'ColFilter',
+          cellClass: ['border-r', '!border-gray-200', 'justify-center']
+        },
+        {
+          flex: 1,
+          field: 'nama',
+          headerName:  'Nama Supplier',
+          sortable: false, resizable: true, filter: 'ColFilter',
+          cellClass: ['border-r', '!border-gray-200', 'justify-center']
+        },
+        {
+          flex: 1,
+          field: 'alamat',
+          headerName:  'Alamat',
+          sortable: false, resizable: true, filter: 'ColFilter',
+          cellClass: ['border-r', '!border-gray-200', 'justify-center']
+        },
+        {
+          flex: 1,
+          field: 'no_telp1',
+          headerName:  'No. Telp',
+          sortable: false, resizable: true, filter: 'ColFilter',
+          cellClass: ['border-r', '!border-gray-200', 'justify-center']
+        }
+        ]" />
+    </div>
+    <div>
+      <FieldPopup :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.no_container"
+        @input="(v)=>data.no_container=v" :errorText="formErrors.no_container?'failed':''"
+        :hints="formErrors.no_container" valueField="id" displayField="no_container" @update:valueFull="(dt) => {
+              $log(dt)
+              data.t_buku_order_id = dt['t_buku_order.id']
+              data.m_customer_id = dt.['t_buku_order.m_customer_id']
+              data.ukuran = dt['ukuran.id']
+            }" :api="{
+          url:  `${store.server.url_backend}/operation/t_buku_order_d_npwp`,
+          headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+          params: {
+            simplest:true,
+            scopes: 'GetCustomer'
+          }
+        }" placeholder="No. Container" :check="false" :columns="[{
           headerName: 'No',
           valueGetter:(p)=>p.node.rowIndex + 1,
           width: 60,
@@ -125,158 +169,203 @@
           cellClass: ['border-r', '!border-gray-200', 'justify-center']
         },
         {
-          headerName: 'No. Prefix',
-          field: 'no_prefix',
+          headerName: 'No. Container',
+          field: 'no_container',
           flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: false,
-        },
-        {
-          headerName: 'No. Suffix',
-          field: 'no_suffix',
-          flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          cellClass: ['border-r', '!border-gray-200', 'justify-center',],
           sortable: true, resizable: true, filter: false,
         },
         {
           headerName: 'Ukuran',
-          field: 'ukuran',
+          field: 'ukuran.deskripsi',
           flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-          sortable: true, resizable: true, filter: false,
-        },
-        {
-          headerName: 'Tipe',
-          field: 'tipe.deskripsi',
-          flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          cellClass: ['border-r', '!border-gray-200', 'justify-center',],
           sortable: true, resizable: true, filter: false,
         },
         {
           headerName: 'jenis',
           field: 'jenis.deskripsi',
           flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          cellClass: ['border-r', '!border-gray-200', 'justify-center',],
           sortable: true, resizable: true, filter: false,
-        },
-      ]" />
-    </div>
-    <div>
-      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tarif_genzet"
-        @input="v=>data.tarif_genzet=v" :errorText="formErrors.tarif_genzet?'failed':''"
-        :hints="formErrors.tarif_genzet" label="Tarif Genzet" placeholder="Tarif Genzet" :check="false" />
-    </div>
-    <!-- <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.jenis_spk"
-        @input="v=>data.jenis_spk=v" :errorText="formErrors.jenis_spk?'failed':''" :hints="formErrors.jenis_spk"
-        valueField="id" displayField="key" :options="[{'id' : 'SPK A', 'key' : 'SPK A'},
-      {'id' : 'SPK B', 'key' : 'SPK B'},
-      {'id' : 'SPK C', 'key' : 'SPK C'},
-      {'id' : 'SPK D', 'key' : 'SPK D'},
-      {'id' : 'SPK E', 'key' : 'SPK E'}]" fa-icon="sort-desc" placeholder="Pilih Jenis SPK" label="Jenis SPK" :check="false" />
-    </div> -->
-    <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.jenis"
-        @input="v=>data.jenis=v" :errorText="formErrors.jenis?'failed':''" :hints="formErrors.jenis" valueField="id"
-        displayField="deskripsi" :api="{
-              url: `${store.server.url_backend}/operation/m_general`,
-              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-              params: {
-                simplest:true,
-                where:`this.group='Jenis SPK'`
-              }
-          }" label="Jenis SPK" placeholder="Pilih Jenis SPK" fa-icon="sort-desc" :check="false" />
-    </div>
-    <!-- <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.lokasi_stuffing"
-        @input="v=>data.lokasi_stuffing=v" :errorText="formErrors.lokasi_stuffing?'failed':''"
-        :hints="formErrors.lokasi_stuffing" valueField="id" displayField="key" :options="[{'id' : 'Surabaya A', 'key' : 'Surabaya A'},
-      {'id' : 'Surabaya B', 'key' : 'Surabaya B'},
-      {'id' : 'Surabaya C', 'key' : 'Surabaya C'},
-      {'id' : 'Surabaya D', 'key' : 'Surabaya D'},
-      {'id' : 'Surabaya E', 'key' : 'Surabaya E'}]" placeholder="Pilih Jenis SPK" label="Jenis SPK" :check="false" />
-    </div> -->
-    <div>
-      <FieldNumber type="number" :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.sangu_tia"
-        @input="v=>data.sangu_tia=v" :errorText="formErrors.sangu_tia?'failed':''" :hints="formErrors.sangu_tia"
-        label="Sangu Tia" placeholder="Sangu Tia" :check="false" />
-    </div>
-    <div>
-      <FieldNumber type="number" :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.sangu_free"
-        @input="v=>data.sangu_free=v" :errorText="formErrors.sangu_free?'failed':''" :hints="formErrors.sangu_free"
-        label="Biaya Lain-Lain" placeholder="Biaya Lain-Lain" :check="false" />
-    </div>
-    <!-- <div>
-      <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3" :value="data.lokasi_stuffing"
-        @input="v=>{
-        if(v){
-          data.lokasi_stuffing=v
-        }else{
-          data.lokasi_stuffing=null
         }
-      }" :errorText="formErrors.lokasi_stuffing?'failed':''" :hints="formErrors.lokasi_stuffing" valueField="id"
-        displayField="nama_lokasi" :api="{
-          url: `${store.server.url_backend}/operation/m_lokasistuffing`,
-          headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-          params: {
-            simplest:true,
-            transform:false,
-            join:false,
+        ]" />
+    </div>
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.t_buku_order_id"
+        @input="v=>data.t_buku_order_id=v" :errorText="formErrors.t_buku_order_id?'failed':''"
+        :hints="formErrors.t_buku_order_id" valueField="id" displayField="no_buku_order" :api="{
+            url: `${store.server.url_backend}/operation/t_buku_order`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+            }
+        }" placeholder="No. Order" :check="false" />
+    </div>
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.m_customer_id"
+        @input="v=>data.m_customer_id=v" :errorText="formErrors.m_customer_id?'failed':''"
+        :hints="formErrors.m_customer_id" valueField="id" displayField="kode" :api="{
+            url: `${store.server.url_backend}/operation/m_customer`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+            }
+        }" placeholder="Customer" :check="false" />
+    </div>
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.ukuran"
+        @input="v=>data.ukuran=v" :errorText="formErrors.ukuran?'failed':''"
+        :hints="formErrors.ukuran" valueField="id" displayField="deskripsi" :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+            }
+        }" placeholder="Ukuran" :check="false" />
+    </div>
+    <div class="grid grid-cols-2 gap-y-2 gap-x-2">
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.keluar_lokasi_tanggal"
+        @input="v=>data.keluar_lokasi_tanggal=v" :errorText="formErrors.keluar_lokasi_tanggal?'failed':''"
+        :hints="formErrors.keluar_lokasi_tanggal" type="date" placeholder="Keluar Lokasi" :check="false" />
 
-          }
-      }" placeholder="Pilih Lokasi Stuffing" fa-icon="sort-desc" label="Lokasi Stuffing" :check="true" />
-    </div> -->
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.keluar_lokasi_jam"
+        @input="v=>data.keluar_lokasi_jam=v" :errorText="formErrors.keluar_lokasi_jam?'failed':''"
+        :hints="formErrors.keluar_lokasi_jam" type="time" placeholder="Jam Keluar" :check="false" />
+
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.keluar_lokasi_temperatur"
+        @input="v=>data.keluar_lokasi_temperatur=v" :errorText="formErrors.keluar_lokasi_temperatur?'failed':''"
+        :hints="formErrors.keluar_lokasi_temperatur" placeholder="Keluar Temperature" :check="false" />
+    </div>
+    <div class="grid grid-cols-2 gap-y-2 gap-x-2">
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tiba_lokasi_tanggal"
+        @input="v=>data.tiba_lokasi_tanggal=v" :errorText="formErrors.tiba_lokasi_tanggal?'failed':''"
+        :hints="formErrors.tiba_lokasi_tanggal" type="date" placeholder="Tiba Lokasi" :check="false" />
+
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tiba_lokasi_jam"
+        @input="v=>data.tiba_lokasi_jam=v" :errorText="formErrors.tiba_lokasi_jam?'failed':''"
+        :hints="formErrors.tiba_lokasi_jam" type="time" placeholder="Jam Tiba" :check="false" />
+
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tiba_lokasi_temperatur"
+        @input="v=>data.tiba_lokasi_temperatur=v" :errorText="formErrors.tiba_lokasi_temperatur?'failed':''"
+        :hints="formErrors.tiba_lokasi_temperatur" placeholder="Tiba Lokasi Temperature" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.setting_temperatur"
+        @input="v=>data.setting_temperatur=v" :errorText="formErrors.setting_temperatur?'failed':''"
+        :hints="formErrors.setting_temperatur" label="Setting Temperature" placeholder="Setting Temperature"
+        type="textarea" :check="false" />
+    </div>
     <div>
       <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.lokasi_stuffing"
         @input="v=>data.lokasi_stuffing=v" :errorText="formErrors.lokasi_stuffing?'failed':''"
-        :hints="formErrors.lokasi_stuffing" placeholder="Lokasi Stuffing" :check="false" />
-    </div>
-    <!-- <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.lokasi_stuffing"
-        @input="v=>data.lokasi_stuffing=v" :errorText="formErrors.lokasi_stuffing?'failed':''" :hints="formErrors.lokasi_stuffing"
-        valueField="id" displayField="key" :options="[{'id' : 'Surabaya', 'key' : 'Surabaya'},
-      {'id' : 'Sidoarjo', 'key' : 'Sidoarjo'},
-      {'id' : 'Gresik', 'key' : 'Gresik'},
-      {'id' : 'Nganjuk', 'key' : 'Nganjuk'},
-      {'id' : 'dll', 'key' : 'dll'}]" placeholder="Pilih Lokasi Stuffing" fa-icon="sort-desc" label="Lokasi Stuffing" :check="false" />
-    </div> -->
-    <!-- <div>
-      <FieldX type="number" :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tarif_genzet"
-        @input="v=>data.tarif_genzet=v" :errorText="formErrors.tarif_genzet?'failed':''"
-        :hints="formErrors.tarif_genzet" label="Tarif Genzet" placeholder="Tarif Genzet" :check="false" />
-    </div> -->
-    <div>
-      <FieldNumber type="number" :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.ganti_solar_sangu"
-        @input="v=>data.ganti_solar_sangu=v" :errorText="formErrors.ganti_solar_sangu?'failed':''"
-        :hints="formErrors.ganti_solar_sangu" label="Ganti Solar Sangu" placeholder="Ganti Solar Sangu"
+        :hints="formErrors.lokasi_stuffing" label="Lokasi Stuffing" placeholder="Lokasi Stuffing" type="textarea"
         :check="false" />
     </div>
     <div>
-      <FieldNumber type="number" :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.ganti_solar_tag"
-        @input="v=>data.ganti_solar_tag=v" :errorText="formErrors.ganti_solar_tag?'failed':''"
-        :hints="formErrors.ganti_solar_tag" label="Ganti Solar Tag" placeholder="Ganti Solar Tag" :check="false" />
-    </div>
-    <div>
-      <FieldNumber type="number" :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.kilometer"
-        @input="v=>data.kilometer=v" :errorText="formErrors.kilometer?'failed':''" :hints="formErrors.kilometer"
-        label="Kilometer" placeholder="Masukan kilometer" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.catatan"
-        :errorText="formErrors.catatan?'failed':''" @input="v=>data.catatan=v" :hints="formErrors.catatan"
-        :check="false" type="textarea" label="Catatan" placeholder="Catatan" />
-    </div>
-    <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ readonly: true, disabled: true, clearable:true }" :value="data.status"
-        @input="v=>data.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status" valueField="id"
-        displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
-      {'id' : 'POSTED' , 'key' : 'POSTED'},
-      {'id' : 'IN PROCESS' , 'key' : 'IN PROCESS'},
-      {'id' : 'COMPLETE' , 'key' : 'COMPLETE'}]" placeholder="Pilih Status" fa-icon="sort-desc" label="Status"
-        :check="false" />
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.catatan" @input="v=>data.catatan=v"
+        :errorText="formErrors.catatan?'failed':''" :hints="formErrors.catatan" label="Catatan" placeholder="Catatan"
+        type="textarea" :check="false" />
     </div>
   </div>
   <hr />
+
+  <!-- START DETAIL -->
+  <div class="<md:col-span-1 col-span-3 p-2 grid <md:grid-cols-1 grid-cols-3 gap-2">
+    <div class="overflow-x-auto <md:col-span-1 col-span-3">
+      <ButtonMultiSelect v-if="actionText" @add="addDetail" :api="{
+        url: `${store.server.url_backend}/operation/m_general`,
+        headers: {
+          'Content-Type': 'Application/json', 
+          authorization: `${store.user.token_type} ${store.user.token}`
+        }, params: { 
+            simplest: true, 
+            searchfield: 'this.kode, this.nama_item, this.tipe_item',
+            //notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`,
+            where: `this.group = 'SEKTOR' AND this.is_active = true`
+            },
+        }" :columns="[{
+          checkboxSelection: true,
+          headerCheckboxSelection: true,
+          headerName: 'No',
+          valueGetter: (params) => '',
+          width: 60,
+          sortable: false, resizable: false, filter: false,
+          cellClass: ['justify-center', 'bg-gray-50']
+        }, {
+          pinned: false,
+          headerName: 'Kode',
+          field: 'kode',
+          cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+          filter: 'ColFilter',
+          flex: 1
+        }, 
+        {
+          pinned: false,
+          headerName: 'Nama Sektor',
+          field: 'deskripsi',
+          cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+          filter: 'ColFilter',
+          flex: 1
+        }, 
+        ]">
+        <div class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
+            items-center transition-colors duration-300">
+          <icon fa="plus" size="sm" />
+          <span>Add To List</span>
+        </div>
+      </ButtonMultiSelect>
+      <table class="w-full overflow-x-auto table-auto border border-[#CACACA] mt-4">
+        <thead>
+          <tr class="border">
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
+              No.</td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Sektor</td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Catatan</td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
+              Action</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, i) in detailArr" :key="i" v-show="detailArr.length > 0">
+            <td class="p-1 text-center border border-[#CACACA]">
+              {{ i+1 }}.
+            </td>
+            <td class="p-1 text-center border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true , disabled: true }" class="m-0" :value="item.sektor"
+                @input="v=>item.sektor=v" :hints="formErrors.sektor" :check="false" />
+            </td>
+            <td class="p-1 text-center border border-[#CACACA]">
+              <FieldX :bind="{ readonly: !actionText }" class="m-0" :value="item.catatan" @input="v=>item.catatan=v"
+                :hints="formErrors.catatan" type="textarea" :check="false" />
+            </td>
+            <td class="p-1 border border-[#CACACA]">
+              <div class="flex justify-center">
+                <button type="button" @click="delDetailArr(i)" :disabled="!actionText">
+                  <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="Vector" d="M14 1H10.5L9.5 0H4.5L3.5 1H0V3H14M1 16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H11C11.5304 18 12.0391 17.7893 12.4142 17.4142C12.7893 17.0391 13 16.5304 13 16V4H1V16Z" fill="#F24E1E"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr v-show="detailArr.length <= 0" class="text-center">
+            <td colspan="15" class="py-[20px]">
+              No data to show
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- END DETAIL -->
+
   <!-- ACTION BUTTON FORM -->
   <hr v-show="actionText" />
   <div class="flex flex-row items-center justify-end space-x-2 py-3 px-4" v-show="actionText">

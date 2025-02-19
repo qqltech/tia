@@ -4,32 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class tspklain extends Migration
+class tspklaind extends Migration
 {
-    protected $tableName = "t_spk_lain";
+    protected $tableName = "t_spk_lain_d";
 
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id()->from(1);
-            $table->string('no_draft')->nullable();
-            $table->string('status')->nullable();
-            $table->string('no_spk')->nullable();
-            $table->date('tanggal')->nullable();
-            $table->integer('genzet')->comment('{"src":"m_supplier.id"}');
-            $table->integer('no_container')->comment('{"src":"t_buku_order_d_npwp.id"}');
-            $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}')->nullable();
-            $table->integer('m_customer_id')->comment('{"src":"m_customer.id"}')->nullable();
-            $table->integer('ukuran')->comment('{"src":"set.m_general.id"}')->nullable();
-            $table->string('setting_temperatur',100);
-            $table->date('keluar_lokasi_tanggal')->nullable();
-            $table->time('keluar_lokasi_jam')->nullable();
-            $table->string('keluar_lokasi_temperatur',100)->nullable();
-            $table->date('tiba_lokasi_tanggal')->nullable();
-            $table->time('tiba_lokasi_jam')->nullable();
-            $table->string('tiba_lokasi_temperatur',100)->nullable();
-            $table->text('lokasi_stuffing')->nullable();
+            $table->integer('t_spk_lain_id')->comment('{"fk":"t_spk_lain.id"}')->nullable();
+            $table->integer('sektor')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->text('catatan')->nullable();
+
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

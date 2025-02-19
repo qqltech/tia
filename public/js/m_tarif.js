@@ -386,8 +386,8 @@ const landing = reactive({
     cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
-    headerName: 'Customer',
-    field: 'm_customer.nama_perusahaan',
+    headerName: 'Kode Customer',
+    field: 'm_customer.kode',
     filter: true,
     sortable: true,
     flex: 1,

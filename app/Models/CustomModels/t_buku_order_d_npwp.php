@@ -143,4 +143,16 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
             )
         ;
     }
+
+    public function scopeGetCustomer($model){
+        return $model
+        ->leftJoin('m_customer as mc','mc.id','t_buku_order.m_customer_id')
+        ->addSelect(
+            'mc.nama_perusahaan',
+            'mc.kode',
+            'mc.id as customer_id',
+            \DB::raw("CONCAT(COALESCE(t_buku_order_d_npwp.no_prefix,'-'), COALESCE(t_buku_order_d_npwp.no_suffix,'-')) as no_container")
+            )
+        ;
+    }
 }

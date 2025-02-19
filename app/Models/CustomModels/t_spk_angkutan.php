@@ -49,18 +49,25 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         // }
         $getid = $this->get_supplier();
         // $checkDataExist1 = $this->where('t_detail_npwp_container_1_id', $arrayData['t_detail_npwp_container_1_id'])->count();
-        // $checkDataExist2 = $this->where('t_detail_npwp_container_2_id', $arrayData['t_detail_npwp_container_2_id'])->count();
+        // $checkDataExist2 = $this->where('t_detail_npwp_container_2_id', $arrayData['t_detail_npwp_container_1_id'])->count();
+
+
+        // $checkDataExist3 = $this->where('t_detail_npwp_container_2_id', $arrayData['t_detail_npwp_container_2_id'])->count();
+        // $checkDataExist4 = $this->where('t_detail_npwp_container_1_id', $arrayData['t_detail_npwp_container_2_id'])->count();
         
-        // if($checkDataExist1 > 0){
+        // if($arrayData['t_detail_npwp_container_1_id'] != null ){
+        //     if($checkDataExist1 > 1 || $checkDataExist2 > 1 ){
         //     return [
-        //         "errors"=>['No. Order 1 sudah terpakai']
+        //         "errors"=>['No. Order 1 sudah terpakai','true'],
         //     ];
-        // }
+        //     }
+        // }   
         // if($arrayData['t_detail_npwp_container_2_id'] != null ){
-        //     if($checkDataExist2 > 0)
+        //     if($checkDataExist3 > 1 || $checkDataExist4 > 1){
         //     return [
-        //         "errors"=>['No. Order 2 sudah terpakai']
+        //         "errors"=>['No. Order 2 sudah terpakai','true'],
         //     ];
+        //     }
         // }
         $newData = [
             "no_spk"=>$this->helper->generateNomor("SPK Angkutan"),
@@ -112,6 +119,44 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     //     ];
     // }
     
+    // public function scopeCheckOrder($model){
+    //     $order1 = request('order1');
+    //     $order2 = request('order2');
+
+    //     $result1 = $model->where('t_detail_npwp_container_1_id',$order1)->get()->count();
+    //     // return $result1;
+        
+    // }
+
+    public function custom_checkOrder(){
+        $order1 = request('order1');
+        $order2 = request('order2');
+
+        $result1 = t_spk_angkutan::where('t_detail_npwp_container_1_id',$order1)->count();
+        $result2 = t_spk_angkutan::where('t_detail_npwp_container_2_id',$order1)->count();
+
+        $result3 = t_spk_angkutan::where('t_detail_npwp_container_1_id',$order2)->count();
+        $result4 = t_spk_angkutan::where('t_detail_npwp_container_2_id',$order2)->count();
+        if($result1 > 1 || $result2 > 1){
+            return [
+                "hasil_npwp_1_1"=> $result1,
+                "hasil_npwp_1_2"=>$result2,
+                "hasil_npwp_2_1"=> $result3,
+                "hasil_npwp_2_2"=>$result4,
+                "is_used"=>true
+            ];
+        }
+        if($result3 > 1 || $result4 > 1){
+            return [
+                "hasil_npwp_1_1"=> $result1,
+                "hasil_npwp_1_2"=>$result2,
+                "hasil_npwp_2_1"=> $result3,
+                "hasil_npwp_2_2"=>$result4,
+                "is_used"=>true
+            ];
+        }
+        
+    }
 
     function get_supplier(){
         $getid = m_general::where('group','SUPPLIER_DEFAULT')->where('kode','SUPPLIER01')->first();

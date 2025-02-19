@@ -138,7 +138,7 @@
     <div>
       <FieldSelect :bind="{ disabled: true, clearable:true }" class="w-full !mt-3" :value="values.customer"
         @input="v=>values.customer=v" :errorText="formErrors.customer?'failed':''" :hints="formErrors.customer"
-        valueField="id" displayField="nama_perusahaan" :api="{
+        valueField="id" displayField="kode" :api="{
               url: `${store.server.url_backend}/operation/m_customer`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -275,7 +275,7 @@
         </tr>
         <tr class="hover:bg-gray-50 border-b">
           <td class="p-3 border-r text-sm border-r text-gray-700">Tarif DP</td>
-          <td class="p-3 text-sm text-gray-900">{{ formatCurrency(values.tarif_dp) || 0 }}</td>
+          <td class="p-3 text-sm text-gray-900">{{ formatCurrency(values.total_tarif_dp) || 0 }}</td>
         </tr>
         <tr class=" border-gray-200 hover:bg-gray-50">
           <td class="p-3 text-sm border-r text-gray-700">Grand Total</td>

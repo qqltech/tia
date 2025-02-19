@@ -21,7 +21,8 @@ class t_spk_lain extends \App\Models\BasicModels\t_spk_lain
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
         $newData = [
-            "kode"=>$this->helper->generateNomor("SPK Lain"),
+            "no_draft"=>$this->helper->generateNomor("Draft SPK Lain"),
+            "no_spk"=>$this->helper->generateNomor("SPK Lain"),
             "status"=>"DRAFT"
         ];
         $newArrayData = array_merge($arrayData,  $newData);

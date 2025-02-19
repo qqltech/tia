@@ -72,10 +72,10 @@
     </div>
     <div>
       <FieldPopup label="No. Buku Order" class="w-full !mt-3" valueField="id" displayField="no_buku_order"
-        :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v" @update:valueFull="(v)=>{
-              detailArr = []
-              values['custom_stuple'] = v['m_customer.custom_stuple']
-              values.code_customer = v['m_customer.kode']
+        :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v" @update:valueFull="v=>{
+              detailArr = []              
+              values['custom_stuple']=(v?v['m_customer.custom_stuple']:null)
+              values['code_customer']=(v?v['m_customer.kode']:null)
             }" :api="{
               url: `${store.server.url_backend}/operation/t_buku_order`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -96,6 +96,13 @@
               flex: 1,
               field: 'no_buku_order',
               headerName:  'No. Buku Order',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            },
+            {
+              flex: 1,
+              field: 'm_customer.kode',
+              headerName:  'Kode Customer',
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-start']
             },

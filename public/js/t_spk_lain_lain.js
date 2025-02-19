@@ -48,8 +48,8 @@ const table = reactive({
       cellClass: ['justify-center', 'bg-gray-50', 'border-r', '!border-gray-200']
     },
     {
-      headerName: 'Kode',
-      field: 'kode',
+      headerName: 'No. Draft',
+      field: 'no_draft',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
@@ -58,8 +58,8 @@ const table = reactive({
       filter: 'ColFilter',
     },
     {
-      headerName: 'Lokasi Stuffing',
-      field: 'lokasi_stuffing.nama_lokasi',
+      headerName: 'No. SPK Lain-Lain',
+      field: 'no_spk',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
@@ -69,30 +69,44 @@ const table = reactive({
     },
 
     {
-      headerName: 'Tarif Genzet',
-      field: 'tarif_genzet',
+      headerName: 'Tanggal SPKL',
+      field: 'tanggal',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
       filter: 'ColFilter',
-      cellRenderer: (params) => {
-        return params.data['tarif_genzet'].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      }
     },
     {
-      headerName: 'Kilometer',
-      field: 'kilometer',
+      headerName: 'Genzet',
+      field: 'genzet.nama',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
       filter: 'ColFilter',
-      cellRenderer: (params) => {
-        return params.data['kilometer'].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      }
+    },
+    {
+      headerName: 'No. Order',
+      field: 't_buku_order.no_buku_order',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
+    },
+    {
+      headerName: 'Customer',
+      field: 'm_customer.kode',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
     },
     {
       headerName: 'Catatan',
@@ -265,7 +279,16 @@ const handleKeyDown = (event) => {
   }
 }
 
-onMounted(() => { window.addEventListener('keydown', handleKeyDown) });
+onMounted(() => { window.addEventListener('keydown', handleKeyDown) 
+  const today = new Date();
+  // Format tanggal sesuai dengan "dd-mm-yyyy"
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const year = today.getFullYear();
+  const formattedDate = `${day}/${month}/${year}`;
+  data.keluar_lokasi_tanggal = formattedDate;
+  data.tiba_lokasi_tanggal = formattedDate;
+});
 onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
@@ -274,6 +297,21 @@ let default_value = {
 }
 
 const data = reactive({ ...default_value.data });
+
+const detailArr = ref([]);
+
+const addDetail = (e) => {
+  e.forEach(row => {
+    row.m_general_id = row.id || null;
+    row.sektor = row.deskripsi
+    row.catatan = null
+    detailArr.value.push(row)
+  })
+}
+
+const delDetailArr = (index) => {
+  detailArr.splice(index, 1);
+}
 
 // GET DATA FROM API
 onBeforeMount(async () => {
@@ -306,6 +344,11 @@ onBeforeMount(async () => {
         default_value.status = "DRAFT"
       }
     });
+
+    console.log(data.t_spk_lain_d)
+    detailArr.value = data.t_spk_lain_d.map((dt) => ({
+          ...dt, sektor: dt.deskripsi
+    }))
 
   } catch (err) {
     isBadForm.value = true;
@@ -356,6 +399,8 @@ async function onSave() {
         ...data,
       }),
     });
+
+    data.t_spk_lain_d = detailArr.value;
 
     if (!res.ok) {
       const responseJson = await res.json();

@@ -98,6 +98,7 @@ async function addDetail() {
                 nama_angkutan_id: item['m_supplier_id'],
                 angkutan_pelabuhan: item['m_supplier_id'],
                 // staple: staple
+                staple:"0",
                 custom_stuple: values['custom_stuple'],
                 trip_desc: item['trip_kode']??'-',
                 trip: item['trip'],
