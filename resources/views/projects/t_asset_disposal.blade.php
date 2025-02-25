@@ -1,6 +1,9 @@
 <!-- LANDING -->
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
+  <div class="pl-2.5 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">Asset Disposal</h1>
+  </div>
   <div class="flex justify-between items-center px-2.5 py-1">
     <div class="flex items-center gap-x-4">
       <p>Filter Status :</p>

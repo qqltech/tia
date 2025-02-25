@@ -17,21 +17,21 @@ class t_tagihan_d_lain extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","tarif_realisasi","qty","is_ppn"];
+    protected $fillable = ["t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","tarif_realisasi","qty","is_ppn","t_tagihan_lain_lain_id"];
 
-    public $columns     = ["id","t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","tarif_realisasi","qty","is_ppn"];
-    public $columnsFull = ["id:bigint","t_tagihan_id:integer","nominal:decimal","keterangan:string:191","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","tarif_realisasi:decimal","qty:integer","is_ppn:boolean"];
+    public $columns     = ["id","t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","tarif_realisasi","qty","is_ppn","t_tagihan_lain_lain_id"];
+    public $columnsFull = ["id:bigint","t_tagihan_id:integer","nominal:decimal","keterangan:string:191","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","tarif_realisasi:decimal","qty:integer","is_ppn:boolean","t_tagihan_lain_lain_id:integer"];
     public $rules       = [];
-    public $joins       = ["t_tagihan.id=t_tagihan_d_lain.t_tagihan_id"];
+    public $joins       = ["t_tagihan.id=t_tagihan_d_lain.t_tagihan_id","t_tagihan_lain_lain.id=t_tagihan_d_lain.t_tagihan_lain_lain_id"];
     public $details     = [];
     public $heirs       = [];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["nominal","keterangan"];
-    public $createable  = ["t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","tarif_realisasi","qty","is_ppn"];
-    public $updateable  = ["t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","tarif_realisasi","qty","is_ppn"];
-    public $searchable  = ["id","t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","tarif_realisasi","qty","is_ppn"];
+    public $createable  = ["t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","tarif_realisasi","qty","is_ppn","t_tagihan_lain_lain_id"];
+    public $updateable  = ["t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","tarif_realisasi","qty","is_ppn","t_tagihan_lain_lain_id"];
+    public $searchable  = ["id","t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","tarif_realisasi","qty","is_ppn","t_tagihan_lain_lain_id"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
@@ -42,5 +42,9 @@ class t_tagihan_d_lain extends Model
     public function t_tagihan() :\BelongsTo
     {
         return $this->belongsTo('App\Models\BasicModels\t_tagihan', 't_tagihan_id', 'id');
+    }
+    public function t_tagihan_lain_lain() :\BelongsTo
+    {
+        return $this->belongsTo('App\Models\BasicModels\t_tagihan_lain_lain', 't_tagihan_lain_lain_id', 'id');
     }
 }

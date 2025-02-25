@@ -20,9 +20,9 @@ const modalOpen = ref(false)
 const detailArrAju = ref([])
 const activeTabIndex = ref(0)
 // ------------------------------ PERSIAPAN
-const endpointApi = 't_tagihan'
+const endpointApi = 't_tagihan_lain_lain'
 onBeforeMount(() => {
-  document.title = 'Transaksi Tagihan'
+  document.title = 'Transaksi Tagihan Lain Lain'
 })
 
 //  @if( $id )------------------- JS CONTENT ! PENTING JANGAN DIHAPUS
@@ -50,13 +50,17 @@ function closeModal(i) {
 
 const values = reactive({
   status: "DRAFT",
-  total_jasa_cont_ppjk: 0,
-  total_lain2_ppn: 0,
+  // total_jasa_cont_ppjk: 0,
+  total_amount_ppn: 0,
   total_ppn: 0,
-  total_jasa_angkutan: 0,
-  total_lain_non_ppn: 0,
+  // total_jasa_angkutan: 0,
+  total_amount_non_ppn: 0,
   grand_total: 0,
-  tarif_dp : 0,
+  // tarif_dp : 0,
+  total_amount_ppn:0,
+  total_amount_non_ppn:0,
+  grand_total_amount:0,
+  piutang:0,
   tgl: new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
 });
 
@@ -83,25 +87,6 @@ const addDetail = () => {
   detailArr.value = [...detailArr.value, tempItem];
 };
 
-// Detail Tarif jasa
-const detailArr1 = ref([]);
-
-const addDetail1 = () => {
-  const tempItem = {
-    tarif: 0,
-    satuan: 0,
-    is_ppn: false,
-  };
-  detailArr1.value = [...detailArr1.value, tempItem];
-};
-
-const detailArr2 = ref([]);
-const addDetail2 = () => {
-  const tempItem = {
-
-  };
-  detailArr2.value = [...detailArr2.value, tempItem];
-};
 
 
 // detail tarif lain-lain
@@ -121,42 +106,14 @@ const removeDetail = (index) => {
 }
 
 
-const detailArrOpen = ref([]);
-const addDetailOpen = (detail) => {
-  const tempItem = {
-
-    ...detail
-  };
-  detailArrOpen.value = [...detailArrOpen.value, tempItem];
-};
-function openDetail(id) {
-  detailArrOpen.value = detailArr.value.filter(dt => dt.id === id)[0].value.m_tarif_d_kontainer;
-  modalOpen.value = true;
-}
 
 async function buku(no_buku_order) {
   if (!no_buku_order || !no_buku_order.id) {
     // Reset detail arrays
-    detailArr.value = [];
-    detailArr1.value = [];
-    detailArr2.value = [];
     detailArr3.value = [];
-    detailArrOpen.value = [];
-    detailArrAju.value = [];
-    
     // Reset values
     values.customer = '';
-    values.ppn = 0;
-    values.total_amount = 0;
-    values.grand_total_amount = 0;
-    values.grand_total_nota_rampung = 0;
-    values.total_jasa_cont_ppjk=0;
-    values.total_lain2_ppn=0;
-    values.total_jasa_angkutan=0;
-    values.total_lain_non_ppn=0;
-    values.grand_total=0;
-    values.total_setelah_ppn=0;
-    values.total_ppn=0;
+
 
     return;
   }
@@ -197,52 +154,7 @@ async function buku(no_buku_order) {
     if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
     const resultJson = await res.json();
     const initialValues = resultJson.data;
-    console.log('DATA BUKU ORDER',initialValues)
-
-    detailArr.value = [];
-    detailArr1.value = [];
-    detailArr2.value = [];
     detailArr3.value = [];
-    detailArrOpen.value = [];
-    detailArrAju.value = [];
-
-    initialValues.relation_ppjk?.forEach((itemAju) => {
-      itemAju['t_ppjk_id'] = itemAju['id'];
-      itemAju['peb_pib'] = itemAju['no_peb_pib'];
-      itemAju['no_ppjk'] = itemAju['no_aju'];
-      detailArrAju.value = [itemAju, ...detailArrAju.value];
-    });
-
-    values.total_tarif_dp = initialValues?.tarif_dp?.total_amount || 0;
-    const tipe_kontainer = initialValues.tipe || 0;
-
-    if (Array.isArray(initialValues['t_buku_order_d_npwp'])) {
-      initialValues['t_buku_order_d_npwp'].forEach((detail) => {
-        detail.no_buku_order = initialValues.id;
-        detail.tipe = tipe_kontainer;
-        detailArr.value.push(detail);
-
-        if (Array.isArray(detail.tarif) && detail.tarif.length > 0) {
-          detail.tarif.forEach((tarif) => {
-            if (Array.isArray(tarif.jasa)) {
-              tarif.jasa.forEach((jasa) => {
-                jasa.satuan = jasa.satuan || 0;
-                jasa.tarif = jasa.tarif === undefined || jasa.tarif === null ? 0 : parseFloat(jasa.tarif);
-                jasa.is_ppn = jasa.ppn;
-                const existingIndex = detailArr1.value.findIndex(item => item.id === jasa.id);
-                if (existingIndex > -1) {
-                  detailArr1.value[existingIndex] = jasa;
-                } else {
-                  detailArr1.value.push(jasa);
-                  console.log('DATA JASA', detailArr1.value);
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-
     const uniqueItems = new Map(); 
     initialValues.t_buku_order_d_npwp.forEach(item => {
       item.tarif.forEach(tarifItem => {
@@ -259,13 +171,9 @@ async function buku(no_buku_order) {
     });
     detailArr3.value = Array.from(uniqueItems.values());
     values.customer = initialValues.m_customer_id || '';
-    values.grand_total_nota_rampung = initialValues.grand_total_nota_rampung || '';
 
-    if (Array.isArray(initialValues['t_buku_order_d_aju'])) {
-      initialValues['t_buku_order_d_aju'].forEach((detail) => {
-        detailArr2.value.push(detail);
-      });
-    }
+
+
 
   } catch (err) {
     isBadForm.value = true;
@@ -298,18 +206,11 @@ async function generateTotal() {
   try {
     const grandTotalNotaRampung = values.grand_total_nota_rampung || 0;
     const payload = {
-      detailArr: detailArr.value,
-      detailArr1: detailArr1.value,
-      detailArr2: detailArrAju.value,
       detailArr3: detailArr3.value,
       t_buku_order_id: values.no_buku_order,
-      tarif_coo: values.tarif_coo || 0,
-      tarif_ppjk: values.tarif_ppjk || 0,
       ppn: values.ppn || false,
-      total_tarif_dp: values.total_tarif_dp || 0,
-      grand_total_nota_rampung: grandTotalNotaRampung
     };
-    console.log(payload)
+
 
     const dataURL = `${store.server.url_backend}/operation/${endpointApi}/calculate_tagihan`;
     const res = await fetch(dataURL, {
@@ -322,14 +223,18 @@ async function generateTotal() {
     });
     if (!res.ok) throw new Error('Failed to generate total.');
     const hasil = await res.json();
-    console.log(hasil)
+    console.log('CEK HASIL',hasil)
 
-    values.grand_total = hasil.grand_total || 0;
-    values.total_jasa_cont_ppjk = hasil.total_jasa_cont_ppjk || 0;
-    values.total_lain2_ppn = hasil.total_lain2_ppn || 0;
+    values.grand_total_amount = hasil.grand_total_amount || 0;
+    values.total_amount_ppn = hasil.total_amount_ppn || 0;
     values.total_ppn = hasil.total_ppn || 0;
-    values.total_jasa_angkutan = hasil.total_jasa_angkutan || 0;
-    values.total_lain_non_ppn = hasil.total_lain_non_ppn || 0;
+    values.total_amount_non_ppn = hasil.total_amount_non_ppn || 0;
+    // values.grand_total_amount = hasil.grand_total || 0;
+    // values.total_jasa_cont_ppjk = hasil.total_jasa_cont_ppjk || 0;
+    // values.total_lain_ppn = hasil.total_lain_ppn || 0;
+    // values.total_ppn = hasil.total_ppn || 0;
+    // values.total_jasa_angkutan = hasil.total_jasa_angkutan || 0;
+    // values.total_lain_non_ppn = hasil.total_lain_non_ppn || 0;
 
     swal.fire({
       icon: 'success',
@@ -376,7 +281,7 @@ onBeforeMount(async () => {
       for (const key in initialValues) {
         values[key] = initialValues[key];
       }
-      console.log("TARIF TAGIHAN", initialValues.t_tagihan_d_lain)
+      console.log("TARIF TAGIHAN LAIN LAIN", initialValues.t_tagihan_d_lain)
 
       await new Promise(resolve => setTimeout(resolve, 500));
       await buku({ id: initialValues.no_buku_order });
@@ -431,8 +336,11 @@ const onReset = async (alert = false) => {
 async function onSave(isPost = false) {
   try {
     values.t_tagihan_d_npwp = detailArr.value;
-    values.t_tagihan_d_tarif = detailArr1.value;
+    values.t_tagihan_d_tarif = detailArr.value;
     values.t_tagihan_d_lain = detailArr3.value;
+
+    // values.grand_total_amount = values.grand_total
+    // console.log('PERIKSA grand_total_amount',grand_total_amount)
 
     const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value);
     const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? isPost ? '?post=true' : '' : isPost ? '/' + route.params.id + '?post=true' : '/' + route.params.id}`;
@@ -652,7 +560,7 @@ const landing = reactive({
   },
   {
     headerName: 'No. Tagihan',
-    field: 'no_tagihan',
+    field: 'no_tagihan_lain_lain',
     filter: true,
     sortable: true,
     flex: 1,
@@ -707,7 +615,7 @@ const landing = reactive({
   // },
   {
     headerName: 'Total',
-    field: 'grand_total',
+    field: 'grand_total_amount',
     filter: true,
     sortable: true,
     flex: 1,

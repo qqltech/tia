@@ -1,7 +1,10 @@
 <!-- LANDING -->
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center px-2.5 py-1">
+  <div class="pl-4 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">TARIF NOTA RAMPUNG</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-1">
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
@@ -25,7 +28,7 @@
   </div>
   <hr>
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
-    class="max-h-[450px]">
+    class="max-h-[400px]">
     <!-- <template #header>
     </template> -->
   </TableApi>

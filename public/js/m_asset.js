@@ -333,7 +333,7 @@ const filterButton = ref(null);
 
 function filterShowData(params) {
     filterButton.value = filterButton.value === params ? null : params;
-    landing.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
+    landing.api.params.where = filterButton.value !== null ? `this.is_active=${filterButton.value}` : null;
     apiTable.value.reload();
 }
 

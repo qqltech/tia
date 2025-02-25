@@ -1,10 +1,13 @@
 @if(!$req->has('id'))
 <div class="bg-white p-6 rounded-xl h-[670px] border-t-10 border-blue-500 dark:bg-black">
+  <div class="pl-4">
+    <h1 class="text-xl font-semibold">SUPPLIER</h1>
+  </div>
   <div class="flex justify-between items-center p-2">
     <!-- FILTER -->
-    <div class="flex items-center gap-x-2">
+    <div class="flex items-center px-2 py-1">
       <p>Filter Status :</p>
-      <div class="flex gap-x-2">
+      <div class="flex gap-x-2 pl-2">
         <button @click="filterShowData(true)" :class="filterButton === true ? 'bg-green-600 text-white hover:bg-green-600' 
                         : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
           Active

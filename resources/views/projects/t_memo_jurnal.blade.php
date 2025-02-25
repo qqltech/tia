@@ -2,7 +2,7 @@
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
   <div class="p-2"> 
-    <h1 class="text-xl font-semibold">Memo Journal</h1>
+    <h1 class="text-xl font-semibold">MEMO JOURNAL</h1>
   </div>
   <div class="flex justify-between items-center px-2.5 py-1">
     <!-- FILTER -->
@@ -10,14 +10,14 @@
         <div class="flex items-center gap-x-2">
             <p>Filter Status :</p>
             <div class="flex gap-x-2">
-                <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 text-white hover:bg-green-600' 
-                        : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'" 
+                <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
+                        : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'" 
                         class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
                     DRAFT
                 </button>
                 <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
-                <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
-                        : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'" 
+                <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-amber-600 text-white hover:bg-amber-600' 
+                        : 'border border-amber-600 text-amber-600 bg-white hover:bg-amber-600 hover:text-white'" 
                         class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
                     POST
                 </button>

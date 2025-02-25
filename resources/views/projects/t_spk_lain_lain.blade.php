@@ -1,14 +1,17 @@
-<!-- LANDING TABLE -->
+<!-- LANDING -->
 @if(!$req->has('id'))
-<div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center gap-x-4 p-4">
+<div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
+  <div class="pl-4 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">SPK LAIN-LAIN</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-1">
 
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 text-white hover:blue-600-600' 
-          : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white'"
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:gray-600-600' 
+          : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           DRAFT
         </button>
@@ -18,20 +21,9 @@
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           POST
         </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('IN PROCESS')" :class="filterButton === 'IN PROCESS' ? 'bg-purple-600 text-white hover:bg-purple-600' 
-          : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          IN PROCESS
-        </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('COMPLETE')" :class="filterButton === 'COMPLETE' ? 'bg-green-600 text-white hover:bg-green-600' 
-          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          COMPLETE
-        </button>
       </div>
     </div>
+
 
     <!-- ACTION BUTTON -->
     <div class="flex items-center gap-x-4">
@@ -45,7 +37,7 @@
   <hr>
 
   <!-- TABLE -->
-  <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
+  <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
       <div class="pb-13 h-full"></div>
@@ -70,37 +62,43 @@
   <div class="pt-2 pb-4 px-4 grid grid-cols-3 gap-y-2 gap-x-4 items-start">
     <!-- col-span-2 -->
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_draft" @input="v=>data.no_draft=v"
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="values.no_draft" @input="v=>values.no_draft=v"
         :errorText="formErrors.no_draft?'failed':''" :hints="formErrors.no_draft" label="No. Draft"
         placeholder="Auto Generate" :check="false" />
     </div>
     <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ readonly: true, disabled: true, clearable:true }" :value="data.status"
-        @input="v=>data.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status" valueField="id"
-        displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
+      <FieldSelect class="w-full !mt-3" :bind="{ readonly: true, disabled: true, clearable:true }"
+        :value="values.status" @input="v=>values.status=v" :errorText="formErrors.status?'failed':''"
+        :hints="formErrors.status" valueField="id" displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
       {'id' : 'POSTED' , 'key' : 'POSTED'},
       {'id' : 'IN PROCESS' , 'key' : 'IN PROCESS'},
       {'id' : 'COMPLETE' , 'key' : 'COMPLETE'}]" placeholder="Pilih Status" fa-icon="sort-desc" label="Status"
         :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: true, disabled: true }" class="w-full !mt-3" :value="data.no_spk" @input="v=>data.no_spk=v"
-        :errorText="formErrors.no_spk?'failed':''" :hints="formErrors.no_spk" placeholder="Nomor SPK Lain-Lain"
-        :check="false" />
+      <FieldX :bind="{ readonly: true, disabled: true }" class="w-full !mt-3" :value="values.no_spk"
+        @input="v=>values.no_spk=v" :errorText="formErrors.no_spk?'failed':''" :hints="formErrors.no_spk"
+        placeholder="Nomor SPK Lain-Lain" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tanggal" @input="v=>data.tanggal=v"
-        :errorText="formErrors.tanggal?'failed':''" :hints="formErrors.tanggal" type="date"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.tanggal"
+        @input="v=>values.tanggal=v" :errorText="formErrors.tanggal?'failed':''" :hints="formErrors.tanggal" type="date"
         placeholder="Tanggal SPK Lain-Lain" :check="false" />
     </div>
     <div>
-      <FieldPopup :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.genzet"
-        @input="(v)=>data.genzet=v" :errorText="formErrors.genzet?'failed':''" :hints="formErrors.genzet"
-        valueField="id" displayField="nama" :api="{
+      <FieldPopup :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.genzet"
+        @input="(v)=>values.genzet=v" :errorText="formErrors.genzet?'failed':''" :hints="formErrors.genzet"
+        valueField="id" displayField="kode" :api="{
           url:  `${store.server.url_backend}/operation/m_supplier`,
           headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
           params: {
             simplest:true,
+            searchfield: 'this.kode, this.nama, this.alamat, this.no_telp1'
+          },
+          onsuccess(response) {
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
           }
         }" placeholder="Genzet" :check="false" :columns="[{
           headerName: 'No',
@@ -140,19 +138,24 @@
         ]" />
     </div>
     <div>
-      <FieldPopup :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.no_container"
-        @input="(v)=>data.no_container=v" :errorText="formErrors.no_container?'failed':''"
-        :hints="formErrors.no_container" valueField="id" displayField="no_container" @update:valueFull="(dt) => {
+      <FieldPopup :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.no_container"
+        @input="(v)=>values.no_container=v" :errorText="formErrors.no_container?'failed':''"
+        :hints="formErrors.no_container" valueField="id" displayField="no_container_gabungan" @update:valueFull="(dt) => {
               $log(dt)
-              data.t_buku_order_id = dt['t_buku_order.id']
-              data.m_customer_id = dt.['t_buku_order.m_customer_id']
-              data.ukuran = dt['ukuran.id']
+              values.t_buku_order_id = dt['t_buku_order.id']
+              values.m_customer_id = dt.['t_buku_order.m_customer_id']
+              values.ukuran = dt['ukuran.id']
             }" :api="{
           url:  `${store.server.url_backend}/operation/t_buku_order_d_npwp`,
           headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
           params: {
-            simplest:true,
-            scopes: 'GetCustomer'
+            getNoContainer:true,
+            searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi'
+          },
+          onsuccess(response) {
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
           }
         }" placeholder="No. Container" :check="false" :columns="[{
           headerName: 'No',
@@ -170,7 +173,7 @@
         },
         {
           headerName: 'No. Container',
-          field: 'no_container',
+          field: 'no_container_gabungan',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-center',],
           sortable: true, resizable: true, filter: false,
@@ -192,8 +195,8 @@
         ]" />
     </div>
     <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.t_buku_order_id"
-        @input="v=>data.t_buku_order_id=v" :errorText="formErrors.t_buku_order_id?'failed':''"
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="values.t_buku_order_id"
+        @input="v=>values.t_buku_order_id=v" :errorText="formErrors.t_buku_order_id?'failed':''"
         :hints="formErrors.t_buku_order_id" valueField="id" displayField="no_buku_order" :api="{
             url: `${store.server.url_backend}/operation/t_buku_order`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -203,8 +206,8 @@
         }" placeholder="No. Order" :check="false" />
     </div>
     <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.m_customer_id"
-        @input="v=>data.m_customer_id=v" :errorText="formErrors.m_customer_id?'failed':''"
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="values.m_customer_id"
+        @input="v=>values.m_customer_id=v" :errorText="formErrors.m_customer_id?'failed':''"
         :hints="formErrors.m_customer_id" valueField="id" displayField="kode" :api="{
             url: `${store.server.url_backend}/operation/m_customer`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -214,9 +217,9 @@
         }" placeholder="Customer" :check="false" />
     </div>
     <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.ukuran"
-        @input="v=>data.ukuran=v" :errorText="formErrors.ukuran?'failed':''"
-        :hints="formErrors.ukuran" valueField="id" displayField="deskripsi" :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="values.ukuran"
+        @input="v=>values.ukuran=v" :errorText="formErrors.ukuran?'failed':''" :hints="formErrors.ukuran"
+        valueField="id" displayField="deskripsi" :api="{
             url: `${store.server.url_backend}/operation/m_general`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
@@ -225,53 +228,55 @@
         }" placeholder="Ukuran" :check="false" />
     </div>
     <div class="grid grid-cols-2 gap-y-2 gap-x-2">
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.keluar_lokasi_tanggal"
-        @input="v=>data.keluar_lokasi_tanggal=v" :errorText="formErrors.keluar_lokasi_tanggal?'failed':''"
-        :hints="formErrors.keluar_lokasi_tanggal" type="date" placeholder="Keluar Lokasi" :check="false" />
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText}" class="w-full !mt-3"
+        :value="values.keluar_lokasi_tanggal" @input="v=>values.keluar_lokasi_tanggal=v"
+        :errorText="formErrors.keluar_lokasi_tanggal?'failed':''" :hints="formErrors.keluar_lokasi_tanggal" type="date"
+        placeholder="Keluar Lokasi" :check="false" />
 
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.keluar_lokasi_jam"
-        @input="v=>data.keluar_lokasi_jam=v" :errorText="formErrors.keluar_lokasi_jam?'failed':''"
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.keluar_lokasi_jam"
+        @input="v=>values.keluar_lokasi_jam=v" :errorText="formErrors.keluar_lokasi_jam?'failed':''"
         :hints="formErrors.keluar_lokasi_jam" type="time" placeholder="Jam Keluar" :check="false" />
 
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.keluar_lokasi_temperatur"
-        @input="v=>data.keluar_lokasi_temperatur=v" :errorText="formErrors.keluar_lokasi_temperatur?'failed':''"
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.keluar_lokasi_temperatur"
+        @input="v=>values.keluar_lokasi_temperatur=v" :errorText="formErrors.keluar_lokasi_temperatur?'failed':''"
         :hints="formErrors.keluar_lokasi_temperatur" placeholder="Keluar Temperature" :check="false" />
     </div>
     <div class="grid grid-cols-2 gap-y-2 gap-x-2">
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tiba_lokasi_tanggal"
-        @input="v=>data.tiba_lokasi_tanggal=v" :errorText="formErrors.tiba_lokasi_tanggal?'failed':''"
-        :hints="formErrors.tiba_lokasi_tanggal" type="date" placeholder="Tiba Lokasi" :check="false" />
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3"
+        :value="values.tiba_lokasi_tanggal" @input="v=>values.tiba_lokasi_tanggal=v"
+        :errorText="formErrors.tiba_lokasi_tanggal?'failed':''" :hints="formErrors.tiba_lokasi_tanggal" type="date"
+        placeholder="Tiba Lokasi" :check="false" />
 
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tiba_lokasi_jam"
-        @input="v=>data.tiba_lokasi_jam=v" :errorText="formErrors.tiba_lokasi_jam?'failed':''"
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tiba_lokasi_jam"
+        @input="v=>values.tiba_lokasi_jam=v" :errorText="formErrors.tiba_lokasi_jam?'failed':''"
         :hints="formErrors.tiba_lokasi_jam" type="time" placeholder="Jam Tiba" :check="false" />
 
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tiba_lokasi_temperatur"
-        @input="v=>data.tiba_lokasi_temperatur=v" :errorText="formErrors.tiba_lokasi_temperatur?'failed':''"
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tiba_lokasi_temperatur"
+        @input="v=>values.tiba_lokasi_temperatur=v" :errorText="formErrors.tiba_lokasi_temperatur?'failed':''"
         :hints="formErrors.tiba_lokasi_temperatur" placeholder="Tiba Lokasi Temperature" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.setting_temperatur"
-        @input="v=>data.setting_temperatur=v" :errorText="formErrors.setting_temperatur?'failed':''"
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.setting_temperatur"
+        @input="v=>values.setting_temperatur=v" :errorText="formErrors.setting_temperatur?'failed':''"
         :hints="formErrors.setting_temperatur" label="Setting Temperature" placeholder="Setting Temperature"
         type="textarea" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.lokasi_stuffing"
-        @input="v=>data.lokasi_stuffing=v" :errorText="formErrors.lokasi_stuffing?'failed':''"
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.lokasi_stuffing"
+        @input="v=>values.lokasi_stuffing=v" :errorText="formErrors.lokasi_stuffing?'failed':''"
         :hints="formErrors.lokasi_stuffing" label="Lokasi Stuffing" placeholder="Lokasi Stuffing" type="textarea"
         :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.catatan" @input="v=>data.catatan=v"
-        :errorText="formErrors.catatan?'failed':''" :hints="formErrors.catatan" label="Catatan" placeholder="Catatan"
-        type="textarea" :check="false" />
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.catatan"
+        @input="v=>values.catatan=v" :errorText="formErrors.catatan?'failed':''" :hints="formErrors.catatan"
+        label="Catatan" placeholder="Catatan" type="textarea" :check="false" />
     </div>
   </div>
   <hr />
 
   <!-- START DETAIL -->
-  <div class="<md:col-span-1 col-span-3 p-2 grid <md:grid-cols-1 grid-cols-3 gap-2">
+  <div class="<md:col-span-1 col-span-3 p-4 grid <md:grid-cols-1 grid-cols-3 gap-2">
     <div class="overflow-x-auto <md:col-span-1 col-span-3">
       <ButtonMultiSelect v-if="actionText" @add="addDetail" :api="{
         url: `${store.server.url_backend}/operation/m_general`,
@@ -280,10 +285,15 @@
           authorization: `${store.user.token_type} ${store.user.token}`
         }, params: { 
             simplest: true, 
-            searchfield: 'this.kode, this.nama_item, this.tipe_item',
+            searchfield: 'this.kode, this.deskripsi',
             //notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`,
             where: `this.group = 'SEKTOR' AND this.is_active = true`
-            },
+        },
+          onsuccess(response) {
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
         }" :columns="[{
           checkboxSelection: true,
           headerCheckboxSelection: true,
@@ -338,8 +348,17 @@
               {{ i+1 }}.
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
-              <FieldX :bind="{ readonly: true , disabled: true }" class="m-0" :value="item.sektor"
-                @input="v=>item.sektor=v" :hints="formErrors.sektor" :check="false" />
+              <FieldSelect class="m-0" :bind="{ disabled: true, readonly:true, clearable:false }" :value="item.sektor"
+                @input="v=>item.sektor=v" :errorText="formErrors.sektor?'failed':''" :hints="formErrors.sektor"
+                valueField="id" displayField="deskripsi" :api="{
+                    url: `${store.server.url_backend}/operation/m_general`,
+                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                    params: {
+                      simplest:true,
+                      transform:false,
+                      join:false
+                    }
+                }" placeholder="" :check="false" />
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
               <FieldX :bind="{ readonly: !actionText }" class="m-0" :value="item.catatan" @input="v=>item.catatan=v"
@@ -367,35 +386,25 @@
   <!-- END DETAIL -->
 
   <!-- ACTION BUTTON FORM -->
-  <hr v-show="actionText" />
-  <div class="flex flex-row items-center justify-end space-x-2 py-3 px-4" v-show="actionText">
-    <i class="text-gray-500 text-[12px] mr-4">Tekan CTRL + S untuk shortcut Save Data</i>
-    <button class="text-sm rounded py-2 px-2.5 text-white bg-red-600 hover:bg-red-700 flex gap-x-1 
-        items-center transition-colors duration-300" @click="onReset(true)">
-      <icon fa="times" />
-      <span>Reset</span>
-    </button>
-    <button class="text-sm rounded py-2 px-2.5 text-white bg-green-600 hover:bg-green-700 flex gap-x-1 items-center
-        transition-colors duration-300" @click="onSave">
-      <icon fa="save" />
-      <span>Simpan</span>
-    </button>
-  </div>
-  <hr v-show="!actionText" />
-  <div class="flex flex-row items-center justify-end space-x-2 py-3 px-4" v-show="(!actionText && data.status=='POST')">
-    <button class="text-sm rounded py-2 px-2.5 text-white bg-purple-600 hover:bg-purple-700 flex gap-x-1 items-center
-        transition-colors duration-300" @click="inProcess">
-      <icon fa="save" />
-      <span>In Process</span>
-    </button>
-  </div>
-  <div class="flex flex-row items-center justify-end space-x-2 py-3 px-4"
-    v-show="(!actionText && data.status=='IN PROCESS')">
-    <button class="text-sm rounded py-2 px-2.5 text-white bg-green-600 hover:bg-green-700 flex gap-x-1 items-center
-        transition-colors duration-300" @click="complete">
-      <icon fa="save" />
-      <span>COMPLETE</span>
-    </button>
+  <hr>
+  <div class="flex flex-row items-center justify-end space-x-2 p-2">
+    <i v-show="actionText" class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
+    <button
+        class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
+        v-show="actionText"
+        @click="onReset(true)"
+      >
+        <icon fa="times" />
+        Reset
+      </button>
+    <button
+        class="bg-green-600 text-white font-semibold hover:bg-green-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
+        v-show="actionText"
+        @click="onSave"
+      >
+        <icon fa="save" />
+        Simpan
+      </button>
   </div>
 </div>
 

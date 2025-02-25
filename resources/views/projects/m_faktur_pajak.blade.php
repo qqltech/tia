@@ -1,10 +1,14 @@
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center px-2.5 py-1">
+  
+  <div class="flex justify-between items-center px-3 py-1">
+    <div class="pt-2 pb-2">
+    <h1 class="text-xl font-semibold">FAKTUR PAJAK</h1>
+  </div>
     <div class="flex items-center gap-x-4">
       <div class="flex gap-x-2"></div>
     </div>
-    <div>
+    <div class="pb-1">
       <RouterLink :to="$route.path+'/create?'+(Date.parse(new Date()))" class="border border-blue-600 text-blue-600 bg-white  hover:bg-blue-600 hover:text-white duration-300 transform hover:-translate-y-0.5 rounded-md py-1 px-2">
         Create New
       </RouterLink>

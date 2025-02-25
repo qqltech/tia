@@ -278,7 +278,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.group, this.code, this.key1, this.value1,this.is_active'
+      searchfield: 'this.id, this.no_tarif_premi, sektor.deskripsi, no_head.deskripsi, trip.deskripsi,this.premi'
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -354,6 +354,7 @@ const landing = reactive({
     headerName:'Status',
     field: 'is_active',  
     sortable: true,
+    filter:false,
     resizable: true,wrapText:true,
     flex:1,
     cellClass: [ 'border-r', '!border-gray-200', 'justify-center'],

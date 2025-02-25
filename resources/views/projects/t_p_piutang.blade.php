@@ -2,7 +2,10 @@
 
 @verbatim
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex flex-col justify-center w-full px-2.5 py-1">
+  <div class="pl-4 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">PEMBAYARAN PIUTANG</h1>
+  </div>
+  <div class="flex flex-col justify-center w-full px-4 py-1">
     <div class="flex justify-between items-center px-2.5 py-1">
       <div class="flex gap-2 pb-3">
         <p class="py-2">Filter Status :</p>
@@ -275,7 +278,13 @@
             headerName:'Nilai Piutang',
             sortable: false, resizable: true, filter: 'ColFilter',
             field: 'grand_total_amount',
-            cellClass: ['justify-center','!border-gray-200']
+            cellClass: ['justify-center','!border-gray-200'],
+            valueFormatter: (params) => {
+              if (params.value) {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+              }
+              return params.value;
+            }
           }
           ]">
         <div class="bg-blue-600 text-white font-semibold 

@@ -1,6 +1,9 @@
 <!-- LANDING TABLE -->
 @if(!$req->has('id'))
 <div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
+  <div class="pl-4 pt-2">
+    <h1 class="text-xl font-semibold">ROLE AKSES</h1>
+  </div>
   <!-- TABLE -->
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">

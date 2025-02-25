@@ -2,12 +2,15 @@
 @if(!$req->has('id'))
 
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center px-2.5 py-1">
+  <div class="pl-4 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">TAGIHAN</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-1">
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 text-white hover:bg-green-600' 
-                        : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
+                        : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
                         class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
                     DRAFT
                 </button>

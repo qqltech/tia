@@ -1,20 +1,23 @@
 <!-- LANDING TABLE -->
 @if(!$req->has('id'))
 <div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
+  <div class="pl-4 pt-2">
+    <h1 class="text-xl font-semibold">BON DINAS LUAR</h1>
+  </div>
   <div class="flex justify-between items-center gap-x-4 p-4">
 
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 text-white hover:bg-green-600' 
-          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
+          : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           DRAFT
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-sky-600 text-white hover:bg-sky-600' 
-          : 'border border-sky-600 text-sky-600 bg-white hover:bg-sky-600 hover:text-white'"
+        <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-amber-600 text-white hover:bg-amber-600' 
+          : 'border border-amber-600 text-amber-600 bg-white hover:bg-amber-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           POST
         </button>
@@ -66,7 +69,7 @@
     </template>
   </TableApi>
 </div>
-<div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto max-h-[450px]">
+<div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto max-h-[100vh]">
   <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">

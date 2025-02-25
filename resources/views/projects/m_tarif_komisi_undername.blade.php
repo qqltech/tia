@@ -1,6 +1,9 @@
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center gap-x-4 p-4">
+  <div class="pl-4 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">TARIF KOMISI UNDERNAME</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-1">
 
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
@@ -80,7 +83,12 @@
           params: {
             simplest:true,
             scopes: 'GetPerusahaan',
-            searchfield: 'this.kode, this.jenis_nama_perusahaan'
+            searchfield: 'this.kode, this.nama_perusahaan'
+          },
+          onsuccess(response) {
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
           }
         }" placeholder="Pilih Customer" label="Nama Customer" :check="false" :columns="[{
           headerName: 'No',

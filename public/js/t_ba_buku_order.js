@@ -541,9 +541,9 @@ const landing = reactive({
     cellRenderer: (params) => {
       return params.data['status'] == 1
         ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-        : (params.data['status'] == 'DRAFT' ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-          : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-sky-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-            : (params.data['status'] == 'APPROVED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+        : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+          : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+            : (params.data['status'] == 'APPROVED' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
               : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`))
         )
     }
@@ -556,7 +556,7 @@ const filterButton = ref(null);
 
 function filterShowData(params) {
   filterButton.value = filterButton.value === params ? null : params;
-  table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+  landing.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
   apiTable.value.reload();
 }
 

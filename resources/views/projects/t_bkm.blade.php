@@ -1,15 +1,18 @@
 <!-- LANDING -->
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
+  <div class="pl-2.5 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">BKM</h1>
+  </div>
   <div class="flex justify-between items-center px-2.5 py-1">
     <!-- FILTER -->
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="activeBtn?.toUpperCase() === 'DRAFT'?'bg-gray-600 font-semibold !text-white hover:bg-gray-400':'border border-gray-600 text-gray-600 bg-white  hover:bg-gray-600 hover:text-white'" class="duration-300 transform transition hover:-translate-y-0.5 rounded-md py-1 px-2">DRAFT</button>
+        <button @click="filterShowData('DRAFT')" :class="activeBtn?.toUpperCase() === 'DRAFT'?'bg-gray-600 !text-white hover:bg-gray-400':'border border-gray-600 text-gray-600 bg-white  hover:bg-gray-600 hover:text-white'" class="duration-300 transform transition hover:-translate-y-0.5 rounded-md py-1 px-2">DRAFT</button>
         <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
-        <button @click="filterShowData('POST')" :class="activeBtn?.toUpperCase() === 'POST'?'bg-amber-600 !text-white hover:bg-amber-400':'border border-amber-600 font-semibold bg-white text-amber-600  hover:bg-amber-600 hover:text-white'" class="duration-300 transition transform hover:-translate-y-0.5 rounded-md py-1 px-2">POST</button>
+        <button @click="filterShowData('POST')" :class="activeBtn?.toUpperCase() === 'POST'?'bg-amber-600 !text-white hover:bg-amber-400':'border border-amber-600 bg-white text-amber-600  hover:bg-amber-600 hover:text-white'" class="duration-300 transition transform hover:-translate-y-0.5 rounded-md py-1 px-2">POST</button>
         <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
       </div>
     </div>

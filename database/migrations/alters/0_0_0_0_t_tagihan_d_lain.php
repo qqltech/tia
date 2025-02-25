@@ -16,7 +16,7 @@ class ttagihandlain extends Migration
             // $table->decimal('tarif_realisasi', 18, 2)->nullable();
             // $table->integer('qty')->nullable();
             // $table->boolean('is_ppn')->nullable();
-
+            // $table->integer('t_tagihan_lain_lain_id')->comment('{"fk":"t_tagihan_lain_lain.id"}')->nullable();
         });
     }
 }

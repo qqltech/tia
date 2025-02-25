@@ -1,23 +1,26 @@
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center gap-x-4 p-4">
+  <div class="pl-4 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">KOMISI UNDERNAME</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-1">
 
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData(true)" :class="filterButton === true ? 'bg-gray-600 text-white hover:bg-gray-600' 
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
         : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
           DRAFT
         </button>
         <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
-        <button @click="filterShowData(false)" :class="filterButton === false ? 'bg-amber-600 text-white hover:bg-amber-600' 
+        <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-amber-600 text-white hover:bg-amber-600' 
         : 'border border-amber-600 text-amber-600 bg-white hover:bg-amber-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
           POST
         </button>
         <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
-        <button @click="filterShowData(false)" :class="filterButton === false ? 'bg-[#B25EFC] text-white hover:bg-[#B25EFC]' 
-        : 'border border-[#B25EFC] text-[#B25EFC] bg-white hover:bg-[#B25EFC] hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
+        <button @click="filterShowData('COMPLETED')" :class="filterButton === 'COMPLETED' ? 'bg-pink-600 text-white hover:bg-pink-600' 
+        : 'border border-pink-600 text-pink-600 bg-white hover:bg-pink-600 hover:text-white'" class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
           COMPLETED
         </button>
       </div>
@@ -73,7 +76,8 @@
         :errorText="formErrors.status_id ? 'failed' : ''" @input="v => values.status_id = v"
         :hints="formErrors.status_id" valueField="id" displayField="key" :options="[
               { 'id': 'DRAFT', 'key': 'DRAFT' },
-              { 'id': 'POST', 'key': 'POST' }
+              { 'id': 'POST', 'key': 'POST' },
+              { 'id': 'COMPLETE', 'key': 'COMPLETE' }
         ]" label="Status" placeholder="Status" :check="true" />
     </div>
     <div class="w-full !mt-3">
@@ -108,7 +112,8 @@
         ]" placeholder="Pilih Salah Satu" :check="true" />
     </div>
     <div class="w-full !mt-3">
-      <FieldPopup class="!mt-0" :bind="{ readonly: !values.tipe_komisi || !actionText }" :value="values.t_buku_order_id" @input="v=>{
+      <FieldPopup class="!mt-0" :bind="{ readonly: !values.tipe_komisi || !actionText }" :value="values.t_buku_order_id"
+        @input="v=>{
           if(v){
             values.t_buku_order_id=v
           }else{
@@ -135,7 +140,13 @@
             tipe_tarif: `${values.tipe_komisi}`,
             //customer_id: `${values.customer_id}`,
             nilai_invoice: `${values.nilai_invoice}`,
-            scopes: 'WithDetailAju,GetPersentase'
+            scopes: 'WithDetailAju,GetPersentase',
+            searchfield: 'this.no_buku_order, m_customer.kode, m_customer.nama_perusahaan'
+          },
+          onsuccess(response) {
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
           }
         }" placeholder="No. Order" :check="false" :columns="[{
           headerName: 'No',

@@ -1,14 +1,17 @@
 <!-- LANDING TABLE -->
 @if(!$req->has('id'))
 <div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center gap-x-4 p-4">
+  <div class="pl-4 pt-2">
+    <h1 class="text-2xl font-semibold">PPJK</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-2">
 
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 text-white hover:bg-green-600' 
-                        : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
+                        : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
                         class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
                     DRAFT
                 </button>
@@ -242,18 +245,12 @@
       :errorText="formErrors.invoice?'failed':''" :hints="formErrors.invoice" placeholder="Invoice" :check="false" />
     <FieldNumber class="pt-1" :bind="{ readonly: !actionText }" :value="data.ppn_pib" @input="(v)=>data.ppn_pib=v"
       :errorText="formErrors.ppn_pib?'failed':''" :hints="formErrors.ppn_pib" placeholder="PPN PIB" :check="false" />
-    <FieldX :bind="{ readonly: true, disabled:true }" class="pt-1" :value="data.currency"
+    <!-- <FieldX :bind="{ readonly: true, disabled:true }" class="pt-1" :value="data.currency"
       :errorText="formErrors.currency?'failed':''" @input="v=>data.currency=v" :hints="formErrors.currency"
       placeholder="Currency" :check="false" />
     <FieldNumber class="pt-1" :bind="{ readonly: true, disabled:true }" :value="data.nilai_kurs"
       @input="(v)=>data.nilai_kurs=v" :errorText="formErrors.nilai_kurs?'failed':''" :hints="formErrors.nilai_kurs"
-      placeholder="Nilai Kurs" :check="false" />
-
-    <!-- <FieldX class="pt-1"
-          :bind="{ readonly: actionText && !data.currency || data.currency === 'IDR' }" :value="data.nilai_kurs" 
-          @input="(v)=>data.nilai_kurs=v"
-          :errorText="formErrors.nilai_kurs?'failed':''" :hints="formErrors.nilai_kurs" placeholder="Nilai Kurs" :check="false" type="number"/>
-        -->
+      placeholder="Nilai Kurs" :check="false" /> -->
     <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.catatan"
       :errorText="formErrors.catatan?'failed':''" @input="v=>data.catatan=v" :hints="formErrors.catatan"
       placeholder="Catatan" :check="false" type="textarea" />

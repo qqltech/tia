@@ -3,7 +3,10 @@
 
 @verbatim
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex flex-col justify-center w-full px-2.5 py-1">
+  <div class="pl-4 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">SURAT JALAN / PENGANTAR</h1>
+  </div>
+  <div class="flex flex-col justify-center w-full px-4 py-1">
     <div class="flex justify-between items-center gap-2">
       <div class="flex gap-2 pb-3">
         <p class="py-2">Filter Status :</p>

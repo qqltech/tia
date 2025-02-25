@@ -17,9 +17,9 @@ const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
 
 // ENDPOINT API
-const endpointApi = 't_spk_lain2'
+const endpointApi = 't_spk_lain'
 onBeforeMount(() => {
-  document.title = 'Transaction SPK Lain-lain 2'
+  document.title = 'Transaction SPK Lain-lain'
 })
 
 // @if( !$id ) | --- LANDING TABLE --- | 
@@ -70,7 +70,7 @@ const table = reactive({
 
     {
       headerName: 'Tanggal SPKL',
-      field: 'tanggal_spk',
+      field: 'tanggal',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
@@ -79,8 +79,8 @@ const table = reactive({
       filter: 'ColFilter',
     },
     {
-      headerName: 'No. Genzet',
-      field: 'no_genzet',
+      headerName: 'Genzet',
+      field: 'genzet.nama',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
@@ -90,7 +90,7 @@ const table = reactive({
     },
     {
       headerName: 'No. Order',
-      field: 'no_buku_order',
+      field: 't_buku_order.no_buku_order',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
@@ -100,7 +100,7 @@ const table = reactive({
     },
     {
       headerName: 'Customer',
-      field: 'nama_customer',
+      field: 'm_customer.kode',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
@@ -279,21 +279,17 @@ const handleKeyDown = (event) => {
   }
 }
 
-onMounted(() => { 
-  window.addEventListener('keydown', handleKeyDown) 
-
+onMounted(() => { window.addEventListener('keydown', handleKeyDown) 
   const today = new Date();
   // Format tanggal sesuai dengan "dd-mm-yyyy"
   const day = String(today.getDate()).padStart(2, '0');
   const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
   const year = today.getFullYear();
   const formattedDate = `${day}/${month}/${year}`;
-  data.tanggal_spk = formattedDate;
-  data.keluar_lokasi = formattedDate;
-  data.tiba_lokasi = formattedDate;
-})
-
-onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) })
+  data.keluar_lokasi_tanggal = formattedDate;
+  data.tiba_lokasi_tanggal = formattedDate;
+});
+onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
@@ -301,6 +297,30 @@ let default_value = {
 }
 
 const data = reactive({ ...default_value.data });
+
+const detailArr = ref([]);
+
+const addDetail = (e) => {
+  e.forEach(row => {
+    row.m_general_id = row.id || null;
+    row.sektor = row.deskripsi
+    row.catatan = null
+    detailArr.value.push(row)
+  })
+}
+
+const delDetailArr = async (index) => {
+  const result = await swal.fire({
+    icon: 'warning',
+    text: 'Hapus Data Terpilih?',
+    confirmButtonText: 'Yes',
+    showDenyButton: true,
+  });
+
+  if (!result.isConfirmed) return;
+
+  detailArr.value = detailArr.value.filter((item, i) => (i !== index));
+}
 
 // GET DATA FROM API
 onBeforeMount(async () => {
@@ -334,6 +354,11 @@ onBeforeMount(async () => {
       }
     });
 
+    console.log(data.t_spk_lain_d)
+    detailArr.value = data.t_spk_lain_d.map((dt) => ({
+          ...dt, sektor: dt.deskripsi
+    }))
+
   } catch (err) {
     isBadForm.value = true;
     swal.fire({
@@ -362,42 +387,86 @@ function onBack() {
   router.replace('/' + modulPath)
 }
 
+// async function onSave() {
+//   const result = await swal.fire({
+//     icon: 'warning', text: 'Simpan data?', showDenyButton: true,
+//   });
+
+//   if (!result.isConfirmed) return;
+
+//   try {
+//     const isCreating = ['Create', 'Copy'].includes(actionText.value);
+//     const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
+//     isRequesting.value = true;
+//     const res = await fetch(dataURL, {
+//       method: isCreating ? 'POST' : 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Authorization: `${store.user.token_type} ${store.user.token}`,
+//       },
+//       body: JSON.stringify({
+//         ...data,
+//       }),
+//     });
+
+//     data.t_spk_lain_d = detailArr.value;
+
+//     if (!res.ok) {
+//       const responseJson = await res.json();
+//       formErrors.value = responseJson.errors || {};
+//       swal.fire({ icon: 'error', text: responseJson.message || "Failed when trying to post data" });
+//     } else {
+//       router.replace(`/${modulPath}?reload=${Date.now()}`);
+//     }
+
+//   } catch (err) {
+//     isBadForm.value = true;
+//     swal.fire({ icon: 'error', text: err });
+//   } finally {
+//     isRequesting.value = false;
+//   }
+// }
+
 async function onSave() {
-  const result = await swal.fire({
-    icon: 'warning', text: 'Simpan data?', showDenyButton: true,
-  });
-
-  if (!result.isConfirmed) return;
-
-  try {
-    const isCreating = ['Create', 'Copy'].includes(actionText.value);
-    const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
-    isRequesting.value = true;
-    const res = await fetch(dataURL, {
-      method: isCreating ? 'POST' : 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${store.user.token_type} ${store.user.token}`,
-      },
-      body: JSON.stringify({
-        ...data,
-      }),
+    const result = await swal.fire({
+        icon: 'warning', text: 'Simpan data?', showDenyButton: true,
     });
 
-    if (!res.ok) {
-      const responseJson = await res.json();
-      formErrors.value = responseJson.errors || {};
-      swal.fire({ icon: 'error', text: responseJson.message || "Failed when trying to post data" });
-    } else {
-      router.replace(`/${modulPath}?reload=${Date.now()}`);
-    }
+    if (!result.isConfirmed) return;
 
-  } catch (err) {
-    isBadForm.value = true;
-    swal.fire({ icon: 'error', text: err });
-  } finally {
-    isRequesting.value = false;
-  }
+    try {
+        const isCreating = ['Create', 'Copy'].includes(actionText.value);
+        const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
+        isRequesting.value = true;
+
+        const res = await fetch(dataURL, {
+            method: isCreating ? 'POST' : 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `${store.user.token_type} ${store.user.token}`,
+            },
+            body: JSON.stringify({
+                ...data,
+                t_spk_lain_d: detail.data.map((dt)=> ({
+                  ...dt,
+                }))
+            }),
+        });
+
+        if (!res.ok) {
+            const responseJson = await res.json();
+            formErrors.value = responseJson.errors || {};
+            swal.fire({ icon: 'error', text: responseJson.message || "Failed when trying to post data" });
+        } else {
+            router.replace(`/${modulPath}?reload=${Date.now()}`);
+        }
+
+    } catch (err) {
+        isBadForm.value = true;
+        swal.fire({ icon: 'error', text: err });
+    } finally {
+        isRequesting.value = false;
+    }
 }
 
 async function inProcess() {

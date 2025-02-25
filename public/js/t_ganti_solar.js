@@ -310,7 +310,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield:'this.id, this.kode, this.deskripsi, this.group, this.is_active',
+      searchfield:'this.id, this.tgl, this.nominal',
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -326,16 +326,6 @@ const landing = reactive({
     resizable: true,
     filter: true,
     cellClass: ['justify-center', 'bg-gray-50', 'border-r', '!border-gray-200']
-  },
-  {
-    headerName: 'No Order Angkutan',
-    field: 'no_angkutan',
-    filter: true,
-    sortable: true,
-    flex:1,
-    filter: 'ColFilter',
-    resizable: true,
-    cellClass: [ 'border-r', '!border-gray-200']
   },
   {
     headerName: 'Tanggal',
@@ -355,18 +345,18 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex:1,
-    cellClass: [ 'border-r', '!border-gray-200']
-  },  
-  {
-    headerName: 'Catatan',
-    field: 'catatan',
-    filter: true,
-    sortable: true,
-    filter: 'ColFilter',
-    resizable: true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200']
-  },
+    cellClass: [ 'border-r', '!border-gray-200'],
+    valueFormatter: params => {
+    if (params.value) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(params.value);
+    }
+    return 'Rp 0';
+  }
+  }, 
   {
   headerName: 'Status', 
   field: 'is_active', 

@@ -26,9 +26,17 @@ onBeforeMount(() => {
 let initialValues = {}
 const changedValues = []
 
+// HOT KEY (CTRL+S)
+const handleKeyDown = (event) => {
+  if (event?.ctrlKey && event?.key === 's' && actionText.value) {
+    event.preventDefault();
+    onSave();
+  }
+}
+
 onMounted(() => {
-  // window.addEventListener('keydown', handleKeyDown);
-})
+  window.addEventListener('keydown', handleKeyDown);
+});
 
 const hitungJatuhTempo = (tanggalStr, top) => {
   // Pisahkan string tanggal dengan separator '/'
@@ -392,7 +400,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.nama, this.nama_modul, this.submodul, this.path, this.status',
+      searchfield: 'this.no_pembayaran, this.tanggal, customer.nama_perusahaan, tipe_pembayaran.deskripsi, this.total_amt',
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -427,7 +435,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Customer',
@@ -437,7 +445,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Tipe Pembayaran',
@@ -447,7 +455,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Total Amount',
@@ -457,13 +465,23 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
     valueFormatter: (params) => {
       if (params.value) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
       }
       return params.value;
     }
+  },
+  {
+    headerName: 'Catatan',
+    field: 'catatan',
+    filter: true,
+    sortable: true,
+    filter: 'ColFilter',
+    resizable: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Status',
@@ -474,19 +492,9 @@ const landing = reactive({
     filter: 'ColFilter',
     cellRenderer: ({ value }) =>
       value === 'DRAFT'
-        ? '<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">' + value + '</span>'
-        : value === null ? `<span class="text-amber-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Belum Dibuat</span>`
-          : `<span class="text-amber-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${value}</span>`
-  },
-  {
-    headerName: 'Catatan',
-    field: 'catatan',
-    filter: true,
-    sortable: true,
-    filter: 'ColFilter',
-    resizable: true,
-    flex: 1,
-    cellClass: ['border-r', '!border-gray-200']
+        ? '<span class="text-gray-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">' + value + '</span>'
+        : value === null ? `<span class="text-yellow-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Belum Dibuat</span>`
+          : `<span class="text-yellow-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${value}</span>`
   }
   ]
 })

@@ -527,7 +527,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.modul, this.submodul, this.menu, this.path, this.icon, this.sequence, this.status_id'
+      searchfield: 'this.no_komisi_undername, customer.nama_perusahaan, this.tipe_komisi, this.tarif_komisi, this.catatan, this.status_id'
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -604,24 +604,24 @@ const landing = reactive({
     cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
-    headerName: 'Status',
-    field: 'status_id',
-    filter: true,
-    // resizable: true,
-    // valueGetter: (p) => p.node.data['status'].toLowerCase()==='active'? 'Aktif':'Tidak Aktif',
-    sortable: true,
-    flex: 1,
-    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
-    cellRenderer: ({ value }) => {
-      if (value === 'DRAFT') {
-        return `<span class="text-gray-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">DRAFT</span>`;
-      } else if (value === 'POST') {
-        return `<span class="text-amber-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">POST</span>`;
-      } else if (value === 'COMPLETED') {
-        return `<span class="text-purple-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">COMPLETED</span>`;
+      headerName: 'Status',
+      field: 'status_id',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      sortable: true,
+      resizable: true,
+      wrapText: true,
+      filter: 'ColFilter',
+      cellRenderer: (params) => {
+        return params.data['status_id'] == 1
+          ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status_id']?.toUpperCase()}</span>`
+          : (params.data['status_id'] == 'DRAFT' ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status_id']?.toUpperCase()}</span>`
+            : (params.data['status_id'] == 'POST' ? `<span class="text-yellow-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status_id']?.toUpperCase()}</span>`
+                : (params.data['status_id'] == 'COMPLETED' ? `<span class="text-pink-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status_id']?.toUpperCase()}</span>`
+                  : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status_id']?.toUpperCase()}</span>`))
+          )
       }
     }
-  },
   ]
 })
 
@@ -630,7 +630,7 @@ const filterButton = ref(null);
 
 function filterShowData(params) {
   filterButton.value = filterButton.value === params ? null : params;
-  landing.api.params.where = filterButton.value !== null ? `this.status_id=${filterButton.value}` : null;
+  landing.api.params.where = filterButton.value !== null ? `this.status_id='${filterButton.value}'` : null;
   apiTable.value.reload();
 }
 

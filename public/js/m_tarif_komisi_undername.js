@@ -288,7 +288,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.modul, this.submodul, this.menu, this.path, this.icon, this.sequence, this.is_active'
+      searchfield: 'kode_tarif_komisi_undername, this.m_cust_id, this.tipe_tarif, this.tarif_komisi, this.keterangan'
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -321,11 +321,12 @@ const landing = reactive({
     headerName: 'Customer',
     filter: true,
     sortable: true,
-    flex: 1,
+    flex: 1.15,
+    autoSize: true,
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
     valueGetter: (params) => {
       const jenis = params.data['m_cust.jenis_perusahaan'] || '';
       const nama = params.data['m_cust.nama_perusahaan'] || '';
@@ -340,7 +341,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true, wrapText: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     field: 'tarif_komisi',
@@ -350,7 +351,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true, wrapText: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
     valueFormatter: (params) => {
 
       if (params.value) {
@@ -367,7 +368,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true, wrapText: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200', 'justify-end']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Status',

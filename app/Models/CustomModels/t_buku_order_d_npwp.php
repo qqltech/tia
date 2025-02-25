@@ -32,6 +32,9 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
             $result = m_customer::where('id',$row['t_buku_order.m_customer_id'])->first();
             $row['t_buku_order.m_customer_kode'] = $result->kode;
         }
+        if(app()->request->getNoContainer){
+            $data = ["no_container_gabungan"=>$row['no_prefix'].$row['no_suffix']];
+        }
 
         // if(app()->request->is_transform){
         //     $getBukuOrder = t_buku_order::where('id', $row['t_buku_order_id'])->first();
@@ -151,7 +154,7 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
             'mc.nama_perusahaan',
             'mc.kode',
             'mc.id as customer_id',
-            \DB::raw("CONCAT(COALESCE(t_buku_order_d_npwp.no_prefix,'-'), COALESCE(t_buku_order_d_npwp.no_suffix,'-')) as no_container")
+            \DB::raw("CONCAT(COALESCE(t_buku_order_d_npwp.no_prefix,'-'), COALESCE(t_buku_order_d_npwp.no_suffix,'-')) as no_container_gabungan")
             )
         ;
     }

@@ -32,7 +32,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
             
             $result = m_customer::where('id',$id_cust)->first();
             // trigger_error(json_encode($result));
-            $row['kode_cust']= $result->kode;
+            $row['kode_cust']= @$result->kode;
         }
 
         return array_merge($row,[]);

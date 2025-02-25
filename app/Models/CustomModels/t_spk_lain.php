@@ -17,6 +17,7 @@ class t_spk_lain extends \App\Models\BasicModels\t_spk_lain
 
     public $createAdditionalData = ["creator_id" => "auth:id"];
     public $updateAdditionalData = ["last_editor_id" => "auth:id"];
+    
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
@@ -32,6 +33,14 @@ class t_spk_lain extends \App\Models\BasicModels\t_spk_lain
             // "errors" => ['error1']
         ];
     }
+
+    public function custom_print()
+    {
+        $id = request("id");
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        return ["success" => true];
+    }
+
 
     public function custom_post()
     {

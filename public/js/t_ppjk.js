@@ -78,7 +78,7 @@ const table = reactive({
       headerName: 'Status', field: 'status', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
       sortable: true, filter: 'ColFilter', cellRenderer: ({ value }) => {
         return value === 'DRAFT'
-          ? `<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">DRAFT</span>`
+          ? `<span class="text-gray-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">DRAFT</span>`
           : `<span class="text-yellow-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">POST</span>`
       }
     },

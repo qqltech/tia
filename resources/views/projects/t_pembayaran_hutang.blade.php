@@ -1,51 +1,54 @@
 @if(!$req->has('id'))
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center gap-x-4 p-4">
+  <div class="pl-2.5 pt-2 pb-2">
+    <h1 class="text-xl font-semibold">PEMBAYARAN HUTANG</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-1">
 
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-green-600 hover:blue-600-600' 
-          : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white'"
+        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 hover:gray-600-600 text-white' 
+          : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           DRAFT
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-amber-600 hover:bg-amber-600' 
+        <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-amber-600 hover:bg-amber-600 text-white' 
           : 'border border-amber-600 text-amber-600 bg-white hover:bg-amber-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           POST
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('IN APPROVAL')" :class="filterButton === 'IN APPROVAL' ? 'bg-sky-600 text-white hover:bg-sky-600' 
+        <button @click="filterShowData('IN APPROVAL')" :class="filterButton === 'IN APPROVAL' ? 'bg-sky-600 hover:bg-sky-600 text-white' 
           : 'border border-sky-600 text-sky-600 bg-white hover:bg-sky-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           IN APPROVAL
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-blue-600 hover:bg-blue-600' 
-          : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white'"
+        <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-green-600 hover:bg-green-600 text-white' 
+          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           APPROVED
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('COMPLETE')" :class="filterButton === 'COMPLETE' ? 'bg-green-600 hover:bg-green-600' 
-          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          COMPLETE
-        </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('REJECTED')" :class="filterButton === 'REJECTED' ? 'bg-red-600 hover:bg-red-600' 
+        <button @click="filterShowData('REJECTED')" :class="filterButton === 'REJECTED' ? 'bg-red-600 hover:bg-red-600 text-white' 
           : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           REJECTED
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('REVISED')" :class="filterButton === 'REVISED' ? 'bg-red-600 hover:bg-red-600' 
-          : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'"
+        <button @click="filterShowData('REVISED')" :class="filterButton === 'REVISED' ? 'bg-purple-600 hover:bg-purple-600 text-white' 
+          : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           REVISED
+        </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('COMPLETE')" :class="filterButton === 'COMPLETE' ? 'bg-pink-600 hover:bg-pink-600 text-white' 
+          : 'border border-pink-600 text-pink-600 bg-white hover:bg-pink-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          COMPLETE
         </button>
       </div>
     </div>
@@ -103,7 +106,7 @@
     </div>
 
     <div class="w-full !mt-3">
-      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tanggal" type="date"
+      <FieldX class="!mt-0" :bind="{ readonly: !actionText, disabled:!actionText }" :value="values.tanggal" type="date"
         :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v" :hints="formErrors.tanggal"
         placeholder="Tanggal" label="Tanggal" :check="false" />
     </div>
@@ -468,7 +471,7 @@
   <div class="p-4 " v-if="activeTabIndex === 0">
     <div class="border border-2 border-dashed p-4 rounded-2xl">
       <div class="<md:col-span-1 col-span-3 grid <md:grid-cols-1 grid-cols-3 gap-2">
-        <ButtonMultiSelect title="Add to list" @add="onDetailAdd" :api="{
+        <ButtonMultiSelect v-show="actionText" title="Add to list" @add="onDetailAdd" :api="{
                   url: `${store.server.url_backend}/operation/t_purchase_invoice`,
                   headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                   params: { 

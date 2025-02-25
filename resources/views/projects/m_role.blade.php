@@ -1,10 +1,13 @@
 <!-- LANDING TABLE -->
 @if(!$req->has('id'))
 <div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
-  <div class="flex justify-between items-center gap-x-4 p-4">
+  <div class="pl-4 pt-2">
+    <h1 class="text-xl font-semibold">ROLE</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-1">
 
     <!-- FILTER -->
-    <div class="flex items-center gap-x-2">
+    <div class="flex items-center gap-x-4">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
         <button @click="filterShowData(true)" :class="filterButton === true ? 'bg-green-600 text-white hover:bg-green-600' 

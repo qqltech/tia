@@ -1,6 +1,9 @@
 <!-- LANDING -->
 @if(!$req->has('id'))
 <div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
+   <div class="pl-4 pt-2">
+    <h1 class="text-xl font-semibold">BKK</h1>
+  </div>
   <div class="flex justify-between items-center gap-x-4 p-4">
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">

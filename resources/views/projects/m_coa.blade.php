@@ -1,6 +1,9 @@
 @if(!$req->has('id'))
 <div class="bg-white p-6 rounded-xl h-[670px] border-t-10 border-blue-500 dark:bg-black">
-  <div class="flex justify-between items-center p-2">
+  <div class="pl-4">
+    <h1 class="text-xl font-semibold">COA</h1>
+  </div>
+  <div class="flex justify-between items-center px-4 py-3">
     <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
@@ -16,7 +19,13 @@
         </button>
       </div>
     </div>
-
+    <div class="flex items-center gap-x-3">
+      <RouterLink :to="$route.path + '/create?' + (Date.parse(new Date()))" class="border border-blue-600 
+    text-blue-600 bg-white hover:bg-blue-600 hover:text-white 
+                      text-sm rounded-md py-1 px-2.5 transition-colors duration-300">
+        Create New
+      </RouterLink>
+    </div>
 
   </div>
   <hr>
@@ -26,13 +35,7 @@
     class="max-h-[550px] pt-2 !px-4 !pb-8">
     <template #header>
       <!-- ACTION BUTTON -->
-      <div class="flex items-center gap-x-4">
-        <RouterLink :to="$route.path + '/create?' + (Date.parse(new Date()))" class="border border-blue-600 
-      text-blue-600 bg-white hover:bg-blue-600 hover:text-white 
-                        text-sm rounded-md py-1 px-2.5 transition-colors duration-300">
-          Create New
-        </RouterLink>
-      </div>
+      
     </template>
   </TableApi>
 </div>

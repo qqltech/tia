@@ -36,7 +36,7 @@ const table = reactive({
     },
     params: {
       simplest: false,
-      searchfield: 'this.id,',
+      searchfield: 'this.id, this.no_premi, this.tgl, this.total_premi, this.catatan',
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };
@@ -97,19 +97,20 @@ const table = reactive({
       headerName: 'Status',
       field: 'status',
       flex: 1,
+      filter:false,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
-      filter: 'ColFilter',
+      // filter: 'ColFilter',
       cellRenderer: (params) => {
         return params.data['status'] == 1
           ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-          : (params.data['status'] == 'DRAFT' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-            : (params.data['status'] == 'POST' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+          : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+            : (params.data['status'] == 'POST' ? `<span class="text-amber-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
               : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-sky-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                : (params.data['status'] == 'REVISED' ? `<span class="text-yellow-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                  : (params.data['status'] == 'APPROVED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                : (params.data['status'] == 'REVISED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                  : (params.data['status'] == 'APPROVED' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
                     : (params.data['status'] == 'REJECTED' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
                       : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`))))))
       }
