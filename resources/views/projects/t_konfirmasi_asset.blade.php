@@ -101,8 +101,9 @@
               Authorization: `${store.user.token_type} ${store.user.token}`
             },
             params: {
-              simplest:false,
-              scopes:'GetAmount',
+              simplest:true,
+              transform: true,
+              //scopes:'GetAmount',
               searchfield:'this.no_lpb , this.tanggal_lpb , this.no_sj_supplier , this.tanggal_sj_supplier',
             },
           }" :columns="[{

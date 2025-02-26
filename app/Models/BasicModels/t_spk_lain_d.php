@@ -24,7 +24,7 @@ class t_spk_lain_d extends Model
     public $rules       = [];
     public $joins       = ["t_spk_lain.id=t_spk_lain_d.t_spk_lain_id","set.m_general.id=t_spk_lain_d.sektor"];
     public $details     = [];
-    public $heirs       = [];
+    public $heirs       = ["t_bon_spk_lain_d"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

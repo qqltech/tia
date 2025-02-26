@@ -370,5 +370,39 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $status = $this->where("id", $id)->update(["status" => "POST"]);
         return ["success" => true];
     }
+
+    public function transformRowData( array $row )
+    {
+        $data = [];
+        if(app()->request->piutang){
+            $data = [
+                // jasa = ppjk+cont+angkut
+                // lain = lain-lain
+                'piutang_jasa' => $this->getPiutangJasa($row['id']), 
+                'piutang_lain_lain' => $this->getPiutangJasa($row['id']),
+
+                'tagihan_jasa' => $this->getPiutangLain($row['id']),
+                'tagihan_lain_lain' => $this->getPiutangLain($row['id']),
+            ];
+        }
+        return array_merge( $row, $data );
+    }
+    
+    private function getPiutangJasa($tagihanId)
+    {
+        return \DB::table('t_tagihan')
+            ->where('t_tagihan_piutang_d.t_tagihan_id', $tagihanId)
+            ->whereIn('t_pembayaran_piutang.tipe_piutang', ['REIMBURSE', 'JASA'])
+            ->sum('t_pembayaran_piutang_d.total_bayar'); 
+    }
+
+    private function getPiutangLain($tagihanId)
+    {
+        return \DB::table('t_pembayaran_piutang_d')
+            ->join('t_pembayaran_piutang', 't_pembayaran_piutang_d.t_pembayaran_piutang_id', '=', 't_pembayaran_piutang.id')
+            ->where('t_tagihan_piutang_d.t_tagihan_id', $tagihanId)
+            ->whereIn('t_pembayaran_piutang.tipe_piutang', ['REIMBURSE', 'JASA'])
+            ->sum('t_pembayaran_piutang_d.total_bayar'); 
+    }
 }
 ?>

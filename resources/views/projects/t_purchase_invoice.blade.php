@@ -380,16 +380,9 @@
       ]" />
     </div> -->
     <div>
-      <FieldSelect class="w-full !mt-3" valueField="id" displayField="no_faktur_pajak" :value="data.no_faktur_pajak"
+      <FieldX class="w-full !mt-3" valueField="id" displayField="no_faktur_pajak" :value="data.no_faktur_pajak"
         @input="(v)=>data.no_faktur_pajak=v" :errorText="formErrors.no_faktur_pajak?'failed':''"
-        :hints="formErrors.no_faktur_pajak" :api="{
-              url: `${store.server.url_backend}/operation/m_faktur_pajak_d`,
-              headers: { 'Content-Type': 'Application/json', 
-              Authorization: `${store.user.token_type} ${store.user.token}`},
-              params: {
-                scopes: 'NoFakturNew,NoFakturPI'
-              }
-            }" label="No. Faktur Pajak" placeholder="Pilih No. Faktur Pajak" :check="false" />
+        :hints="formErrors.no_faktur_pajak"  label="No. Faktur Pajak" placeholder="Pilih No. Faktur Pajak" :check="false" />
     </div>
     <div>
       <!-- <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.t_lpb_id"

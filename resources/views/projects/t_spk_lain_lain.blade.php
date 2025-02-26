@@ -37,7 +37,7 @@
   <hr>
 
   <!-- TABLE -->
-  <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions" class="max-h-[500px] pt-2 !px-4 
+  <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions" class="max-h-[450px] pt-2 !px-4 
   !pb-8">
     <template #header>
       <div class="pb-13 h-full"></div>
@@ -67,18 +67,18 @@
         placeholder="Auto Generate" :check="false" />
     </div>
     <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ readonly: true, disabled: true, clearable:true }"
+      <FieldSelect class="w-full !mt-3" :bind="{ readonly: true, disabled: true, clearable:false }"
         :value="values.status" @input="v=>values.status=v" :errorText="formErrors.status?'failed':''"
         :hints="formErrors.status" valueField="id" displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
       {'id' : 'POSTED' , 'key' : 'POSTED'},
       {'id' : 'IN PROCESS' , 'key' : 'IN PROCESS'},
-      {'id' : 'COMPLETE' , 'key' : 'COMPLETE'}]" placeholder="Pilih Status" fa-icon="sort-desc" label="Status"
-        :check="false" />
+      {'id' : 'COMPLETE' , 'key' : 'COMPLETE'}]" placeholder="Status" label="Status"
+        :check="true" />
     </div>
     <div>
       <FieldX :bind="{ readonly: true, disabled: true }" class="w-full !mt-3" :value="values.no_spk"
         @input="v=>values.no_spk=v" :errorText="formErrors.no_spk?'failed':''" :hints="formErrors.no_spk"
-        placeholder="Nomor SPK Lain-Lain" :check="false" />
+        placeholder="Auto Generate" label="Nomor SPK Lain-Lain" :check="false" />
     </div>
     <div>
       <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.tanggal"

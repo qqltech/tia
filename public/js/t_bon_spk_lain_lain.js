@@ -17,9 +17,9 @@ const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
 
 // ENDPOINT API
-const endpointApi = 't_spk_lain'
+const endpointApi = 't_bon_spk_lain'
 onBeforeMount(() => {
-  document.title = 'Transaction SPK Lain-lain'
+  document.title = 'Transaction Bon SPK Lain-lain'
 })
 
 
@@ -43,8 +43,6 @@ onMounted(() => {
   const year = today.getFullYear();
   const formattedDate = `${day}/${month}/${year}`;
   values.tanggal = formattedDate;
-  values.keluar_lokasi_tanggal = formattedDate;
-  values.tiba_lokasi_tanggal = formattedDate;
 });
 onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) })
 
@@ -56,14 +54,6 @@ const changedValues = []
 let values = reactive({})
 
 const detailArr = ref([]);
-// const addDetail = (e) => {
-//   e.forEach(row => {
-//     // row.m_general_id = row.id || null;
-//     row.sektor = row.id || '';
-//     row.catatan = row.catatan || '';
-//     detailArr.value.push(row);
-//   });
-// };
 
 function addDetail(rows) {
   const data = [...detailArr.value]
@@ -81,7 +71,89 @@ const onRetotal = (dArr) => {
   }
 }
 
+async function detailBon(no_spk) {
+  if (!no_spk || !no_spk.id) {
+    // Reset detail arrays
+    detailArr.value = [];
+    return;
+  }
 
+  try {
+    // // Fetch General Container Data
+    // const dataURL1 = `${store.server.url_backend}/operation/m_general`;
+    // isRequesting.value = true;
+    // const params1 = {
+    //   where: `this.group='UKURAN KONTAINER'`,
+    //   transform: false,
+    // };
+    // const fixedParams1 = new URLSearchParams(params1);
+    // const res1 = await fetch(dataURL1 + '?' + fixedParams1, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `${store.user.token_type} ${store.user.token}`,
+    //   },
+    // });
+    // if (!res1.ok) throw new Error("Gagal saat mencoba membaca data");
+    // const resultJson1 = await res1.json();
+    // const deskripsiKeys = Array.isArray(resultJson1.data) ? resultJson1.data.map(item => item.deskripsi) : [];
+    // FECTH BUKU ORDER
+    const dataURL = `${store.server.url_backend}/operation/t_spk_lain/${no_spk.id}`;
+    const params = {
+      // join: true,
+      // view_tarif: true,
+      // transform: false,
+      // getSpkFly:true,
+      scopes: 'WithDetail'
+    };
+    const fixedParams = new URLSearchParams(params);
+    const res = await fetch(dataURL + '?' + fixedParams, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    });
+    if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
+    const resultJson = await res.json();
+    const initialValues = resultJson.data;
+    // console.log('DATA SPK FLY',initialValues.t_spk_lain_d)
+
+    detailArr.value = [];
+
+    initialValues.t_spk_lain_d?.forEach((itemBon)=>{
+      itemBon.t_spk_lain_d_id = itemBon.id
+      itemBon.sektor = itemBon['sektor.id'];
+      itemBon.catatan = itemBon['catatan'];
+      itemBon.sangu = 0;
+      itemBon.tambahan = 0;
+      itemBon.tagihan = 0;
+      detailArr.value=[itemBon, ...detailArr.value];
+    });
+
+  } catch (err) {
+    isBadForm.value = true;
+    swal.fire({
+      icon: 'error',
+      text: err.message || "Terjadi kesalahan.",
+      allowOutsideClick: false,
+      confirmButtonText: 'Kembali',
+    }).then(() => {
+      router.back();
+    });
+  } finally {
+    isRequesting.value = false;
+  }
+}
+
+
+// const Bon = computed(() => {
+//   let total = 0;
+
+//   detailArr.value.forEach((dt) => {
+//     total += (dt.sangu || 0) + (dt.tambahan || 0);
+//   });
+
+//   return total;
+// });
 
 const delDetailArr = async (index) => {
   const result = await swal.fire({
@@ -134,7 +206,7 @@ onBeforeMount(async () => {
       const dataURL = `${store.server.url_backend}/operation/${endpointApi}/${editedId}`
       isRequesting.value = true
 
-      const params = { join: true, transform: false }
+      const params = { join: true, transform: false, GetData: true }
       const fixedParams = new URLSearchParams(params)
       const res = await fetch(dataURL + '?' + fixedParams, {
         headers: {
@@ -149,14 +221,17 @@ onBeforeMount(async () => {
       if (actionText.value?.toLowerCase() === 'copy') {
         delete initialValues.uid
       }
-      if (initialValues.t_spk_lain_d && Array.isArray(initialValues.t_spk_lain_d)) {
-        detailArr.value = initialValues.t_spk_lain_d.map(det => ({
+      console.log(initialValues)
+      if (initialValues.t_bon_spk_lain_d && Array.isArray(initialValues.t_bon_spk_lain_d)) {
+        detailArr.value = initialValues.t_bon_spk_lain_d.map(det => ({
           ...det,
-          sektor: det['sektor.id'],
+          sektor: det['t_spk_lain_d.sektor'],
+          sangu: det['sangu'],
+          tambahan: det['tambahan'],
+          tagihan: det['tagihan'],
           catatan: det['catatan']
         }));
       }
-
 
     } catch (err) {
       isBadForm.value = true
@@ -210,7 +285,7 @@ async function onSave() {
     const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value);
     const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
     isRequesting.value = true;
-    values.t_spk_lain_d = detailArr.value;
+    values.t_bon_spk_lain_d = detailArr.value;
 
 
     const res = await fetch(dataURL, {
@@ -251,7 +326,7 @@ async function inProcess() {
   }).then(async (res) => {
     if (res.isConfirmed) {
       try {
-        const dataURL = `${store.server.url_backend}/operation/t_spk_lain/inProcess`
+        const dataURL = `${store.server.url_backend}/operation/t_bon_spk_lain/inProcess`
         isRequesting.value = true
         const res = await fetch(dataURL, {
           method: 'POST',
@@ -302,7 +377,7 @@ async function complete() {
   }).then(async (res) => {
     if (res.isConfirmed) {
       try {
-        const dataURL = `${store.server.url_backend}/operation/t_spk_lain/complete`
+        const dataURL = `${store.server.url_backend}/operation/t_bon_spk_lain/complete`
         isRequesting.value = true
         const res = await fetch(dataURL, {
           method: 'POST',
@@ -421,7 +496,7 @@ const landing = reactive({
         }).then(async (res) => {
           if (res.isConfirmed) {
             try {
-              const dataURL = `${store.server.url_backend}/operation/t_spk_lain/post`
+              const dataURL = `${store.server.url_backend}/operation/t_bon_spk_lain/post`
               isRequesting.value = true
               const res = await fetch(dataURL, {
                 method: 'POST',
@@ -469,7 +544,7 @@ const landing = reactive({
       show: (row) => row['status'] !== 'DRAFT',
       async click(row) {
         try {
-          const dataURL = `${store.server.url_backend}/operation/t_spk_lain/print?id=${row.id}`;
+          const dataURL = `${store.server.url_backend}/operation/t_bon_spk_lain/print?id=${row.id}`;
           isRequesting.value = true;
           const response = await fetch(dataURL, {
             method: 'POST',
@@ -545,8 +620,8 @@ const landing = reactive({
       filter: 'ColFilter',
     },
     {
-      headerName: 'No. SPK Lain-Lain',
-      field: 'no_spk',
+      headerName: 'No. BSG',
+      field: 'no_bsg',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
@@ -556,7 +631,7 @@ const landing = reactive({
     },
 
     {
-      headerName: 'Tanggal SPKL',
+      headerName: 'Tanggal BSG',
       field: 'tanggal',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-center',],
@@ -566,8 +641,8 @@ const landing = reactive({
       filter: 'ColFilter',
     },
     {
-      headerName: 'Genzet',
-      field: 'genzet.nama',
+      headerName: 'No. SPK',
+      field: 't_spk_lain_lain.no_spk',
       filter: true,
       sortable: true,
       filter: 'ColFilter',
@@ -576,8 +651,8 @@ const landing = reactive({
       cellClass: ['border-r', '!border-gray-200', 'justify-center']
     },
     {
-      headerName: 'No. Order',
-      field: 't_buku_order.no_buku_order',
+      headerName: 'Operator',
+      field: 'operator.nama',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
@@ -586,18 +661,8 @@ const landing = reactive({
       filter: 'ColFilter',
     },
     {
-      headerName: 'Customer',
-      field: 'm_customer.kode',
-      flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
-      sortable: true,
-      resizable: true,
-      wrapText: true,
-      filter: 'ColFilter',
-    },
-    {
-      headerName: 'Catatan',
-      field: 'catatan',
+      headerName: 'Sangu',
+      field: 'sangu',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,

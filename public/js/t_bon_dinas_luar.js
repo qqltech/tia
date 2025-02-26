@@ -90,7 +90,10 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    valueFormatter: (params) => {
+      return new Intl.NumberFormat('id-ID').format(Number(params.value));
+    }
   },
   {
     headerName: 'Catatan',

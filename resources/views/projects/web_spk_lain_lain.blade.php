@@ -2,12 +2,12 @@
 $req = app()->request;
 
 function formatDate($tanggal){
-  $unixTime = strtotime($tanggal);
-  $result = date("d/m/Y",$unixTime);
-  return $result;
+$unixTime = strtotime($tanggal);
+$result = date("d/m/Y",$unixTime);
+return $result;
 }
 
-//get data 
+//get data
 $data = \DB::select("
 select
 tsl.id as spk_lain_id,
@@ -51,7 +51,7 @@ $tanggal_tiba = formatDate($n->tiba_lokasi_tanggal);
 
 //detail spk lain-lain
 $detailSPKLain = \DB::select("
-select 
+select
 tsld.sektor,
 mg.deskripsi as sektor_desc
 from
@@ -64,7 +64,7 @@ where tsld.t_spk_lain_id = ?
 //get sektor
 $sektorArr = [];
 foreach($detailSPKLain as $dsl){
-    $sektorArr[] = $dsl->sektor_desc ?? '-';
+$sektorArr[] = $dsl->sektor_desc ?? '-';
 }
 $sektor=implode(', ',$sektorArr);
 
@@ -250,7 +250,7 @@ $sektor=implode(', ',$sektorArr);
 
     table {
       table-layout: fixed;
-      font-size: 10px;
+      font-size: 13px;
       /* font-family: 'Courier New', monospace; */
       font-family: sans-serif;
       /* font-family: monospace; */
@@ -264,7 +264,7 @@ $sektor=implode(', ',$sektorArr);
   <!-- Lembar 1 -->
   <section class="sheet padding-3mm" style="padding-right: 32px; padding-top: 21px; page-break-after: always;">
     <table style="width:100%;">
-      <p style="text-align: center;">SPK LAIN-LAIN</p>
+      <!-- <p style="text-align: center;">SPK LAIN-LAIN</p> -->
       <!-- <thead>
         <tr>
           <th colspan="2" class="underline-2"
@@ -282,16 +282,17 @@ $sektor=implode(', ',$sektorArr);
         </tr>
         <tr>
           <td style="font-weight: normal">Genzet</td>
-          <td colspan="3" style="padding-top: 5px;">: &nbsp;&nbsp;{{$n->kode_supp??'-'}}</td>
+          <td colspan="3" style="padding-top: 3px;">: &nbsp;&nbsp;{{$n->kode_supp??'-'}}</td>
         </tr>
         <tr>
           <td style="">Order No.</td>
-          <td colspan="3" style="padding-top: 5px;">: &nbsp;&nbsp;{{$n->no_buku_order ?? '-'}}</td>
-          <td>Exp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{$n->kode_cust ?? '-'}}</td>
+          <td colspan="2" style="padding-top: 3px;">: &nbsp;&nbsp;{{$n->no_buku_order ?? '-'}}</td>
+          <td colspan="2" style="padding-top: 3px; padding-left: 3%;">Exp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{$n->kode_cust
+            ?? '-'}}</td>
         </tr>
       </tbody>
       <tr>
-        <td style="padding-top: 5%;"></td>
+        <td style="padding-top: 3%;"></td>
       </tr>
       <tbody>
         <tr>
@@ -303,44 +304,53 @@ $sektor=implode(', ',$sektorArr);
           <td colspan="4" style="">: &nbsp;&nbsp;{{$sektor}}</td>
         </tr>
         <tr>
-          <td style="padding-top: 5%;"></td>
+          <td style="padding-top: 3%;"></td>
         </tr>
         <tr>
-          <td style="">Cont. No.</td>
-          <td colspan="3" style="">: &nbsp;&nbsp;{{$n->no_prefix??'-'}}-{{$n->no_suffix??'-'}}</td>
-          <td>Ukuran :&nbsp;&nbsp;{{$n->ukuran_cont_desc ?? '-'}}</td>
-        </tr>
-        <tr>
-          <td colspan="3" style="padding-left: 23.5%;">Setting Temp.
-            <span style="padding-left: 5%;">:</span>
-            <span>&nbsp;&nbsp;{{$n->setting_temperatur}}</span>
+          <td colspan="3" style="">Cont. No.
+            <span style="padding-left: 6%;">:</span>
+            <span style="border-bottom: 0.5px dashed black; margin-left: 3%;">{{$n->no_prefix??'-'}}-{{$n->no_suffix??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          </td>
+          <td colspan="2" style="padding-left: 3%;">Ukuran
+            <span>:</span>
+            <span style="margin-left: 3%; border-bottom: 0.5px dashed black;">{{$n->ukuran_cont_desc ?? '-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </td>
         </tr>
         <tr>
-          <td colspan="3" style="padding-left: 23.5%;">Ventilation
-            <span style="padding-left: 16.75%;">:</span>
-            <span>&nbsp;&nbsp;</span>
+          <td style="padding-top: 1%;"></td>
+        </tr>
+        <tr>
+          <td colspan="4" style="padding-left: 23.5%;">Setting Temp.
+            <span style="padding-left: 5%;">:</span>
+            <span style="margin-left: 3%; border-bottom: 0.5px dashed black;">{{$n->setting_temperatur}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" style="padding-left: 23.5%;">Ventilation
+            <span style="padding-left: 14.75%;">:</span>
+            <span style="margin-left: 3%; border-bottom: 0.5px dashed black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </td>
         </tr>
         <tr>
           <td style="padding-top: 2%;"></td>
         </tr>
         <tr>
-          <td style="">Keluar Lokasi</td>
+          <td style="">Keluar Lok.</td>
           <td colspan="3" style="">:
             <span style="padding-left: 3%;">Tanggal</span>
             <span style="padding-left: 2%;">:</span>
-            <span style="border-bottom: 0.5px dashed black;">{{$tanggal_keluar??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span style="border-bottom: 0.5px dashed black;">{{$tanggal_keluar??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </td>
         </tr>
         <tr>
-          <td colspan="5" style="padding-left: 23.5%;">Jam
-            <span style="padding-left: 7.75%;">:
-              <strong style="border-bottom: 0.5px dashed black; font-weight: normal;">{{$n->keluar_lokasi_jam??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+          <td colspan="5" style="padding-left: 24%;">Jam
+            <span style="padding-left: 9.75%;">:
+              <strong style="border-bottom: 0.5px dashed black; font-weight: normal;">{{$n->keluar_lokasi_jam??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
             </span>
             <span style="font-weight: normal; padding-left: 5%;">Temp.
-              <strong style="border-bottom: 0.5px dashed black; font-weight: normal;">{{$n->keluar_lokasi_temperatur??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+              <strong style="font-weight: normal; margin-left: 2%;">:</strong>
             </span>
+            <span style="border-bottom: 0.5px dashed black; margin-left: 2%;">{{$n->keluar_lokasi_temperatur??'-'}}&nbsp;&nbsp;&nbsp;</span>
           </td>
         </tr>
         <tr>
@@ -351,17 +361,18 @@ $sektor=implode(', ',$sektorArr);
           <td colspan="3" style="">:
             <span style="padding-left: 3%;">Tanggal</span>
             <span style="padding-left: 2%;">:</span>
-            <span style="border-bottom: 0.5px dashed black;">{{$tanggal_tiba??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span style="border-bottom: 0.5px dashed black;">{{$tanggal_tiba??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </td>
         </tr>
         <tr>
-          <td colspan="5" style="padding-left: 23.5%;">Jam
-            <span style="padding-left: 7.75%;">:
-              <strong style="border-bottom: 0.5px dashed black; font-weight: normal;">{{$n->tiba_lokasi_jam??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+          <td colspan="5" style="padding-left: 24%;">Jam
+            <span style="padding-left: 9.75%;">:
+              <strong style="border-bottom: 0.5px dashed black; font-weight: normal;">{{$n->tiba_lokasi_jam??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
             </span>
             <span style="font-weight: normal; padding-left: 5%;">Temp.
-              <strong style="border-bottom: 0.5px dashed black; font-weight: normal;">{{$n->tiba_lokasi_temperatur??'-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+              <strong style="font-weight: normal; margin-left: 2%;">:</strong>
             </span>
+            <span style="border-bottom: 0.5px dashed black; margin-left: 2%;">{{$n->tiba_lokasi_temperatur??'-'}}&nbsp;&nbsp;&nbsp;</span>
           </td>
         </tr>
         <tr>
@@ -370,9 +381,8 @@ $sektor=implode(', ',$sektorArr);
         <tr>
           <td>Keterangan</td>
           <td colspan="4">:
-            <span style="border-bottom: 0.5px dashed black;">{{$n->catatan}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="border-bottom: 0.5px dashed black; margin-left: 2%;">{{$n->catatan}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </span>
           </td>
         </tr>
@@ -380,31 +390,35 @@ $sektor=implode(', ',$sektorArr);
           <td style="padding-top: 5%;"></td>
         </tr>
         <tr>
-          <td colspan="3" style="padding-left: 5%;">Mengetahui,</td>
-          <td colspan="2" style="text-align: center;">Tanda Tangan Penerima</td>
+          <td colspan="2" style="text-align: center;">Mengetahui,</td>
+          <td colspan="3" style="padding-left: 15%; text-align: center;">Tanda Tangan Penerima</td>
         </tr>
         <tr>
-          <td colspan="3">A/n Pemilik Barang</td>
-          <td colspan="2" style="text-align: center;">Genzet</td>
+          <td colspan="2" style="text-align: center;">A/n Pemilik Barang</td>
+          <td colspan="3" style="padding-left: 15%; text-align: center;">Genzet</td>
         </tr>
         <tr>
-          <td style="padding-top: 20%;"></td>
+          <td style="padding-top: 10%;"></td>
         </tr>
         <tr>
-          <td colspan="3">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
-          <td colspan="2" style="text-align: center;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
+          <td colspan="2" style="text-align: center;">
+            (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+          </td>
+          <td colspan="3" style="padding-left: 15%; text-align: center;">
+            (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+          </td>
         </tr>
         <tr>
           <td style="padding-top: 5%;"></td>
         </tr>
         <tr style="width: 100%; font-size: 10px;">
-        <td style=" font-weight: bold; border-bottom: 0.5px solid black; white-space: nowrap;">Dicetak pada
-          tgl : {{$currentDate}}  jam  Operator : {{$currentTime}} DEWI-PC # dewi</td>
-        <td style="border-bottom: 0.5px solid black;"></td>
-        <td style="border-bottom: 0.5px solid black;"></td>
-        <td style="border-bottom: 0.5px solid black;"></td>
-        <td style="border-bottom: 0.5px solid black;"></td>
-      </tr>
+          <td style=" font-weight: bold; border-bottom: 0.5px solid black; white-space: nowrap;">Dicetak pada
+            tgl : {{$currentDate}} jam Operator : {{$currentTime}} DEWI-PC # dewi</td>
+          <td style="border-bottom: 0.5px solid black;"></td>
+          <td style="border-bottom: 0.5px solid black;"></td>
+          <td style="border-bottom: 0.5px solid black;"></td>
+          <td style="border-bottom: 0.5px solid black;"></td>
+        </tr>
       </tbody>
     </table>
   </section>

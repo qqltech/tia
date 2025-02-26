@@ -4,41 +4,27 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class tpurchaseinvoice extends Migration
+class tbonspklaind extends Migration
 {
-    protected $tableName = "t_purchase_invoice";
+    protected $tableName = "t_bon_spk_lain_d";
 
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id()->from(1);
-
-            $table->string('no_draft', 20);
-            $table->string('status', 20)->default('DRAFT');
-            $table->date('tanggal');
-            $table->string('no_pi', 20);
-            $table->integer('t_po_id')->comment('{"src":"t_purchase_order.id"}');
-            $table->string('no_faktur_pajak')->comment('{"src":"m_faktur_pajak_d.id"}')->change();
-
-            $table->integer('tipe_pembayaran_id')->comment('{"src":"set.m_general.id"}')->nullable();
-            $table->integer('m_supplier_id')->comment('{"src":"m_supplier.id"}');
-            $table->integer('t_lpb_id')->comment('{"src":"t_lpb.id"}');
-
-            $table->integer('jenis_ppn')->comment('{"src":"set.m_general.id"}');
-            $table->float('persen_ppn');
-            $table->integer('jenis_pph')->comment('{"src":"set.m_general.id"}');
-            $table->float('persen_pph');
+            $table->integer('t_bon_spk_lain_id')->comment('{"fk":"t_bon_spk_lain.id"}')->nullable();
+            $table->integer('t_spk_lain_d_id')->comment('{"src":"t_spk_lain_d.id"}');
+            $table->decimal('sangu',18,4)->nullable();
+            $table->decimal('tambahan',18,4)->nullable();
+            $table->decimal('tagihan',18,4)->nullable();
             $table->text('catatan')->nullable();
 
-            $table->decimal('total_pph', 18, 4);
-            $table->decimal('total_ppn', 18, 4);
-            $table->decimal('grand_total', 18, 4);
-            $table->decimal('utang',18,4)->nullable();
-
+            //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
-            $table->integer('deleted_id')->nullable();
-            $table->timestamp('deleted_at')->nullable();
+            $table->datetime("edited_at")->nullable();
+            $table->integer("deletor_id")->nullable();
+            $table->datetime("deleted_at")->nullable();
             $table->timestamps();
         });
 

@@ -18,6 +18,7 @@ class tpembayaranpiutang extends Migration
             $table->date('tanggal')->nullable();
             $table->date('tanggal_pembayaran');
             $table->integer('tipe_pembayaran')->comment('{"src":"set.m_general.id"}');
+            $table->integer('tipe_piutang')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->decimal('total_amt', 18, 4)->nullable();
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
             $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();

@@ -205,9 +205,28 @@
                   join:false
                 }
             }" placeholder="Pilih Akun Pembayaran" label="Akun Pembayaran" fa-icon="caret-down" :check="false" />
-
       </div>
 
+      <div class="w-full !mt-3">
+        <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
+          valueField="id" :value="values.tipe_piutang" @input="(v) => values.tipe_piutang = v"
+          :errorText="formErrors.tipe_piutang ? 'failed' : ''" :hints="formErrors.tipe_piutang"
+          placeholder="Tipe Piutang" label="Tipe Piutang" :check="false" @update:valueFull="(response)=>{
+          
+        }" :api="{
+      url: `${store.server.url_backend}/operation/m_general`,
+      headers: {
+        'Content-Type': 'Application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      params: {
+        join: false,
+        simplest: false,
+        selectfield: 'this.id, this.deskripsi',
+        where: `this.is_active=true and this.group='TIPE PIUTANG'`
+      },
+    }" />
+      </div>
 
       <div class="w-full !mt-3">
         <FieldNumber class="!mt-0" :bind="{ readonly: true }" :value="hitungTotalAmount()"

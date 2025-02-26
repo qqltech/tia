@@ -24,7 +24,7 @@ class m_faktur_pajak_d extends Model
     public $rules       = [];
     public $joins       = ["m_faktur_pajak.id=m_faktur_pajak_d.m_faktur_pajak_id"];
     public $details     = [];
-    public $heirs       = ["t_purchase_invoice"];
+    public $heirs       = [];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

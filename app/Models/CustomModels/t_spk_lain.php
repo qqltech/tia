@@ -34,6 +34,10 @@ class t_spk_lain extends \App\Models\BasicModels\t_spk_lain
         ];
     }
 
+    public function scopeWithDetail($model){
+        return $model->with(['t_spk_lain_d']);
+    }
+
     public function custom_print()
     {
         $id = request("id");

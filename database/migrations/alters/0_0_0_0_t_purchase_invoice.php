@@ -18,8 +18,9 @@ class tpurchaseinvoice extends Migration
             // $table->string('termin')->nullable();
             // $table->decimal('utang',18,4)->nullable();
             // $table->renameColumn('m_faktur_pajak_d_id','no_faktur_pajak');
-            // $table->integer('m_faktur_pajak_d_id')->comment('{"src":"m_faktur_pajak_d.id"}')->change();
-            $table->integer('tipe_pembayaran_id')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->string('no_faktur_pajak')->change();
+            // $table->integer('tipe_pembayaran_id')->comment('{"src":"set.m_general.id"}')->nullable();
+            // \DB::statement("ALTER TABLE t_purchase_invoice ALTER COLUMN no_faktur_pajak TYPE VARCHAR(255);");
         });
     }
 }

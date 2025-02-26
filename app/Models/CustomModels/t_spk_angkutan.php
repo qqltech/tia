@@ -158,6 +158,61 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         
     }
 
+    public function custom_CheckBukuOrder($req)
+{
+    $id = $req->id;
+    $data_req = ['t_detail_npwp_container_1_id', 't_detail_npwp_container_2_id'];
+    $messages = [];
+
+    // Ambil data order berdasarkan ID
+    $data = $this->where("id", $id)->select($data_req)->first();
+
+    if (!$data) {
+        return $this->helper->CustomResponse("Data tidak ditemukan.", 404);
+    }
+
+    foreach ($data_req as $field) {
+        if (!empty($data->$field)) {
+            // Cari order yang sudah pernah dibuat
+            $existingOrders = t_spk_angkutan::where($field, $data->$field)
+                ->select('no_spk', $field)
+                ->get();
+
+            dd($existingOrders);
+
+
+            // Jika ada order yang sudah pernah dibuat, masukkan ke pesan
+            if ($existingOrders->isNotEmpty()) {
+                foreach ($existingOrders as $order) {
+                    $messages[] = [
+                        'field' => $field,
+                        'no_order' => $data->$field,
+                        'no_spk' => $order->no_spk
+                    ];
+                }
+            }
+        }
+    }
+
+    // Jika ada order yang sudah pernah dibuat, kirim pesan
+    if (count($messages) > 0) {
+        $textMessage = "No Order berikut sudah pernah dibuat:\n";
+        
+        foreach ($messages as $msg) {
+            $textMessage .= "- No Order: {$msg['no_order']} (di SPK: {$msg['no_spk']}) pada kolom {$msg['field']}\n";
+        }
+
+        return $this->helper->CustomResponse([
+            "message" => $textMessage,
+            "data" => $messages
+        ], 422);
+    }
+
+    return ["success" => true];
+}
+
+
+
     function get_supplier(){
         $getid = m_general::where('group','SUPPLIER_DEFAULT')->where('kode','SUPPLIER01')->first();
         $getsupplier = m_supplier::where('nama',$getid->deskripsi)->first();

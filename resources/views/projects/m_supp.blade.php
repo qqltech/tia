@@ -19,7 +19,11 @@
         </button>
       </div>
     </div>
-
+<RouterLink :to="$route.path + '/create?' + (Date.parse(new Date()))" class="border border-blue-600 
+      text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
+      transition-colors duration-300">
+        Create New
+      </RouterLink>
 
   </div>
   <hr>
@@ -29,13 +33,13 @@
     class="max-h-[550px] pt-2 !px-4 !pb-8">
     <template #header>
       <!-- ACTION BUTTON -->
-      <div class="flex items-center gap-x-4">
+      <!-- <div class="flex items-center gap-x-4">
         <RouterLink :to="$route.path + '/create?' + (Date.parse(new Date()))" class="border border-blue-600 
       text-blue-600 bg-white hover:bg-blue-600 hover:text-white 
                         text-sm rounded-md py-1 px-2.5 transition-colors duration-300">
           Create New
         </RouterLink>
-      </div>
+      </div> -->
     </template>
   </TableApi>
 </div>

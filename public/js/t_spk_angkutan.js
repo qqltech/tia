@@ -37,7 +37,7 @@ const table = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.no_spk, tipe_spk.deskripsi, supir.nama, sektor1.deskripsi, this.total_sangu',
+      searchfield: 'this.no_spk, tipe_spk.deskripsi,t_detail_npwp_container_1.no_buku_order,t_detail_npwp_container_2.no_buku_order, supir.nama, sektor1.deskripsi, this.total_sangu',
       getNoBukuOrder:true
     },
     onsuccess(response) {

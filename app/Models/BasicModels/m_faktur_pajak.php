@@ -26,7 +26,7 @@ class m_faktur_pajak extends Model
     public $details     = ["m_faktur_pajak_d"];
     public $heirs       = [];
     public $detailsChild= [];
-    public $detailsHeirs= ["t_purchase_invoice"];
+    public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["prefix","no_awal","no_akhir","tgl_pembuatan","start_date","end_date"];
     public $createable  = ["prefix","no_awal","no_akhir","tgl_pembuatan","start_date","end_date","creator_id","last_editor_id","edited_at","delete_id","deleted_at"];
