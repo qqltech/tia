@@ -131,7 +131,7 @@ async function onSave() {
     if(values.tempNomor){
       console.log(parseInt(values.tempNomor))
       console.log(typeof values.tempNomor)
-     values.nomor = (values.no_induk  ?? '') + (values.no_induk ? ',' : '') + values.tempNomor;
+     values.nomor = (values.no_induk ? values.no_induk + ',' : '') + values.tempNomor;
     }
     try {
 
