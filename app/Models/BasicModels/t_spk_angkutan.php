@@ -24,7 +24,7 @@ class t_spk_angkutan extends Model
     public $rules       = [];
     public $joins       = ["set.m_general.id=t_spk_angkutan.tipe_spk","t_buku_order.id=t_spk_angkutan.t_buku_order_1_id","t_buku_order_d_npwp.id=t_spk_angkutan.t_detail_npwp_container_1_id","set.m_general.id=t_spk_angkutan.isi_container_1","t_buku_order.id=t_spk_angkutan.t_buku_order_2_id","t_buku_order_d_npwp.id=t_spk_angkutan.t_detail_npwp_container_2_id","set.m_general.id=t_spk_angkutan.isi_container_2","set.m_kary.id=t_spk_angkutan.supir","set.m_general.id=t_spk_angkutan.sektor1","set.m_general.id=t_spk_angkutan.head","set.m_general.id=t_spk_angkutan.chasis","set.m_general.id=t_spk_angkutan.depo","m_supplier.id=t_spk_angkutan.m_supplier_id","set.m_general.id=t_spk_angkutan.trip_id","set.m_general.id=t_spk_angkutan.sektor2","set.m_general.id=t_spk_angkutan.chasis2","m_customer.id=t_spk_angkutan.nama_customer","m_customer.id=t_spk_angkutan.nama_customer_2","set.m_general.id=t_spk_angkutan.waktu_out","set.m_general.id=t_spk_angkutan.waktu_in"];
     public $details     = ["t_spk_bon_detail"];
-    public $heirs       = ["t_angkutan_d","t_ganti_solar","t_premi"];
+    public $heirs       = ["t_angkutan_d","t_premi_batal","t_ganti_solar","t_premi"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

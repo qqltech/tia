@@ -204,4 +204,15 @@ class t_purchase_order extends \App\Models\BasicModels\t_purchase_order
         $data = $this->approval->approvalLog($conf);
         return response($data);
     }
+
+    public function scopeCheckDouble($model)
+{
+    $model->whereNotIn('t_purchase_order.id', function ($sub) {
+        $sub->select('t_lpb.t_po_id')
+            ->from('t_lpb')
+            ->whereNull('t_lpb.deleted_at');
+    });
+}
+
+
 }

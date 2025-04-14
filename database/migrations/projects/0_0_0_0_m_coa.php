@@ -19,6 +19,7 @@ class mcoa extends Migration
             $table->string('nomor');
             $table->boolean('induk');
             $table->text('nama_coa');
+            $table->decimal('saldo',18,4)->nullable()->default(0);
             $table->integer('level')->default(1);
             $table->integer('jenis')->comment('{"src":"set.m_general.id"}');
             // $table->integer('jenis_level')->default(1);

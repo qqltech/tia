@@ -111,6 +111,10 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
                     $data->update([
                         "status" => $req->type
                     ]);
+
+                    if($req->type == 'APPROVED'){
+                        $this->autoJurnal($data->id);
+                    }
                    
                 } else {
                     $data->update([
@@ -142,6 +146,56 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         ];
         $data = $this->approval->approvalLog($conf);
         return response($data);
+    }
+
+    private function autoJurnal($id){
+        // debet = detil, credit = header.
+        $trx = \DB::selectOne('select a.* from t_bkk_non_order a where a.id = ?', [ $id ]);
+        if(!$trx)  return ['status'=>true];
+
+        $getdebet = \DB::select("select cbkd.m_coa_id, sum(cbkd.nominal) amount from t_bkk_non_order cbk
+        join t_bkk_non_order_d cbkd on cbkd.t_bkk_non_order_id = cbk.id
+        where cbk.id = ?
+        group by cbkd.m_coa_id", [$id]);
+
+        $seq = 0;
+        $debetArr = [];
+        $amount = 0;
+
+        foreach($getdebet as $dbt){
+            $debetArr[] = (object) [
+                "m_coa_id" => $dbt->m_coa_id,
+                "seq" => $seq+1,
+                "debet" => (float) $dbt->amount,
+                "desc" => $trx->keterangan
+            ];
+            $amount += (float) $dbt->amount;
+            $seq++;
+        }
+
+        $creditArr = [];
+
+        $credit = new \stdClass();
+        $credit->m_coa_id = $trx->m_perkiraan_id;
+        $credit->seq = 1;
+        $credit->credit = ((float) @$amount ?? 0);
+        $credit->desc = $trx->keterangan;
+        $creditArr[] = $credit;
+
+        $obj = [
+            'date'              => $trx->tanggal,
+            'form'              => "BKK (Non Order)",
+            'ref_table'         => 't_bkk_non_order',
+            'ref_id'            => $trx->id,
+            'ref_no'            => $trx->no_bkk,
+            'desc'              => $trx->keterangan,
+            'detail'            => array_merge($debetArr, $creditArr)
+        ];
+
+        $r_gl = new r_gl;
+        $data = $r_gl->autoJournal($obj);
+
+        return ['status'=>true];
     }
     
 }

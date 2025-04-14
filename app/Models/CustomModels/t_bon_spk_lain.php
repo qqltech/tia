@@ -56,4 +56,11 @@ class t_bon_spk_lain extends \App\Models\BasicModels\t_bon_spk_lain
         $status = $this->where("id", $id)->update(["status" => "POST"]);
         return ["success" => true];
     }
+
+    public function custom_print()
+    {
+        $id = request("id");
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        return ["success" => true];
+    }
 }

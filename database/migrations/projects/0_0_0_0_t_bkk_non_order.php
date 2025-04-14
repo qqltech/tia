@@ -15,6 +15,7 @@ class tbkknonorder extends Migration
             $table->string('no_draft',20)->nullable();
             $table->string('no_bkk',20)->nullable();
             $table->string('status',20)->default("DRAFT")->nullable();
+            $table->string('nama_penerima', 100)->nullable();
             $table->date('tanggal');
             $table->decimal('total_amt',18,4)->nullable();
             $table->string('no_reference',50);

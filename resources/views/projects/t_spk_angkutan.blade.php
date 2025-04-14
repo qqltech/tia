@@ -43,7 +43,12 @@
     </div>
 
     <!-- ACTION BUTTON -->
-    <div class="flex items-center gap-x-4">
+    <div class="flex items-center gap-x-2">
+      <RouterLink :to="'/thermal_printer?view=public'" class="border border-gray-600 
+      text-gray-600 bg-white hover:bg-gray-600 hover:text-white text-sm rounded py-1 px-2.5
+      transition-colors duration-300">
+        Pengaturan Thermal
+      </RouterLink>
       <RouterLink :to="$route.path + '/create?' + (Date.parse(new Date()))" class="border border-blue-600 
       text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
       transition-colors duration-300">
@@ -106,14 +111,9 @@
       <FieldX :bind="{ readonly: !actionText}" class="w-full !mt-3" :value="data.tanggal_out"
         :errorText="formErrors.tanggal_out?'failed' :''" @input="v=>data.tanggal_out=v" :hints="formErrors.tanggal_out"
         :check="false" type="date" label="Tanggal Out" placeholder="Pilih Tanggal Out" />
-      <FieldSelect
-      class="w-full !mt-3"
-        :bind="{ disabled: !actionText, clearable:true, readonly:!actionText }"
-        :value="data.waktu_out" @input="v=>data.waktu_out=v"
-        :errorText="formErrors.waktu_out?'failed':''" 
-        :hints="formErrors.waktu_out"
-        valueField="id" displayField="deskripsi"
-        :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true, readonly:!actionText }"
+        :value="data.waktu_out" @input="v=>data.waktu_out=v" :errorText="formErrors.waktu_out?'failed':''"
+        :hints="formErrors.waktu_out" valueField="id" displayField="deskripsi" :api="{
             url: `${store.server.url_backend}/operation/m_general`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
@@ -122,23 +122,16 @@
               join:false,
               where:`this.group='WAKTUOUT'`,
             }
-        }"
-        placeholder="Pilih Waktu Out" label="Waktu Out" :check="false"
-      />
-      
+        }" placeholder="Pilih Waktu Out" label="Waktu Out" :check="false" />
+
     </div>
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
       <FieldX :bind="{ readonly: !actionText}" class="w-full !mt-3" :value="data.tanggal_in"
         :errorText="formErrors.tanggal_in?'failed' :''" @input="v=>data.tanggal_in=v" :hints="formErrors.tanggal_in"
         :check="false" type="date" label="Tanggal In" placeholder="Pilih Tanggal In" />
-      <FieldSelect
-      class="w-full !mt-3"
-        :bind="{ disabled: !actionText, clearable:true, readonly:!actionText }"
-        :value="data.waktu_in" @input="v=>data.waktu_in=v"
-        :errorText="formErrors.waktu_in?'failed':''" 
-        :hints="formErrors.waktu_in"
-        valueField="id" displayField="deskripsi"
-        :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true, readonly:!actionText }"
+        :value="data.waktu_in" @input="v=>data.waktu_in=v" :errorText="formErrors.waktu_in?'failed':''"
+        :hints="formErrors.waktu_in" valueField="id" displayField="deskripsi" :api="{
             url: `${store.server.url_backend}/operation/m_general`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
@@ -147,9 +140,7 @@
               join:false,
               where:`this.group='WAKTUIN'`,
             }
-        }"
-        placeholder="Pilih Waktu In" label="Waktu In" :check="false"
-      />
+        }" placeholder="Pilih Waktu In" label="Waktu In" :check="false" />
     </div>
 
     <div>
@@ -281,9 +272,9 @@
           }" label="Sektor 1" placeholder="Pilih Sektor 1" fa-icon="sort-desc" :check="false" />
 
 
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true, hidden:true}" :value="data.sektor2"
-        @input="v=>data.sektor2=v" :errorText="formErrors.sektor2?'failed':''" :hints="formErrors.sektor2"
-        valueField="id" displayField="deskripsi" :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true, hidden:true}"
+        :value="data.sektor2" @input="v=>data.sektor2=v" :errorText="formErrors.sektor2?'failed':''"
+        :hints="formErrors.sektor2" valueField="id" displayField="deskripsi" :api="{
               url: `${store.server.url_backend}/operation/m_general`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -332,7 +323,7 @@
     </div>
     <div></div>
     <div></div>
-    
+
 
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
       <FieldPopup class="w-full !mt-3" :api="{
@@ -344,6 +335,7 @@
         params: {
           transform: true,
           getCustomer:true,
+          useSPKVal: true,
           //scopes:'getCodeCustomer',
           simplest:false,
           where:`this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id : 0}`,
@@ -356,26 +348,9 @@
         }
       }" displayField="t_buku_order.no_buku_order" valueField="id" :bind="{ readonly: !actionText }"
         :value="data.t_detail_npwp_container_1_id" @input="(v)=>{
-          data.t_detail_npwp_container_1_id=v
+          selectBukuOrder1(v);
           }" @update:valueFull="(response)=>{
-            {{$log(response,'ini response')}}
-        if(response == null) {
-          data.nama_customer = '';
-          data.ukuran_container_1 = '';
-          data.jenis_container_1 = ''
-          data.t_buku_order_1_id = '';
-          data.no_container_1 = '';
-          data.no_prefix_1 = '';
-          data.no_suffix_1 = '';
-        } else {
-          data.nama_customer = response['t_buku_order.m_customer_id'];
-          data.ukuran_container_1=response['ukuran.deskripsi'];
-          data.jenis_container_1=response['jenis.deskripsi'];
-          data.t_buku_order_1_id = response['id'];
-          data.no_container_1 = response.no_prefix +'-'+ response.no_suffix;
-          data.no_prefix_1 = response.no_prefix;
-          data.no_suffix_1 = response.no_suffix;
-        }
+          updateBukuOrder1(response);
       }" :errorText="formErrors.t_detail_npwp_container_1_id?'failed':''"
         :hints="formErrors.t_detail_npwp_container_1_id" placeholder="No. Order 1" :check='false' :columns="[
         {
@@ -428,10 +403,9 @@
           sortable: true, resizable: true, filter: 'ColFilter',
         }
       ]" />
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
-        :value="data.nama_customer" @input="v=>data.nama_customer=v"
-        :errorText="formErrors.nama_customer?'failed':''" :hints="formErrors.nama_customer" valueField="id"
-        displayField="kode" :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }" :value="data.nama_customer"
+        @input="v=>data.nama_customer=v" :errorText="formErrors.nama_customer?'failed':''"
+        :hints="formErrors.nama_customer" valueField="id" displayField="kode" :api="{
               url: `${store.server.url_backend}/operation/m_customer`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -474,7 +448,7 @@
               }
           }" label="Chasis 2" placeholder="Pilih Chasis 2" fa-icon="sort-desc" :check="false" />
 
-          <FieldSelect class="w-full !mt-3" :bind="{ disabled: is_key_isi_container_2 || !actionText, clearable:true }"
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: is_key_isi_container_2 || !actionText, clearable:true }"
         :value="data.isi_container_2" @input="v=>data.isi_container_2=v"
         :errorText="formErrors.isi_container_2?'failed':''" :hints="formErrors.isi_container_2" valueField="id"
         displayField="deskripsi" :api="{
@@ -489,7 +463,7 @@
     <div></div>
     <div></div>
 
-    
+
     <div class="grid grid-cols-2 gap-y-2 gap-x-2">
       <FieldPopup class="w-full !mt-3" :api="{
         url: `${store.server.url_backend}/operation/t_buku_order_d_npwp`,
@@ -500,9 +474,10 @@
         params: {
           transform: true,
           getCustomer:true,
+          useSPKVal: true,
           //scopes:'getCodeCustomer',
           simplest:false,
-          //where:`this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 }`,
+          where:`this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 }`,
           searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi'
         },
         onsuccess: (response) => {
@@ -511,26 +486,10 @@
           return response;
         }
       }" displayField="t_buku_order.no_buku_order" valueField="id" :bind="{ readonly: !actionText }"
-        :value="data.t_detail_npwp_container_2_id" @input="(v)=>data.t_detail_npwp_container_2_id=v" @update:valueFull="(response)=>{
-        $log(response);
-        if(response == null) {
-          data.nama_customer_2 = '';
-          data.ukuran_container_2 = '';
-          data.jenis_container_2 = '';
-          data.t_buku_order_2_id = '';
-          data.no_container_2 = '';
-          data.no_prefix_2 = '';
-          data.no_suffix_2 = '';
-
-        } else {
-          data.nama_customer_2 = response['t_buku_order.m_customer_id'];
-          data.ukuran_container_2=response['ukuran.deskripsi'];
-          data.jenis_container_2=response['jenis.deskripsi'];
-          data.t_buku_order_2_id = response['id'];
-          data.no_container_2 = response.no_prefix +'-'+ response.no_suffix;
-          data.no_prefix_2 = response.no_prefix;
-          data.no_suffix_2 = response.no_suffix;
-        }
+        :value="data.t_detail_npwp_container_2_id" @input="(v)=>{
+          selectBukuOrder2(v);
+          }" @update:valueFull="(response)=>{
+          updateBukuOrder2(response);
       }" :errorText="formErrors.t_detail_npwp_container_2_id?'failed':''"
         :hints="formErrors.t_detail_npwp_container_2_id" placeholder="No. Order 2" :check='false' :columns="[
         {
@@ -583,10 +542,9 @@
           sortable: true, resizable: true, filter: 'ColFilter',
         }
       ]" />
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }"
-        :value="data.nama_customer_2" @input="v=>data.nama_customer_2=v"
-        :errorText="formErrors.nama_customer_2?'failed':''" :hints="formErrors.nama_customer_2" valueField="id"
-        displayField="kode" :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled:true, readonly:true }" :value="data.nama_customer_2"
+        @input="v=>data.nama_customer_2=v" :errorText="formErrors.nama_customer_2?'failed':''"
+        :hints="formErrors.nama_customer_2" valueField="id" displayField="kode" :api="{
               url: `${store.server.url_backend}/operation/m_customer`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -610,7 +568,7 @@
         @input="v=>data.ukuran_container_2=v" :errorText="formErrors.ukuran_container_2?'failed':''"
         :hints="formErrors.ukuran_container_2" label="Ukuran Container 2" placeholder="Ukuran Container 2"
         :check="false" />
-    
+
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.jenis_container_2"
         @input="v=>data.jenis_container_2=v" :errorText="formErrors.jenis_container_2?'failed':''"
         :hints="formErrors.jenis_container_2" label="Jenis Container 2" placeholder="Jenis Container 2"

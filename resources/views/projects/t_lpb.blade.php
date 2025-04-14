@@ -75,6 +75,7 @@
               params: {
                 simplest:true,
                 where: `this.status='APPROVED'`,
+                scopes:'CheckDouble',
                 //selectfield: 'id,tanggal,no_po,m_supplier.nama,m_supplier.alamat,m_supplier.kota',
                 searchfield: 'this.tanggal, this.no_po,m_supplier.nama,m_supplier.alamat,m_supplier.kota'
               }

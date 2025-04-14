@@ -107,7 +107,7 @@
             simplest:true,
             searchfield: 'this.no_draft, this.no_spk, this.tanggal, genzet.nama, t_buku_order.no_buku_order'
           },
-          onsuccess(response) {
+          onsuccess : (response) => {
             response.page = response.current_page
             response.hasNext = response.has_next
             return response
@@ -203,7 +203,7 @@
           flex: 1,
           field: 'bu.nama',
           headerName: 'Business Unit',
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: false, filter: 'ColFilter',
           cellClass: ['border-r', '!border-gray-200', 'justify-center']
         },
         {
@@ -211,28 +211,28 @@
           field: 'nip',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-center',],
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: false, filter: 'ColFilter',
         },
         {
           headerName: 'Nama',
           field: 'nama',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-center',],
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: false, filter: 'ColFilter',
         },
         {
           headerName: 'No. ID/KTP',
           field: 'no_id',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-center',],
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: false, filter: 'ColFilter',
         },
         {
           headerName: 'Divisi',
           field: 'divisi',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-center',],
-          sortable: true, resizable: true, filter: false,
+          sortable: true, resizable: true, filter: false, filter: 'ColFilter',
         },
         ]" />
     </div>
@@ -249,7 +249,7 @@
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               No.</td>
             <td
-              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[15%] border bg-[#f8f8f8] border-[#CACACA]">
               Sektor</td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[15%] border bg-[#f8f8f8] border-[#CACACA]">
@@ -281,8 +281,6 @@
                     headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                     params: {
                       simplest:true,
-                      transform:false,
-                      join:false
                     }
                 }" placeholder="" :check="false" />
             </td>
@@ -295,7 +293,7 @@
                 @input="v=>item.tambahan=v" :hints="formErrors.tambahan" :check="false" />
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
-              <FieldNumber :bind="{ readonly: true }" class="m-0" :value="Bon"
+              <FieldNumber :bind="{ readonly: true }" class="m-0" :value="countTotalBon(item.sangu, item.tambahan, item.bon)"
                 @input="v=>item.bon=v" :hints="formErrors.bon" :check="false" />
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
@@ -320,13 +318,13 @@
     <div class="w-md">
       <div class="grid grid-cols-2 gap-x-2 ">
         <label class="!mt-4 !ml-3 text-xl font-bold">Total Bon</label>
-        <FieldNumber class="w-full content-center !mt-3" :bind="{ readonly: true }" :value="values.total_bon"
+        <FieldNumber class="w-full content-center !mt-3" :bind="{ readonly: true }" :value="HitungBon || 0"
           @input="(v)=>values.total_bon=v" :errorText="formErrors.total_bon?'failed':''" :hints="formErrors.total_bon"
           placeholder="0.00" label="" :check="false" />
       </div>
       <div class="grid grid-cols-2 gap-x-2 mb-4">
         <label class="!mt-4 !ml-3 text-xl font-bold">Total Tagihan</label>
-        <FieldNumber class="w-full content-center !mt-3" :bind="{ readonly: true }" :value="values.total_tagihan"
+        <FieldNumber class="w-full content-center !mt-3" :bind="{ readonly: true }" :value="HitungTagihan || 0"
           @input="(v)=>values.total_tagihan=v" :errorText="formErrors.total_tagihan?'failed':''" :hints="formErrors.total_tagihan"
           placeholder="0.00" label="" :check="false" />
       </div>

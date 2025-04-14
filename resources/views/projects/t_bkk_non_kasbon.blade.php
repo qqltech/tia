@@ -169,6 +169,12 @@
             ]" />
     </div>
 
+    <div>
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"
+        :value="data.nama_penerima" :errorText="formErrors.nama_penerima?'failed':''" @input="v=>data.nama_penerima=v"
+        :hints="formErrors.nama_penerima" :check="false" label="Nama Penerima" placeholder="Nama Penerima" />
+    </div>
+
     <div class="w-full !mt-3">
       <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
         valueField="id" :value="data.tipe_pembayaran" @input="(v) => data.tipe_pembayaran = v"

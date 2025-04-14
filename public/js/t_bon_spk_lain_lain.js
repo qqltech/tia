@@ -1,5 +1,5 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
-import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated } from 'vue'
+import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, computed } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -79,24 +79,6 @@ async function detailBon(no_spk) {
   }
 
   try {
-    // // Fetch General Container Data
-    // const dataURL1 = `${store.server.url_backend}/operation/m_general`;
-    // isRequesting.value = true;
-    // const params1 = {
-    //   where: `this.group='UKURAN KONTAINER'`,
-    //   transform: false,
-    // };
-    // const fixedParams1 = new URLSearchParams(params1);
-    // const res1 = await fetch(dataURL1 + '?' + fixedParams1, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `${store.user.token_type} ${store.user.token}`,
-    //   },
-    // });
-    // if (!res1.ok) throw new Error("Gagal saat mencoba membaca data");
-    // const resultJson1 = await res1.json();
-    // const deskripsiKeys = Array.isArray(resultJson1.data) ? resultJson1.data.map(item => item.deskripsi) : [];
-    // FECTH BUKU ORDER
     const dataURL = `${store.server.url_backend}/operation/t_spk_lain/${no_spk.id}`;
     const params = {
       // join: true,
@@ -115,7 +97,6 @@ async function detailBon(no_spk) {
     if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
     const resultJson = await res.json();
     const initialValues = resultJson.data;
-    // console.log('DATA SPK FLY',initialValues.t_spk_lain_d)
 
     detailArr.value = [];
 
@@ -144,16 +125,33 @@ async function detailBon(no_spk) {
   }
 }
 
+const countTotalBon = (sangu, tambahan, bon) => {
+  bon = (sangu || 0) + (tambahan || 0)
 
-// const Bon = computed(() => {
-//   let total = 0;
+  return bon
+}
 
-//   detailArr.value.forEach((dt) => {
-//     total += (dt.sangu || 0) + (dt.tambahan || 0);
-//   });
+const HitungBon = computed(() => {
+  let total = 0;
 
-//   return total;
-// });
+  detailArr.value.forEach((dt) => {
+    total += (dt.sangu || 0) + (dt.tambahan || 0)
+  });
+
+  return total
+})
+
+
+const HitungTagihan = computed(() => {
+  let total_tagihan = 0;
+
+  detailArr.value.forEach((dt) => {
+    total_tagihan += (dt.tagihan || 0) 
+  });
+
+  return total_tagihan
+})
+
 
 const delDetailArr = async (index) => {
   const result = await swal.fire({
@@ -219,7 +217,10 @@ onBeforeMount(async () => {
       initialValues = resultJson.data
       // initialValues.kode = resultJson.data['m_customer.kode']
       if (actionText.value?.toLowerCase() === 'copy') {
-        delete initialValues.uid
+        delete initialValues.id
+        initialValues.no_draft = null;
+        initialValues.status = 'DRAFT';
+        initialValues.no_bsg = null;
       }
       console.log(initialValues)
       if (initialValues.t_bon_spk_lain_d && Array.isArray(initialValues.t_bon_spk_lain_d)) {
@@ -569,7 +570,7 @@ const landing = reactive({
             icon: 'success',
             text: responseJson?.message || 'PRINTED'
           });
-          window.open(`${store.server.url_backend}/web/spk_lain_lain?id=${row.id}`)
+          window.open(`${store.server.url_backend}/web/bon_spk_lain_lain?id=${row.id}`)
         } catch (err) {
           isBadForm.value = true;
           swal.fire({
@@ -662,13 +663,19 @@ const landing = reactive({
     },
     {
       headerName: 'Sangu',
-      field: 'sangu',
+      field: 'total_bon',
       flex: 1,
       cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       resizable: true,
       wrapText: true,
       filter: 'ColFilter',
+      valueFormatter: (params) => {
+      if (params.value) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+      }
+      return params.value;
+    }
     },
     {
       headerName: 'Status',

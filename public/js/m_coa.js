@@ -30,6 +30,7 @@ const values = reactive({
    is_active: true ,
    induk: false,
    level : 1,
+   saldo: 0
 })
 
 const nilaiAwal = ref()

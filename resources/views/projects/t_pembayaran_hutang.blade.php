@@ -1,4 +1,5 @@
 @if(!$req->has('id'))
+@verbatim
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
   <div class="pl-2.5 pt-2 pb-2">
     <h1 class="text-xl font-semibold">PEMBAYARAN HUTANG</h1>
@@ -75,6 +76,52 @@
 
 
 </div>
+<div v-show="modalOpen" class="fixed inset-0 flex items-center justify-center z-50">
+  <div class="modal-overlay fixed inset-0 bg-black opacity-50"></div>
+  <div class="modal-container bg-white  w-[70%] mx-auto rounded shadow-lg z-50 overflow-y-auto">
+    <div class="modal-content py-4 text-left px-6">
+      <!-- Modal Header -->
+      <div class="modal-header flex items-center justify-between flex-wrap">
+        <div class="flex items-center">
+          <h3 class="text-xl font-semibold ml-2">Log Approval
+            <span v-if="!dataLog.items.length" class="!text-red-600"> | Belum ada log approval</span>
+          </h3>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div v-if="dataLog.items.length" class="modal-body">
+        <table class="w-[100%] my-3 border">
+          <thead>
+            <tr class="border">
+              <td class="border px-2 py-1 font-medium ">Urutan</td>
+              <td class="border px-2 py-1 font-medium ">Nomor Transaksi</td>
+              <td class="border px-2 py-1 font-medium ">Tipe Aksi</td>
+              <td class="border px-2 py-1 font-medium ">Tanggal Aksi </td>
+              <td class="border px-2 py-1 font-medium ">User Aksi</td>
+              <td class="border px-2 py-1 font-medium ">Catatan</td>
+            </tr>
+          </thead>
+          <tr class="border" v-for="d,i in dataLog.items" :key="i">
+            <td class="border px-2 py-1">{{ i+1 }}</td>
+            <td class="border px-2 py-1">{{ d.trx_nomor ?? '-' }}</td>
+            <td class="border px-2 py-1">{{ d.action_type ?? '-' }}</td>
+            <td class="border px-2 py-1">{{ d.action_at ?? '-' }}</td>
+            <td class="border px-2 py-1">{{ d.action_user ?? '-' }}</td>
+            <td class="border px-2 py-1">{{ d.action_note ?? '-' }}</td>
+          </tr>
+        </table>
+      </div>
+      <!-- Modal Footer -->
+      <div class="modal-footer flex justify-end mt-2">
+        <button @click="closeModal" class="modal-button bg-yellow-500 hover:bg-yellow-600 text-white font-semibold ml-2 px-2 py-1 rounded-sm">
+      Tutup
+    </button>
+      </div>
+    </div>
+  </div>
+</div>
+@endverbatim
 @else
 
 <!-- CONTENT -->

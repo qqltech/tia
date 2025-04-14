@@ -136,4 +136,16 @@ class m_customer extends \App\Models\BasicModels\m_customer
     public function scopeGetCustomerNPWP($model){
         return $model->with(['m_customer_d_npwp']);
     }
+
+    public function scopeCustomerPpjk($model)
+    {
+        $req = request('buku_order_id', 0);
+
+        return $model
+        ->leftjoin('t_ppjk','m_customer.id','t_ppjk.m_customer_id')
+        ->select('m_customer.id', 'm_customer.kode', 'm_customer.nama_perusahaan', 'm_customer.alamat', 'm_customer.kota')
+        ->where('t_ppjk.t_buku_order_id', $req)
+        ->distinct()
+        ->orderBy('m_customer.nama_perusahaan');
+    }
 }

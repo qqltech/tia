@@ -42,6 +42,12 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
         //         "no_buku_order" => $getBukuOrder['no_buku_order']
         //     ];
         // }
+
+        if(app()->request->useSPKVal){
+            $getSPK = \DB::table('t_spk_angkutan')->where('t_buku_order_1_id', $row['id'])
+            ->orWhere('t_buku_order_2_id', $row['id'])->get();
+            $row['in_spk'] = $getSPK;
+        }
         return array_merge($row, $data);
     }
 

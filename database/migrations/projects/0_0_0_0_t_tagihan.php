@@ -38,6 +38,12 @@ class ttagihan extends Migration
             $table->decimal('total_lain2_ppn',18,4)->nullable();
             $table->decimal('total_jasa_angkutan',18,4)->nullable();
             $table->decimal('total_lain_non_ppn',18,4)->nullable();
+
+            $table->decimal('persentase_konsolidator_kont',18,4)->nullable();
+            // $table->decimal('total_jasa_cont_ppjk_kons',18,4)->nullable();
+            // $table->decimal('total_jasa_angkutan_kons',18,4)->nullable();
+            // $table->decimal('grand_total_kons',18,4)->nullable();
+
             $table->timestamps();
         });
 

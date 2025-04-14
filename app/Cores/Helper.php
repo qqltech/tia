@@ -114,6 +114,42 @@ class Helper
         return $temporaryCode;
     }
 
+    public function formatTime($time) {
+        return date("H:i", strtotime($time));
+    }
+
+    public function formatTanggalIndonesia($tanggal) {
+        $bulan = [
+            'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret',
+            'April' => 'April', 'May' => 'Mei', 'June' => 'Juni',
+            'July' => 'Juli', 'August' => 'Agustus', 'September' => 'September',
+            'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
+        ];
+
+        $date = new \DateTime($tanggal);
+        $formattedDate = $date->format('d F Y'); // Contoh: 05 February 2025
+        return strtr($formattedDate, $bulan); // Mengubah bulan ke bahasa Indonesia
+    }
+
+    public function monthToRoman($month)
+    {
+        $romans = [
+            "Jan" => "I",
+            "Feb" => "II",
+            "Mar" => "III",
+            "Apr" => "IV",
+            "May" => "V",
+            "Jun" => "VI",
+            "Jul" => "VII",
+            "Aug" => "VIII",
+            "Sep" => "IX",
+            "Oct" => "X",
+            "Nov" => "XI",
+            "Dec" => "XII",
+        ];
+        return isset($romans[$month]) ? $romans[$month] : null;
+    }
+
     public function terbilang($x)
     {
         $angka = [

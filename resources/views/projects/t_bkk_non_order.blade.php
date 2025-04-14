@@ -121,6 +121,11 @@
         :hints="formErrors.no_reference" label="No. Reference" placeholder="No. Reference" :check="false" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.nama_penerima"
+        :errorText="formErrors.nama_penerima?'failed':''" @input="v=>data.nama_penerima=v"
+        :hints="formErrors.nama_penerima" label="Nama Penerima" placeholder="Nama Penerima" :check="false" />
+    </div>
+    <div>
       <FieldX :bind="{readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"
         @input="v=>data.tanggal=v" :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''"
         :hints="formErrors.tanggal" :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />

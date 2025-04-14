@@ -35,6 +35,58 @@ class t_bkm_non_order extends \App\Models\BasicModels\t_bkm_non_order
     {
         $id = request("id");
         $status = $this->where("id", $id)->update(["status" => "POST"]);
+        $this->autoJurnal($id);
         return ["success" => true, "message"=> "Post Data Berhasil"];
+    }
+
+    private function autoJurnal($id){
+        $trx = \DB::selectOne('select a.* from t_bkm_non_order a where a.id = ?', [ $id ]);
+        if(!$trx)  return ['status'=>true];
+
+        $getcredit = \DB::select("select cbmd.m_coa_id, sum(cbmd.nominal) amount from t_bkm_non_order cbm
+        join t_bkm_non_order_d cbmd on cbmd.t_bkm_non_order_id = cbm.id
+        where cbm.id = ?
+        group by cbmd.m_coa_id", [$id]);
+
+        $seq = 1;
+        $creditArr = [];
+        $amount = 0;
+
+        foreach($getcredit as $cr){
+            $creditArr[] = (object) [
+                "m_coa_id" => $cr->m_coa_id,
+                "seq" => $seq+1,
+                "credit" => (float) $cr->amount,
+                "desc" => $trx->keterangan
+            ];
+            $amount += (float) $cr->amount;
+            $seq++;
+        }
+
+
+        $debetArr = [];
+
+        $debet = new \stdClass();
+        $debet->m_coa_id = $trx->m_akun_pembayaran_id;
+        $debet->seq = 1;
+        $debet->debet = ((float) @$amount ?? 0);
+        $debet->desc = $trx->keterangan;
+        $debetArr[] = $debet;
+
+        $obj = [
+            'date'              => $trx->tanggal,
+            'form'              => "BKM Non Order",
+            'ref_table'         => 't_bkm_non_order',
+            'ref_id'            => $trx->id,
+            'ref_no'            => $trx->no_bkm,
+            // 'm_cust_id'         => $trx->m_cust_id,
+            'desc'              => $trx->keterangan,
+            'detail'            => array_merge($debetArr, $creditArr)
+        ];
+
+        $r_gl = new r_gl;
+        $data = $r_gl->autoJournal($obj);
+
+        return ['status'=>true];
     }
 }

@@ -20,6 +20,9 @@ class ttagihandtarif extends Migration
             $table->decimal('tarif',18,2)->nullable();
             $table->text('catatan')->nullable();
             $table->boolean('ppn')->default(0)->nullable();
+
+            $table->decimal('persentase_konsolidator_jasa', 18,4)->nullable();
+
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

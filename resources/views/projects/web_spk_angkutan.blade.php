@@ -79,7 +79,9 @@ $temp = ' sebelas';
   $temp=terbilang((int)($number / 100)) . ' ratus' . terbilang($number % 100); } elseif ($number < 2000) {
   $temp=' seribu' . terbilang($number - 1000); } elseif ($number < 1000000) { $temp=terbilang((int)($number / 1000))
   . ' ribu' . terbilang($number % 1000); } elseif ($number < 1000000000) { $temp=terbilang((int)($number / 1000000))
-  . ' juta' . terbilang($number % 1000000); } return $temp; } @endphp @foreach ($nospk as $n) @php
+  . ' juta' . terbilang($number % 1000000); } return $temp; } 
+  
+  @endphp @foreach ($nospk as $n) @php
   $unixTime1=strtotime($n->tanggal_in);
   $tanggal_in = date("d/m/Y", $unixTime1);
 

@@ -55,23 +55,23 @@ const table = reactive({
       sortable: true, filter: 'ColFilter'
     },
     {
-      headerName: 'No Buku Order', field: 't_buku_order.no_buku_order', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      headerName: 'No Buku Order', field: 't_buku_order.no_buku_order', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-center'],
       sortable: true, filter: 'ColFilter'
     },
     {
-      headerName: 'Customer', field: 'm_customer.nama_perusahaan', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      headerName: 'Customer', field: 'm_customer.nama_perusahaan', flex: 1.5, cellClass: ['border-r', '!border-gray-200', 'justify-center'],
       sortable: true, filter: 'ColFilter'
     },
     {
-      headerName: 'No NPWP', field: 'no_npwp', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      headerName: 'No NPWP', field: 'no_npwp', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-center'],
       sortable: true, filter: 'ColFilter'
     },
     {
-      headerName: 'No PEB / PIB', field: 'no_peb_pib', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      headerName: 'No PEB / PIB', field: 'no_peb_pib', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-center'],
       sortable: true, filter: 'ColFilter'
     },
     {
-      headerName: 'No SPPB', field: 'no_sppb', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+      headerName: 'No SPPB', field: 'no_sppb', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-center'],
       sortable: true, filter: 'ColFilter'
     },
     {

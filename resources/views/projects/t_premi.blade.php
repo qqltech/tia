@@ -84,6 +84,20 @@
   <!-- HEADER -->
   <div class="pt-2 pb-4 px-4 grid grid-cols-3 gap-y-2 gap-x-4 items-start">
     <!-- col-span-2 -->
+    <!-- <div>
+      <FieldX class="w-full !mt-3" :bind="{ readonly: !actionText }" 
+        :value="values.no_draft" :errorText="formErrors.no_draft?'failed':''"
+        @input="v=>values.no_draft=v" :hints="formErrors.no_draft" 
+        placeholder="Generate by System" label="No Draft" :check="false"
+      />
+    </div> -->
+    <!-- <div>
+      <FieldX class="w-full !mt-3" :bind="{ readonly: !actionText }" 
+        :value="values.no_premi" :errorText="formErrors.no_premi?'failed':''"
+        @input="v=>values.no_premi=v" :hints="formErrors.no_premi" 
+        placeholder="Generate by System" label="No Premi" :check="false"
+      />
+    </div> -->
     <div>
       <FieldPopup class="w-full !mt-3" :api="{
         url: `${store.server.url_backend}/operation/t_spk_angkutan`,

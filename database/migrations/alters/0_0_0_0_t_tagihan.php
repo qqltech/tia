@@ -28,6 +28,10 @@ class ttagihan extends Migration
             // $table->decimal('total_jasa_angkutan',18,4)->nullable();
             // $table->decimal('total_lain_non_ppn',18,4)->nullable();
             // $table->date('tgl_nota')->nullable();
+            // $table->integer('persentase_konsolidator_kont')->nullable();
+            // $table->string('tipe_tagihan')->nullable();
+            // $table->dropColumn(['total_jasa_cont_ppjk_kons', 'total_jasa_angkutan_kons', 'grand_total_kons']);
+            // $table->decimal('persentase_konsolidator_kont', 18,4)->nullable()->change();
         });
     }
 }

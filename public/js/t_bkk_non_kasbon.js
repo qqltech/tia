@@ -92,7 +92,8 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
+    cellRenderer: (p) => parseFloat(p.value||0).toLocaleString('id'),
   },
   {
     headerName: 'Status',

@@ -186,6 +186,18 @@
         :errorText="formErrors.no_rek?'failed':''" @input="v=>data.no_rek=v" :hints="formErrors.no_rek"
         placeholder="No Rekening" :check="false" type="number" />
 
+      <FieldSelect class="pt-1" :bind="{ disabled: !actionText, clearable:false }" :value="data.piutang_id"
+        @input="v=>data.piutang_id=v" :errorText="formErrors.piutang_id?'failed':''" :hints="formErrors.piutang_id"
+        valueField="id" displayField="nama_coa" :api="{
+              url: `${store.server.url_backend}/operation/m_coa`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                notin: `this.is_active: false`,
+                //where: `kategori.deskripsi='MODAL'`,
+                
+              }
+          }" placeholder="COA Supir" :check="false" fa-icon="sort-desc" />
+
 
       <FieldUpload :bind="{ readonly: !actionText }" class="pt-1" :value="data.foto_kary" @input="(v)=>data.foto_kary=v"
         :maxSize="10" :reducerDisplay="val=>!val?null:val.split(':::')[val.split(':::').length-1]" :api="{

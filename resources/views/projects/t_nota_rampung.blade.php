@@ -301,7 +301,7 @@
               params: { 
                 join: true,
                 simplest: true,
-                notin: detailArr.length>0?`this.id:${detailArr.map(dt=>dt.id).join(',')}`:null
+                notin: detailArr.length>0?`this.id:${detailArr.map(dt=>dt.t_buku_order_d_npwp_id).join(',')}`:null
                },
               onsuccess:(res)=>{
                 $log(res)

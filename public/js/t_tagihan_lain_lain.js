@@ -22,7 +22,7 @@ const activeTabIndex = ref(0)
 // ------------------------------ PERSIAPAN
 const endpointApi = 't_tagihan_lain_lain'
 onBeforeMount(() => {
-  document.title = 'Transaksi Tagihan Lain Lain'
+  document.title = 'Transaksi Tagihan Lain-Lain'
 })
 
 //  @if( $id )------------------- JS CONTENT ! PENTING JANGAN DIHAPUS

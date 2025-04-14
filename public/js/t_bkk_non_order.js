@@ -377,8 +377,7 @@ onBeforeMount(async () => {
 
       // FETCH HEADER DATA
       await fetchData(dataApprovalURL, { join: false, transform: false }).then((res) => {
-        trx_id = res.trx_id;
-        console.log(res, trx_id);
+        trx_id = res?.data?.trx_id;
       });
     }
 

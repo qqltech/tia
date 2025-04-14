@@ -36,9 +36,9 @@ const table = reactive({
       authorization: `${store.user.token_type} ${store.user.token}`,
     },
     params: {
-      simplest: true,
-      searchfield: 'this.no_spk, tipe_spk.deskripsi,t_detail_npwp_container_1.no_buku_order,t_detail_npwp_container_2.no_buku_order, supir.nama, sektor1.deskripsi, this.total_sangu',
-      getNoBukuOrder:true
+      // simplest: true,
+      searchfield: 'this.no_spk, tipe_spk.deskripsi, supir.nama, sektor1.deskripsi, this.total_sangu',
+      getNoBukuOrder: true
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };
@@ -282,6 +282,16 @@ const table = reactive({
         }
       }
     },
+    {
+      icon: 'rocket',
+      title: "Cetak",
+      class: 'bg-violet-600 text-light-100',
+      //show: (row) => row['status'] == 'APPROVED' || row['status'] == 'PRINTED',
+      async click(row) {
+        console.log(row.id, 'id spk print')
+        await tesPrint(row.id);
+      }
+    },
   ],
 });
 
@@ -316,6 +326,343 @@ async function deleteData(row) {
   } catch (err) {
     isBadForm.value = true;
     swal.fire({ icon: 'error', text: err.message });
+  } finally {
+    isRequesting.value = false;
+  }
+}
+
+const defaultThermal = reactive({});
+const thermal = reactive({});
+
+onBeforeMount(async () => {
+
+  const initThermal = {
+    interface: 'POS-80',
+    port: '9000',
+    url: '/print/custom'
+  }
+
+  for (const key in initThermal) {
+    defaultThermal[key] = initThermal[key]
+    thermal[key] = initThermal[key]
+  }
+
+  if (localStorage.getItem('thermal_interface')) {
+    thermal.interface = localStorage.getItem('thermal_interface')
+  }
+  if (localStorage.getItem('thermal_port')) {
+    thermal.port = localStorage.getItem('thermal_port')
+  }
+})
+
+function terbilang(number) {
+  const huruf = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan'];
+  let temp = '';
+
+  if (number < 12) {
+    temp = huruf[number];
+  } else if (number < 20) {
+    temp = terbilang(number - 10) + ' Belas';
+  } else if (number < 100) {
+    temp = terbilang(Math.floor(number / 10)) + ' Puluh ' + terbilang(number % 10);
+  } else if (number < 200) {
+    temp = 'Seratus ' + terbilang(number - 100);
+  } else if (number < 1000) {
+    temp = terbilang(Math.floor(number / 100)) + ' Ratus ' + terbilang(number % 100);
+  } else if (number < 2000) {
+    temp = 'Seribu ' + terbilang(number - 1000);
+  } else if (number < 1000000) {
+    temp = terbilang(Math.floor(number / 1000)) + ' Ribu ' + terbilang(number % 1000);
+  } else if (number < 1000000000) {
+    temp = terbilang(Math.floor(number / 1000000)) + ' Juta ' + terbilang(number % 1000000);
+  }
+
+  return temp.trim();
+}
+
+function getCurrentDateTime() {
+  const now = new Date();
+
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Januari = 0
+  const year = now.getFullYear();
+
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+}
+
+function number_format(number, decimals = 0, decPoint = ',', thousandsSep = '.') {
+  if (isNaN(number) || number === null) return '0';
+
+  const fixedNumber = Number(number).toFixed(decimals);
+  const parts = fixedNumber.split('.');
+
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep);
+
+  return parts.length > 1 ? parts.join(decPoint) : parts[0];
+}
+
+async function tesPrint(spk_angkutan_id) {
+  isRequesting.value = true;
+
+  let spk_data = [];
+  let fieldData = null; // Ensure fieldData is initialized properly
+
+  try {
+    // Fetch print data
+    const dataURL = `${store.server.url_backend}/operation/t_spk_angkutan/getPrintData`;
+    const params = {
+      join: true,
+      transform: true,
+      t_spk_id: `${spk_angkutan_id}`,
+    };
+    const fixedParams = new URLSearchParams(params);
+
+    const res = await fetch(`${dataURL}?${fixedParams}`, {
+      method: "GET", // Explicitly define method
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
+
+    const resultJson = await res.json();
+    spk_data = resultJson;
+
+    // Prepare fieldData after fetching spk_data
+    const spkData = spk_data?.data[0] ?? {};
+
+    fieldData = {
+      interface: thermal.interface,
+      data: [
+        { "type": "alignCenter" }, { "type": "setTextDoubleHeight" }, { "type": "println", "value": "SPK ANGKUTAN" },
+        { "type": "setTextNormal" }, { "type": "alignLeft" }, { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `Tanggal In : ${spkData?.tanggal_in}`, "align": "LEFT", "cols": 24 },
+            { "text": `Tanggal Out : ${spkData?.tanggal_out}`, "align": "RIGHT", "cols": 24 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Order 1", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.no_buku_order} / ${spkData?.isi_container_1_deskripsi[0]} /${spkData?.customer_kode}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Order 2", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.no_buku_order2} / ${spkData?.isi_container_2_deskripsi[0]} /${spkData?.customer_kode2}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. SPK", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.no_spk}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Pagi/Sore", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.waktu_out_deskripsi} / ${spkData?.waktu_in_deskripsi}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Head", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.head_kode}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Chasis 1", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.chasis1_kode}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Supir", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.supir_nip}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Chasis 2", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.chasis2_kode}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Trip", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.trip_kode}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Sektor", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.sektor1_deskripsi}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Container", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.ukuran1_deskripsi} Ft`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Dari", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.dari}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Ke", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.ke}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "setTextDoubleHeight" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Sangu", "align": "LEFT", "cols": 5 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `Rp ${number_format(parseFloat(spkData?.sangu), 0, ',', '.')}`, "align": "LEFT", "cols": 40 }
+          ]
+        },
+        { "type": "setTextNormal" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Tambahan Biaya Lain-lain", "align": "LEFT", "cols": 24 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.catatan}`, "align": "LEFT", "cols": 21 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No.", "align": "LEFT", "cols": 4 },
+            { "text": "Keterangan", "align": "LEFT", "cols": 29 },
+            { "text": "Jumlah", "align": "RIGHT", "cols": 15 }
+          ]
+        },
+        { "type": "drawLine" },
+        ...spk_data?.nospkd?.map((dt, idx) => ({
+          "type": "tableCustom",
+          "value": [
+            { "text": idx + 1, "align": "LEFT", "cols": 4 },
+            { "text": dt?.keterangan, "align": "LEFT", "cols": 29 },
+            { "text": `Rp ${number_format(parseFloat(dt?.nominal), 0, ',', '.')}`, "align": "RIGHT", "cols": 15 }
+          ]
+        })),
+        { "type": "drawLine" },
+        { "type": "setTextDoubleHeight" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Total", "align": "LEFT", "cols": 5 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `Rp ${number_format(parseFloat(spkData?.total_sangu), 0, ',', '.')}`, "align": "RIGHT", "cols": 40 }
+          ]
+        },
+        { "type": "setTextNormal" },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Terbilang", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${terbilang(parseFloat(spkData?.total_sangu))} Rupiah`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "println", "value": "Mengetahui," },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Admin / Kasir", "align": "CENTER", "cols": 15 },
+            { "text": "Sopir", "align": "CENTER", "cols": 16 },
+            { "text": "Pengebon", "align": "CENTER", "cols": 17 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "(Kusmiati)", "align": "CENTER", "cols": 16 },
+            { "text": `(${spkData?.supir_nip})`, "align": "CENTER", "cols": 16 },
+            { "text": "(Budi)", "align": "CENTER", "cols": 16 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "println", "value": `Dicetak pada tanggal : ${getCurrentDateTime()}` },
+        { "type": "println", "value": `Operator : ${spk_data?.user_print?.name}-PC # ${spk_data?.user_print?.nip}` },
+        { "type": "cut" }
+      ]
+    }
+
+  } catch (err) {
+    console.error("Error fetching print data:", err);
+    isBadForm.value = true;
+    swal.fire({
+      icon: "error",
+      text: err.message || "Terjadi kesalahan.",
+      allowOutsideClick: false,
+      confirmButtonText: "Kembali",
+    });
+    isRequesting.value = false;
+    return; // Stop execution if fetching data fails
+  }
+
+  try {
+    console.log("Sending print request:", fieldData);
+
+    const response = await fetch(`http://localhost:${thermal.port}${thermal.url}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fieldData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    swal.fire({
+      icon: "success",
+      text: "Print berhasil",
+    });
+
+  } catch (error) {
+    console.error("Print request error:", error);
+    swal.fire({
+      icon: "error",
+      text: "Print gagal, periksa kembali pengaturan atau perangkat Anda!",
+    });
+
   } finally {
     isRequesting.value = false;
   }
@@ -481,8 +828,6 @@ onBeforeMount(async () => {
     //   detail.data = default_value.detail.map(item => ({ ...item }));
     // });
 
-    console.log("AAAAAAA", actionSingleEdit.value, route.query.action)
-    console.log("AAAAAAA", !actionText.value && (!actionSingleEdit.value || data.is_con_edit == true))
   } catch (err) {
     isBadForm.value = true;
     swal.fire({
@@ -512,6 +857,101 @@ const deleteDetailAll = () => {
       detail.data = [];
     }
   })
+}
+
+const oldBukuOrder1 = ref(null);
+const oldBukuOrder2 = ref(null);
+
+function selectBukuOrder1(v) {
+  data.t_detail_npwp_container_1_id = v;
+  oldBukuOrder1.value = v;
+}
+
+function selectBukuOrder2(v) {
+  data.t_detail_npwp_container_2_id = v;
+  oldBukuOrder2.value = v;
+}
+
+function modifyBukuOrder1(response) {
+  if (response == null) {
+    data.nama_customer = '';
+    data.ukuran_container_1 = '';
+    data.jenis_container_1 = ''
+    data.t_buku_order_1_id = '';
+    data.no_container_1 = '';
+    data.no_prefix_1 = '';
+    data.no_suffix_1 = '';
+  } else {
+    data.nama_customer = response['t_buku_order.m_customer_id'];
+    data.ukuran_container_1 = response['ukuran.deskripsi'];
+    data.jenis_container_1 = response['jenis.deskripsi'];
+    data.t_buku_order_1_id = response['id'];
+    data.no_container_1 = response.no_prefix + '-' + response.no_suffix;
+    data.no_prefix_1 = response.no_prefix;
+    data.no_suffix_1 = response.no_suffix;
+  }
+}
+
+function modifyBukuOrder2(response) {
+  if (response == null) {
+    data.nama_customer_2 = '';
+    data.ukuran_container_2 = '';
+    data.jenis_container_2 = '';
+    data.t_buku_order_2_id = '';
+    data.no_container_2 = '';
+    data.no_prefix_2 = '';
+    data.no_suffix_2 = '';
+  } else {
+    data.nama_customer_2 = response['t_buku_order.m_customer_id'];
+    data.ukuran_container_2 = response['ukuran.deskripsi'];
+    data.jenis_container_2 = response['jenis.deskripsi'];
+    data.t_buku_order_2_id = response['id'];
+    data.no_container_2 = response.no_prefix + '-' + response.no_suffix;
+    data.no_prefix_2 = response.no_prefix;
+    data.no_suffix_2 = response.no_suffix;
+  }
+}
+
+function updateBukuOrder1(response) {
+  if ((response.in_spk ?? []).length > 0) {
+    swal.fire({
+      icon: 'warning', text: `Buku Order sudah digunakan di 
+      ${response.in_spk.map((dt, i) => dt.no_spk).join(', ')}
+      `,
+      showDenyButton: true
+    }).then((res) => {
+      if (res.isConfirmed) {
+        selectBukuOrder1(response.id);
+        modifyBukuOrder1(response);
+      } else {
+        selectBukuOrder1(oldBukuOrder1 ?? null);
+      }
+    })
+    console.log(response.in_spk);
+  } else {
+    modifyBukuOrder1(response);
+  }
+}
+
+function updateBukuOrder2(response) {
+  if ((response.in_spk ?? []).length > 0) {
+    swal.fire({
+      icon: 'warning', text: `Buku Order sudah digunakan di 
+      ${response.in_spk.map((dt, i) => dt.no_spk).join(', ')}
+      `,
+      showDenyButton: true
+    }).then((res) => {
+      if (res.isConfirmed) {
+        selectBukuOrder2(response.id);
+        modifyBukuOrder2(response);
+      } else {
+        selectBukuOrder2(oldBukuOrder2 ?? null);
+      }
+    })
+    
+  } else {
+    modifyBukuOrder2(response);
+  }
 }
 
 // ACTION BUTTON
@@ -545,7 +985,7 @@ async function onSave() {
 
   try {
     let next = true
-    if(!data.waktu_out){
+    if (!data.waktu_out) {
       swal.fire({
         icon: 'warning',
         text: `Waktu Out harus diisi`
@@ -553,7 +993,7 @@ async function onSave() {
       next = false
       return
     }
-    if(!data.waktu_in){
+    if (!data.waktu_in) {
       swal.fire({
         icon: 'warning',
         text: `Waktu In harus diisi`
@@ -611,10 +1051,6 @@ async function onSave() {
         no_suffix: data.no_suffix_2,
       }),
     });
-
-
-
-
 
     if (!res.ok) {
       const responseJson = await res.json();
@@ -681,43 +1117,43 @@ async function sendApproval() {
             t_spk_bon_detail: detailArr,
           }),
         }).then(async response => {
-            // if (!response.ok) {
-            //   throw new Error(`HTTP error! status: ${response.status}`);
-            // }
-            if (!response.ok) {
-              const responseJson = await resSimpan.json();
-              formErrors.value = responseJson.errors || {};
-              swal.fire({ icon: 'error', text: responseJson.message || "Failed when trying to post data" });
+          // if (!response.ok) {
+          //   throw new Error(`HTTP error! status: ${response.status}`);
+          // }
+          if (!response.ok) {
+            const responseJson = await resSimpan.json();
+            formErrors.value = responseJson.errors || {};
+            swal.fire({ icon: 'error', text: responseJson.message || "Failed when trying to post data" });
+          }
+          return response.json(); // Parse JSON from the response body
+        }).then(async data => {
+          console.log('Parsed response JSON:', data);
+          data.id = data.id;
+          const dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_approval`
+          isRequesting.value = true
+          const res = await fetch(dataURL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'Application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+            body: JSON.stringify({ id: data.id })
+          })
+          if (!res.ok) {
+            if ([400, 422, 500].includes(res.status)) {
+              const responseJson = await res.json()
+              formErrors.value = responseJson.errors || {}
+              throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to Send Approval")
+            } else {
+              throw ("Failed when trying to Send Approval")
             }
-            return response.json(); // Parse JSON from the response body
-          }).then(async data => {
-            console.log('Parsed response JSON:', data);
-            data.id = data.id;
-            const dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_approval`
-            isRequesting.value = true
-            const res = await fetch(dataURL, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'Application/json',
-                Authorization: `${store.user.token_type} ${store.user.token}`
-              },
-              body: JSON.stringify({ id: data.id })
-            })
-            if (!res.ok) {
-              if ([400, 422, 500].includes(res.status)) {
-                const responseJson = await res.json()
-                formErrors.value = responseJson.errors || {}
-                throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to Send Approval")
-              } else {
-                throw ("Failed when trying to Send Approval")
-              }
-            }
-            const responseJson = await res.json()
-            swal.fire({
-              icon: 'success',
-              text: responseJson.message
-            })
-          });
+          }
+          const responseJson = await res.json()
+          swal.fire({
+            icon: 'success',
+            text: responseJson.message
+          })
+        });
         // const resultJson = await res.json()
       } catch (err) {
         isBadForm.value = true

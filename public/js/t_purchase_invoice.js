@@ -789,8 +789,7 @@ async function post() {
     text: 'Post?',
     iconColor: '#1469AE',
     confirmButtonColor: '#1469AE',
-
-    showDenyButton: true
+    showDenyButton: true,
   }).then(async (res) => {
     if (res.isConfirmed) {
       try {
@@ -798,6 +797,7 @@ async function post() {
         const dataURLSimpan = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
         isRequesting.value = true;
 
+        // Simpan data utama
         const resSimpan = await fetch(dataURLSimpan, {
           method: isCreating ? 'POST' : 'PUT',
           headers: {
@@ -813,52 +813,135 @@ async function post() {
         if (!resSimpan.ok) {
           const responseJson = await resSimpan.json();
           formErrors.value = responseJson.errors || {};
-          swal.fire({ icon: 'error', text: responseJson.message || "Failed when trying to post data" });
+          throw new Error(responseJson.message || "Failed when trying to save data");
         }
-        else {
-          const responseJson = await resSimpan.json();
-          const savedId = responseJson.id; // or responseJson.data.id depending on the structure
-          console.log("Saved ID:", savedId);
-          const dataURL = `${store.server.url_backend}/operation/t_purchase_invoice/post`
-          isRequesting.value = true
-          const res = await fetch(dataURL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'Application/json',
-              Authorization: `${store.user.token_type} ${store.user.token}`
-            },
-            body: JSON.stringify({ id: isCreating ? savedId : data.id })
-          })
-          if (!res.ok) {
-            if ([400, 422, 500].includes(res.status)) {
-              const responseJson = await res.json()
-              formErrors.value = responseJson.errors || {}
-              throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to post")
-            } else {
-              throw ("Failed when trying to post")
-            }
+
+        const responseJson = await resSimpan.json();
+        const savedId = responseJson.id; // or responseJson.data.id depending on the structure
+        console.log("Saved ID:", savedId);
+
+        // Proses posting data
+        const dataURL = `${store.server.url_backend}/operation/t_purchase_invoice/post`;
+        isRequesting.value = true;
+        const resPost = await fetch(dataURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${store.user.token_type} ${store.user.token}`,
+          },
+          body: JSON.stringify({ id: isCreating ? savedId : data.id }),
+        });
+
+        if (!resPost.ok) {
+          if ([400, 422, 500].includes(resPost.status)) {
+            const responseJson = await resPost.json();
+            formErrors.value = responseJson.errors || {};
+            throw new Error(responseJson.message + " " + (responseJson.data?.errorText || "Failed when trying to post"));
+          } else {
+            throw new Error("Failed when trying to post");
           }
-          swal.fire({
-            icon: 'success',
-            text: responseJson.message
-          })
         }
 
+        const resultJson = await resPost.json();
+        swal.fire({
+          icon: 'success',
+          text: resultJson.message || "Data posted successfully",
+        });
 
-        // const resultJson = await res.json()
+        // Redirect hanya jika semua proses berhasil
+        router.replace(tsId);
       } catch (err) {
-        isBadForm.value = true
+        isBadForm.value = true;
         swal.fire({
           icon: 'error',
           iconColor: '#1469AE',
           confirmButtonColor: '#1469AE',
-          text: err
-        })
+          text: err.message || "An unexpected error occurred",
+        });
+        // Tidak melakukan redirect jika terjadi kesalahan
+      } finally {
+        isRequesting.value = false;
       }
-      isRequesting.value = false;
-      router.replace('/' + modulPath);
     }
-  })
+  });
 }
+
+// async function post() {
+//   swal.fire({
+//     icon: 'warning',
+//     text: 'Post?',
+//     iconColor: '#1469AE',
+//     confirmButtonColor: '#1469AE',
+
+//     showDenyButton: true
+//   }).then(async (res) => {
+//     if (res.isConfirmed) {
+//       try {
+//         const isCreating = ['Create', 'Copy'].includes(actionText.value);
+//         const dataURLSimpan = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
+//         isRequesting.value = true;
+
+//         const resSimpan = await fetch(dataURLSimpan, {
+//           method: isCreating ? 'POST' : 'PUT',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             Authorization: `${store.user.token_type} ${store.user.token}`,
+//           },
+//           body: JSON.stringify({
+//             ...data,
+//             t_purchase_invoice_d: detailArr,
+//           }),
+//         });
+
+//         if (!resSimpan.ok) {
+//           const responseJson = await resSimpan.json();
+//           formErrors.value = responseJson.errors || {};
+//           swal.fire({ icon: 'error', text: responseJson.message || "Failed when trying to post data" });
+//         }
+//         else {
+//           const responseJson = await resSimpan.json();
+//           const savedId = responseJson.id; // or responseJson.data.id depending on the structure
+//           console.log("Saved ID:", savedId);
+//           const dataURL = `${store.server.url_backend}/operation/t_purchase_invoice/post`
+//           isRequesting.value = true
+//           const res = await fetch(dataURL, {
+//             method: 'POST',
+//             headers: {
+//               'Content-Type': 'Application/json',
+//               Authorization: `${store.user.token_type} ${store.user.token}`
+//             },
+//             body: JSON.stringify({ id: isCreating ? savedId : data.id })
+//           })
+//           if (!res.ok) {
+//             if ([400, 422, 500].includes(res.status)) {
+//               const responseJson = await res.json()
+//               formErrors.value = responseJson.errors || {}
+//               throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to post")
+//             } else {
+//               throw ("Failed when trying to post")
+//             }
+//           }
+//           swal.fire({
+//             icon: 'success',
+//             text: responseJson.message
+//           })
+//         }
+
+
+//         // const resultJson = await res.json()
+//       } catch (err) {
+//         isBadForm.value = true
+//         swal.fire({
+//           icon: 'error',
+//           iconColor: '#1469AE',
+//           confirmButtonColor: '#1469AE',
+//           text: err
+//         })
+//       }
+//       isRequesting.value = false;
+//       router.replace(tsId);
+//     }
+//   })
+// }
 //  @endif | --- END --- |
 watchEffect(() => store.commit('set', ['isRequesting', isRequesting.value]))

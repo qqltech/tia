@@ -14,7 +14,8 @@ class tbkm extends Migration
             //$table->string('_columnName_');
             // $table->dropColumn(['m_coa_id']);
             // $table->text('keterangan')->nullable(true)->change();
-            $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable()->change();
+            // $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable()->change();
+            $table->string('nama_penyetor', 100)->nullable();
         });
     }
 }

@@ -1,6 +1,6 @@
 @if(!$req->has('id'))
-<div class="bg-white p-6 rounded-xl h-[670px] border-t-10 border-blue-500 dark:bg-black">
-  <div class="pl-4">
+<div class="bg-white p-6 rounded-xl h-[700px] border-t-10 border-blue-500 dark:bg-black">
+  <div class="pl-4 pt-2 pb-2">
     <h1 class="text-xl font-semibold">COA</h1>
   </div>
   <div class="flex justify-between items-center px-4 py-3">
@@ -32,10 +32,10 @@
 
   <!-- TABLE -->
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
-    class="max-h-[550px] pt-2 !px-4 !pb-8">
+    class="max-h-[500px] pt-2 !px-4 !pb-8">
     <template #header>
       <!-- ACTION BUTTON -->
-      
+
     </template>
   </TableApi>
 </div>
@@ -50,23 +50,22 @@
       <Icon fa="arrow-left" class="cursor-pointer mr-2 font-bold hover:text-blue-300" title="Kembali" @click="onBack" />
       <div>
         <h1 class="text-20px font-bold">Form COA</h1>
-        <p class="text-gray-100"></p>
+        <p class="text-gray-100">Master COA</p>
       </div>
     </div>
   </div>
   <div class="flex gap-x-4 px-2 p-4">
-    <div class="flex flex-col border rounded shadow-sm px-6 py-6 <md:w-full w-full bg-white">
+    <div class="flex flex-col border rounded shadow-sm px-4 py-4 <md:w-full w-full bg-white">
 
       <!-- NOMOR -->
 
 
-         <!-- KATEGORI -->
-        <div class="p-2">
-          <span class="text-xl font-semibold">Kategori</span>
-          <FieldSelect :bind="{ disabled: !actionText, clearable: true }" class="w-1/2  !mt-3"
-            :value="values.kategori" :errorText="formErrors.kategori?'failed':''"
-            :hints="formErrors.kategori" valueField="id" displayField="deskripsi"
-            @input="v=>{
+      <!-- KATEGORI -->
+      <div class="p-2">
+        <span class="text-xl font-semibold">Kategori</span>
+        <FieldSelect :bind="{ disabled: !actionText, clearable: true }" class="w-1/2  !mt-3" :value="values.kategori"
+          :errorText="formErrors.kategori?'failed':''" :hints="formErrors.kategori" valueField="id"
+          displayField="deskripsi" @input="v=>{
             if(v){
               values.kategori=v
             }else{
@@ -75,8 +74,7 @@
               values.no_induk=null
               values.nama_coa=null
             }
-            }"
-             :api="{
+            }" :api="{
               url: `${store.server.url_backend}/operation/m_general`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -84,17 +82,17 @@
                 simplest:true,
               }
           }" placeholder="Pilih Kategori" fa-icon="sort-desc" label="" :check="false" />
-        </div>
+      </div>
 
-        <div class="flex items-center mt-5">
-          <div class="flex space-x-5">
-            <label
+      <div class="flex items-center mt-5">
+        <div class="flex space-x-5">
+          <label
             class="inline-block pl-[0.15rem] hover:cursor-pointer font-semibold"
             for="induk_for_click"
             >Parent Induk :</label>
-            <div class="flex w-40 space-x-5">
-              <div class="flex justify-center items-center space-x-3">
-                <input
+          <div class="flex w-40 space-x-5">
+            <div class="flex justify-center items-center space-x-3">
+              <input
                           class="h-6 w-6 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                           type="checkbox"
                           id="induk_for_click"
@@ -102,26 +100,20 @@
                           v-model="values.induk"
                           @change="changeParent"
                         />
-              </div>
-              <div class="flex items-center justify-start">
-                <i class="text-green-500">IYA</i>
-              </div>
+            </div>
+            <div class="flex items-center justify-start">
+              <i class="text-green-500">IYA</i>
             </div>
           </div>
         </div>
+      </div>
 
 
       <div class="grid <md:grid-cols-1 grid-cols-3 gap-2">
         <!-- START COLUMN -->
-<div v-show="values.induk === true"> 
-  <FieldPopup
-    label="Induk"
-    :bind="{ disabled: !actionText , readonly: !actionText , clearable: true }"
-    class="w-full !mt-3" 
-    valueField="id" 
-    displayField="nama_coa"
-    :value="values.m_induk_id" 
-    @input="v => {
+        <div v-show="values.induk === true">
+          <FieldPopup label="Induk" :bind="{ disabled: !actionText , readonly: !actionText , clearable: true }"
+            class="w-full !mt-3" valueField="id" displayField="nama_coa" :value="values.m_induk_id" @input="v => {
       if (v) {
         values.m_induk_id = v;
       } else {
@@ -129,8 +121,7 @@
         values.no_induk = null;
         values.nama_coa = null;
       }
-    }"
-    @update:valueFull="v => {
+    }" @update:valueFull="v => {
       if (v) {
         values.no_induk = v.nomor;
         values.level = v.level + 1;
@@ -140,8 +131,7 @@
         values.no_induk = null;
         values.nama_coa = null;
       }
-    }"
-    :api="{
+    }" :api="{
       url: `${store.server.url_backend}/operation/m_coa`,
       headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
       params: {
@@ -150,10 +140,7 @@
         simplest: true,
         searchfield: 'this.nomor, this.nama_coa'
       }
-    }"
-    placeholder="Pilih Induk"
-    :check="false" 
-    :columns="[{
+    }" placeholder="Pilih Induk" :check="false" :columns="[{
       headerName: 'No',
       valueGetter: (p) => p.node.rowIndex + 1,
       width: 60,
@@ -174,38 +161,27 @@
       sortable: false, resizable: true, filter: 'ColFilter',
       cellClass: ['border-r', '!border-gray-200', 'justify-start']
     },
-    ]"
-  />
-</div>
+    ]" />
+        </div>
 
-<div class="flex space-x-1">
-        <FieldX v-show="values.induk" :bind="{ readonly: true }" class="w-full !mt-3"
-          :value="values.no_induk" :errorText="formErrors.no_induk?'failed':''"
-          @input="v=>values.no_induk=v" :hints="formErrors.no_induk" 
-          :check="false"
-          label="Nomor Parent"
-          placeholder="Autofield Nomor Parent"
-        />
-        <span class="flex items-center" v-show="values.induk" > - </span>
-        <FieldX :bind="{ readonly: !actionText }" :class="{'col-span-2':!values.is_parent}" class="w-full !mt-3"
-          :value="values.tempNomor" :errorText="formErrors.nomor?'failed':''"
-          @input="v=>{
+        <div class="flex space-x-1">
+          <FieldX v-show="values.induk" :bind="{ readonly: true }" class="w-full !mt-3" :value="values.no_induk"
+            :errorText="formErrors.no_induk?'failed':''" @input="v=>values.no_induk=v" :hints="formErrors.no_induk"
+            :check="false" label="Nomor Parent" placeholder="Autofield Nomor Parent" />
+          <span class="flex items-center" v-show="values.induk" > - </span>
+          <FieldX :bind="{ readonly: !actionText }" :class="{'col-span-2':!values.is_parent}" class="w-full !mt-3"
+            :value="values.tempNomor" :errorText="formErrors.nomor?'failed':''" @input="v=>{
             if(v===''){
               values.nomor=null
             }
-            values.tempNomor=v}" 
-            :hints="formErrors.nomor" 
-          :check="true"
-          type="number"
-          label="Nomor"
-          placeholder="Masukan Nomor"
-        />
-      </div>
+            values.tempNomor=v}" :hints="formErrors.nomor" :check="true" type="number" label="Nomor"
+            placeholder="Masukan Nomor" />
+        </div>
 
         <div v-show="values.induk === true">
           <FieldX :bind="{ readonly: !actionText }" class="w-full  !mt-3" :value="values.nama"
-            :errorText="formErrors.nama?'failed':''" @input="v=>values.nama=v" :hints="formErrors.nama"
-            :check="false" label="Nama" placeholder="Tuliskan Nama Parent" />
+            :errorText="formErrors.nama?'failed':''" @input="v=>values.nama=v" :hints="formErrors.nama" :check="false"
+            label="Nama" placeholder="Tuliskan Nama Parent" />
         </div>
         <!-- NAMA -->
         <div>
@@ -215,9 +191,9 @@
         </div>
         <!-- level -->
         <div>
-        <FieldNumber class="w-full !mt-3" :bind="{ readonly : true }" :value="values.level"
-        :errorText="formErrors.level?'failed':''" @input="v=>values.level=v" :hints="formErrors.level" :check="false" 
-        label="Level" type="number" placeholder="Level"/>
+          <FieldNumber class="w-full !mt-3" :bind="{ readonly : true }" :value="values.level"
+            :errorText="formErrors.level?'failed':''" @input="v=>values.level=v" :hints="formErrors.level"
+            :check="false" label="Level" type="number" placeholder="Level" />
         </div>
         <!-- JENIS -->
         <div>
@@ -261,8 +237,15 @@
               }
           }" placeholder="Pilih Tipe Perkiraan" fa-icon="sort-desc" label="Tipe Perkiraan" :check="false" />
         </div>
-      </div>
 
+        <!-- Saldo -->
+        <div>
+          <FieldNumber class="w-full !mt-3" :bind="{ readonly: !actionText }" :value="values.saldo"
+            @input="(v)=>values.saldo=v" :errorText="formErrors.saldo?'failed':''" :hints="formErrors.saldo"
+            placeholder="Saldo" :check="false" />
+
+        </div>
+      </div>
 
 
 

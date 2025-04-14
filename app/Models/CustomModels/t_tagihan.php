@@ -318,7 +318,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $idBukuOrder = $req['t_buku_order_id'];
         $ppn = $req['ppn'];
         $countKontainer = collect($req['detailArr'])->count();
-        
+
         $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
         
         $totalKontainer = $this->kontainer($tagihanKontainer);
@@ -378,31 +378,109 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
             $data = [
                 // jasa = ppjk+cont+angkut
                 // lain = lain-lain
-                'piutang_jasa' => $this->getPiutangJasa($row['id']), 
-                'piutang_lain_lain' => $this->getPiutangJasa($row['id']),
+                'piutang_jasa' => $this->getPiutang($row['id'])['piutang_jasa'], 
+                'piutang_lain_lain' => $this->getPiutang($row['id'])['piutang_lain_lain'],
 
-                'tagihan_jasa' => $this->getPiutangLain($row['id']),
-                'tagihan_lain_lain' => $this->getPiutangLain($row['id']),
+                'tagihan_jasa' => $this->getTagihan($row['id'])['tagihan_jasa'],
+                'tagihan_lain_lain' => $this->getTagihan($row['id'])['tagihan_lain_lain'],
             ];
         }
         return array_merge( $row, $data );
     }
     
-    private function getPiutangJasa($tagihanId)
+
+    private function getPiutang($tagihanId)
     {
-        return \DB::table('t_tagihan')
-            ->where('t_tagihan_piutang_d.t_tagihan_id', $tagihanId)
-            ->whereIn('t_pembayaran_piutang.tipe_piutang', ['REIMBURSE', 'JASA'])
-            ->sum('t_pembayaran_piutang_d.total_bayar'); 
+        $piutangJasa = \DB::table('t_pembayaran_piutang_d')
+            ->join('t_pembayaran_piutang', 't_pembayaran_piutang_d.t_pembayaran_piutang_id', '=', 't_pembayaran_piutang.id')
+            ->where('t_pembayaran_piutang_d.t_tagihan_id', $tagihanId)
+            ->where('t_pembayaran_piutang.tipe_piutang', '=', \DB::table('set.m_general')->where('deskripsi', 'JASA')->value('id'))
+            ->sum('t_pembayaran_piutang_d.total_bayar');
+
+        $piutangReimburse = \DB::table('t_pembayaran_piutang_d')
+            ->join('t_pembayaran_piutang', 't_pembayaran_piutang_d.t_pembayaran_piutang_id', '=', 't_pembayaran_piutang.id')
+            ->where('t_pembayaran_piutang_d.t_tagihan_id', $tagihanId)
+            ->where('t_pembayaran_piutang.tipe_piutang', '=', \DB::table('set.m_general')->where('deskripsi', 'REIMBURSE')->value('id'))
+            ->sum('t_pembayaran_piutang_d.total_bayar');
+
+        return [
+            'piutang_jasa' => (float) ($piutangJasa ?? 0),
+            'piutang_lain_lain' => (float) ($piutangReimburse ?? 0),
+        ]; 
     }
 
-    private function getPiutangLain($tagihanId)
+    private function getTagihan($tagihanId)
     {
-        return \DB::table('t_pembayaran_piutang_d')
-            ->join('t_pembayaran_piutang', 't_pembayaran_piutang_d.t_pembayaran_piutang_id', '=', 't_pembayaran_piutang.id')
-            ->where('t_tagihan_piutang_d.t_tagihan_id', $tagihanId)
-            ->whereIn('t_pembayaran_piutang.tipe_piutang', ['REIMBURSE', 'JASA'])
-            ->sum('t_pembayaran_piutang_d.total_bayar'); 
+        $tagihan = \DB::table('t_tagihan')
+            ->where('id', $tagihanId)
+            ->selectRaw('total_jasa_cont_ppjk + total_jasa_angkutan + total_lain2_ppn AS tagihan_jasa')
+            ->selectRaw('total_lain_non_ppn AS tagihan_lain_lain')
+            ->first();
+
+        return [
+            'tagihan_jasa' => (float) ($tagihan->tagihan_jasa ?? 0),
+            'tagihan_lain_lain' => (float) ($tagihan->tagihan_lain_lain ?? 0),
+        ]; 
     }
+
+    // Perhitungan tagihan konsolidator
+    public function custom_calculate_tagihan_konsolidator($req){
+        $tagihanKontainer = $req['detailArr'];
+        $tagihanJasa = $req['detailArr1'];
+        $tagihanPpjk = $req['detailArr2'];
+        $tagihanLain = $req['detailArr3'];
+        $tarifdp = $req['total_tarif_dp'];
+        $idBukuOrder = $req['t_buku_order_id'];
+        $ppn = $req['ppn'];
+        $countKontainer = collect($req['detailArr'])->count();
+
+        $persentaseKonsolidatorKont = $req['persentase_konsolidator_kont']; // t_tagihan
+        // $persentaseKonsolidatorJasa = $tagihanJasa[0]['persentase_konsolidator_jasa'] ?? 0; // t_tagihan_d _tarif jika 1 data
+        // total jasa angkutan berdasarkan per item
+        $totalJasaAngkutan = 0;
+        foreach ($tagihanJasa as $jasaItem) {
+            $persen = $jasaItem['persentase_konsolidator_jasa'] ?? 0;
+            $tarif = $jasaItem['tarif'] ?? 0;
+            $totalJasaAngkutan += ($tarif * ($persen / 100));
+        }
+        
+        $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
+        
+        $totalKontainer = $this->kontainer($tagihanKontainer);
+        $totalJasa = $this->jasa($tagihanJasa, $ppn, $countKontainer);
+        $totalPpjk = $this->ppjk($tagihanPpjk, $nominalPpjk, $ppn);
+        $totalLainArray = $this->lain($tagihanLain, $ppn); 
+        $totalLain = $totalLainArray['total'] - $tarifdp;
+        
+        // Menghitung Total PPN 
+        $totalLainPPN = $totalLainArray['total_ppn'];
+        $totalPPN = ($totalLainPPN * ($ppn / 100)) + ($totalKontainer * ($ppn / 100)) + ($totalPpjk['total_non_ppn'] * ($ppn / 100));
+        
+        return [
+            'total_jasa_cont_ppjk' => ($totalKontainer + $totalPpjk['total_non_ppn']) * ($persentaseKonsolidatorKont / 100),
+            'total_lain2_ppn' => $totalLainPPN,
+            'total_ppn' => $totalPPN + $totalJasa['total_ppn'],
+            'total_jasa_angkutan' => $totalJasaAngkutan,
+            'total_lain_non_ppn' => $totalLainArray['total_non_ppn'],
+            'grand_total' =>  (
+                (($totalKontainer + $totalPpjk['total_non_ppn']) * ($persentaseKonsolidatorKont / 100)) +
+                $totalLainPPN +
+                ($totalPPN + $totalJasa['total_ppn']) +
+                $totalJasaAngkutan +
+                $totalLainArray['total_non_ppn'] - $tarifdp
+            ),
+
+            // 'total_jasa_angkutan' => $totalJasa['total'] * ($persentaseKonsolidatorJasa / 100),
+            // 'grand_total' => $totalKontainer + $totalPpjk['total_non_ppn'] + $totalPPN + $totalJasa['total'],
+            
+            // 'total_jasa_cont_ppjk' => $totalKontainer + $totalPpjk['total_non_ppn'],
+            // 'total_lain2_ppn' => $totalLainPPN,
+            // 'total_ppn' => $totalPPN + $totalJasa['total_ppn'],
+            // 'total_jasa_angkutan' => $totalJasa['total_non_ppn'],
+            // 'total_lain_non_ppn' => $totalLainArray['total_non_ppn'],
+            // 'grand_total' => $totalKontainer + $totalPpjk['total_non_ppn'] + $totalLain + $totalPPN + $totalJasa['total'],
+        ];
+    }
+
 }
 ?>

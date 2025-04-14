@@ -24,7 +24,7 @@ class t_buku_order extends Model
     public $rules       = [];
     public $joins       = ["m_customer.id=t_buku_order.m_customer_id","set.m_general.id=t_buku_order.sektor","set.m_general.id=t_buku_order.pelabuhan_id","set.m_general.id=t_buku_order.kode_pelayaran_id","set.m_general.id=t_buku_order.tipe"];
     public $details     = ["t_buku_order_d_aju","t_buku_order_d_npwp","t_buku_order_detber"];
-    public $heirs       = ["t_angkutan","t_bon_dinas_luar_d","t_ppjk","t_komisi","t_komisi","t_surat_jalan","t_komisi_d","t_tagihan_d_npwp","t_spk_angkutan","t_spk_angkutan","t_bll","t_nota_rampung","t_komisi_undername","t_buku_penyesuaian","t_dp_penjualan","t_bkk","t_bkm","t_tagihan_lain_lain","t_bkm_non_order","t_tagihan","t_spk_lain"];
+    public $heirs       = ["t_angkutan","t_bon_dinas_luar_d","t_ppjk","t_komisi","t_komisi","t_surat_jalan","t_komisi_d","t_tagihan_d_npwp","t_spk_angkutan","t_spk_angkutan","t_bll","t_nota_rampung","t_komisi_undername","t_buku_penyesuaian","t_dp_penjualan","t_bkk","t_bkm","t_tagihan_lain_lain","t_tagihan","t_bkm_non_order","t_spk_lain"];
     public $detailsChild= [];
     public $detailsHeirs= ["t_surat_jalan","t_spk_angkutan","t_spk_angkutan","t_nota_rampung_d","t_spk_lain"];
     public $unique      = [];

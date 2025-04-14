@@ -16,6 +16,8 @@ const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
+let modalOpen = ref(false)
+let dataLog = reactive({ items: [] })
 let isApproved = ref(false)
 const activeTabIndex = ref(0)
 let isFinish = ref(false)
@@ -511,7 +513,58 @@ async function progress(status) {
   })
 }
 
+function openModal(id) {
+  dataLog.items = []
+  modalOpen.value = true
+  loadLog(id)
+  console.log(modalOpen.value)
+}
+
+function closeModal(i) {
+  dataLog.items = []
+  modalOpen.value = false
+}
+
+async function loadLog(id) {
+  const url = `${store.server.url_backend}/operation/t_pembayaran_hutang/log?id=${id}`
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'Application/json',
+      Authorization: `${store.user.token_type} ${store.user.token}`
+    },
+  })
+  if (!res.ok) throw new Error("Failed when trying to read data")
+  const result = await res.json()
+  dataLog.items = result
+}
+
 //  @else----------------------- LANDING
+
+function openModal(id) {
+  dataLog.items = []
+  modalOpen.value = true
+  loadLog(id)
+  console.log(modalOpen.value)
+}
+
+function closeModal(i) {
+  dataLog.items = []
+  modalOpen.value = false
+}
+
+async function loadLog(id) {
+  const url = `${store.server.url_backend}/operation/t_pembayaran_hutang/log?id=${id}`
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'Application/json',
+      Authorization: `${store.user.token_type} ${store.user.token}`
+    },
+  })
+  if (!res.ok) throw new Error("Failed when trying to read data")
+  const result = await res.json()
+  dataLog.items = result
+}
+
 const landing = reactive({
   actions: [
     {
@@ -585,7 +638,7 @@ const landing = reactive({
       icon: 'location-arrow',
       title: "Post Data",
       class: 'bg-rose-700 rounded-lg text-white',
-      show: (row) => row.status?.toUpperCase() === 'DRAFT',
+      show: (row) => row.status?.toUpperCase() === 'DRAFT' || row.status?.toUpperCase() === 'REVISED',
       async click(row) {
         swal.fire({
           icon: 'warning',
@@ -630,7 +683,7 @@ const landing = reactive({
         })
       }
     },
-{
+    {
       icon: 'location-arrow',
       title: "Send Approval",
       class: 'bg-rose-700 rounded-lg text-white',
@@ -685,6 +738,15 @@ const landing = reactive({
             apiTable.value.reload()
           }
         })
+      }
+    },
+    {
+      icon: 'table',
+      title: "Log Approval",
+      class: 'bg-gray-700 rounded-lg text-white',
+      show: (row) => !['POST', 'DRAFT'].includes(row.status),
+      click(row) {
+        openModal(row.id)
       }
     },
   ],

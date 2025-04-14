@@ -13,7 +13,8 @@ class mcoa extends Migration
             //$table->string('_existColumnName_')->change();
             // $table->string('_columnName_');
             //$table->dropColumn([ ]);
-            $table->string('no_induk',30)->nullable();
+            // $table->string('no_induk',30)->nullable();
+            // $table->decimal('saldo',18,4)->nullable()->default(0);
         });
     }
 }

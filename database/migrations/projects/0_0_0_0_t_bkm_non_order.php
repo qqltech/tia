@@ -24,6 +24,7 @@ class tbkmnonorder extends Migration
             $table->decimal('total_amt',18,4);
             $table->string('no_ref',20)->nullable();
             $table->text('keterangan')->nullable();
+            $table->string('nama_penyetor', 100)->nullable();
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();
