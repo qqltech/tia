@@ -20,7 +20,7 @@ class t_tagihan_d_lain extends Model
     protected $fillable = ["t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","tarif_realisasi","qty","is_ppn","t_tagihan_lain_lain_id"];
 
     public $columns     = ["id","t_tagihan_id","nominal","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","tarif_realisasi","qty","is_ppn","t_tagihan_lain_lain_id"];
-    public $columnsFull = ["id:bigint","t_tagihan_id:integer","nominal:decimal","keterangan:string:191","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","tarif_realisasi:decimal","qty:integer","is_ppn:boolean","t_tagihan_lain_lain_id:integer"];
+    public $columnsFull = ["id:bigint","t_tagihan_id:integer","nominal:decimal","keterangan:string:191","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","tarif_realisasi:decimal","qty:decimal","is_ppn:boolean","t_tagihan_lain_lain_id:integer"];
     public $rules       = [];
     public $joins       = ["t_tagihan.id=t_tagihan_d_lain.t_tagihan_id","t_tagihan_lain_lain.id=t_tagihan_d_lain.t_tagihan_lain_lain_id"];
     public $details     = [];
