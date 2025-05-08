@@ -23,6 +23,8 @@ onBeforeMount(() => {
   document.title = 'Transaksi BKM'
 })
 
+const userId = btoa(store.user.data['id']);
+
 //  @if( $id )------------------- JS CONTENT ! PENTING JANGAN DIHAPUS
 
 // HOT KEY
@@ -378,6 +380,53 @@ const landing = reactive({
           }
         })
       }
+    },
+    {
+      icon: 'print',
+      title: "Cetak",
+      class: 'bg-amber-600 text-light-100',
+      show: (row) => row['status'] == 'POST' || row['status'] == 'PRINTED',
+      async click(row) {
+        try {
+          const dataURL = `${store.server.url_backend}/operation/${endpointApi}/print?id=${row.id}`;
+          isRequesting.value = true;
+          const response = await fetch(dataURL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+          });
+
+          if (!response.ok) {
+            const responseJson = await response.json();
+            if ([400, 422, 500].includes(response.status)) {
+              formErrors.value = responseJson.errors || {};
+              throw new Error(responseJson?.message + " " + responseJson?.data?.errorText || "Failed when trying to post data");
+            } else {
+              throw new Error("Failed when trying to print data");
+            }
+          }
+
+          const responseJson = await response.json();
+          swal.fire({
+            icon: 'success',
+            text: responseJson?.message || 'PRINTED'
+          });
+          window.open(`${store.server.url_backend}/web/bkm?id=${row.id}&user=${userId}`)
+        } catch (err) {
+          isBadForm.value = true;
+          swal.fire({
+            icon: 'error',
+            iconColor: '#1469AE',
+            confirmButtonColor: '#1469AE',
+            text: err.message
+          });
+        } finally {
+          isRequesting.value = false;
+          apiTable.value.reload();
+        }
+      }
     }
   ],
   api: {
@@ -480,7 +529,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
     cellRenderer: (p) => parseFloat(p.value || 0).toLocaleString('id')
   },
   {
@@ -509,13 +558,14 @@ const landing = reactive({
         : (params.data['status'] == 'POST' ? `<span class="text-amber-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 'completed' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+        : (params.data['status'] == 'PRINTED' ?  `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 11 ?  `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 21 ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 5 ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>` 
         : (params.data['status'] == 6 ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>` 
         : (params.data['status'] == 7 ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 9 ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-        : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Status Tidak Terdaftar</span>`))))))))
+        : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Status Tidak Terdaftar</span>`)))))))))
         )
     }
   }

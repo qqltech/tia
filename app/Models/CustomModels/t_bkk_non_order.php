@@ -18,6 +18,13 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
     public $createAdditionalData = ["creator_id"=>"auth:id"];
     public $updateAdditionalData = ["last_editor_id"=>"auth:id"];
 
+    public function custom_print()
+    {
+        $id = request("id");
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        return ["success" => true];
+    }
+
     public function createBefore( $model, $arrayData, $metaData, $id=null )
     {
         $newData = [

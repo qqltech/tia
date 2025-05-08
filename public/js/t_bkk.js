@@ -335,9 +335,6 @@ async function progress(status) {
 
 //  @else----------------------- LANDING
 
-
-
-
 const landing = reactive({
   actions: [
     {

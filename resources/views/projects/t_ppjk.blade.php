@@ -114,7 +114,7 @@
               headerName: 'Tipe PPJK', field: 'tipe', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
               sortable: true, filter: 'ColFilter'
           }]" />
-    <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.tanggal"
+    <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="pt-1" :value="data.tanggal"
       :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
       placeholder="Masukkan Tanggal" :check="false" type="date" />
     <FieldPopup :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="v=>{
@@ -232,13 +232,13 @@
     <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.no_peb_pib"
       :errorText="formErrors.no_peb_pib?'failed':''" @input="v=>data.no_peb_pib=v" :hints="formErrors.no_peb_pib"
       placeholder="No PEB / PIB" :check="false" type="number" />
-    <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.tanggal_peb_pib"
+    <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="pt-1" :value="data.tanggal_peb_pib"
       :errorText="formErrors.tanggal_peb_pib?'failed':''" @input="v=>data.tanggal_peb_pib=v"
       :hints="formErrors.tanggal_peb_pib" placeholder="Tanggal PEB / PIB" :check="false" type="date" />
     <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.no_sppb"
       :errorText="formErrors.no_sppb?'failed':''" @input="v=>data.no_sppb=v" :hints="formErrors.no_sppb"
       placeholder="No SPPB" :check="false" type="number" />
-    <FieldX :bind="{ readonly: !actionText }" class="pt-1" :value="data.tanggal_sppb"
+    <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="pt-1" :value="data.tanggal_sppb"
       :errorText="formErrors.tanggal_sppb?'failed':''" @input="v=>data.tanggal_sppb=v" :hints="formErrors.tanggal_sppb"
       placeholder="Tanggal SPPB" :check="false" type="date" />
     <FieldNumber class="pt-1" :bind="{ readonly: !actionText }" :value="data.invoice" @input="(v)=>data.invoice=v"

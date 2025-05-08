@@ -21,30 +21,24 @@
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           POST
         </button>
-        <!-- <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('In Process')" :class="filterButton === 'In Process' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
-          : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          In Process
-        </button> -->
-        <!-- <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('PRINTED')" :class="filterButton === 'PRINTED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
           : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          PRINTED
+        </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('IN APPROVAL')" :class="filterButton === 'IN APPROVAL' ? 'bg-blue-600 text-white hover:bg-blue-600' 
+          : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          IN APPROVAL
+        </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-green-600 text-white hover:bg-green-600' 
+          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           APPROVED
         </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('REVISED')" :class="filterButton === 'REVISED' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
-          : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          REVISED
-        </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('REJECTED')" :class="filterButton === 'REJECTED' ? 'bg-red-600 text-white hover:bg-red-600' 
-          : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          REJECTED
-        </button> -->
       </div>
     </div>
 
@@ -161,68 +155,6 @@
         :errorText="formErrors.no_bkk?'failed':''" @input="v=>data.no_bkk=v" :hints="formErrors.no_bkk" label="No. BKK"
         placeholder="No. BKK" :check="false" />
     </div>
-    <!-- <div class="w-full !mt-3">
-      <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="data.t_bkk_id" @input="v=>{
-          if(v){
-            data.t_bkk_id=v
-          }else{
-            data.t_bkk_id=null
-          }
-        }" :errorText="formErrors.t_bkk_id?'failed':''" :hints="formErrors.t_bkk_id" @update:valueFull="(dt) => {
-              $log(dt)
-              if(dt){
-            data.no_bkk=dt.no_bkk;
-          }else{
-            data.no_bkk=null  
-          }
-            }" valueField="id" displayField="no_bkk" :api="{
-              url: `${store.server.url_backend}/operation/t_bkk`,
-              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-              params: {
-                simplest:true,
-              },
-              onsuccess(response) {
-                response.page = response.current_page
-                response.hasNext = response.has_next
-                return response
-              }
-            }" placeholder="No. BKK" :check="false" :columns="[{
-              headerName: 'No',
-              valueGetter:(p)=>p.node.rowIndex + 1,
-              width: 60,
-              sortable: false, resizable: false, filter: false,
-              cellClass: ['justify-center', 'bg-gray-50']
-            },
-            {
-              flex: 1,
-              field: 'no_bkk',
-              headerName:  'No. BKK',
-              sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-center']
-            },
-            {
-              flex: 1,
-              field: 'tipe_bkk',
-              headerName:  'Tipe',
-              sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-center']
-            },
-            {
-              flex: 1,
-              field: 't_buku_order.no_buku_order',
-              headerName:  'No. Order',
-              sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-center']
-            },
-            {
-              flex: 1,
-              field: 'total_amt',
-              headerName:  'Total Amount',
-              sortable: false, resizable: true, filter: 'ColFilter',
-              cellClass: ['border-r', '!border-gray-200', 'justify-center']
-            },
-            ]" />
-    </div> -->
     <div>
       <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="data.total_amt"
         :errorText="formErrors.total_amt?'failed':''" @input="v=>data.total_amt=v" :hints="formErrors.total_amt"
@@ -434,7 +366,7 @@
               cellClass: ['border-r', '!border-gray-200', 'justify-center']
             }
              ]">
-        <div class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
+        <div v-show="actionText" class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
             items-center transition-colors duration-300">
           <icon fa="plus" size="sm" />
           <span>Add To List</span>
@@ -463,7 +395,7 @@
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Sub Total
             </td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
               Action
             </td>
@@ -474,34 +406,18 @@
             <td class="p-2 text-center border border-[#CACACA]">
               {{ i + 1 }}.
             </td>
+            <td class="p-2 border border-[#CACACA] text-center">{{ item.no_buku_order }}</td>
             <td class="p-2 border border-[#CACACA]">
-              <p class="text-black leading-none">{{ detailArr[i].no_buku_order }}</p>
-            </td>
-            <td class="p-2 border border-[#CACACA]">
-              <FieldX type="textarea" :bind="{ disabled: !actionText, clearable:false }" class="w-full py-2 !mt-0"
+              <FieldX :bind="{ readonly: !actionText}" class="w-full py-2 !mt-0"
                 :value="item.keterangan" @input="v=>item.keterangan=v" :errorText="formErrors.keterangan?'failed':''"
-                :hints="formErrors.keterangan" placeholder="Masukkan Keterangan" :check="false" />
+                :hints="formErrors.keterangan" placeholder="Masukkan Keterangan" label="" type="textarea" :check="false" />
             </td>
-            <!-- <td class="p-2 border border-[#CACACA]">
-              <FieldSelect class="w-full py-2 !mt-0" :bind="{ disabled: !actionText, clearable:false }"
-                :value="item.ukuran_container" @input="v=>item.ukuran_container=v"
-                :errorText="formErrors.ukuran_container?'failed':''" :hints="formErrors.ukuran_container"
-                valueField="id" displayField="deskripsi" :api="{
-                    url: `${store.server.url_backend}/operation/m_general`,
-                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-                    params: {
-                      simplest:true,
-                      where: `this.group = 'UKURAN KONTAINER'`
-                    }
-                }" placeholder="Pilih Salah Satu" label="" :check="true" />
-
-            </td> -->
             <td class="p-1 text-center border border-[#CACACA]">
               <FieldNumber :bind="{ readonly: !actionText }" class="m-0" :value="detailArr[i].sub_total"
                 :errorText="formErrors.sub_total?'failed':''" @input="v=>detailArr[i].sub_total=v"
                 :hints="formErrors.sub_total" :check="false" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <td v-show="actionText" class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailArr(i)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">

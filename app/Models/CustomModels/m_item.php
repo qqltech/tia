@@ -33,4 +33,8 @@ class m_item extends \App\Models\BasicModels\m_item
     public function scopeGetQTY($model){
         $model->leftJoin('v_stock_item', 'v_stock_item.m_item_id', '=', 'm_item.id')->addSelect('v_stock_item.qty_stock');
     }
+
+    public function scopeGetLPB($model){
+        $model->leftJoin('t_lpb_d', 't_lpb_d.m_item_id', '=', 'm_item.id')->addSelect('t_lpb_d.*');
+    }
 }

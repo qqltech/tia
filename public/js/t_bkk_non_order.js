@@ -1,6 +1,6 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch } from 'vue'
-
+// import CryptoJS from "crypto-js";
 const router = useRouter()
 const route = useRoute()
 const store = inject('store')
@@ -22,6 +22,8 @@ const endpointApi = 't_bkk_non_order'
 onBeforeMount(() => {
   document.title = 'Transaction BKK'
 })
+
+const userId = btoa(store.user.data['id']);
 
 // @if( !$id ) | --- LANDING TABLE --- |
 
@@ -59,7 +61,7 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'tgl. BKK',
@@ -70,7 +72,7 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Tipe BKK',
@@ -81,7 +83,7 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Total Amount',
@@ -92,13 +94,17 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+    valueFormatter: params => {
+      if (params == null) return '-';
+      return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+    }
   },
   {
     headerName: 'Status',
     field: 'status',
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+    cellClass: ['border-r', '!border-gray-200', 'justify-center',],
     sortable: true,
     // resizable: true,
     // wrapText: true,
@@ -109,10 +115,11 @@ const table = reactive({
         : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
           : (params.data['status'] == 'POST' ? `<span class="text-amber-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
             : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-sky-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-              : (params.data['status'] == 'REVISED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+              : (params.data['status'] == 'REVISED' ? `<span class="text-yellow-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
                 : (params.data['status'] == 'APPROVED' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                  : (params.data['status'] == 'REJECTED' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                    : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`))))))
+                  : (params.data['status'] == 'PRINTED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                    : (params.data['status'] == 'REJECTED' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                      : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`)))))))
     }
   },
   ],
@@ -128,70 +135,60 @@ const table = reactive({
     },
     {
       title: 'Edit', icon: 'edit', class: 'bg-blue-600 text-light-100',
-      show: (row) => row.status === 'DRAFT',
+      show: (row) => row.status === 'DRAFT' || row.status === 'REVISED',
       click: row => router.push(`${route.path}/${row.id}?action=Edit&${tsId}`)
     },
     {
       title: 'Copy', icon: 'copy', class: 'bg-gray-600 text-light-100',
       click: row => router.push(`${route.path}/${row.id}?action=Copy&${tsId}`)
     },
-    // {
-    //   icon: 'location-arrow',
-    //   title: "Post Data",
-    //   class: 'bg-rose-700 rounded-lg text-white',
-    //   show: (row) => row.status === 'DRAFT',
-    //   async click(row) {
-    //     swal.fire({
-    //       icon: 'warning',
-    //       text: 'Post Data?',
-    //       iconColor: '#1469AE',
-    //       confirmButtonColor: '#1469AE',
+    {
+      icon: 'print',
+      title: "Cetak",
+      class: 'bg-amber-600 text-light-100',
+      show: (row) => row['status'] == 'APPROVED' || row['status'] == 'PRINTED',
+      async click(row) {
+        try {
+          const dataURL = `${store.server.url_backend}/operation/${endpointApi}/print?id=${row.id}`;
+          isRequesting.value = true;
+          const response = await fetch(dataURL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+          });
 
-    //       showDenyButton: true
-    //     }).then(async (res) => {
-    //       if (res.isConfirmed) {
-    //         try {
-    //           const dataURL = `${store.server.url_backend}/operation/${endpointApi}/post`
-    //           isRequesting.value = true
-    //           const res = await fetch(dataURL, {
-    //             method: 'POST',
-    //             headers: {
-    //               'Content-Type': 'Application/json',
-    //               Authorization: `${store.user.token_type} ${store.user.token}`
-    //             },
-    //             body: JSON.stringify({ id: row.id })
-    //           })
-    //           if (!res.ok) {
-    //             if ([400, 422, 500].includes(res.status)) {
-    //               const responseJson = await res.json()
-    //               formErrors.value = responseJson.errors || {}
-    //               throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to post data")
-    //             } else {
-    //               throw ("Failed when trying to post data")
-    //             }
-    //           }
-    //           const responseJson = await res.json()
-    //           swal.fire({
-    //             icon: 'success',
-    //             text: responseJson.message
-    //           })
-    //           // const resultJson = await res.json()
-    //         } catch (err) {
-    //           isBadForm.value = true
-    //           swal.fire({
-    //             icon: 'error',
-    //             iconColor: '#1469AE',
-    //             confirmButtonColor: '#1469AE',
-    //             text: err
-    //           })
-    //         }
-    //         isRequesting.value = false
+          if (!response.ok) {
+            const responseJson = await response.json();
+            if ([400, 422, 500].includes(response.status)) {
+              formErrors.value = responseJson.errors || {};
+              throw new Error(responseJson?.message + " " + responseJson?.data?.errorText || "Failed when trying to post data");
+            } else {
+              throw new Error("Failed when trying to print data");
+            }
+          }
 
-    //         apiTable.value.reload()
-    //       }
-    //     })
-    //   }
-    // },
+          const responseJson = await response.json();
+          swal.fire({
+            icon: 'success',
+            text: responseJson?.message || 'PRINTED'
+          });
+          window.open(`${store.server.url_backend}/web/bkk_non_order?id=${row.id}&user=${userId}`)
+        } catch (err) {
+          isBadForm.value = true;
+          swal.fire({
+            icon: 'error',
+            iconColor: '#1469AE',
+            confirmButtonColor: '#1469AE',
+            text: err.message
+          });
+        } finally {
+          isRequesting.value = false;
+          apiTable.value.reload();
+        }
+      }
+    },
     {
       icon: 'location-arrow',
       title: "Send for approval",
@@ -579,7 +576,7 @@ async function progress(status) {
         })
       }
       isRequesting.value = false;
-      router.replace('/' + modulPath);
+      router.replace('/notifikasi?reload=true');
     }
   })
 }

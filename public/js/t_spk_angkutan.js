@@ -1,11 +1,9 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch } from 'vue'
-
 const router = useRouter()
 const route = useRoute()
 const store = inject('store')
 const swal = inject('swal')
-
 const isRead = route.params.id && route.params.id !== 'create'
 const actionText = ref(route.params.id === 'create' ? 'Create' : route.query.action != 'EditContainer' ? route.query.action : false)
 const actionSingleEdit = ref(route.query.action === 'EditContainer' ? 'EditContainer' : false)
@@ -16,9 +14,8 @@ const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
-
 const isApproval = route.query.is_approval;
-// console.log(store.user.data['name'],'user aaaa');
+// console.log(store.user.data['id'],'user aaaa');
 // ENDPOINT API
 const endpointApi = 't_spk_angkutan'
 onBeforeMount(() => {
@@ -182,7 +179,7 @@ const table = reactive({
       icon: 'location-arrow',
       title: "Send Approval",
       class: 'bg-rose-700 rounded-lg text-white',
-      show: (row) => row.status === 'DRAFT' || row.status === 'REVISED',
+      show: (row) => row.status === 'DRAFT' || row.status === 'REVISED' || row.status === 'PRINTED',
       async click(row) {
         swal.fire({
           icon: 'warning',
@@ -239,7 +236,7 @@ const table = reactive({
       icon: 'print',
       title: "Cetak",
       class: 'bg-amber-600 text-light-100',
-      show: (row) => row['status'] == 'APPROVED' || row['status'] == 'PRINTED',
+      show: (row) => (row['status'] == 'APPROVED' && row['is_printed'] == false),
       async click(row) {
         try {
           const dataURL = `${store.server.url_backend}/operation/t_spk_angkutan/print?id=${row.id}`;
@@ -286,10 +283,23 @@ const table = reactive({
       icon: 'rocket',
       title: "Cetak",
       class: 'bg-violet-600 text-light-100',
-      //show: (row) => row['status'] == 'APPROVED' || row['status'] == 'PRINTED',
+      show: (row) => (row['status'] == 'APPROVED' && row['is_printed'] == false),
       async click(row) {
-        console.log(row.id, 'id spk print')
-        await tesPrint(row.id);
+        try {
+          console.log(row.id, 'id spk print')
+          await tesPrint(row.id);
+        } catch (err) {
+          isBadForm.value = true;
+          swal.fire({
+            icon: 'error',
+            iconColor: '#1469AE',
+            confirmButtonColor: '#1469AE',
+            text: err.message
+          });
+        } finally {
+          isRequesting.value = false;
+          apiTable.value.reload();
+        }
       }
     },
   ],
@@ -409,9 +419,29 @@ async function tesPrint(spk_angkutan_id) {
   isRequesting.value = true;
 
   let spk_data = [];
-  let fieldData = null; // Ensure fieldData is initialized properly
+  let fieldData1 = null;
+  let fieldData2 = null; // Ensure fieldData is initialized properly
 
   try {
+    // Fetch print data
+    const URLdata = `${store.server.url_backend}/operation/t_spk_angkutan/updatePrintData`;
+    const parameter = {
+      join: true,
+      transform: true,
+      t_spk_id: `${spk_angkutan_id}`,
+    };
+    const fixParams = new URLSearchParams(parameter);
+
+    const response = await fetch(`${URLdata}?${fixParams}`, {
+      method: "GET", // Explicitly define method
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Gagal saat mencoba membaca data");
+
     // Fetch print data
     const dataURL = `${store.server.url_backend}/operation/t_spk_angkutan/getPrintData`;
     const params = {
@@ -437,7 +467,8 @@ async function tesPrint(spk_angkutan_id) {
     // Prepare fieldData after fetching spk_data
     const spkData = spk_data?.data[0] ?? {};
 
-    fieldData = {
+    //Field Data 1
+    fieldData1 = {
       interface: thermal.interface,
       data: [
         { "type": "alignCenter" }, { "type": "setTextDoubleHeight" }, { "type": "println", "value": "SPK ANGKUTAN" },
@@ -618,9 +649,214 @@ async function tesPrint(spk_angkutan_id) {
         { "type": "newLine" },
         { "type": "println", "value": `Dicetak pada tanggal : ${getCurrentDateTime()}` },
         { "type": "println", "value": `Operator : ${spk_data?.user_print?.name}-PC # ${spk_data?.user_print?.nip}` },
+        { "type": "println", "value": `Sudah di print : ${spkData?.jumlah_print}x` },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "tableCustom", "value": [
+          { "text": "", "align": "RIGHT", "cols": 16 },
+          { "text": "", "align": "RIGHT", "cols": 13 },
+          { "text": "RANGKAP 1", "align": "RIGHT", "cols": 16 }
+        ] },
         { "type": "cut" }
       ]
     }
+
+    //Field Data 2
+    fieldData2 = {
+      interface: thermal.interface,
+      data: [
+        { "type": "alignCenter" }, { "type": "setTextDoubleHeight" }, { "type": "println", "value": "SPK ANGKUTAN" },
+        { "type": "setTextNormal" }, { "type": "alignLeft" }, { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `Tanggal In : ${spkData?.tanggal_in}`, "align": "LEFT", "cols": 24 },
+            { "text": `Tanggal Out : ${spkData?.tanggal_out}`, "align": "RIGHT", "cols": 24 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Order 1", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.no_buku_order} / ${spkData?.isi_container_1_deskripsi[0]} /${spkData?.customer_kode}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Order 2", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.no_buku_order2} / ${spkData?.isi_container_2_deskripsi[0]} /${spkData?.customer_kode2}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. SPK", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.no_spk}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Pagi/Sore", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.waktu_out_deskripsi} / ${spkData?.waktu_in_deskripsi}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Head", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.head_kode}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Chasis 1", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.chasis1_kode}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Supir", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.supir_nip}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Chasis 2", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.chasis2_kode}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Trip", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.trip_kode}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Sektor", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.sektor1_deskripsi}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Container", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.ukuran1_deskripsi} Ft`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Dari", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.dari}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Ke", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.ke}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "setTextDoubleHeight" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Sangu", "align": "LEFT", "cols": 5 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `Rp ${number_format(parseFloat(spkData?.sangu), 0, ',', '.')}`, "align": "LEFT", "cols": 40 }
+          ]
+        },
+        { "type": "setTextNormal" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Tambahan Biaya Lain-lain", "align": "LEFT", "cols": 24 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${spkData?.catatan}`, "align": "LEFT", "cols": 21 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No.", "align": "LEFT", "cols": 4 },
+            { "text": "Keterangan", "align": "LEFT", "cols": 29 },
+            { "text": "Jumlah", "align": "RIGHT", "cols": 15 }
+          ]
+        },
+        { "type": "drawLine" },
+        ...spk_data?.nospkd?.map((dt, idx) => ({
+          "type": "tableCustom",
+          "value": [
+            { "text": idx + 1, "align": "LEFT", "cols": 4 },
+            { "text": dt?.keterangan, "align": "LEFT", "cols": 29 },
+            { "text": `Rp ${number_format(parseFloat(dt?.nominal), 0, ',', '.')}`, "align": "RIGHT", "cols": 15 }
+          ]
+        })),
+        { "type": "drawLine" },
+        { "type": "setTextDoubleHeight" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Total", "align": "LEFT", "cols": 5 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `Rp ${number_format(parseFloat(spkData?.total_sangu), 0, ',', '.')}`, "align": "RIGHT", "cols": 40 }
+          ]
+        },
+        { "type": "setTextNormal" },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Terbilang", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${terbilang(parseFloat(spkData?.total_sangu))} Rupiah`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "println", "value": "Mengetahui," },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Admin / Kasir", "align": "CENTER", "cols": 15 },
+            { "text": "Sopir", "align": "CENTER", "cols": 16 },
+            { "text": "Pengebon", "align": "CENTER", "cols": 17 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "(Kusmiati)", "align": "CENTER", "cols": 16 },
+            { "text": `(${spkData?.supir_nip})`, "align": "CENTER", "cols": 16 },
+            { "text": "(Budi)", "align": "CENTER", "cols": 16 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "println", "value": `Dicetak pada tanggal : ${getCurrentDateTime()}` },
+        { "type": "println", "value": `Operator : ${spk_data?.user_print?.name}-PC # ${spk_data?.user_print?.nip}` },
+        { "type": "println", "value": `Sudah di print : ${spkData?.jumlah_print}x` },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "tableCustom", "value": [
+          { "text": "", "align": "RIGHT", "cols": 16 },
+          { "text": "", "align": "RIGHT", "cols": 13 },
+          { "text": "RANGKAP 2", "align": "RIGHT", "cols": 16 }
+        ] },
+        { "type": "cut" }
+      ]
+    }
+
 
   } catch (err) {
     console.error("Error fetching print data:", err);
@@ -636,24 +872,32 @@ async function tesPrint(spk_angkutan_id) {
   }
 
   try {
-    console.log("Sending print request:", fieldData);
-
-    const response = await fetch(`http://localhost:${thermal.port}${thermal.url}`, {
+    const printURL = `http://localhost:${thermal.port}${thermal.url}`;
+    const printOptions1 = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(fieldData),
-    });
+      body: JSON.stringify(fieldData1),
+    };
+    const printOptions2 = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fieldData2),
+    };
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+    // Cetak dua kali
+    const response1 = await fetch(printURL, printOptions1);
+    if (!response1.ok) throw new Error(`Cetakan pertama gagal: ${response1.status}`);
 
-    const result = await response.json();
+    const response2 = await fetch(printURL, printOptions2);
+    if (!response2.ok) throw new Error(`Cetakan kedua gagal: ${response2.status}`);
+
     swal.fire({
       icon: "success",
-      text: "Print berhasil",
+      text: "Print berhasil!",
     });
 
   } catch (error) {
@@ -698,17 +942,25 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
-  data: { status: 'DRAFT', is_con_edit: false, total_bon_tambahan: 0 },
-  detail: []
+  data: { 
+    status: 'DRAFT', 
+    is_con_edit: false, 
+    total_bon_tambahan: 0 
+  },
+  detail: [],
+  t_spk_bon_detail: []
 }
+
 
 const data = reactive({ ...default_value.data });
 
 const dataOrderId = reactive([]);
 
 const initArr = {
-  keterangan: ''
+  keterangan: '',
+  nominal: ''
 }
+
 const detailArr = reactive([])
 
 
@@ -787,7 +1039,8 @@ onBeforeMount(async () => {
         data.status = default_value.data.status;
         data.is_con_edit = default_value.data.is_con_edit;
         data.no_spk = null;
-
+        data.jumlah_print = 0;
+        data.is_printed = 0;
       }
     });
 
@@ -948,7 +1201,7 @@ function updateBukuOrder2(response) {
         selectBukuOrder2(oldBukuOrder2 ?? null);
       }
     })
-    
+
   } else {
     modifyBukuOrder2(response);
   }
@@ -957,17 +1210,24 @@ function updateBukuOrder2(response) {
 // ACTION BUTTON
 function onReset() {
   swal.fire({
-    icon: 'warning', text: 'Reset semua data?',
-    showDenyButton: true
-  }).then((res) => {
-    if (res.isConfirmed) {
-      for (const key in data) {
+    icon: 'warning',
+    text: 'Reset semua data?',
+    showDenyButton: true,
+    confirmButtonText: 'Ya',
+    denyButtonText: 'Batal',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Reset data utama
+      Object.keys(data).forEach((key) => {
         data[key] = default_value.data[key];
-      }
-      detail.data = default_value.detail.map(item => ({ ...item }));
+      });
+
+      // Reset detailArr dengan salinan baru agar reaktif
+      detailArr.splice(0, detailArr.length, ...default_value.detail.map(item => ({ ...item })));
     }
-  })
+  });
 }
+
 
 function onBack() {
   router.replace('/' + modulPath)
@@ -1073,7 +1333,6 @@ async function onSave() {
 }
 
 watch(() => detailArr, () => {
-  console.log('ini panjangggg', detailArr.length);
   data.total_bon_tambahan = 0;
   for (let idx = 0; idx < detailArr.length; idx++) {
     if (detailArr[idx].nominal) data.total_bon_tambahan += Number(detailArr[idx].nominal);

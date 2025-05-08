@@ -439,9 +439,10 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         // total jasa angkutan berdasarkan per item
         $totalJasaAngkutan = 0;
         foreach ($tagihanJasa as $jasaItem) {
-            $persen = $jasaItem['persentase_konsolidator_jasa'] ?? 0;
             $tarif = $jasaItem['tarif'] ?? 0;
-            $totalJasaAngkutan += ($tarif * ($persen / 100));
+            $persen = $jasaItem['persentase_konsolidator_jasa'] ?? 0;
+            $byTambah = $jasaItem['by_tambah'] ?? 0;
+            $totalJasaAngkutan += ($tarif * ($persen / 100)) + $byTambah;
         }
         
         $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
@@ -457,7 +458,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $totalPPN = ($totalLainPPN * ($ppn / 100)) + ($totalKontainer * ($ppn / 100)) + ($totalPpjk['total_non_ppn'] * ($ppn / 100));
         
         return [
-            'total_jasa_cont_ppjk' => ($totalKontainer + $totalPpjk['total_non_ppn']) * ($persentaseKonsolidatorKont / 100),
+            'total_jasa_cont_ppjk' => ($totalKontainer * ($persentaseKonsolidatorKont / 100))  + $totalPpjk['total_non_ppn'],
             'total_lain2_ppn' => $totalLainPPN,
             'total_ppn' => $totalPPN + $totalJasa['total_ppn'],
             'total_jasa_angkutan' => $totalJasaAngkutan,

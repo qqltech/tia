@@ -527,7 +527,7 @@
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Jenis
             </td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
               Action
             </td>
@@ -812,7 +812,7 @@
                           }
                       }" placeholder="Pilih Jenis" label="" :check="false" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <td v-show="actionText" class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="removeDetail(i)" :disabled="!actionText" title="Hapus">
                           <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -925,7 +925,7 @@
   </div>
 
   <div class="<md:col-span-1 col-span-3 p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 " v-if="activeTabIndex === 2">
-    <button
+    <button v-show="actionText"
       title="Add to List"
       @click="addDetailBerkas"
       >
@@ -957,7 +957,7 @@
               class="text-[#8F8F8F] font-semibold text-[14px] w-[10%] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Catatan
             </td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
               Action
             </td>
@@ -996,7 +996,7 @@
                 :errorText="formErrors.catatan?'failed':''" @input="v=>itemBerkas.catatan=v" :hints="formErrors.catatan"
                 :check="false" type="textarea" label="" placeholder="Catatan" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <td v-show="actionText" class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="removeDetailBerkas(i)" :disabled="!actionText" title="Hapus">
                           <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">

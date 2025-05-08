@@ -337,7 +337,7 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Catatan</td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               Action</td>
           </tr>
@@ -364,7 +364,7 @@
               <FieldX :bind="{ readonly: !actionText }" class="m-0" :value="item.catatan" @input="v=>item.catatan=v"
                 :hints="formErrors.catatan" type="textarea" :check="false" />
             </td>
-            <td class="p-1 border border-[#CACACA]">
+            <td v-show="actionText" class="p-1 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailArr(i)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -43,6 +43,13 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
             // "errors" => ['error1']
         ];
     }
+    
+     public function custom_print()
+    {
+        $id = request("id");
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        return ["success" => true];
+    }
 
     public function custom_post()
     {

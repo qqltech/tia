@@ -97,7 +97,7 @@
     </div>
 
     <div>
-      <FieldX :bind="{ readonly: true}" class="w-full !mt-3" :value="data.tanggal_spk"
+      <FieldX :bind="{ readonly: true, disabled: true}" class="w-full !mt-3" :value="data.tanggal_spk"
         :errorText="formErrors.tanggal_spk?'failed' :''" @input="v=>data.tanggal_spk=v" :hints="formErrors.tanggal_spk"
         :check="false" type="date" label="Tanggal SPK" placeholder="Pilih Tanggal SPK" />
     </div>
@@ -108,7 +108,7 @@
     </div>
 
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
-      <FieldX :bind="{ readonly: !actionText}" class="w-full !mt-3" :value="data.tanggal_out"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText}" class="w-full !mt-3" :value="data.tanggal_out"
         :errorText="formErrors.tanggal_out?'failed' :''" @input="v=>data.tanggal_out=v" :hints="formErrors.tanggal_out"
         :check="false" type="date" label="Tanggal Out" placeholder="Pilih Tanggal Out" />
       <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true, readonly:!actionText }"
@@ -122,7 +122,7 @@
               join:false,
               where:`this.group='WAKTUOUT'`,
             }
-        }" placeholder="Pilih Waktu Out" label="Waktu Out" :check="false" />
+        }" placeholder="Pilih Waktu Out" fa-icon="sort-desc" label="Waktu Out" :check="false" />
 
     </div>
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
@@ -140,7 +140,7 @@
               join:false,
               where:`this.group='WAKTUIN'`,
             }
-        }" placeholder="Pilih Waktu In" label="Waktu In" :check="false" />
+        }" placeholder="Pilih Waktu In" fa-icon="sort-desc" label="Waktu In" :check="false" />
     </div>
 
     <div>
@@ -618,7 +618,7 @@
   <!-- START TABLE DETAIL -->
   <div class="<md:col-span-1 col-span-3 p-2 grid <md:grid-cols-1 grid-cols-3 gap-2">
     <div class="overflow-x-auto <md:col-span-1 col-span-3">
-      <button class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
+      <button v-show="actionText" class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
             items-center transition-colors duration-300" @click="addDetailBon">
         <icon fa="plus" size="sm" />
         <span>Add To List</span>
@@ -635,7 +635,7 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Nominal</td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               Action</td>
           </tr>
@@ -655,7 +655,7 @@
                 :errorText="formErrors.nominal?'failed':''" @input="v=>detailArr[i].nominal=v"
                 :hints="formErrors.nominal" label="" placeholder="Nominal" :check="false" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <td v-show="actionText" class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailBon(i)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -680,7 +680,7 @@
     <FieldNumber type="number" :bind="{ readonly: true }" class="w-full content-center !mt-3"
       :value="data.total_bon_tambahan" @input="v=>data.total_bon_tambahan=v"
       :errorText="formErrors.total_bon_tambahan?'failed':''" :hints="formErrors.total_bon_tambahan"
-      placeholder="Total Bon Tambahan" label="Total Bon Tambahan" :check="false" />
+      placeholder="Total Bon Tambahan" label="" :check="false" />
   </div>
   <!-- ACTION BUTTON FORM -->
   <hr v-show="actionText" />

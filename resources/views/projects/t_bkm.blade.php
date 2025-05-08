@@ -14,6 +14,7 @@
         <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
         <button @click="filterShowData('POST')" :class="activeBtn?.toUpperCase() === 'POST'?'bg-amber-600 !text-white hover:bg-amber-400':'border border-amber-600 bg-white text-amber-600  hover:bg-amber-600 hover:text-white'" class="duration-300 transition transform hover:-translate-y-0.5 rounded-md py-1 px-2">POST</button>
         <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
+        <button @click="filterShowData('PRINTED')" :class="activeBtn?.toUpperCase() === 'PRINTED'?'bg-purple-600 !text-white hover:bg-purple-400':'border border-purple-600 bg-white text-purple-600  hover:bg-purple-600 hover:text-white'" class="duration-300 transition transform hover:-translate-y-0.5 rounded-md py-1 px-2">PRINTED</button>
       </div>
     </div>
 
@@ -81,14 +82,20 @@
         label="No. BKM" placeholder="No. BKM" :check="false" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.nama_penerima"
+        :errorText="formErrors.nama_penerima?'failed':''" @input="v=>values.nama_penerima=v" :hints="formErrors.nama_penerima"
+        label="Nama Penyetor" placeholder="Nama Penyetor" :check="false" />
+    </div>
+    <div>
       <FieldX :bind="{ readonly: !actionText, disabled:!actionText, clearable:false }" class="w-full !mt-3"
         :value="values.tanggal" :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v"
         :hints="formErrors.tanggal" :check="false" type="date" label="Tanggal BKM" placeholder="Pilih Tanggal BKM" />
     </div>
     <div>
-      <FieldPopup label="No. Buku Order" class="w-full !mt-3" valueField="id" displayField="no_buku_order"
-        :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v"
-        :errorText="formErrors.t_buku_order_id?'failed':''" :hints="formErrors.t_buku_order_id" @update:valueFull="(v)=>{
+      <FieldPopup :bind="{ readonly: !actionText, disabled:!actionText, clearable:false }" label="No. Buku Order"
+        class="w-full !mt-3" valueField="id" displayField="no_buku_order" :value="values.t_buku_order_id"
+        @input="(v)=>values.t_buku_order_id=v" :errorText="formErrors.t_buku_order_id?'failed':''"
+        :hints="formErrors.t_buku_order_id" @update:valueFull="(v)=>{
             detailArr = [] 
             values.total_amt = 0
           }" :api="{
@@ -146,10 +153,10 @@
     </div>
 
     <div class="w-full !mt-3">
-        <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
-          valueField="id" :value="values.tipe_pembayaran" @input="(v) => values.tipe_pembayaran = v"
-          :errorText="formErrors.tipe_pembayaran ? 'failed' : ''" :hints="formErrors.tipe_pembayaran"
-          placeholder="Tipe Pembayaran" label="Tipe Pembayaran" :check="false" @update:valueFull="(response)=>{
+      <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
+        valueField="id" :value="values.tipe_pembayaran" @input="(v) => values.tipe_pembayaran = v"
+        :errorText="formErrors.tipe_pembayaran ? 'failed' : ''" :hints="formErrors.tipe_pembayaran"
+        placeholder="Tipe Pembayaran" label="Tipe Pembayaran" :check="false" @update:valueFull="(response)=>{
           $log(response)
           values.tipe_pembayaran_deskripsi = response.deskripsi
         }" :api="{
@@ -165,13 +172,13 @@
         where: `this.is_active=true and this.group='TIPE PEMBAYARAN'`
       },
     }" />
-      </div>
+    </div>
 
-      <div class="w-full !mt-3" v-if="values.tipe_pembayaran_deskripsi === 'TRANSFER'">
-        <FieldPopup class="!mt-0" :bind="{ readonly: values.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
-          :value="values.m_akun_bank_id" @input="(v) => values.m_akun_bank_id = v"
-          :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
-          displayField="nama_coa" :api="{
+    <div class="w-full !mt-3" v-if="values.tipe_pembayaran_deskripsi === 'TRANSFER'">
+      <FieldPopup class="!mt-0" :bind="{ readonly: values.tipe_pembayaran_deskripsi !== 'TRANSFER' || !actionText }"
+        :value="values.m_akun_bank_id" @input="(v) => values.m_akun_bank_id = v"
+        :errorText="formErrors.m_akun_bank_id ? 'failed' : ''" :hints="formErrors.m_akun_bank_id" valueField="id"
+        displayField="nama_coa" :api="{
       url: `${store.server.url_backend}/operation/m_coa`,
       headers: {
         'Content-Type': 'Application/json', 
@@ -216,12 +223,13 @@
         filter: false,
       },
     ]" />
-      </div>
+    </div>
 
     <div>
-      <FieldPopup label="Akun Pembayaran" class="w-full !mt-3" valueField="id" displayField="nama_coa"
-        :value="values.m_akun_pembayaran_id" @input="(v)=>values.m_akun_pembayaran_id=v"
-        :errorText="formErrors.m_akun_pembayaran_id?'failed':''" :hints="formErrors.m_akun_pembayaran_id" :api="{
+      <FieldPopup :bind="{ disabled: !actionText, readonly: !actionText }" label="Akun Pembayaran" class="w-full !mt-3"
+        valueField="id" displayField="nama_coa" :value="values.m_akun_pembayaran_id"
+        @input="(v)=>values.m_akun_pembayaran_id=v" :errorText="formErrors.m_akun_pembayaran_id?'failed':''"
+        :hints="formErrors.m_akun_pembayaran_id" :api="{
             url: `${store.server.url_backend}/operation/m_coa`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
@@ -351,7 +359,7 @@
             cellClass: ['justify-start','!border-gray-200']
           },
         ]">
-      <div
+      <div v-show="actionText"
         class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
         <icon fa="plus" size="sm mr-0.5" /> Add Detail
       </div>
@@ -381,7 +389,7 @@
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Keterangan
             </td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
               Action
             </td>
@@ -412,7 +420,7 @@
                 :value="item.keterangan" :check="false" @input="v=>item.keterangan=v"
                 :errorText="formErrors.keterangan?'failed':''" :hints="formErrors.keterangan" type="textarea" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <td v-show="actionText" class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="removeDetail(i)" :disabled="!actionText" title="Hapus">
                       <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -433,10 +441,10 @@
     </div>
   </div>
 
-  <hr>
+  <hr v-show="actionText">
 
   <div class="flex flex-row items-center justify-end space-x-2 p-2">
-    <i class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
+    <i v-show="actionText" class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
     <button
         class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         v-show="actionText"

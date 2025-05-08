@@ -67,12 +67,12 @@
 
     <!-- Date Coloumn -->
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.tgl"
         :errorText="formErrors.tgl?'failed':''" @input="v=>values.tgl=v" :hints="formErrors.tgl"
         placeholder="Masukkan Tanggal" :check="false" type="date" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_nota"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.tgl_nota"
         :errorText="formErrors.tgl_nota?'failed':''" @input="v=>values.tgl_nota=v" :hints="formErrors.tgl_nota"
         placeholder="Masukkan Tanggal Nota" :check="false" type="date" />
     </div>
@@ -240,7 +240,7 @@
 
 
     <div>
-      <FieldX class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="values.status"
+      <FieldX class="w-full !mt-3" :bind="{ readonly: !actionText, disabled: true, clearable:true }" :value="values.status"
         @input="v=>values.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status"
         placeholder="Pilih Status" label="Status" :check="false" />
     </div>
@@ -315,7 +315,7 @@
             <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[15%]">Tarif Realisasi</th>
             <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">QTY</th>
             <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">PPN</th>
-            <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">Action</th>
+            <th v-show="actionText" class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -354,7 +354,7 @@
             />
             </td>
 
-            <td class="p-3 text-sm text-gray-900 border-r">
+            <td v-show="actionText" class="p-3 text-sm text-gray-900 border-r">
               <div class="flex justify-center">
                 <button
                 type="button"

@@ -120,11 +120,10 @@ const table = reactive({
         ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
           : (params.data['status'] == 'POST' ? `<span class="text-amber-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-            : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-sky-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-              : (params.data['status'] == 'REVISED' ? `<span class="text-yellow-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                : (params.data['status'] == 'APPROVED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                  : (params.data['status'] == 'REJECTED' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                    : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`))))))
+            : (params.data['status'] == 'PRINTED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+              : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                : (params.data['status'] == 'APPROVED' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                  : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`)))))
     }
   },
   ],
@@ -200,63 +199,86 @@ const table = reactive({
         })
       }
     },
-    // {
-    //   icon: 'location-arrow',
-    //   title: "Send for approval",
-    //   class: 'bg-rose-700 text-white',
-    //   show: (row) => row.status === 'DRAFT',
-    //   async click(row) {
-    //     swal.fire({
-    //       icon: 'warning',
-    //       text: 'Send for approval?',
-    //       iconColor: '#1469AE',
-    //       confirmButtonColor: '#1469AE',
+    {
+      icon: 'rocket',
+      title: "Cetak Thermal",
+      class: 'bg-violet-600 text-light-100',
+      show: (row) => (row['status'] == 'POST' || row['status'] == 'APPROVED'),
+      async click(row) {
+        try {
+          console.log(row.id, 'id Bon print')
+          await tesPrint(row.id);
+        } catch (err) {
+          isBadForm.value = true;
+          swal.fire({
+            icon: 'error',
+            iconColor: '#1469AE',
+            confirmButtonColor: '#1469AE',
+            text: err.message
+          });
+        } finally {
+          isRequesting.value = false;
+          apiTable.value.reload();
+        }
+      }
+    },
+    {
+      icon: 'location-arrow',
+      title: "Send for approval",
+      class: 'bg-rose-700 text-white',
+      show: (row) => row.status === 'PRINTED',
+      async click(row) {
+        swal.fire({
+          icon: 'warning',
+          text: 'Send for approval?',
+          iconColor: '#1469AE',
+          confirmButtonColor: '#1469AE',
 
-    //       showDenyButton: true
-    //     }).then(async (res) => {
-    //       if (res.isConfirmed) {
-    //         try {
-    //           const dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_approval`
-    //           isRequesting.value = true
-    //           const res = await fetch(dataURL, {
-    //             method: 'POST',
-    //             headers: {
-    //               'Content-Type': 'Application/json',
-    //               Authorization: `${store.user.token_type} ${store.user.token}`
-    //             },
-    //             body: JSON.stringify({ id: row.id })
-    //           })
-    //           if (!res.ok) {
-    //             if ([400, 422, 500].includes(res.status)) {
-    //               const responseJson = await res.json()
-    //               formErrors.value = responseJson.errors || {}
-    //               throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to post data")
-    //             } else {
-    //               throw ("Failed when trying to approval data")
-    //             }
-    //           }
-    //           const responseJson = await res.json()
-    //           swal.fire({
-    //             icon: 'success',
-    //             text: responseJson.message
-    //           })
-    //           // const resultJson = await res.json()
-    //         } catch (err) {
-    //           isBadForm.value = true
-    //           swal.fire({
-    //             icon: 'error',
-    //             iconColor: '#1469AE',
-    //             confirmButtonColor: '#1469AE',
-    //             text: err
-    //           })
-    //         }
-    //         isRequesting.value = false
+          showDenyButton: true
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            try {
+              const dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_approval`
+              isRequesting.value = true
+              const res = await fetch(dataURL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'Application/json',
+                  Authorization: `${store.user.token_type} ${store.user.token}`
+                },
+                body: JSON.stringify({ id: row.id })
+              })
+              if (!res.ok) {
+                if ([400, 422, 500].includes(res.status)) {
+                  const responseJson = await res.json()
+                  formErrors.value = responseJson.errors || {}
+                  throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to post data")
+                } else {
+                  throw ("Failed when trying to approval data")
+                }
+              }
+              const responseJson = await res.json()
+              swal.fire({
+                icon: 'success',
+                text: responseJson.message
+              })
+              // const resultJson = await res.json()
+            } catch (err) {
+              isBadForm.value = true
+              swal.fire({
+                icon: 'error',
+                iconColor: '#1469AE',
+                confirmButtonColor: '#1469AE',
+                text: err
+              })
+            }
+            isRequesting.value = false
 
-    //         apiTable.value.reload()
-    //       }
-    //     })
-    //   }
-    // }
+            apiTable.value.reload()
+          }
+        })
+      }
+    }
   ],
 });
 
@@ -291,6 +313,451 @@ async function deleteData(row) {
   } catch (err) {
     isBadForm.value = true;
     swal.fire({ icon: 'error', text: err.message });
+  } finally {
+    isRequesting.value = false;
+  }
+}
+
+const defaultThermal = reactive({});
+const thermal = reactive({});
+
+onBeforeMount(async () => {
+
+  const initThermal = {
+    interface: 'POS-80',
+    port: '9000',
+    url: '/print/custom'
+  }
+
+  for (const key in initThermal) {
+    defaultThermal[key] = initThermal[key]
+    thermal[key] = initThermal[key]
+  }
+
+  if (localStorage.getItem('thermal_interface')) {
+    thermal.interface = localStorage.getItem('thermal_interface')
+  }
+  if (localStorage.getItem('thermal_port')) {
+    thermal.port = localStorage.getItem('thermal_port')
+  }
+})
+
+function terbilang(number) {
+  const huruf = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan'];
+  let temp = '';
+
+  if (number < 12) {
+    temp = huruf[number];
+  } else if (number < 20) {
+    temp = terbilang(number - 10) + ' Belas';
+  } else if (number < 100) {
+    temp = terbilang(Math.floor(number / 10)) + ' Puluh ' + terbilang(number % 10);
+  } else if (number < 200) {
+    temp = 'Seratus ' + terbilang(number - 100);
+  } else if (number < 1000) {
+    temp = terbilang(Math.floor(number / 100)) + ' Ratus ' + terbilang(number % 100);
+  } else if (number < 2000) {
+    temp = 'Seribu ' + terbilang(number - 1000);
+  } else if (number < 1000000) {
+    temp = terbilang(Math.floor(number / 1000)) + ' Ribu ' + terbilang(number % 1000);
+  } else if (number < 1000000000) {
+    temp = terbilang(Math.floor(number / 1000000)) + ' Juta ' + terbilang(number % 1000000);
+  }
+
+  return temp.trim();
+}
+
+function getCurrentDateTime() {
+  const now = new Date();
+
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Januari = 0
+  const year = now.getFullYear();
+
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+}
+
+function number_format(number, decimals = 0, decPoint = ',', thousandsSep = '.') {
+  if (isNaN(number) || number === null) return '0';
+
+  const fixedNumber = Number(number).toFixed(decimals);
+  const parts = fixedNumber.split('.');
+
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep);
+
+  return parts.length > 1 ? parts.join(decPoint) : parts[0];
+}
+
+async function tesPrint(bon_dinas_luar_id) {
+  isRequesting.value = true;
+
+  let bon_dl_data = [];
+  let fieldData1 = null;
+  let fieldData2 = null;  // Ensure fieldData is initialized properly
+
+  try {
+    // Fetch print data
+    const URLdata = `${store.server.url_backend}/operation/t_bon_dinas_luar/updatePrintData`;
+    const parameter = {
+      join: true,
+      transform: true,
+      t_bon_dinas_luar_id: `${bon_dinas_luar_id}`,
+    };
+    const fixParams = new URLSearchParams(parameter);
+
+    const response = await fetch(`${URLdata}?${fixParams}`, {
+      method: "GET", // Explicitly define method
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Gagal saat mencoba membaca data");
+
+    // Fetch print data
+    const dataURL = `${store.server.url_backend}/operation/t_bon_dinas_luar/getPrintData`;
+    const params = {
+      join: true,
+      transform: true,
+      t_bon_dinas_luar_id: `${bon_dinas_luar_id}`,
+    };
+    const fixedParams = new URLSearchParams(params);
+
+
+    const res = await fetch(`${dataURL}?${fixedParams}`, {
+      method: "GET", // Explicitly define method
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    });
+
+
+    if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
+
+    const resultJson = await res.json();
+    bon_dl_data = resultJson;
+
+    // Prepare fieldData after fetching bon_dl_data
+    const bonData = bon_dl_data?.data ?? {};
+
+    console.log(bonData, 'ini respon')
+    
+    //Fieldata 1
+    fieldData1 = {
+      interface: thermal.interface,
+      data: [
+        { "type": "alignCenter" }, { "type": "setTextDoubleHeight" }, { "type": "println", "value": "BON DINAS LUAR" },
+        { "type": "setTextNormal" }, { "type": "alignLeft" }, { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `Tanggal : ${bonData?.bdl_tanggal}`, "align": "LEFT", "cols": 24 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Tipe Ord", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.deskripsi}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Tipe Kat", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.nama_coa}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. BDL", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.no_bon_dinas_luar}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Karyawan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.nip}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Nama Supp", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.nama}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Catatan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.bdl_catatan}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No.", "align": "LEFT", "cols": 4 },
+            { "text": "No Order", "align": "LEFT", "cols": 10 },
+            { "text": "Ket", "align": "CENTER", "cols": 16 },
+            { "text": "Sub Total", "align": "RIGHT", "cols": 16 }
+          ]
+        },
+        { "type": "drawLine" },
+        ...bonData?.t_bon_dinas_luar_d?.map((dt, idx) => ({
+          "type": "tableCustom",
+          "value": [
+            { "text": idx + 1, "align": "LEFT", "cols": 4 },
+            { "text": dt?.no_buku_order, "align": "LEFT", "cols": 10 },
+            { "text": dt?.keterangan, "align": "CENTER", "cols": 16 },
+            { "text": `Rp ${number_format(parseFloat(dt?.sub_total), 0, ',', '.')}`, "align": "RIGHT", "cols": 16 }
+          ]
+        })),
+        { "type": "drawLine" },
+        { "type": "setTextNormal" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Total Amount :", "align": "LEFT", "cols": 15 },
+            { "text": " ", "align": "CENTER", "cols": 3 },
+            { "text": `Rp ${number_format(parseFloat(bonData?.bdl_total_amt), 0, ',', '.')}`, "align": "LEFT", "cols": 21 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "println", "value": "Mengetahui," },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Karyawan", "align": "CENTER", "cols": 15 },
+            { "text": "Kasir", "align": "CENTER", "cols": 16 },
+            { "text": "Supplier", "align": "CENTER", "cols": 22 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `(${bonData?.nip})`, "align": "CENTER", "cols": 15 },
+            { "text": `(${bonData?.user_print?.name})`, "align": "CENTER", "cols": 16 },
+            { "text": `(${bonData?.nama})`, "align": "CENTER", "cols": 22 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "println", "value": `Dicetak pada tanggal : ${getCurrentDateTime()}` },
+        { "type": "println", "value": `Operator : ${bonData?.user_print?.name}-PC # ${bonData?.user_print?.nip}` },
+        { "type": "println", "value": `Sudah di print : ${bonData?.jumlah_print}x` },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "tableCustom", "value": [
+          { "text": "", "align": "RIGHT", "cols": 16 },
+          { "text": "", "align": "RIGHT", "cols": 13 },
+          { "text": "RANGKAP 1", "align": "RIGHT", "cols": 16 }
+        ] },
+        { "type": "cut" }
+      ]
+    }
+
+    //Fieldata 2
+    fieldData2 = {
+      interface: thermal.interface,
+      data: [
+        { "type": "alignCenter" }, { "type": "setTextDoubleHeight" }, { "type": "println", "value": "BON DINAS LUAR" },
+        { "type": "setTextNormal" }, { "type": "alignLeft" }, { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `Tanggal : ${bonData?.bdl_tanggal}`, "align": "LEFT", "cols": 24 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Tipe Ord", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.deskripsi}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Tipe Kat", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.nama_coa}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. BDL", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.no_bon_dinas_luar}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Karyawan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.nip}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Nama Supp", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.nama}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Catatan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${bonData?.bdl_catatan}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No.", "align": "LEFT", "cols": 4 },
+            { "text": "No Order", "align": "LEFT", "cols": 10 },
+            { "text": "Ket", "align": "CENTER", "cols": 16 },
+            { "text": "Sub Total", "align": "RIGHT", "cols": 16 }
+          ]
+        },
+        { "type": "drawLine" },
+        ...bonData?.t_bon_dinas_luar_d?.map((dt, idx) => ({
+          "type": "tableCustom",
+          "value": [
+            { "text": idx + 1, "align": "LEFT", "cols": 4 },
+            { "text": dt?.no_buku_order, "align": "LEFT", "cols": 10 },
+            { "text": dt?.keterangan, "align": "CENTER", "cols": 16 },
+            { "text": `Rp ${number_format(parseFloat(dt?.sub_total), 0, ',', '.')}`, "align": "RIGHT", "cols": 16 }
+          ]
+        })),
+        { "type": "drawLine" },
+        { "type": "setTextNormal" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Total Amount :", "align": "LEFT", "cols": 15 },
+            { "text": " ", "align": "CENTER", "cols": 3 },
+            { "text": `Rp ${number_format(parseFloat(bonData?.bdl_total_amt), 0, ',', '.')}`, "align": "LEFT", "cols": 21 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "println", "value": "Mengetahui," },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Karyawan", "align": "CENTER", "cols": 15 },
+            { "text": "Kasir", "align": "CENTER", "cols": 16 },
+            { "text": "Supplier", "align": "CENTER", "cols": 22 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `(${bonData?.nip})`, "align": "CENTER", "cols": 15 },
+            { "text": `(${bonData?.user_print?.name})`, "align": "CENTER", "cols": 16 },
+            { "text": `(${bonData?.nama})`, "align": "CENTER", "cols": 22 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "println", "value": `Dicetak pada tanggal : ${getCurrentDateTime()}` },
+        { "type": "println", "value": `Operator : ${bonData?.user_print?.name}-PC # ${bonData?.user_print?.nip}` },
+        { "type": "println", "value": `Sudah di print : ${bonData?.jumlah_print}x` },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "tableCustom", "value": [
+          { "text": "", "align": "RIGHT", "cols": 16 },
+          { "text": "", "align": "RIGHT", "cols": 13 },
+          { "text": "RANGKAP 2", "align": "RIGHT", "cols": 16 }
+        ] },
+        { "type": "cut" }
+      ]
+    }
+
+  } catch (err) {
+    console.error("Error fetching print data:", err);
+    isBadForm.value = true;
+    swal.fire({
+      icon: "error",
+      text: err.message || "Terjadi kesalahan.",
+      allowOutsideClick: false,
+      confirmButtonText: "Kembali",
+    });
+    isRequesting.value = false;
+    return; // Stop execution if fetching data fails
+  }
+
+  try {
+    const printURL = `http://localhost:${thermal.port}${thermal.url}`;
+    const printOptions1 = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fieldData1),
+    };
+
+    const printOptions2 = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fieldData2),
+    };
+
+    // Cetak dua kali
+    const response1 = await fetch(printURL, printOptions1);
+    if (!response1.ok) throw new Error(`Cetakan pertama gagal: ${response1.status}`);
+
+    const response2 = await fetch(printURL, printOptions2);
+    if (!response2.ok) throw new Error(`Cetakan kedua gagal: ${response2.status}`);
+
+    swal.fire({
+      icon: "success",
+      text: "Print berhasil!",
+    });
+
+  } catch (error) {
+    console.error("Print request error:", error);
+    swal.fire({
+      icon: "error",
+      text: "Print gagal, periksa kembali pengaturan atau perangkat Anda!",
+    });
+
   } finally {
     isRequesting.value = false;
   }
@@ -373,7 +840,7 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
-  data: { status: 'DRAFT', no_draft: 'Generate by System',no_bkk: 'Generate by System', tipe_order_id: route.query.tipe_order_id, tipe_kategori_id: route.query.tipe_kategori_id },
+  data: { status: 'DRAFT', no_draft: 'Generate by System', no_bkk: 'Generate by System', tipe_order_id: route.query.tipe_order_id, tipe_kategori_id: route.query.tipe_kategori_id },
   detail: []
 }
 
@@ -421,7 +888,6 @@ onBeforeMount(async () => {
     const editedId = route.params.id;
     const dataURL = trx_id ? `${store.server.url_backend}/operation/${endpointApi}/${trx_id}` : `${store.server.url_backend}/operation/${endpointApi}/${editedId}`;
     isRequesting.value = true;
-    console.log(trx_id);
 
     // FETCH HEADER DATA
     await fetchData(dataURL, { join: true, transform: false }).then((res) => {
@@ -435,21 +901,22 @@ onBeforeMount(async () => {
         data.no_bkk = default_value.data.no_bkk;
         data.status = default_value.data.status;
         data.tanggal = getCurrentDateFormatted();
+        data.jumlah_print = 0;
+        data.is_printed = 0;
       }
     });
     for (let idx = 0; idx < detailArr.length; idx++) {
       detailArr[idx].nomor = detailArr[idx]['m_coa.nomor'];
       detailArr[idx].nama_coa = detailArr[idx]['m_coa.nama_coa'];
-      // const dataURLcontainer = `${store.server.url_backend}/operation/m_coa`;
-      // await fetchData(dataURLcontainer, {
-      //   where: `this.id=${detailArr[idx].m_coa_id}`
-      // }).then(res => {
-      //   if (res.data.length !== 0) {
-      //     detailArr[idx].nomor = res.data[0].nomor;
-      //     detailArr[idx].nama_coa = res.data[0].nama_coa;
-      //   }
-      // })
+      detailArr[idx].no_buku_order = detailArr[idx]['t_buku_order.no_buku_order'];
     }
+
+    // detailArr.value = data.t_bon_dinas_luar_d.map((dt) => ({
+    //   ...dt,
+    //   no_buku_order: dt['t_buku_order.no_buku_order'],
+    // }));
+
+    // console.log(detailArr.value, 'hasil mapping detailArr');
 
   } catch (err) {
     isBadForm.value = true;

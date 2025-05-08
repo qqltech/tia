@@ -71,7 +71,7 @@
         :check="false" type="date" label="Tanggal" placeholder="Pilih Tanggal" />
     </div>
     <div>
-      <FieldPopup label="No. Buku Order" class="w-full !mt-3" valueField="id" displayField="no_buku_order"
+      <FieldPopup :bind="{ readonly: !actionText }" label="No. Buku Order" class="w-full !mt-3" valueField="id" displayField="no_buku_order"
         :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v" @update:valueFull="v=>{
               detailArr = []              
               values['custom_stuple']=(v?v['m_customer.custom_stuple']:null)
@@ -275,7 +275,7 @@
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldX
-                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) }"
+                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText }"
                 class="w-full !mt-3" :value="item.no_container" :errorText="formErrors.no_container?'failed':''"
                 @input="v=>item.no_container=v" :hints="formErrors.no_container" :check="false" label=""
                 placeholder="" />
@@ -308,7 +308,7 @@
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 150px !important;">
               <FieldSelect
-                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:true }"
+                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText, clearable:true }"
                 class="w-full !mt-3" :value="item.depo" @input="v=>{
                     if(v){
                       item.depo=v
@@ -329,7 +329,7 @@
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 150px !important;">
               <FieldSelect
-                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:true }"
+                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true)|| !actionText, clearable:true }"
                 class="w-full !mt-3" :value="item.sektor" @input="v=>{
                     if(v){
                       item.sektor=v
@@ -350,14 +350,14 @@
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 100px !important;">
               <FieldX
-                :bind="{ readonly: true, disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), required: true}"
+                :bind="{ readonly: true, disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText, required: true}"
                 class="w-full !mt-3" :value="item.tanggal_out" :errorText="formErrors.tanggal_out?'failed':''"
                 @input="v=>updateTanggalOut(v, item)" :hints="formErrors.tanggal_out" :check="false" type="date"
                 placeholder="" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldSelect
-                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }"
+                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText, clearable:false }"
                 class="w-full !mt-3" :value="item.waktu_out" @input="v=>{
                     if(v){
                       item.waktu_out=v
@@ -374,7 +374,7 @@
                         where:`this.group='WAKTUOUT'`,
                         join:false
                       }
-                  }" placeholder="" fa-icon="" :check="false" />
+                  }" placeholder="" fa-icon="" :check="true" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldX :bind="{ readonly: !actionText , required: false}" class="w-full !mt-3" :value="item.jam_out"
@@ -383,7 +383,7 @@
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 100px !important;">
               <FieldX
-                :bind="{ readonly: true, disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), required: false, clearable:false}"
+                :bind="{ readonly: true, disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText, required: false, clearable:false}"
                 class="w-full !mt-3" :value="item.tanggal_in" :errorText="formErrors.tanggal_in?'failed':''"
                 @input="v=>updateTanggalIn(v, item)" :hints="formErrors.tanggal_in" :check="false" type="date"
                 placeholder="" fa-icon="" />
@@ -391,7 +391,7 @@
             <td class="p-2 border border-[#CACACA]">
 
               <FieldSelect
-                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:false }"
+                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText, clearable:false }"
                 class="w-full !mt-3" :value="item.waktu_in" @input="v=>{
                     if(v){
                       item.waktu_in=v
@@ -428,14 +428,14 @@
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldNumber
-                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) }"
+                :bind="{ readonly: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText }"
                 class="w-full !mt-3" :value="item.biaya_lain_lain" :errorText="formErrors.biaya_lain_lain?'failed':''"
                 @input="v=>item.biaya_lain_lain=v" :hints="formErrors.biaya_lain_lain" :check="false" label=""
                 placeholder="" />
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 150px !important;">
               <FieldSelect
-                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:true }"
+                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText, clearable:true }"
                 class="w-full !mt-3" :value="item.nama_angkutan_id" @input="v=>{
                     if(v){
                       item.nama_angkutan_id=v
@@ -466,7 +466,7 @@
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldSelect
-                :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) }"
+                :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) || !actionText }"
                 class="w-full !mt-3" :value="item.pelabuhan" @input="v=>item.pelabuhan=v"
                 :errorText="formErrors.pelabuhan?'failed':''" :hints="formErrors.pelabuhan" valueField="id"
                 displayField="kode" :api="{
@@ -488,7 +488,7 @@
 
 
               <FieldSelect
-                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true), clearable:true }"
+                :bind="{ disabled: item.item_no_spk === null ? false : (item.no_spk ? !item.no_spk.includes('Luar') : true) || !actionText, clearable:true }"
                 class="w-full !mt-3" :value="item.angkutan_pelabuhan" @input="v=>{
                     if(v){
                       item.angkutan_pelabuhan=v
@@ -513,7 +513,7 @@
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldX
-                :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) }"
+                :bind="{ readonly: item.item_no_spk === null ? true : (item.no_spk ? item.no_spk.includes('SPK') : true) || !actionText }"
                 type="textarea" class="w-full !mt-3" :value="item.catatan" :errorText="formErrors.catatan?'failed':''"
                 @input="v=>item.catatan=v" :hints="formErrors.catatan" :check="false" label="" placeholder="" />
             </td>

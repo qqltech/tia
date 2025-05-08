@@ -288,7 +288,7 @@
         :errorText="formErrors.tipe?'failed':''" :hints="formErrors.tipe" placeholder="Tipe" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.estimasi_kedatangan"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="data.estimasi_kedatangan"
         :errorText="formErrors.estimasi_kedatangan?'failed':''" @input="v=>data.estimasi_kedatangan=v"
         :hints="formErrors.estimasi_kedatangan" :check="false" type="date" label="Estimasi Kedatangan"
         placeholder="Pilih Estimasi Kedatangan" />
@@ -554,7 +554,7 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               History Stok</td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               Action</td>
           </tr>
@@ -659,7 +659,7 @@
                 </button>
               </div>
             </td>
-            <td class="p-1 border border-[#CACACA]">
+            <td v-show="actionText" class="p-1 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailArr(i)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">

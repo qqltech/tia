@@ -119,7 +119,7 @@
           />
         </div>
         <div class="w-full !mt-3">
-          <FieldX class="!mt-0" :bind="{ readonly: data.tipe !== 'LAIN-LAIN' }" 
+          <FieldX class="!mt-0" :bind="{ readonly: data.tipe !== 'LAIN-LAIN' || !actionText }" 
             :value="data.kode" :errorText="formErrors.kode?'failed':''"
             @input="v=>data.kode=v" :hints="formErrors.kode" 
             placeholder="Prefix" :check="false"
@@ -222,7 +222,7 @@
       <!-- ACTION BUTTON START -->
       <hr>
     <div class="flex flex-row items-center justify-end space-x-2 p-2">
-      <i class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
+      <i v-show="actionText" class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
       <button 
         class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         v-show="actionText" 

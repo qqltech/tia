@@ -271,7 +271,7 @@
           </button>
   </div>
   <div class="<md:col-span-1 col-span-3 p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 " v-if="activeTabIndex === 0">
-    <div class="col-span-3 mt-3">
+    <div v-show="actionText" class="col-span-3 mt-3">
       <ButtonMultiSelect title="Add to list" @add="onDetailAdd" :api="{
               url: `${store.server.url_backend}/operation/m_jasa`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
@@ -335,7 +335,7 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               PPN</td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[2%] border bg-[#f8f8f8] border-[#CACACA]">
               Action</td>
           </tr>
@@ -366,7 +366,7 @@
                   v-model="item.ppn"
                 >
             </td>
-            <td class="p-2 border border-[#CACACA] text-center">
+            <td v-show="actionText" class="p-2 border border-[#CACACA] text-center">
               <button type="button" @click="removeDetail(index)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path id="Vector" d="M14 1H10.5L9.5 0H4.5L3.5 1H0V3H14M1 16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H11C11.5304 18 12.0391 17.7893 12.4142 17.4142C12.7893 17.0391 13 16.5304 13 16V4H1V16Z" fill="#F24E1E"/>
@@ -382,7 +382,7 @@
 
   <!-- START TARIF LAIN-LAIN -->
   <div class="<md:col-span-1 col-span-3 p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 " v-if="activeTabIndex === 1">
-    <div class="!mt-3">
+    <div v-show="actionText" class="!mt-3">
       <button :disabled="!actionText" @click="addDetailLL" type="button" class="bg-blue-600 text-white font-semibold 
             hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
               <icon fa="plus" size="sm mr-0.5"/>
@@ -405,7 +405,7 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Nominal</td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               Action</td>
           </tr>
@@ -437,7 +437,7 @@
                 :errorText="formErrors.nominal?'failed':''" :hints="formErrors.nominal" label=""
                 placeholder="Masukkan Nominal" :check="false" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <td v-show="actionText" class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailLL(i)" :disabled="!actionText">
                       <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -459,9 +459,9 @@
   <!-- END TABLE TARIF LAIN-LAIN -->
 
   <!-- ACTION BUTTON START -->
-  <hr>
+  <hr v-show="actionText">
   <div class="flex flex-row items-center justify-end space-x-2 p-2">
-    <i class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
+    <i v-show="actionText" class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
     <button
         class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         v-show="actionText"

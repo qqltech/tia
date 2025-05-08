@@ -70,7 +70,7 @@
           label="No.Draft" placeholder="No Draft" :check="false" />
       </div>
       <div class="w-full !mt-3">
-        <FieldSelect class="!mt-0" :bind="{ disabled: true, clearable:true  }" :value="values.status"
+        <FieldSelect class="!mt-0" :bind="{ disabled: true, clearable:false  }" :value="values.status"
           :errorText="formErrors.status ? 'failed' : ''" @input="v => values.status = v" :hints="formErrors.status"
           valueField="id" displayField="key" :options="[
               { 'id': 'DRAFT', 'key': 'DRAFT' },
@@ -237,13 +237,13 @@
                 simplest:true,
                 where: `this.group='ISI CONTAINER'`
               }
-          }" placeholder="Isi Kontainer" label="Isi Kontainer" :check="false" />
+          }" placeholder="Isi Kontainer" label="Isi Kontainer" :check="true" />
       </div>
       <div class="w-full !mt-3">
         <FieldX class="!mt-0" :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
           :value="values.lokasi_stuffing" @input="v=>values.lokasi_stuffing=v"
           :errorText="formErrors.lokasi_stuffing?'failed':''" :hints="formErrors.lokasi_stuffing"
-          placeholder="Lokasi Stuffing" type="textarea" :check="false" />
+          placeholder="Lokasi Bongkar" type="textarea" :check="false" />
       </div>
       <div class="w-full !mt-3">
         <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.depo" @input="v=>values.depo=v"

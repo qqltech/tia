@@ -260,7 +260,7 @@ async function buku(no_buku_order) {
       });
     });
     detailArr3.value = Array.from(uniqueItems.values());
-    values.customer = initialValues.m_customer_id || '';
+    
     values.grand_total_nota_rampung = initialValues.grand_total_nota_rampung || '';
 
     if (Array.isArray(initialValues['t_buku_order_d_aju'])) {
@@ -382,13 +382,14 @@ onBeforeMount(async () => {
       for (const key in initialValues) {
         values[key] = initialValues[key];
       }
-      console.log("TARIF TAGIHAN", initialValues.t_tagihan_d_lain)
+      console.log("TARIF TAGIHAN", initialValues)
 
       await new Promise(resolve => setTimeout(resolve, 500));
       await buku({ id: initialValues.no_buku_order });
       detailArr3.value = initialValues.t_tagihan_d_lain || [];
       detailArr1.value = initialValues.t_tagihan_d_tarif.map((dt) => ({
-        ...dt, persentase_konsolidator_jasa: dt['persentase_konsolidator_jasa']
+        ...dt, persentase_konsolidator_jasa: dt['persentase_konsolidator_jasa'],
+        by_tambah: dt['by_tambah']
       }))
 
     } catch (err) {
@@ -572,7 +573,7 @@ const landing = reactive({
       title: "Cetak",
       class: 'bg-gray-600 text-light-100',
       click(row) {
-        window.open(`${store.server.url_backend}/web/report_tagihan?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
+        window.open(`${store.server.url_backend}/web/report_tagihan_k?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
       }
     },
     {

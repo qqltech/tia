@@ -310,7 +310,7 @@
         :errorText="formErrors.longtitude?'failed':''" @input="v=>values.longtitude=v" :hints="formErrors.longtitude"
         :check="false" label="Longtitude" placeholder="Longtitude" />
     </div>
-    <div class="flex space-x-3 !mt-4 text-blue-600">
+    <div v-if="!actionText" class="flex space-x-3 !mt-4 text-blue-600">
       <label class="col-start text-black gap-3" for="CustomStupleBox">Custom Stuple</label>
       <input type="checkbox" id="CustomStupleBox" v-model="values.custom_stuple" style="width: 20px; height: 20px;">
       <label for="CustomStupleBox">Ya</label>
@@ -366,7 +366,7 @@
           :hints="formErrorsNpwp.catatan" type="textarea" placeholder="Masukan Catatan" label="Catatan"
           :check="false" />
         <div class="!mt-2">
-          <button :disabled="!actionText" @click="addDetail" type="button" class="bg-blue-600 text-white font-semibold 
+          <button v-show="actionText" :disabled="!actionText" @click="addDetail" type="button" class="bg-blue-600 text-white font-semibold 
             hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5 mt-3">
               <icon fa="plus" size="sm mr-0.5"/>
               Add to List
@@ -456,7 +456,7 @@
     <!-- START Detail Address Table -->
     <div class="<md:col-span-1 col-span-3 p-2 grid <md:grid-cols-1 grid-cols-3 gap-2 " v-if="activeTabIndex === 1">
       <div class="!mb-2">
-        <button :disabled="!actionText" @click="addDetailAddr" type="button" class="bg-blue-600 text-white font-semibold 
+        <button v-show="actionText" :disabled="!actionText" @click="addDetailAddr" type="button" class="bg-blue-600 text-white font-semibold 
             hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
               <icon fa="plus" size="sm mr-0.5"/>
               Add to List
@@ -688,7 +688,7 @@
                 No data to show
               </td>
             </tr>
-            <tr class=" border-t border-gray-200">
+            <tr v-show="actionText" class=" border-t border-gray-200">
               <td>
                 <button class="w-full flex justify-center items-center text-blue-600 font-semibold transition-transform 
                     duration-300 transform 
@@ -705,9 +705,9 @@
     <!-- END COLUMN -->
     <!-- ACTION BUTTON START -->
   </div>
-  <hr>
+  <hr v-show="actionText">
   <div class="flex flex-row items-center justify-end space-x-2 p-2">
-    <i class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
+    <i v-show="actionText" class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
     <button
         class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         v-show="actionText"

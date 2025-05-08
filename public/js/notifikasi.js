@@ -66,7 +66,9 @@ async function loadTable() {
         dataLanding.items.push({
           'active' : active,
           'name' : item,
-          'data' : data[item]
+          'data' : data[item],
+          'selectedIds': [],
+          'trx_table': data[item][0]?.trx_table
         })
         counter++
       }
@@ -84,6 +86,93 @@ async function loadTable() {
     }
     isRequesting.value = false
     // console.log(dataLanding.items)
+}
+
+function toggleSelectAll(item) {
+  if (item.selectedIds.length === item.data.length) {
+    item.selectedIds = [];
+  } else {
+    item.selectedIds = item.data.map(d => ({
+      id: d.id,
+      trx_table: item.trx_table
+    }))
+  }
+}
+
+function toggleSelectRow(item, id) {
+  const index = item.selectedIds.findIndex(d => d.id === id);
+  if (index > -1) {
+    item.selectedIds.splice(index, 1);
+  } else {
+    item.selectedIds.push({
+      id,
+      trx_table: item.trx_table
+    });
+  }
+}
+
+
+async function approveSelected(item,status) {
+  swal.fire({
+    icon: 'warning',
+    text: status == 'APPROVED' ? 'Approve?' : status == 'REJECTED' ? 'Reject?' : 'Revise?',
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+
+    showDenyButton: true
+  }).then(async (res) => {
+    if (res.isConfirmed) {
+      if (!item.selectedIds?.length) return;
+
+      const trxTable = item.selectedIds[0]?.trx_table;
+      if (!trxTable) return;
+
+      const payload = item.selectedIds.map(d => ({ ...d, type:status, note:'aaaa' }));
+      try {
+        
+        const dataURL = `${store.server.url_backend}/operation/${trxTable}/multi_progress`
+        isRequesting.value = true
+        const res = await fetch(dataURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'Application/json',
+            Authorization: `${store.user.token_type} ${store.user.token}`
+          },
+          body: JSON.stringify({ items: payload })
+        });
+
+        if (!res.ok) {
+          if ([400, 422, 500].includes(res.status)) {
+            const responseJson = await res.json()
+            // formErrors.value = responseJson.errors || {}
+            throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to Approved")
+          } else {
+            throw ("Failed when trying to Approved")
+          }
+        }
+        const responseJson = await res.json()
+        swal.fire({
+          icon: 'success',
+          text: responseJson.message
+        })
+
+        item.selectedIds = [];
+        await loadTable()
+
+      } catch (err) {
+        isBadForm.value = true
+        swal.fire({
+          icon: 'error',
+          iconColor: '#1469AE',
+          confirmButtonColor: '#1469AE',
+          text: err
+        })
+      }
+      item.selectedIds = [];
+      isRequesting.value = false;
+      }
+  })
+  
 }
 
 

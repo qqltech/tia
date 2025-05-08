@@ -219,7 +219,7 @@
         <label class="flex-auto items-center" for="kenaPajakCheckbox">Ya</label>
       </div>
 
-      <FieldSelect v-if="values.kena_pajak" :bind="{ disabled: !values.kena_pajak, readonly: !actionText}" class="flex-auto w-full !mt-3"
+      <FieldSelect v-if="values.kena_pajak" :bind="{ disabled: !values.kena_pajak || !actionText, readonly: !actionText}" class="flex-auto w-full !mt-3"
         :value="values.jenis_pajak" :errorText="formErrors.jenis_pajak?'failed' :''" @input="v=>values.jenis_pajak=v"
         :hints="formErrors.jenis_pajak" :check="false" valueField="id" displayField="deskripsi"
         placeholder="Jenis Pajak" label="Jenis Pajak" :check="false" @update:valueFull="(data)=>{

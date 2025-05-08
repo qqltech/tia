@@ -31,6 +31,13 @@ class t_bkm_non_order extends \App\Models\BasicModels\t_bkm_non_order
         ];
     }
 
+     public function custom_print()
+    {
+        $id = request("id");
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        return ["success" => true];
+    }
+
     public function custom_post()
     {
         $id = request("id");

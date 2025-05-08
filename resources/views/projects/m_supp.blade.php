@@ -64,7 +64,7 @@
       <div class="grid <md:grid-cols-1 grid-cols-3 gap-2">
         <!-- START COLUMN -->
         <div class="flex">
-          <FieldX :bind="{ readonly: true }" class="w-full  !mt-3" :value="values.kode"
+          <FieldX :bind="{ readonly: !actionText }" class="w-full  !mt-3" :value="values.kode"
             :errorText="formErrors.kode?'failed':''" @input="v=>values.kode=v" :hints="formErrors.kode" :check="false"
             label="Kode" placeholder="kode" />
         </div>

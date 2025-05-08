@@ -67,14 +67,10 @@
         :hints="formErrors.no_nota_rampung" label="No. Nota Rampung" placeholder="No. Nota Rampung" :check="false" />
     </div>
     <div>
-      <FieldSelect
-      class="w-full !mt-3"
-        :bind="{ disabled: !actionText, clearable:false, readonly:!actionText }"
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false, readonly:!actionText }"
         :value="values.tipe_nota_rampung" @input="v=>values.tipe_nota_rampung=v"
-        :errorText="formErrors.tipe_nota_rampung?'failed':''" 
-        :hints="formErrors.tipe_nota_rampung"
-        valueField="id" displayField="deskripsi"
-        :api="{
+        :errorText="formErrors.tipe_nota_rampung?'failed':''" :hints="formErrors.tipe_nota_rampung" valueField="id"
+        displayField="deskripsi" :api="{
             url: `${store.server.url_backend}/operation/m_general`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
@@ -83,14 +79,13 @@
               join:false,
               where: `this.group = 'TIPE TARIF NOTA RAMPUNG' AND this.is_active = 'true' `,
             }
-        }"
-        placeholder="Tipe Nota Rampung" fa-icon="" :check="false"
-      />
-      
+        }" placeholder="Tipe Nota Rampung" fa-icon="" :check="false" />
+
     </div>
     <div>
-      <FieldPopup label="No. Buku Order" class="w-full !mt-3" valueField="id" displayField="no_buku_order"
-        :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v" @update:valueFull="(data)=>{
+      <FieldPopup :bind="{ readonly: !actionText }" label="No. Buku Order" class="w-full !mt-3" valueField="id"
+        displayField="no_buku_order" :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v"
+        @update:valueFull="(data)=>{
         
         //values.jenis_option = data.t_buku_order_d_npwp.map(res => (res.id));
         $log(data)
@@ -234,22 +229,18 @@
 
     <!-- Buat filedUpload Foto disini  -->
     <div>
-     
 
-      <FieldUpload
-        class="col-span-9 w-full !mt-3"
-        :value="values.foto_scn" @input="(v)=>values.foto_scn=v" :maxSize="25"
-        :reducerDisplay="val=>!val?null:val.split(':::')[val.split(':::').length-1]"
-        :api="{
+
+      <FieldUpload :bind="{ readonly: !actionText }" class="col-span-9 w-full !mt-3" :value="values.foto_scn"
+        @input="(v)=>values.foto_scn=v" :maxSize="25"
+        :reducerDisplay="val=>!val?null:val.split(':::')[val.split(':::').length-1]" :api="{
           url: `${store.server.url_backend}/operation/t_nota_rampung/upload`,
           headers: { Authorization: `${store.user.token_type} ${store.user.token}`},
           params: { field: 'foto_scn' },
           onsuccess: response=>response,
           onerror:(error)=>{},
-         }"
-         :hints="formErrors.foto_scn" placeholder="Upload Foto Scan/Masukan File" fa-icon="upload"
-         :accept="acceptType('foto_scn')" :check="false"  
-      />
+         }" :hints="formErrors.foto_scn" placeholder="Upload Foto Scan/Masukan File" fa-icon="upload"
+        :accept="acceptType('foto_scn')" :check="false" />
       <!-- <div v-if="previewSrc" class="mt-4">
         <img :src="previewSrc" alt="Foto Preview" class="w-full h-auto rounded" />
       </div>  -->
@@ -295,7 +286,7 @@
     <div class="overflow-scroll lg:overflow-visible <md:col-span-1 col-span-3">
       <h1 class="text-3xl"> Nota Rampung Detail </h1>
       <br>
-      <ButtonMultiSelect title="Add to list" @add="onDetailAdd" :api="{
+      <ButtonMultiSelect v-show="actionText" title="Add to list" @add="onDetailAdd" :api="{
               url: `${store.server.url_backend}/operation/t_buku_order/${values.t_buku_order_id?? 0}/t_buku_order_d_npwp`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: { 
@@ -360,7 +351,7 @@
         <table class="w-[400%] table-auto border border-[#CACACA]">
           <thead>
             <tr class="border">
-              <td
+              <td v-show="actionText"
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[1%]">
                 #
               </td>
@@ -377,7 +368,8 @@
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Kontainer
               </td>
-              <td class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[4%]">
+              <td
+                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[4%]">
                 Sektor
               </td>
               <td
@@ -466,13 +458,13 @@
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Catatan
               </td>
-              
+
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, i) in detailArr" :key="item.id" class="border-t" v-if="detailArr.length > 0">
 
-              <td class="p-2 border border-[#CACACA]">
+              <td v-show="actionText" class="p-2 border border-[#CACACA]">
                 <div class="flex justify-center">
                   <button type="button" @click="removeDetail(values)" :disabled="!actionText">
                     <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -624,7 +616,7 @@
                   :hints="formErrors.catatan" placeholder="Catatan" label="" :check="false" />
               </td>
 
-              
+
             </tr>
             <tr v-else class="text-center">
               <td colspan="25" class="py-[20px]">

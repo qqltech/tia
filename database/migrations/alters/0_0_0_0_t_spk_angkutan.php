@@ -13,7 +13,7 @@ class tspkangkutan extends Migration
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
             // $table->renameColumn('sektor','sektor1');
-            // $table->dropColumn(['waktu_out','waktu_in' ]);
+            // $table->dropColumn(['isPrinted']);
             // $table->string('no_spk', 50)->nullable();
             // $table->integer('tipe_spk')->comment('{"src":"set.m_general.id"}')->nullable()->change();
             // $table->integer('depo')->comment('{"src":"set.m_general.id"}')->nullable()->change();
@@ -53,8 +53,11 @@ class tspkangkutan extends Migration
             // $table->string('ke', 100)->nullable();
             // $table->bigInteger('nama_customer')->nullable()->comment('{"src":"m_customer.id"}');
             // $table->bigInteger('nama_customer_2')->nullable()->comment('{"src":"m_customer.id"}');
-            $table->bigInteger('waktu_out')->comment('{"src":"set.m_general.id"}')->nullable();
-            $table->bigInteger('waktu_in')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->bigInteger('waktu_out')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->bigInteger('waktu_in')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->bigInteger('jumlah_print')->default(0)->nullable();
+            // $table->boolean('is_printed')->default(0)->nullable();
+            // $table->renameColumn('isPrinted','is_printed');
             
         });
 

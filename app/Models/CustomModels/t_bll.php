@@ -119,7 +119,9 @@ class t_bll extends \App\Models\BasicModels\t_bll
                     $data->update([
                         "status" => $req->type
                     ]);
-                   
+                    if($req->type == 'APPROVED'){
+                        $this->autoJurnal($data->id);
+                    }
                 } else {
                     $data->update([
                         "status" => "IN APPROVAL",
@@ -151,4 +153,55 @@ class t_bll extends \App\Models\BasicModels\t_bll
         $data = $this->approval->approvalLog($conf);
         return response($data);
     }
+
+
+    private function autoJurnal($id){
+        $trx = \DB::table('t_bll')->find($id);
+        if (!$trx) return ['status' => true];
+
+        $getdebet = \DB::select("
+            SELECT b.m_coa_id, SUM(b.nominal) as amount
+            FROM t_bll_d b
+            WHERE b.t_bll_id = ?
+            GROUP BY b.m_coa_id
+        ", [$id]);
+
+        $seq = 0;
+        $debetArr = [];
+        $amount = 0;
+
+        foreach($getdebet as $dbt){
+            $debetArr[] = (object) [
+                "m_coa_id" => $dbt->m_coa_id,
+                "seq" => ++$seq,
+                "debet" => (float) $dbt->amount,
+                "desc" => $trx->keterangan
+            ];
+            $amount += (float) $dbt->amount;
+        }
+
+        $creditArr = [];
+        $credit = new \stdClass();
+        $credit->m_coa_id = $trx->m_coa_id;
+        $credit->seq = ++$seq;
+        $credit->credit = $amount;
+        $credit->desc = $trx->keterangan;
+        $creditArr[] = $credit;
+
+        $obj = [
+            'date'      => $trx->tanggal,
+            'form'      => "BLL",
+            'ref_table' => 't_bll',
+            'ref_id'    => $trx->id,
+            'ref_no'    => $trx->no_bll,
+            'desc'      => $trx->keterangan,
+            'detail'    => array_merge($debetArr, $creditArr)
+        ];
+
+        $r_gl = new \App\Models\CustomModels\r_gl;
+        $data = $r_gl->autoJournal($obj);
+
+        return ['status' => true];
+    }
+
 }

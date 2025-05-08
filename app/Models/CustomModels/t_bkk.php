@@ -3,7 +3,7 @@
 namespace App\Models\CustomModels;
 
 class t_bkk extends \App\Models\BasicModels\t_bkk
-{    
+{
     private $helper;
     private $approval;
     public function __construct()
@@ -12,11 +12,13 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         $this->helper = getCore("Helper");
         $this->approval = getCore("Approval");
     }
-    
-    public $fileColumns    = [ /*file_column*/ ];
 
-    public $createAdditionalData = ["creator_id"=>"auth:id"];
-    public $updateAdditionalData = ["last_editor_id"=>"auth:id"];
+    public $fileColumns = [
+        /*file_column*/
+    ];
+
+    public $createAdditionalData = ["creator_id" => "auth:id"];
+    public $updateAdditionalData = ["last_editor_id" => "auth:id"];
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
@@ -31,6 +33,13 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
             "data" => $newArrayData,
             // "errors" => ['error1']
         ];
+    }
+
+    public function custom_print()
+    {
+        $id = request("id");
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        return ["success" => true];
     }
 
     // public function updateBefore($model, $arrayData, $metaData, $id = null)
@@ -50,7 +59,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
     {
         $id = request("id");
         $status = $this->where("id", $id)->update(["status" => "POST"]);
-        return ["success" => true, "message"=> "Post Data Berhasil"];
+        return ["success" => true, "message" => "Post Data Berhasil"];
     }
 
     public function custom_send_approval()
@@ -81,7 +90,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
     private function createAppTicket($id)
     {
         $tempId = $id;
-        $trx = \DB::table('t_bkk')->find($tempId);
+        $trx = \DB::table("t_bkk")->find($tempId);
         $conf = [
             "app_name" => "APPROVAL BKK",
             "trx_id" => $trx->id,
@@ -118,12 +127,11 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
                 $data = $this->find($app->trx_id);
                 if ($app->finish) {
                     $data->update([
-                        "status" => $req->type
+                        "status" => $req->type,
                     ]);
-                    if($req->type == 'APPROVED'){
+                    if ($req->type == "APPROVED") {
                         $this->autoJurnal($data->id);
                     }
-                   
                 } else {
                     $data->update([
                         "status" => "IN APPROVAL",
@@ -155,29 +163,34 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         $data = $this->approval->approvalLog($conf);
         return response($data);
     }
-    
-    
 
-    private function autoJurnal($id){
+    private function autoJurnal($id)
+    {
         // debet = detil, credit = header.
-        $trx = \DB::selectOne('select a.* from t_bkk a where a.id = ?', [ $id ]);
-        if(!$trx)  return ['status'=>true];
+        $trx = \DB::selectOne("select a.* from t_bkk a where a.id = ?", [$id]);
+        
+        if (!$trx) {
+            return ["status" => true];
+        }
 
-        $getdebet = \DB::select("select cbkd.m_coa_id, sum(cbkd.nominal) amount from t_bkk cbk
+        $getdebet = \DB::select(
+            "select cbkd.m_coa_id, sum(cbkd.nominal) amount from t_bkk cbk
         join t_bkk_d cbkd on cbkd.t_bkk_id = cbk.id
         where cbk.id = ?
-        group by cbkd.m_coa_id", [$id]);
+        group by cbkd.m_coa_id",
+            [$id]
+        );
 
         $seq = 0;
         $debetArr = [];
         $amount = 0;
 
-        foreach($getdebet as $dbt){
+        foreach ($getdebet as $dbt) {
             $debetArr[] = (object) [
                 "m_coa_id" => $dbt->m_coa_id,
-                "seq" => $seq+1,
+                "seq" => $seq + 1,
                 "debet" => (float) $dbt->amount,
-                "desc" => $trx->keterangan
+                "desc" => $trx->keterangan,
             ];
             $amount += (float) $dbt->amount;
             $seq++;
@@ -188,23 +201,23 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         $credit = new \stdClass();
         $credit->m_coa_id = $trx->m_akun_pembayaran_id;
         $credit->seq = 1;
-        $credit->credit = ((float) @$amount ?? 0);
+        $credit->credit = (float) @$amount ?? 0;
         $credit->desc = $trx->keterangan;
         $creditArr[] = $credit;
 
         $obj = [
-            'date'              => $trx->tanggal,
-            'form'              => "BKK (Non Kasbon)",
-            'ref_table'         => 't_bkk',
-            'ref_id'            => $trx->id,
-            'ref_no'            => $trx->no_bkk,
-            'desc'              => $trx->keterangan,
-            'detail'            => array_merge($debetArr, $creditArr)
+            "date" => $trx->tanggal,
+            "form" => "BKK (Non Kasbon)",
+            "ref_table" => "t_bkk",
+            "ref_id" => $trx->id,
+            "ref_no" => $trx->no_bkk,
+            "desc" => $trx->keterangan,
+            "detail" => array_merge($debetArr, $creditArr),
         ];
 
-        $r_gl = new r_gl;
+        $r_gl = new r_gl();
         $data = $r_gl->autoJournal($obj);
 
-        return ['status'=>true];
+        return ["status" => true];
     }
 }

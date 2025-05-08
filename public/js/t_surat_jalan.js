@@ -103,12 +103,14 @@ onBeforeMount(async () => {
         if (!res.ok) throw new Error("Failed when trying to read data")
         const resultJson = await res.json()
         initialValues = resultJson.data
-        
-          if (actionText.value === 'Copy') {
-            initialValues.status = 'DRAFT';
-            initialValues.no_surat_jalan = null;
-            initialValues.no_draft = null;
-          }
+
+        if (actionText.value === 'Copy') {
+          initialValues.status = 'DRAFT';
+          initialValues.no_surat_jalan = null;
+          initialValues.no_draft = null;
+          initialValues.jumlah_print = 0;
+          initialValues.is_printed = 0;
+        }
 
         if (initialValues.status !== 'DRAFT') {
           actionText.value = false
@@ -233,17 +235,557 @@ async function onSave(isPost = false) {
 }
 
 //  @else----------------------- LANDING
-// function openModal(id, statusProf = null) {
-//   dataLog.items = []
-//   modalOpen.value = true
-//   loadLog(id,statusProf)
-//   console.log(modalOpen.value)
-// }
 
-// function closeModal(i) {
-//   dataLog.items = []
-//   modalOpen.value = false
-// }
+const defaultThermal = reactive({});
+const thermal = reactive({});
+
+onBeforeMount(async () => {
+
+  const initThermal = {
+    interface: 'POS-80',
+    port: '9000',
+    url: '/print/custom'
+  }
+
+  for (const key in initThermal) {
+    defaultThermal[key] = initThermal[key]
+    thermal[key] = initThermal[key]
+  }
+
+  if (localStorage.getItem('thermal_interface')) {
+    thermal.interface = localStorage.getItem('thermal_interface')
+  }
+  if (localStorage.getItem('thermal_port')) {
+    thermal.port = localStorage.getItem('thermal_port')
+  }
+})
+
+function terbilang(number) {
+  const huruf = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan'];
+  let temp = '';
+
+  if (number < 12) {
+    temp = huruf[number];
+  } else if (number < 20) {
+    temp = terbilang(number - 10) + ' Belas';
+  } else if (number < 100) {
+    temp = terbilang(Math.floor(number / 10)) + ' Puluh ' + terbilang(number % 10);
+  } else if (number < 200) {
+    temp = 'Seratus ' + terbilang(number - 100);
+  } else if (number < 1000) {
+    temp = terbilang(Math.floor(number / 100)) + ' Ratus ' + terbilang(number % 100);
+  } else if (number < 2000) {
+    temp = 'Seribu ' + terbilang(number - 1000);
+  } else if (number < 1000000) {
+    temp = terbilang(Math.floor(number / 1000)) + ' Ribu ' + terbilang(number % 1000);
+  } else if (number < 1000000000) {
+    temp = terbilang(Math.floor(number / 1000000)) + ' Juta ' + terbilang(number % 1000000);
+  }
+
+  return temp.trim();
+}
+
+function getCurrentDateTime() {
+  const now = new Date();
+
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Januari = 0
+  const year = now.getFullYear();
+
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+}
+
+function number_format(number, decimals = 0, decPoint = ',', thousandsSep = '.') {
+  if (isNaN(number) || number === null) return '0';
+
+  const fixedNumber = Number(number).toFixed(decimals);
+  const parts = fixedNumber.split('.');
+
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep);
+
+  return parts.length > 1 ? parts.join(decPoint) : parts[0];
+}
+
+async function tesPrint(surat_jalan_id) {
+  isRequesting.value = true;
+
+  let surat_jalan = [];
+  let fieldData1 = null;
+  let fieldData2 = null; // Ensure fieldData is initialized properly
+
+  try {
+    
+    // Fetch print data
+    const URLdata = `${store.server.url_backend}/operation/t_surat_jalan/updatePrintData`;
+    const parameter = {
+      join: true,
+      transform: true,
+      t_sj_id: `${surat_jalan_id}`,
+    };
+    const fixParams = new URLSearchParams(parameter);
+
+    const response = await fetch(`${URLdata}?${fixParams}`, {
+      method: "GET", // Explicitly define method
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Gagal saat mencoba membaca data");
+
+    // Fetch print data
+    const dataURL = `${store.server.url_backend}/operation/t_surat_jalan/getPrintData`;
+    const params = {
+      join: true,
+      transform: true,
+      t_sj_id: `${surat_jalan_id}`,
+    };
+    const fixedParams = new URLSearchParams(params);
+
+    const res = await fetch(`${dataURL}?${fixedParams}`, {
+      method: "GET", // Explicitly define method
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Gagal saat mencoba membaca data");
+
+    const resultJson = await res.json();
+    surat_jalan = resultJson;
+
+    // Prepare fieldData after fetching surat_jalan
+    const suratJalanData = surat_jalan?.data[0] ?? {};
+
+    // Fieldata 1
+    fieldData1 = {
+      interface: thermal.interface,
+      data: [
+        { "type": "alignCenter" }, { "type": "setTextDoubleHeight" }, { "type": "println", "value": "SURAT JALAN" },
+        { "type": "setTextNormal" }, { "type": "alignLeft" }, { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `Tgl SJ : ${suratJalanData?.tanggal}`, "align": "LEFT", "cols": 20 },
+            { "text": `Tgl Berangkat : ${suratJalanData?.tanggal_berangkat}`, "align": "RIGHT", "cols": 28 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. Order", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_buku_order}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. SJ", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_surat_jalan}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_container}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        //Space
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "", "align": "LEFT", "cols": 9 },
+            { "text": "", "align": "CENTER", "cols": 3 },
+            { "text": "", "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Jns Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.jenis_container_kode}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Tipe SJ", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.tipe_order_sj}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Pelabuhan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.pelabuhan_kode}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Kapal", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.nama_kapal}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Isi Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.jenis_sj_deskripsi}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Uk. Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.ukuran_container}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. Seal", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_seal}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        //Space
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "", "align": "LEFT", "cols": 9 },
+            { "text": "", "align": "CENTER", "cols": 3 },
+            { "text": "", "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Lok Bngkr", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.lokasi_stuffing}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Depo", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.depo_kode}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Temp Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": ``, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "NW", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.nw}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "GW", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.gw}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Catatan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.catatan}`, "align": "LEFT", "cols": 36 },
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "println", "value": "Mengetahui," },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Penerima", "align": "CENTER", "cols": 14 },
+            { "text": "Pembawa", "align": "CENTER", "cols": 18 },
+            { "text": "Pengirim", "align": "CENTER", "cols": 17 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "(           )", "align": "CENTER", "cols": 15 },
+            { "text": "(           )", "align": "CENTER", "cols": 16 },
+            { "text": "(           )", "align": "CENTER", "cols": 20 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "newLine" },
+        { "type": "println", "value": `Dicetak pada tanggal : ${getCurrentDateTime()}` },
+        { "type": "println", "value": `Operator : ${surat_jalan?.user_print?.name}-PC # ${surat_jalan?.user_print?.nip}` },
+        { "type": "println", "value": `Sudah di print : ${suratJalanData?.jumlah_print}x` },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "tableCustom", "value": [
+          { "text": "", "align": "RIGHT", "cols": 16 },
+          { "text": "", "align": "RIGHT", "cols": 13 },
+          { "text": "RANGKAP 1", "align": "RIGHT", "cols": 16 }
+        ] },
+        { "type": "cut" }
+      ]
+    }
+
+    // Fieldata 2
+    fieldData2 = {
+      interface: thermal.interface,
+      data: [
+        { "type": "alignCenter" }, { "type": "setTextDoubleHeight" }, { "type": "println", "value": "SURAT JALAN" },
+        { "type": "setTextNormal" }, { "type": "alignLeft" }, { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": `Tgl SJ : ${suratJalanData?.tanggal}`, "align": "LEFT", "cols": 20 },
+            { "text": `Tgl Berangkat : ${suratJalanData?.tanggal_berangkat}`, "align": "RIGHT", "cols": 28 }
+          ]
+        },
+        { "type": "drawLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. Order", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_buku_order}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. SJ", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_surat_jalan}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_container}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        //Space
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "", "align": "LEFT", "cols": 9 },
+            { "text": "", "align": "CENTER", "cols": 3 },
+            { "text": "", "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Jns Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.jenis_container_kode}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Tipe SJ", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.tipe_order_sj}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Pelabuhan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.pelabuhan_kode}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Kapal", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.nama_kapal}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Isi Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.jenis_sj_deskripsi}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "Uk. Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.ukuran_container}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "No. Seal", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.no_seal}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        //Space
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "", "align": "LEFT", "cols": 9 },
+            { "text": "", "align": "CENTER", "cols": 3 },
+            { "text": "", "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Lok Stuff", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.lokasi_stuffing}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Depo", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.depo_kode}`, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Temp Cont", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": ``, "align": "LEFT", "cols": 36 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "NW", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.nw}`, "align": "LEFT", "cols": 11 },
+            { "text": "", "align": "CENTER", "cols": 1 },
+            { "text": "GW", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.gw}`, "align": "LEFT", "cols": 12 }
+          ]
+        },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Catatan", "align": "LEFT", "cols": 9 },
+            { "text": " : ", "align": "CENTER", "cols": 3 },
+            { "text": `${suratJalanData?.catatan}`, "align": "LEFT", "cols": 36 },
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "println", "value": "Mengetahui," },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "Penerima", "align": "CENTER", "cols": 14 },
+            { "text": "Pembawa", "align": "CENTER", "cols": 18 },
+            { "text": "Pengirim", "align": "CENTER", "cols": 17 }
+          ]
+        },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        {
+          "type": "tableCustom",
+          "value": [
+            { "text": "(           )", "align": "CENTER", "cols": 15 },
+            { "text": "(           )", "align": "CENTER", "cols": 16 },
+            { "text": "(           )", "align": "CENTER", "cols": 20 }
+          ]
+        },
+        { "type": "drawLine" },
+        { "type": "newLine" },
+        { "type": "println", "value": `Dicetak pada tanggal : ${getCurrentDateTime()}` },
+        { "type": "println", "value": `Operator : ${surat_jalan?.user_print?.name}-PC # ${surat_jalan?.user_print?.nip}` },
+        { "type": "println", "value": `Sudah di print : ${suratJalanData?.jumlah_print}x` },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "newLine" },
+        { "type": "tableCustom", "value": [
+          { "text": "", "align": "RIGHT", "cols": 16 },
+          { "text": "", "align": "RIGHT", "cols": 13 },
+          { "text": "RANGKAP 2", "align": "RIGHT", "cols": 16 }
+        ] },
+        { "type": "cut" }
+      ]
+    }
+
+  } catch (err) {
+    console.error("Error fetching print data:", err);
+    isBadForm.value = true;
+    swal.fire({
+      icon: "error",
+      text: err.message || "Terjadi kesalahan.",
+      allowOutsideClick: false,
+      confirmButtonText: "Kembali",
+    });
+    isRequesting.value = false;
+    return; // Stop execution if fetching data fails
+  }
+
+  try {
+    const printURL = `http://localhost:${thermal.port}${thermal.url}`;
+    const printOptions1 = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fieldData1),
+    };
+    const printOptions2 = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fieldData2),
+    };
+
+    // Cetak dua kali
+    const response1 = await fetch(printURL, printOptions1);
+    if (!response1.ok) throw new Error(`Cetakan pertama gagal: ${response1.status}`);
+
+    const response2 = await fetch(printURL, printOptions2);
+    if (!response2.ok) throw new Error(`Cetakan kedua gagal: ${response2.status}`);
+
+    swal.fire({
+      icon: "success",
+      text: "Print berhasil!",
+    });
+
+  } catch (error) {
+    console.error("Print request error:", error);
+    swal.fire({
+      icon: "error",
+      text: "Print gagal, periksa kembali pengaturan atau perangkat Anda!",
+    });
+
+  } finally {
+    isRequesting.value = false;
+  }
+}
 
 const landing = reactive({
   actions: [
@@ -306,8 +848,8 @@ const landing = reactive({
       }
     },
     {
-      title: 'Edit', 
-      icon: 'edit', 
+      title: 'Edit',
+      icon: 'edit',
       class: 'bg-blue-600 text-light-100',
       click: row => router.push(`${route.path}/${row.id}?action=EditBerkas&${tsId}`),
       show: (row) => row.status == 'PRINTED' && row.is_edit_berkas != true
@@ -422,6 +964,16 @@ const landing = reactive({
         }
       }
     },
+    {
+      icon: 'rocket',
+      title: "Cetak",
+      class: 'bg-violet-600 text-light-100',
+      show: (row) => row['status'] == 'APPROVED' || row['status'] == 'PRINTED',
+      async click(row) {
+        console.log(row.id, 'id sj print')
+        await tesPrint(row.id);
+      }
+    },
   ],
   api: {
     url: `${store.server.url_backend}/operation${endpointApi}`,
@@ -498,7 +1050,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Jenis Barang',
@@ -507,8 +1059,18 @@ const landing = reactive({
     sortable: true,
     filter: 'ColFilter',
     resizable: true,
-    flex: 1,
+    flex: 1.5,
     cellClass: ['border-r', '!border-gray-200']
+  },
+  {
+    headerName: 'Tipe SJ',
+    field: 'tipe_surat_jalan',
+    filter: true,
+    sortable: true,
+    filter: 'ColFilter',
+    resizable: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Catatan',

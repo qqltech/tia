@@ -14,7 +14,8 @@ class tbkmnonorder extends Migration
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
             // $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable()->change();
-            $table->string('nama_penyetor', 100)->nullable();
+            // $table->string('nama_penyetor', 100)->nullable();
+            // $table->renameColumn('nama_penyetor','nama_penerima');
         });
     }
 }

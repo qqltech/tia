@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Cores;
 
 use App\Models\CustomModels\m_approval;
@@ -19,7 +20,7 @@ class Approval
     const STATUS_REJECTED = "REJECTED";
     const STATUS_REVISED = "REVISED";
 
-        function __construct()
+    function __construct()
     {
         $this->timestamp = \Carbon\Carbon::now();
     }
@@ -75,8 +76,8 @@ class Approval
                     )
                 end
             ")->exists();
-            
-        if(!$check){
+
+        if (!$check) {
             $next = false;
             $kode = "0000002, $text";
         }
@@ -141,15 +142,15 @@ class Approval
 
         $this->checkUserCanCreateTicket($m_approval);
 
-        $check_approve_atasan = m_approval_det::join('set.m_role','m_role.id','m_approval_det.m_role_id')
-            ->where('m_approval_id',$m_approval->id)
+        $check_approve_atasan = m_approval_det::join('set.m_role', 'm_role.id', 'm_approval_det.m_role_id')
+            ->where('m_approval_id', $m_approval->id)
             ->where('level', 2)
             ->first();
 
-        
-        if(strtolower(@$check_approve_atasan->name) == 'atasan'){
-            $atasan_id = m_kary::join('default_users as u','u.m_kary_id','m_kary.id')->where('u.id',auth()->user()->id)->pluck('atasan_id')->first() ?? 0;
-            $user_atasan_id = default_users::whereRaw("default_users.m_kary_id = $atasan_id")->orderBy('id','asc')->pluck('id')->first();
+
+        if (strtolower(@$check_approve_atasan->name) == 'atasan') {
+            $atasan_id = m_kary::join('default_users as u', 'u.m_kary_id', 'm_kary.id')->where('u.id', auth()->user()->id)->pluck('atasan_id')->first() ?? 0;
+            $user_atasan_id = default_users::whereRaw("default_users.m_kary_id = $atasan_id")->orderBy('id', 'asc')->pluck('id')->first();
         }
 
         $header = [
@@ -192,13 +193,13 @@ class Approval
                 ]);
             }
 
-            
+
             // insert log pengajuan
             $fixedConfigPengajuan = "select d.* from set.m_approval_det d 
                 join set.m_approval a on a.id = d.m_approval_id 
                 where a.id= ? AND tipe = 'MENGAJUKAN' ORDER BY d.level ASC";
-            $pengajuan = DB::select($fixedConfigPengajuan, [ $m_approval->m_approval_id ]);
-            if(count($pengajuan)){
+            $pengajuan = DB::select($fixedConfigPengajuan, [$m_approval->m_approval_id]);
+            if (count($pengajuan)) {
                 $log_insert = generate_approval_log::create([
                     'nomor'                     => $g_app->nomor,
                     'generate_approval_id'      => $g_app->id,
@@ -215,16 +216,16 @@ class Approval
                     'creator_id'                => auth()->user()->id,
                     'action_at'                 => $this->timestamp,
                     'action_note'               => ''
-                ]); 
+                ]);
             }
 
             //update last approver by detail approval
-            $last_det_approver = generate_approval_det::where('generate_approval_id',$g_app->id)
-                ->where('tipe','MENYETUJUI')
-                ->where('is_done',false)
-                ->orderBy('id','asc')->pluck('id')->first();
-            generate_approval::where('id',$g_app->id)->update([
-                'last_approve_det_id' => $last_det_approver 
+            $last_det_approver = generate_approval_det::where('generate_approval_id', $g_app->id)
+                ->where('tipe', 'MENYETUJUI')
+                ->where('is_done', false)
+                ->orderBy('id', 'asc')->pluck('id')->first();
+            generate_approval::where('id', $g_app->id)->update([
+                'last_approve_det_id' => $last_det_approver
             ]);
 
             DB::commit();
@@ -247,7 +248,7 @@ class Approval
         $app_note = $config["app_note"];
 
         $generate_approval = generate_approval::where('id', $app_id)->first();
-        
+
         if (!$generate_approval) {
             trigger_error("Maaf data approval tidak ditemukan");
         }
@@ -263,7 +264,7 @@ class Approval
         if (!$app_note) {
             trigger_error("Catatan approval diperlukan!");
         }
-        
+
         $fixedConfig = "select d.* from set.generate_approval_det d join set.generate_approval a on a.id = d.generate_approval_id where a.id = ? and d.is_done = false order by d.urutan_level limit 1";
         $process_data = DB::select($fixedConfig, [$app_id]);
 
@@ -273,7 +274,7 @@ class Approval
 
         $process_data = $process_data[0];
         $this->checkUserCanApprove($process_data);
-        
+
         DB::beginTransaction();
 
         try {
@@ -282,7 +283,7 @@ class Approval
             } else {
                 $whereRawUpdate = "generate_approval_id = $generate_approval->id and id = $process_data->id";
             }
-            
+
             // Update ticket approval sesuai kondisi di atas
             $check = generate_approval_det::whereRaw($whereRawUpdate)->update([
                 'action_at' => $this->timestamp,
@@ -296,27 +297,27 @@ class Approval
                 ->where('is_done', false)
                 ->where('urutan_level', '>', $process_data->urutan_level)
                 ->exists();
-            
+
             // Jika masih ada outstanding, update waktu assign approval selanjutnya
             if ($outstanding && $app_type != 'REJECTED') {
                 $finish = false;
                 //update last approver by detail approval
-               $last_det_approver = generate_approval_det::where('generate_approval_id',$generate_approval->id)
-                ->where('tipe','MENYETUJUI')
-                ->where('is_done',false)
-                ->orderBy('id','asc')->pluck('id')->first();
+                $last_det_approver = generate_approval_det::where('generate_approval_id', $generate_approval->id)
+                    ->where('tipe', 'MENYETUJUI')
+                    ->where('is_done', false)
+                    ->orderBy('id', 'asc')->pluck('id')->first();
 
-                generate_approval::where('id',$generate_approval->id)->update([
+                generate_approval::where('id', $generate_approval->id)->update([
                     'last_approve_det_id' => $last_det_approver
                 ]);
 
-                generate_approval_det::where('id',$last_det_approver)->update(['assigned_at' => $this->timestamp]);
-                generate_approval::find($generate_approval->id)->update(['last_approve_id'=>null]);
+                generate_approval_det::where('id', $last_det_approver)->update(['assigned_at' => $this->timestamp]);
+                generate_approval::find($generate_approval->id)->update(['last_approve_id' => null]);
             } else {
                 $finish = true;
 
                 // Jika tidak ada, update status header approval
-                generate_approval::find($generate_approval->id)->update(['status' => $app_type, 'last_approve_id'=>null,'last_approve_det_id'=>null]);
+                generate_approval::find($generate_approval->id)->update(['status' => $app_type, 'last_approve_id' => null, 'last_approve_det_id' => null]);
             }
             $log_insert = generate_approval_log::create([
                 'nomor'                     => $generate_approval->nomor,
@@ -355,7 +356,7 @@ class Approval
 
         return $app;
     }
-    
+
     public function approvalOustanding()
     {
         $userAuth = auth()->user();

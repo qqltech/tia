@@ -127,7 +127,8 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     $newData = [
         "no_spk" => $this->helper->generateNomor("SPK Angkutan"),
         "status" => "DRAFT",
-        "m_supplier_id" => $getid
+        "m_supplier_id" => $getid,
+        "is_printed" => 0
     ];
     
     $newArrayData = array_merge($arrayData, $newData);
@@ -344,6 +345,7 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         \DB::beginTransaction();
 
         try {
+            
             $conf = [
                 "app_id" => $req->id,
                 "app_type" => $req->type, // APPROVED, REVISED, REJECTED,
@@ -365,6 +367,13 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
                 }
             }
 
+            if($req->type=="APPROVED"){
+                $get_trx_id = generate_approval::where('id',$req->id)->first();
+                $t_spk_angkutan = t_spk_angkutan::where('id',$get_trx_id->trx_id)->first();
+                $update_status_print = t_spk_angkutan::where('id',$get_trx_id->trx_id)->update(["is_printed"=>0]);
+            }
+
+
             \DB::commit();
 
             return $this->helper->customResponse("Proses approval berhasil");
@@ -373,6 +382,49 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
             return $this->helper->responseCatch($e);
         }
     }
+
+
+
+    public function custom_multi_progress($req)
+    {
+        \DB::beginTransaction();
+
+        try {
+            foreach ($req->items as $item) {
+                $conf = [
+                    "app_id" => $item['id'],
+                    "app_type" => $item['type'], // APPROVED, REVISED, REJECTED
+                    "app_note" => $item['note'] ?? null,
+                ];
+
+                $app = $this->approval->approvalProgress($conf, true);
+
+                if ($app->status) {
+                    $data = $this->find($app->trx_id);
+
+                    $data->update([
+                        "status" => $app->finish ? $item['type'] : "IN APPROVAL"
+                    ]);
+                }
+
+                if ($item['type'] === "APPROVED") {
+                    $get_trx_id = generate_approval::find($item['id']);
+                    if ($get_trx_id) {
+                        $trx_id = $get_trx_id->trx_id;
+                        t_spk_angkutan::where('id', $trx_id)->update(["is_printed" => 0]);
+                    }
+                }
+            }
+
+            \DB::commit();
+            return $this->helper->customResponse("Proses multi-approval berhasil");
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->helper->responseCatch($e);
+        }
+    }
+
 
     public function custom_detail($req)
     {
@@ -437,7 +489,10 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         mg5.kode as trip_kode, mg4.kode as head_kode, mg10.deskripsi as waktu_in_deskripsi,
         mg11.deskripsi as waktu_out_deskripsi,
         mg12.deskripsi as isi_container_1_deskripsi,
-        mg13.deskripsi as isi_container_2_deskripsi
+        mg13.deskripsi as isi_container_2_deskripsi,
+        tsa.jumlah_print,
+        to_char(tsa.tanggal_in, 'DD/MM/YYYY') AS tanggal_in,
+        to_char(tsa.tanggal_out, 'DD/MM/YYYY') AS tanggal_out
 
         FROM t_spk_angkutan tsa
         LEFT JOIN set.m_general mg1 ON tsa.chasis = mg1.id
@@ -482,6 +537,18 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
             "currentDate" => @$currentDate,
             "currentTime" => @$currentTime
         ];
+    }
+
+    public function custom_updatePrintData(){
+        $spk_id = request('t_spk_id');
+
+        $get_jumlah_print = t_spk_angkutan::where('id',$spk_id)->first();
+        $new_jumlah_print = ($get_jumlah_print->jumlah_print + 1);
+        $update_jumlah_print = t_spk_angkutan::where('id',$spk_id)->update([
+            "jumlah_print"=>$new_jumlah_print,
+            "is_printed"=>1,
+            "status" =>"PRINTED"
+            ]);
     }
      
 }

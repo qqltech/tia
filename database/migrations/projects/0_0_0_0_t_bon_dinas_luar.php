@@ -25,6 +25,8 @@ class tbondinasluar extends Migration
             $table->bigInteger('m_supplier_id')->comment('{"src":"m_supplier.id"}');
             $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->text('catatan')->nullable();
+            $table->bigInteger('jumlah_print')->default(0)->nullable();
+            $table->boolean('is_printed')->default(0)->nullable();
 
             $table->bigInteger('creator_id')->nullable();
             $table->bigInteger('last_editor_id')->nullable();

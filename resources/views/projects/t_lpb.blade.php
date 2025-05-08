@@ -57,6 +57,7 @@
       </div>
       <div>
         <FieldPopup 
+            :bind="{ readonly: !actionText }"
             label="No. PO"
             class="w-full !mt-3"
             valueField="id" displayField="no_po"
@@ -128,7 +129,7 @@
           />
       </div>
       <div>
-        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3"
+        <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3"
           :value="values.tanggal_lpb" :errorText="formErrors.tanggal_lpb?'failed':''"
           @input="v=>values.tanggal_lpb=v"  :hints="formErrors.tanggal_lpb" 
           :check="false"
@@ -138,7 +139,7 @@
         />
       </div>
       <div>
-        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3"
+        <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3"
           :value="values.no_sj_supplier" :errorText="formErrors.no_sj_supplier?'failed':''"
           @input="v=>values.no_sj_supplier=v" :hints="formErrors.no_sj_supplier" 
           label="No. SJ Supplier"
@@ -147,7 +148,7 @@
         />
       </div>
       <div>
-        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3"
+        <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3"
           :value="values.tanggal_sj_supplier" :errorText="formErrors.tanggal_sj_supplier?'failed':''"
           @input="v=>values.tanggal_sj_supplier=v"  :hints="formErrors.tanggal_sj_supplier" 
           :check="false"
@@ -208,7 +209,7 @@
     
     <!-- detail -->
     <div class="p-4">
-      <button
+      <button v-show="actionText"
           title="Add Detail"
           @click="addAllDetail"
           >
@@ -261,7 +262,7 @@
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
                 Bundling?
               </td>
-              <td
+              <td v-show="actionText"
                 class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
                 Action
               </td>
@@ -330,7 +331,7 @@
                 />
               </td>
               <td class="p-2 border border-[#CACACA]">
-                <FieldX :bind="{ disabled: !actionText, clearable:false }"
+                <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }"
                   class="w-full py-2 !mt-0" :value="item.catatan" @input="v=>item.catatan=v"
                   :errorText="formErrors.catatan?'failed':''" :hints="formErrors.catatan" type="textarea" :check="false"
                 />
@@ -342,7 +343,7 @@
                   :check="false"
                 />
               </td>
-              <td class="p-2 border border-[#CACACA]">
+              <td v-show="actionText" class="p-2 border border-[#CACACA]">
                 <div class="flex justify-center">
                   <button type="button" @click="removeDetail(i)" :disabled="!actionText" title="Hapus">
                       <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -363,10 +364,10 @@
       </div>
     </div>
 
-      <hr>
+      <hr v-show="actionText">
 
     <div class="flex flex-row items-center justify-end space-x-2 p-2">
-      <i class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
+      <i v-show="actionText" class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
       <button 
         class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         v-show="actionText" 

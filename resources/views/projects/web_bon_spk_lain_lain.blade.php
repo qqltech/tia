@@ -431,10 +431,13 @@ $temp = ' sebelas';
             <tr>
               <td>&nbsp;</td>
             </tr>
-            <tr>
+          </table>
+          <tr>
+            <td style="padding-top: 3%;"></td>
+          </tr>
+          <tr>
               <td colspan="4" style="font-style: italic; font-size: 10px;">Dicetak pada tanggal : {{$currentDate}} jam {{$currentTime}}</td>
             </tr>
-          </table>
         </td>
       </tr>
     </table>

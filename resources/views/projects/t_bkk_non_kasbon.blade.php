@@ -21,12 +21,6 @@
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           IN APPROVAL
         </button>
-        <!-- <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('In Process')" :class="filterButton === 'In Process' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
-          : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          In Process
-        </button> -->
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
         <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-green-600 text-white hover:bg-green-600' 
           : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
@@ -34,8 +28,14 @@
           APPROVED
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('REVISED')" :class="filterButton === 'REVISED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
+        <button @click="filterShowData('PRINTED')" :class="filterButton === 'PRINTED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
           : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          PRINTED
+        </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('REVISED')" :class="filterButton === 'REVISED' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
+          : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           REVISED
         </button>
@@ -445,17 +445,12 @@
           filter: 'ColFilter',
           flex: 1
         }, ]">
-        <div class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
+        <div v-show="actionText" class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
             items-center transition-colors duration-300">
           <icon fa="plus" size="sm" />
           <span>Add To List</span>
         </div>
       </ButtonMultiSelect>
-      <!-- <button class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
-            items-center transition-colors duration-300" @click="setDetail">
-          <icon fa="plus" size="sm" />
-          <span>Add To List</span>
-      </button> -->
       <table class="w-full overflow-x-auto table-auto border border-[#CACACA] mt-4">
         <thead>
           <tr class="border">
@@ -479,7 +474,7 @@
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Detail
             </td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
               Action
             </td>
@@ -499,14 +494,14 @@
             <td class="p-2 border border-[#CACACA]">
               <FieldNumber :bind="{ disabled: !actionText, clearable:false }" class="w-full py-2 !mt-0"
                 :value="item.nominal" @input="v=>item.nominal=v" :errorText="formErrors.nominal?'failed':''"
-                :hints="formErrors.nominal" />
+                :hints="formErrors.nominal" :check="false" />
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
               <FieldX type="textarea" :bind="{ readonly: !actionText }" class="m-0" :value="detailArr[i].keterangan"
                 :errorText="formErrors.keterangan?'failed':''" @input="v=>detailArr[i].keterangan=v"
                 :hints="formErrors.keterangan" :check="false" />
             </td>
-            <td class="p-2 border border-[#CACACA]">
+            <td v-show="actionText" class="p-2 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailArr(i)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">

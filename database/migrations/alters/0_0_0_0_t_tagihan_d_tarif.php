@@ -15,7 +15,8 @@ class ttagihandtarif extends Migration
             //$table->dropColumn([ ]);
             // $table->integer('persentase_konsolidator')->nullable();
             // $table->renameColumn('persentase_konsolidator','persentase_konsolidator_jasa');
-            $table->decimal('persentase_konsolidator_jasa', 18,4)->nullable()->change();
+            // $table->decimal('persentase_konsolidator_jasa', 18,4)->nullable()->change();
+            // $table->decimal('by_tambah', 18,4)->nullable();
         });
     }
 }

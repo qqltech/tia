@@ -22,6 +22,7 @@ class ttagihandtarif extends Migration
             $table->boolean('ppn')->default(0)->nullable();
 
             $table->decimal('persentase_konsolidator_jasa', 18,4)->nullable();
+            $table->decimal('by_tambah', 18,4)->nullable();
 
             //penting
             $table->integer('creator_id')->nullable();

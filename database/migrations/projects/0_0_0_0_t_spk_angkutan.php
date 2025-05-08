@@ -46,6 +46,8 @@ class tspkangkutan extends Migration
             $table->bigInteger('waktu_in')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->text('catatan')->nullable();
             $table->integer('m_supplier_id')->comment('{"src":"m_supplier.id"}')->nullable();
+            $table->bigInteger('jumlah_print')->default(0)->nullable();
+            $table->boolean('is_printed')->default(0)->nullable();
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();

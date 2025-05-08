@@ -14,6 +14,7 @@
                 <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
                 <button @click="filterShowData('POST')" :class="activeBtn?.toUpperCase() === 'POST'?'bg-amber-600 !text-white hover:bg-amber-400':'border border-amber-600 bg-white text-amber-600  hover:bg-amber-600 hover:text-white'" class="duration-300 transition transform hover:-translate-y-0.5 rounded-md py-1 px-2">POST</button>
                 <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
+                <button @click="filterShowData('PRINTED')" :class="activeBtn?.toUpperCase() === 'PRINTED'?'bg-purple-600 !text-white hover:bg-purple-400':'border border-purple-600 bg-white text-purple-600  hover:bg-purple-600 hover:text-white'" class="duration-300 transition transform hover:-translate-y-0.5 rounded-md py-1 px-2">PRINTED</button>
             </div>
         </div>
 
@@ -77,6 +78,11 @@
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="values.no_bkm" :errorText="formErrors.no_bkm?'failed':''"
         @input="v=>values.no_bkm=v" :hints="formErrors.no_bkm" label="No. BKM Non Order" placeholder="No. BKM Non Order" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.nama_penerima"
+        :errorText="formErrors.nama_penerima?'failed':''" @input="v=>values.nama_penerima=v" :hints="formErrors.nama_penerima"
+        label="Nama Penyetor" placeholder="Nama Penyetor" :check="false" />
     </div>
     <div>
       <FieldX :bind="{ readonly: !actionText, disabled:!actionText, clearable:false }" class="w-full !mt-3"

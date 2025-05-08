@@ -56,8 +56,15 @@
                   class="group relative flex w-full items-center rounded-none border-0 !bg-gradient-to-r from-dark-300 to-dark-100 px-5 py-1  text-left text-base font-medium  text-white transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-primary [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-neutral-800 dark:[&:not([data-te-collapse-collapsed])]:text-primary-400 dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
                 type="button">
                 {{ item.name }} ({{item.data.length}})
+                <button
+                  @click.stop="approveSelected(item,'APPROVED')"
+                  class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded ml-auto"
+                  v-if="item.selectedIds?.length"
+                >
+                  Approve ({{ item.selectedIds.length }})
+                </button>
                 <span
-                  class="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
+                  class="-mr-1 ml-2 h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
                   <Icon :fa="!item.active ? 'arrow-down-wide-short' : 'times'">
                 </span>
               </button>
@@ -70,6 +77,13 @@
                   <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                          <th scope="col" class="px-6 py-3 text-center">
+                              <input 
+                                type="checkbox" 
+                                :checked="item?.selectedIds?.length === item.data.length && item.data.length > 0"
+                                @change="toggleSelectAll(item)"
+                              />
+                            </th>
                             <th scope="col" class="px-6 py-3">
                                 Nomor Approval
                             </th>
@@ -93,12 +107,23 @@
                     <tbody>
                       <tr 
                         v-for="d, idx in item.data" :key="idx" 
-                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 cursor-pointer" 
-                        title="klik untuk membuka detail approval"
-                        @click="detail(i,idx)"
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50" 
                       >
-                        <th scope="row" class="px-6 py-2 font-medium text-blue-700 whitespace-nowrap dark:text-white">
-                            {{ d.nomor }}
+                      <!-- title="klik untuk membuka detail approval" -->
+                      <!-- @click="detail(i,idx)" -->
+                      <td class="px-6 py-2 text-center">
+                          <input 
+                            type="checkbox" 
+                            :value="d.id"
+                            :checked="item.selectedIds.some(s => s.id === d.id)"
+                            @change="toggleSelectRow(item, d.id)"
+                            @click.stop
+                          />
+                        </td>
+                        <th scope="row" class="px-6 py-2 font-medium  whitespace-nowrap dark:text-white">
+                        <span class="text-blue-700 cursor-pointer hover:text-blue-800"
+                        title="klik untuk membuka detail approval"
+                        @click="detail(i,idx)">{{ d.nomor }}</span>
                         </th>
                         <th scope="row" class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ d.trx_nomor }}

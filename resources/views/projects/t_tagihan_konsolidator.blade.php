@@ -66,12 +66,12 @@
 
     <!-- Date Coloumn -->
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.tgl"
         :errorText="formErrors.tgl?'failed':''" @input="v=>values.tgl=v" :hints="formErrors.tgl"
         placeholder="Masukkan Tanggal" :check="false" type="date" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_nota"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.tgl_nota"
         :errorText="formErrors.tgl_nota?'failed':''" @input="v=>values.tgl_nota=v" :hints="formErrors.tgl_nota"
         placeholder="Masukkan Tanggal Nota" :check="false" type="date" />
     </div>
@@ -154,7 +154,7 @@
     </div> -->
 
     <div>
-      <FieldPopup label="Customer" :bind="{ readonly: false , clearable: true }" class="w-full !mt-3"
+      <FieldPopup label="Customer" :bind="{ readonly: !actionText , clearable: true }" class="w-full !mt-3"
         valueField="id" displayField="kode" :value="values.customer" @input="(v)=> values.customer=v"
         :api="{
               url: `${store.server.url_backend}/operation/m_customer`,
@@ -165,7 +165,7 @@
                 simplest:true,
                 scopes:'CustomerPpjk',
                 searchfield: 'this.kode , this.nama_perusahaan, this.alamat, this.no_tlp1, this.is_active',
-                buku_order_id: values.no_buku_order
+                buku_order_id: values.no_buku_order 
               }
             }" placeholder="Pilih Customer" :check="false" :columns="[
               {
@@ -279,7 +279,7 @@
     <!-- No. Faktur Pajak -->
     <div>
 
-      <FieldX :bind="{ readonly: false }" class="w-full !mt-3 w-full" :value="values.no_faktur_pajak"
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3 w-full" :value="values.no_faktur_pajak"
         :errorText="formErrors.no_faktur_pajak?'failed':''" @input="v=>values.no_faktur_pajak=v"
         :hints="formErrors.no_faktur_pajak" label="No. Faktur Pajak" placeholder="No. Faktur Pajak" :check="false" />
     </div>
@@ -298,7 +298,7 @@
 
 
     <div>
-      <FieldX class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="values.status"
+      <FieldX class="w-full !mt-3" :bind="{ readonly: !actionText, disabled: true, clearable:true }" :value="values.status"
         @input="v=>values.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status"
         placeholder="Pilih Status" label="Status" :check="false" />
     </div>
@@ -521,6 +521,7 @@
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700">Nama Jasa</th>
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700">Tarif</th>
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700">Persentase</th>
+              <th class="p-3 text-left text-sm border-r font-semibold text-gray-700">By Tambah</th>
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700">PPN</th>
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700">Catatan</th>
             </tr>
@@ -565,6 +566,13 @@
                 <FieldNumber :bind="{ readonly: !actionText, clearable: false }" class="w-full py-2 !mt-0" :value="item.persentase_konsolidator_jasa"
                   @input="v => item.persentase_konsolidator_jasa = v" :errorText="formErrors.persentase_konsolidator_jasa ? 'failed' : ''" :hints="formErrors.persentase_konsolidator_jasa"
                   valueField="key" displayField="key" placeholder="Persentase jasa" label="" :check="false" />
+              </td>
+
+              <!-- By Tambahan with FieldNumber -->
+              <td class="p-3 text-sm text-gray-900 border-r">
+                <FieldNumber :bind="{ readonly: !actionText, clearable: false }" class="w-full py-2 !mt-0" :value="item.by_tambah"
+                  @input="v => item.by_tambah = v" :errorText="formErrors.by_tambah ? 'failed' : ''" :hints="formErrors.by_tambah"
+                  valueField="key" displayField="key" placeholder="By tambah" label="" :check="false" />
               </td>
 
               <!-- PPN with Checkbox -->
@@ -618,7 +626,7 @@
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">Satuan</th>
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">QTY</th>
               <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">PPN</th>
-              <th class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">Action</th>
+              <th v-show="actionText" class="p-3 text-left text-sm border-r font-semibold text-gray-700 w-[10%]">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -674,7 +682,7 @@
             />
               </td>
 
-              <td class="p-3 text-sm text-gray-900 border-r">
+              <td v-show="actionText" class="p-3 text-sm text-gray-900 border-r">
                 <div class="flex justify-center">
                   <button
                 type="button"
