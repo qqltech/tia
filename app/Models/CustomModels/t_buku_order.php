@@ -156,36 +156,36 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
 
     
 
-    public function transformRowData( array $row )
-    {
-        $data = [];
-        if(app()->request->view_tarif){
-            $tarifDP = $this->GetTarifDP($row['id']);
-            // $notaRampung = new t_nota_rampung;
-            // $getNotaRampung = $notaRampung->grand_total($row['id']);
-            // $tarif = $this->getTarif($row['m_customer.id']);
-            $data = [
-                'tarif_dp' => $tarifDP,
-            ];
+    // public function transformRowData( array $row )
+    // {
+    //     $data = [];
+    //     if(app()->request->view_tarif){
+    //         $tarifDP = $this->GetTarifDP($row['id']);
+    //         // $notaRampung = new t_nota_rampung;
+    //         // $getNotaRampung = $notaRampung->grand_total($row['id']);
+    //         // $tarif = $this->getTarif($row['m_customer.id']);
+    //         $data = [
+    //             'tarif_dp' => $tarifDP,
+    //         ];
 
-            // foreach($tarif as $single){
-            //     $single['ukuran_kontainer'] = m_general::where('id',$single['ukuran_kontainer'])->first()->deskripsi;
-            //     $data += [
-            //         'tarif_id_'.$single['ukuran_kontainer'] => @$single->id,
-            //         'tarif_d_jasa_'.$single['ukuran_kontainer'] => m_tarif_d_jasa::where('m_tarif_id',@$single->id)
-            //         ->join('m_jasa as mj','m_tarif_d_jasa.m_jasa_id','mj.id')
-            //         ->whereHas('m_tarif',function($query) use($row){
-            //             $query->where('tipe_tarif',ucfirst(strtolower($row['tipe_order'])));
-            //         })
-            //         ->select('m_tarif_d_jasa.*', 'mj.*')->with(['m_tarif' => function($query){
-            //             $query->join('set.m_general as mg','mg.id','m_tarif.ukuran_kontainer')->select('m_tarif.*','mg.deskripsi');
-            //         }])->get(),
-            //         // 'grand_total_nota_rampung' => $getNotaRampung
-            //     ];
-            // }
-        }
-        return array_merge( $row, $data);
-    }
+    //         // foreach($tarif as $single){
+    //         //     $single['ukuran_kontainer'] = m_general::where('id',$single['ukuran_kontainer'])->first()->deskripsi;
+    //         //     $data += [
+    //         //         'tarif_id_'.$single['ukuran_kontainer'] => @$single->id,
+    //         //         'tarif_d_jasa_'.$single['ukuran_kontainer'] => m_tarif_d_jasa::where('m_tarif_id',@$single->id)
+    //         //         ->join('m_jasa as mj','m_tarif_d_jasa.m_jasa_id','mj.id')
+    //         //         ->whereHas('m_tarif',function($query) use($row){
+    //         //             $query->where('tipe_tarif',ucfirst(strtolower($row['tipe_order'])));
+    //         //         })
+    //         //         ->select('m_tarif_d_jasa.*', 'mj.*')->with(['m_tarif' => function($query){
+    //         //             $query->join('set.m_general as mg','mg.id','m_tarif.ukuran_kontainer')->select('m_tarif.*','mg.deskripsi');
+    //         //         }])->get(),
+    //         //         // 'grand_total_nota_rampung' => $getNotaRampung
+    //         //     ];
+    //         // }
+    //     }
+    //     return array_merge( $row, $data);
+    // }
 
     public function relationPpjk(){
         return $this->hasMany('App\Models\BasicModels\t_ppjk', 't_buku_order_id', 'id');

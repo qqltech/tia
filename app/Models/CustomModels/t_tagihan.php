@@ -424,7 +424,8 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
     }
 
     // Perhitungan tagihan konsolidator
-    public function custom_calculate_tagihan_konsolidator($req){
+    public function custom_calculate_tagihan_konsolidator($req)
+    {
         $tagihanKontainer = $req['detailArr'];
         $tagihanJasa = $req['detailArr1'];
         $tagihanPpjk = $req['detailArr2'];

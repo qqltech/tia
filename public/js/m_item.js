@@ -1,5 +1,5 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
-import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated } from 'vue'
+import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, computed } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -14,21 +14,39 @@ const modulPath = route.params.modul
 const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
-const tsId = `ts=`+(Date.parse(new Date()))
+const tsId = `ts=` + (Date.parse(new Date()))
+const is_bundling = ref(false);
+const detailArr = ref([]);
+
+// Computed property untuk menghitung quantity dari detail array yang used = false
+const computedQuantity = computed(() => {
+  try {
+    if (!detailArr.value || !Array.isArray(detailArr.value) || detailArr.value.length === 0) {
+      return 0;
+    }
+    const count = detailArr.value.filter(item =>
+      item && (item.used === false || item.used === 0 || item.used === null || item.used === undefined)
+    ).length;
+    return count || 0;
+  } catch (error) {
+    console.error('Error calculating computedQuantity:', error);
+    return 0;
+  }
+});
 
 // ------------------------------ PERSIAPAN
 const endpointApi = '/m_item'
-onBeforeMount(()=>{
+onBeforeMount(() => {
   document.title = 'Master Item'
 })
 
 //  @if( $id )------------------- JS CONTENT ! PENTING JANGAN DIHAPUS
 
 // HOT KEY
-onMounted(()=>{
+onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);
 })
-onBeforeUnmount(()=>{
+onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyDown);
 })
 
@@ -44,7 +62,8 @@ let initialValues = {}
 const changedValues = []
 
 const values = reactive({
-  is_active : 1
+  is_active: 1,
+  is_bundling: false
 })
 
 onBeforeMount(async () => {
@@ -54,7 +73,7 @@ onBeforeMount(async () => {
       const editedId = route.params.id
       const dataURL = `${store.server.url_backend}/operation${endpointApi}/${editedId}`
       isRequesting.value = true
-     
+
       const params = { scopes: 'GetQTY', selectfield: "this.*, qty_stock" }
       const fixedParams = new URLSearchParams(params)
       const res = await fetch(dataURL + '?' + fixedParams, {
@@ -66,11 +85,15 @@ onBeforeMount(async () => {
       if (!res.ok) throw new Error("Failed when trying to read data")
       const resultJson = await res.json()
       initialValues = resultJson.data
-      initialValues.is_active=initialValues.is_active?1:0
-      
+      initialValues.is_active = initialValues.is_active ? 1 : 0
+      initialValues.is_bundling = initialValues.is_bundling ? true : false
+
+      initialValues.detailArr = initialValues.m_item_d;
+      console.log('Detail Array:', initialValues.detailArr);
+
       if (actionText.value?.toLowerCase() === 'copy') {
         // delete initialValues.uid;
-        initialValues.kode= null
+        initialValues.kode = null
       }
 
     } catch (err) {
@@ -90,6 +113,16 @@ onBeforeMount(async () => {
   for (const key in initialValues) {
     values[key] = initialValues[key]
   }
+
+  // Ensure detailArr is properly set
+  if (initialValues.detailArr && Array.isArray(initialValues.detailArr)) {
+    detailArr.value = initialValues.detailArr
+    console.log('DetailArr updated:', detailArr.value);
+    console.log('Computed quantity:', detailArr.value.filter(item => item && (item.used === false || item.used === 0)).length);
+  } else {
+    detailArr.value = []
+    console.log('DetailArr set to empty array');
+  }
 })
 
 function onReset() {
@@ -98,13 +131,14 @@ function onReset() {
     text: 'Anda yakin akan mereset data ini?',
     showDenyButton: true
   }).then((res) => {
-  
+
     if (res.isConfirmed) {
       const newValues = {
         nama: '',
         desc: '',
+        is_bundling: false
       };
-      
+
       for (const key in newValues) {
         if (newValues.hasOwnProperty(key)) {
           values[key] = newValues[key];
@@ -115,59 +149,60 @@ function onReset() {
 }
 
 function onBack() {
-    router.replace('/' + modulPath)
+  router.replace('/' + modulPath)
 }
 
 async function onSave() {
   //values.tags = JSON.stringify(values.tags)
-      try {
-        const isCreating = ['Create','Copy','Tambah'].includes(actionText.value)
-        const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`
-        isRequesting.value = true
-         values.is_active = values.is_active ? 1 : 0
-        const res = await fetch(dataURL, {
-          method: isCreating ? 'POST' : 'PUT',
-          headers: {
-            'Content-Type': 'Application/json',
-            Authorization: `${store.user.token_type} ${store.user.token}`
-          },
-          body: JSON.stringify(values)
-        })
-        if (!res.ok) {
-          if ([400, 422].includes(res.status)) {
-            const responseJson = await res.json()
-            formErrors.value = responseJson.errors || {}
-            throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data")
-          } else {
-            throw ("Failed when trying to post data")
-          }
-        }
-        router.replace('/' + modulPath + '?reload='+(Date.parse(new Date())))
-      } catch (err) {
-        isBadForm.value = true
-        swal.fire({
-          icon: 'error',
-          text: err
-        })
+  try {
+    const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value)
+    const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`
+    isRequesting.value = true
+    values.is_active = values.is_active ? 1 : 0
+    values.is_bundling = values.is_bundling ? true : false
+    const res = await fetch(dataURL, {
+      method: isCreating ? 'POST' : 'PUT',
+      headers: {
+        'Content-Type': 'Application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      body: JSON.stringify(values)
+    })
+    if (!res.ok) {
+      if ([400, 422].includes(res.status)) {
+        const responseJson = await res.json()
+        formErrors.value = responseJson.errors || {}
+        throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data")
+      } else {
+        throw ("Failed when trying to post data")
       }
-      isRequesting.value = false
+    }
+    router.replace('/' + modulPath + '?reload=' + (Date.parse(new Date())))
+  } catch (err) {
+    isBadForm.value = true
+    swal.fire({
+      icon: 'error',
+      text: err
+    })
+  }
+  isRequesting.value = false
 }
 
 //  @else----------------------- LANDING
 const activeBtn = ref()
 
-function filterShowData(params,noBtn){
-  if(activeBtn.value === noBtn){
+function filterShowData(params, noBtn) {
+  if (activeBtn.value === noBtn) {
     activeBtn.value = null
-  }else{
+  } else {
     activeBtn.value = noBtn
   }
-  if(params){
+  if (params) {
     landing.api.params.where = `this.is_active=true`
-  }else if(activeBtn.value == null){
+  } else if (activeBtn.value == null) {
     // clear params filter
     landing.api.params.where = null
-  }else{
+  } else {
     landing.api.params.where = `this.is_active=false`
   }
 
@@ -223,7 +258,7 @@ const landing = reactive({
       class: 'bg-green-600 text-light-100',
       // show: (row) => (currentMenu?.can_read)||store.user.data.username==='developer',
       click(row) {
-        router.push(`${route.path}/${row.id}?`+tsId)
+        router.push(`${route.path}/${row.id}?` + tsId)
       }
     },
     {
@@ -232,7 +267,7 @@ const landing = reactive({
       class: 'bg-blue-600 text-light-100',
       // show: (row) => (currentMenu?.can_update)||store.user.data.username==='developer',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Edit&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Edit&` + tsId)
       }
     },
     {
@@ -240,7 +275,7 @@ const landing = reactive({
       title: "Copy",
       class: 'bg-gray-600 text-light-100',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Copy&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Copy&` + tsId)
       }
     }
   ],
@@ -252,7 +287,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield:'this.nama, this.kode, this.tipe_item, this.tanggal, this.is_active',
+      searchfield: 'this.nama, this.kode, this.tipe_item, this.tanggal, this.is_active',
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -274,20 +309,20 @@ const landing = reactive({
     field: 'kode',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
   },
   {
     headerName: 'Nama',
     field: 'nama_item',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
   },
   {
     headerName: 'Tanggal',
@@ -296,8 +331,8 @@ const landing = reactive({
     sortable: true,
     filter: 'ColFilter',
     resizable: true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-center'],
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
   },
   {
     headerName: 'Tipe',
@@ -306,8 +341,8 @@ const landing = reactive({
     sortable: true,
     filter: 'ColFilter',
     resizable: true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start'],
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
   },
   {
     headerName: 'Status',
@@ -316,16 +351,23 @@ const landing = reactive({
     sortable: true,
     filter: 'ColFilter',
     resizable: true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-center'],
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
     cellRenderer: ({ value }) => {
-    return value === true
-      ? `<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>`
-      : `<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Inactive</span>`
-  }},
+      return value === true
+        ? `<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>`
+        : `<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Inactive</span>`
+    }
+  },
   ]
 })
 
+function changeIsBundling(event) {
+  const value = event.target.checked;
+  values.is_bundling = value;
+  console.log('Status bundling:', value); // true / false
+  console.log('Values object:', values);
+}
 onActivated(() => {
   //  reload table api landing
   if (apiTable.value) {
@@ -336,4 +378,14 @@ onActivated(() => {
 })
 
 //  @endif -------------------------------------------------END
-watchEffect(()=>store.commit('set', ['isRequesting', isRequesting.value]))
+watchEffect(() => store.commit('set', ['isRequesting', isRequesting.value]))
+
+// Watch untuk memantau perubahan computed quantity
+watchEffect(() => {
+  try {
+    console.log('Computed Quantity Changed:', computedQuantity.value);
+    console.log('DetailArr state:', detailArr.value);
+  } catch (error) {
+    console.error('Error in computed quantity watchEffect:', error);
+  }
+})

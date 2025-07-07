@@ -95,6 +95,15 @@ SELECT
     np.qty AS qty_non_ppn,
     np.tarif_realisasi AS tarif_realisasi_non_ppn,
     (
+    SELECT 
+        COALESCE(SUM(ttdl.qty * ttdl.tarif_realisasi), 0)
+    FROM 
+        t_tagihan_d_lain ttdl
+    WHERE 
+        ttdl.t_tagihan_id = tt.id 
+        AND ttdl.is_ppn IS NOT NULL
+    ) AS total_tarif_realisasi_ppn,
+    (
     SELECT COUNT(*) 
     FROM t_tagihan_d_lain 
     WHERE t_tagihan_d_lain.t_tagihan_id = tt.id 
@@ -299,55 +308,35 @@ function terbilang($number) {
   @endphp
   <tr>
     <td border="1" style="text-align: center;">1.</td>
-    <td border="1" > JASA EMKL</td>
+    <td border="1" > Total Jasa Cont + PPJK</td>
     <td border="1" style="text-align: center;"> {{ $tp->jumlah_tjcp }} </td>
     <td style="width:5%; border-bottom: 1px solid black">Rp. </td>
-    <td style="width:20%; border-bottom: 1px solid black; text-align: right;">{{ number_format($tp->total_jasa_cont_ppjk, 2, ',', '.') }}</td>
-    <td border="1" style="width:5%;"> Rp.</td>
-    <td border="1" style="width:20%; text-align: right;">  {{ number_format($jumlah_total_jasa_cont_ppjk, 2, ',', '.') }} </td>
+    <td style="width:20%; border-bottom: 1px solid black; text-align: right;"></td>
+    <td style="width:5%; border-left: 1px solid black"> Rp.</td>
+    <td style="width:20%; border-bottom: 1px solid black; text-align: right;">  {{ number_format($jumlah_total_jasa_cont_ppjk, 2, ',', '.') }} </td>
   </tr>
 
   <tr>
     <td border="1" style="text-align: center;">2.</td>
-    <td border="1"> Biaya Jasa EMKL Lain</td>
+    <td border="1"> Total Lain-lain (PPN)</td>
     <td border="1" style="text-align: center;"> {{ $tp->jumlah_is_ppn }} </td>
     <td style="width:5%; border-bottom: 1px solid black;">Rp.</td>
-    <td style="width:20%; border-bottom: 1px solid black; text-align: right;">{{ number_format($tp->tarif_realisasi, 2, ',', '.') }}</td>
-    <td border="1" style="width:5%;"> Rp.</td>
-    <td border="1" style="width:20%; text-align: right;">{{ number_format($tp->tarif_realisasi, 2, ',', '.') }}</td>
+    <td style="width:20%; border-bottom: 1px solid black; text-align: right;"></td>
+    <td style="width:5%; border-top: 1px solid black; border-left: 1px solid black"> Rp.</td>
+    <td style="width:20%; border-bottom: 1px solid black; text-align: right;">{{ number_format($tp->total_tarif_realisasi_ppn, 2, ',', '.') }}</td>
   </tr>
 
-  <tr>
+  <!-- <tr>
     <td border="1" style="text-align: center;">3.</td>
-    <td border="1" > Biaya Pelabuhan</td>
+    <td border="1" > Biaya Pelabuhan / COO / PPJK</td>
     <td border="1"></td>
     <td style="width:5%; border-bottom: 1px solid black;"> </td>
     <td style="width:20%; border-bottom: 1px solid black; text-align: right;"> </td>
     <td border="1" style="width:5%;"> Rp.</td>
     <td border="1" style="width:20%; text-align: right;">100.000,00</td>
-  </tr>
+  </tr> -->
 
-  <tr>
-    <td border="1" style="text-align: center;">4.</td>
-    <td border="1" > COO</td>
-    <td border="1" ></td>
-    <td style="width:5%; border-bottom: 1px solid black; "> </td>
-    <td style="width:20%; border-bottom: 1px solid black; text-align: right;"> </td>
-    <td border="1" style="width:5%;"> Rp.</td>
-    <td border="1" style="width:20%; text-align: right;">100.000,00</td>
-  </tr>
-
-  <tr>
-    <td border="1" style="text-align: center;">5.</td>
-    <td border="1" > PPJK</td>
-    <td border="1" ></td>
-    <td style="width:5%; border-bottom: 1px solid black; "> </td>
-    <td style="width:20%; border-bottom: 1px solid black; text-align: right;"> </td>
-    <td border="1" style="width:5%;"> Rp.</td>
-    <td border="1" style="width:20%; text-align: right;">100.000,00</td>
-  </tr>
-
-  <tr>
+  <!-- <tr>
     <td border="1" style="text-align: center;">6.</td>
     <td border="1" style="text-align: center;"></td>
     <td border="1" ></td>
@@ -355,29 +344,35 @@ function terbilang($number) {
     <td style="width:20%; border-bottom: 1px solid black; text-align: right;"> </td>
     <td border="1" style="width:5%;"> Rp.</td>
     <td border="1" style="width:20%; text-align: right;">100.000,00</td>
-  </tr>
+  </tr> -->
 
+  @php
+    $total_jasa_lain_ppn = $jumlah_total_jasa_cont_ppjk + $tp->total_tarif_realisasi_ppn; 
+  @endphp
   <tr>
     <td border="1" colspan="3" style="text-align: right;">TOTAL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td border="1" colspan="2"></td>
-    <td border="1" style="width:5%;"> Rp.</td>
-    <td border="1" style="width:20%; text-align: right;">100.000,00</td>
+    <td style="width:5%; border-top: 1px solid black; border-left: 1px solid black"> Rp.</td>
+    <td style="width:20%; border-bottom: 1px solid black; text-align: right;">{{ number_format($total_jasa_lain_ppn, 2, ',', '.') }}</td>
   </tr>
 
   <tr>
     <td border="1" colspan="3" style="text-align: right;"> </td>
     <td border="1" colspan="2" style="text-align: center;">PPN</td>
-    <td border="1" style="width:5%;"> Rp.</td>
-    <td border="1" style="width:20%; text-align: right;">100.000,00</td>
+    <td style="width:5%; border-top: 1px solid black; border-left: 1px solid black"> Rp.</td>
+    <td style="width:20%; border-bottom: 1px solid black; text-align: right;">{{ number_format($tp->total_ppn, 2, ',', '.') }}</td>
   </tr>
 
+  @php
+    $total_dpp_ppn = $total_jasa_lain_ppn + $tp->total_ppn;
+  @endphp
   <tr>
     <td border="1" colspan="3" style="text-align: left; ">&nbsp; PPN = {{ number_format($tk->ppn) }} % X Dasar Pengenaan Pajak</td>
     <td border="1" colspan="2" style="text-align: center;">DPP + PPN</td>
-    <td border="1" style="width:5%;"> Rp.</td>
-    <td border="1" style="width:20%; text-align: right;">100.000,00</td>
+    <td style="width:5%; border-top: 1px solid black; border-left: 1px solid black; border-bottom: 1px solid black"> Rp.</td>
+    <td style="width:20%; border-bottom: 1px solid black; text-align: right;">{{ number_format($total_dpp_ppn, 2, ',', '.') }}</td>
   </tr>
 
 </table>
@@ -395,7 +390,7 @@ function terbilang($number) {
 
   <tr>
     <td style="text-align: left; width: 7%;"> </td>
-    <td colspan="2" style="width: 93%;  font-size:10px;"><i><u># Tiga Ratus Tujuh Puluh Delapan Ribu Delapan Ratus Dua Puluh Satu Rupiah #</u></i></td>
+    <td colspan="2" style="width: 93%;  font-size:10px;"><i><u># {{ucfirst(trim(terbilang($total_dpp_ppn)))}} Rupiah #</u></i></td>
   </tr>
 </table>
   <br>
@@ -418,7 +413,7 @@ function terbilang($number) {
 <!-- halaman 2 -->
 <?php
 $br = '';
-for ($i = 0; $i < 28; $i++) {
+for ($i = 0; $i < 32; $i++) {
     $br .= '<br>';
 }
 echo $br;
@@ -553,7 +548,7 @@ echo $br;
   <tr>
     <td colspan="1" style="width: 20%; text-align:right">TERBILANG : </td>
     <td colspan="1" style="width: 80%; text-decoration:underline"><u># 
-      {{ucfirst(trim(terbilang($total_non_ppn)))}} rupiah #</u></td>
+      {{ucfirst(trim(terbilang($total_non_ppn)))}} Rupiah #</u></td>
   </tr>
 </table>
 

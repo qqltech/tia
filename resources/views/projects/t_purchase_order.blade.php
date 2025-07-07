@@ -383,7 +383,7 @@
             simplest: true, 
             searchfield: 'this.kode, this.nama_item, this.tipe_item',
             notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`,
-            where: `this.is_active = true`
+            where: `this.is_active = true AND this.tipe_item = 'ITEM'`
             },
             onsuccess: (response) => {
               response.data = [...response.data].map((dt) => {
@@ -400,6 +400,7 @@
                   total_amount: 0,
                   satuan: 'Pcs',
                   catatan: '',
+                  is_bundling: dt.is_bundling,
                 }
               })
             return response
@@ -450,7 +451,8 @@
         }, params: { 
             simplest: true, 
             searchfield: 'this.kode, this.nama, this.tipe_item',
-            notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`
+            notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`,
+            where: `this.is_active = true AND this.tipe_item = 'ASSET'`
             },
             onsuccess: (response) => {
               response.data = [...response.data].map((dt) => {
@@ -494,7 +496,16 @@
           cellClass: ['border-r', '!border-gray-200', 'justify-center'],
           filter: 'ColFilter',
           flex: 1
-        }, ]">
+        },
+        {
+          pinned: false,
+          headerName: 'Tipe Item',
+          field: 'tipe_item',
+          cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+          filter: 'ColFilter',
+          flex: 1
+        },
+        ]">
         <div class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
             items-center transition-colors duration-300">
           <icon fa="plus" size="sm" />

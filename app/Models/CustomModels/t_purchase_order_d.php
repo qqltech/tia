@@ -46,6 +46,23 @@ class t_purchase_order_d extends \App\Models\BasicModels\t_purchase_order_d
         }
     }
 
+    public function scopeGetDetail($query)
+    {
+        return $query
+            ->leftJoin("t_purchase_order as po", "po.id", "=", "t_purchase_order_d.t_purchase_order_id")
+            ->leftJoin("m_item as mi", "mi.id", "=", "t_purchase_order_d.m_item_id")
+            ->select(
+                "po.*",
+                "t_purchase_order_d.*",
+                "po.id as t_po_id",
+                \DB::raw('COALESCE(t_purchase_order_d.quantity, 0) as qty_po'),
+                "mi.nama_item",
+                "mi.kode as kode_item",
+                "mi.tipe_item"
+            );
+    }
+
+
     // public function scopeUseBundling($model)
     // {
     //     return $model->where(function ($query) {

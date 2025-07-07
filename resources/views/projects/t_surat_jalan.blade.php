@@ -239,11 +239,17 @@
               }
           }" placeholder="Isi Kontainer" label="Isi Kontainer" :check="true" />
       </div>
-      <div class="w-full !mt-3">
+      <div v-if="values.tipe_surat_jalan === 'IMPORT'" class="w-full !mt-3">
         <FieldX class="!mt-0" :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
           :value="values.lokasi_stuffing" @input="v=>values.lokasi_stuffing=v"
           :errorText="formErrors.lokasi_stuffing?'failed':''" :hints="formErrors.lokasi_stuffing"
           placeholder="Lokasi Bongkar" type="textarea" :check="false" />
+      </div>
+      <div v-if="values.tipe_surat_jalan === 'EKSPORT'" class="w-full !mt-3">
+        <FieldX class="!mt-0" :bind="{ readonly: !actionText && (!actionEditBerkas || values.is_edit_berkas == true) }"
+          :value="values.lokasi_stuffing" @input="v=>values.lokasi_stuffing=v"
+          :errorText="formErrors.lokasi_stuffing?'failed':''" :hints="formErrors.lokasi_stuffing"
+          placeholder="Alamat Kirim" type="textarea" :check="false" />
       </div>
       <div class="w-full !mt-3">
         <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.depo" @input="v=>values.depo=v"

@@ -1,4 +1,3 @@
-
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch } from 'vue'
 
@@ -91,7 +90,7 @@ const table = reactive({
     sortable: true,
     filter: 'ColFilter',
     resizable: true, wrapText: true,
-    flex: 1,
+    flex: 1.5,
     cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
@@ -141,7 +140,7 @@ const table = reactive({
     sortable: true,
     filter: 'ColFilter',
     resizable: true, wrapText: true,
-    flex: 1,
+    flex: 1.5,
     cellClass: ['border-r', '!border-gray-200', 'justify-start'],
     valueFormatter: (params) => {
       // Format the value as Rupiah
@@ -503,28 +502,32 @@ onBeforeMount(async () => {
       }
       data["tipe_po"] = res.data["t_po.tipe"];
       data["tanggal_lpb"] = res.data["t_lpb.tanggal_lpb"];
-      if (actionText == 'Copy') {
-        data.no_draft = '';
-        data.no_pi = '';
-        data.tanggal = getCurrentDateFormatted();
+      if (actionText.value?.toLowerCase() === 'copy') {
+        delete data.no_draft
+        delete data.no_pi
+        data.status = 'DRAFT'
+        data.tanggal = getCurrentDateFormatted()
+        data.tanggal_lpb = getCurrentDateFormatted()
       }
     });
 
-    for (const pid of data.t_purchase_invoice_d) {
-      const podetailid = pid["t_po_detail_id"];
-      const queryString = new URLSearchParams({ simplest: true, where: `this.id = ${podetailid}` }).toString();
+    const uniqueDetailIds = [...new Set(data.t_purchase_invoice_d.map(pid => pid["t_po_detail_id"]))];
+
+    for (const podetailid of uniqueDetailIds) {
+      const queryString = new URLSearchParams({ 
+        simplest: true,
+        where: `this.id = ${podetailid}`,
+        scopes: 'GetDetail'
+      }).toString();
       const response = await fetch(`${store.server.url_backend}/operation/t_purchase_order_d?${queryString}`, { headers });
       const resData = await response.json();
-      const result = resData.data.map(dt => {
-        return {
-          id: pid.id,
-          t_purchase_invoice_id: data.id || null,
-          t_po_id: pid['t_po_id'],
-          t_no_po: pid['t_po.no_po'],
-          t_po_detail_id: pid['t_po_detail_id'],
+      const result = resData.data.map(dt => ({
+          t_no_po: dt['no_po'],
+          t_po_id: dt['t_po_id'],
+          t_po_detail_id: dt.id,
           m_item_id: dt['m_item.id'],
-          kode: dt['m_item.kode'],
-          nama_item: dt['m_item.nama_item'],
+          kode: dt.kode_item,
+          nama_item: dt.nama_item,
           tipe_item: dt['m_item.tipe_item'],
           quantity: dt.quantity,
           harga: parseInt(parseFloat(dt.harga)),
@@ -532,10 +535,9 @@ onBeforeMount(async () => {
           disc1: dt['disc1'],
           disc2: dt['disc2'],
           disc_amt: dt['disc_amt'],
-          catatan: pid.catatan,
-        }
-      })
-      detailArr.push(...result);
+          catatan: dt.catatan,
+        }));
+        detailArr.push(...result);
     }
 
 
@@ -579,7 +581,11 @@ const poChanged = async (id) => {
     Authorization: `${store.user.token_type} ${store.user.token}`,
   };
 
-  const queryString = new URLSearchParams({ simplest: true, where: `this.t_lpb_id=${id}` }).toString();
+  const queryString = new URLSearchParams({ 
+    simplest: true, 
+    where: `this.t_lpb_id=${id}`
+    
+  }).toString();
   const response = await fetch(`${store.server.url_backend}/operation/t_lpb_d?${queryString}`, { headers });
 
   const resData = await response.json();
@@ -598,10 +604,10 @@ const poChanged = async (id) => {
       quantity: dt.qty,
       harga: parseInt(parseFloat(dt['t_po_d.harga'])),
       satuan: 'Lembar',
-      disc1: dt['t_po_d.disc1'],
-      disc2: dt['t_po_d.disc2'],
-      disc_amt: dt['t_po_d.disc_amt'],
-      catatan: '',
+      disc1: parseFloat(dt['t_po_d.disc1']),
+      disc2: parseFloat(dt['t_po_d.disc2']),
+      disc_amt: parseFloat(dt['t_po_d.disc_amt']),
+      catatan: dt.catatan,
     }
   })
 
@@ -847,9 +853,6 @@ async function post() {
           icon: 'success',
           text: resultJson.message || "Data posted successfully",
         });
-
-        // Redirect hanya jika semua proses berhasil
-        router.replace(tsId);
       } catch (err) {
         isBadForm.value = true;
         swal.fire({
@@ -858,9 +861,9 @@ async function post() {
           confirmButtonColor: '#1469AE',
           text: err.message || "An unexpected error occurred",
         });
-        // Tidak melakukan redirect jika terjadi kesalahan
       } finally {
         isRequesting.value = false;
+        router.replace('/' + modulPath);
       }
     }
   });

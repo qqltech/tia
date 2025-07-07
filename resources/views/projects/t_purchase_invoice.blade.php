@@ -380,7 +380,7 @@
       ]" />
     </div> -->
     <div>
-      <FieldX class="w-full !mt-3" valueField="id" displayField="no_faktur_pajak" :value="data.no_faktur_pajak"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" valueField="id" displayField="no_faktur_pajak" :value="data.no_faktur_pajak"
         @input="(v)=>data.no_faktur_pajak=v" :errorText="formErrors.no_faktur_pajak?'failed':''"
         :hints="formErrors.no_faktur_pajak"  label="No. Faktur Pajak" placeholder="Pilih No. Faktur Pajak" :check="false" />
     </div>
@@ -478,7 +478,7 @@
           valueField="id" displayField="key"
           :options="[{'id' : 1 , 'key' : 'INCLUDE', 'persen': 2},{'id': 2, 'key' : 'NOT INCLUDE', 'persen': 0}]"
           label="PPH" fa-icon="sort-desc" placeholder="Pilih PPH" :check="false" /> -->
-        <FieldSelect class="w-full !mt-3" valueField="id" displayField="deskripsi" :value="data.jenis_pph"
+        <FieldSelect :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" valueField="id" displayField="deskripsi" :value="data.jenis_pph"
           @input="(v)=>data.jenis_pph=v" :errorText="formErrors.jenis_pph?'failed':''" :hints="formErrors.jenis_pph"
           :options="allPphOptions" @update:valueFull="(res)=>{
             if(res) {
@@ -489,7 +489,7 @@
               $log(data.persen_pph);
             }
       }" label="Tipe PPH" placeholder="Pilih Tipe PPH" :check="false" />
-        <FieldX class="w-full !mt-3" :bind="{ readonly: true }"
+        <FieldX class="w-full !mt-3" :bind="{ readonly: !actionText, disabled: !actionText }"
           :value="data.persen_pph !== undefined ? `${data.persen_pph}%` : ''"
           :errorText="formErrors.persen_pph?'failed':''" @input="v => data.persen_pph = v.replace('%', '')"
           :hints="formErrors.persen_pph" placeholder="Persen PPH" :check="false" />
@@ -639,7 +639,7 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Catatan</td>
-            <td
+            <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               Action</td>
           </tr>
@@ -715,11 +715,11 @@
               <!-- <p class="text-black leading-none">{{ detailArr[i].total_disc }}</p> -->
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
-              <FieldX type="textarea" :bind="{ readonly: !actionText }" class="m-0" :value="detailArr[i].catatan"
+              <FieldX type="textarea" :bind="{ readonly: true }" class="m-0" :value="detailArr[i].catatan"
                 :errorText="formErrors.catatan?'failed':''" @input="v=>detailArr[i].catatan=v"
                 :hints="formErrors.catatan" :check="false" />
             </td>
-            <td class="p-1 border border-[#CACACA]">
+            <td v-show="actionText" class="p-1 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailArr(i)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">

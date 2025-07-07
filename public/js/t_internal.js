@@ -14,11 +14,11 @@ const modulPath = route.params.modul
 const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
-const tsId = `ts=`+(Date.parse(new Date()))
+const tsId = `ts=` + (Date.parse(new Date()))
 
 // ------------------------------ PERSIAPAN
 const endpointApi = '/t_internal'
-onBeforeMount(()=>{
+onBeforeMount(() => {
   document.title = 'Transaksi Internal Usage'
 })
 
@@ -27,9 +27,8 @@ let initialValues = {}
 const changedValues = []
 
 const values = reactive({
-      is_active : true,
-      status : 'AKTIF',
-      tanggal : new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
+  status: 1,
+  date: new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
 })
 
 onBeforeMount(async () => {
@@ -39,7 +38,7 @@ onBeforeMount(async () => {
       const editedId = route.params.id
       const dataURL = `${store.server.url_backend}/operation${endpointApi}/${editedId}`
       isRequesting.value = true
-     
+
       const params = { join: false, transform: false }
       const fixedParams = new URLSearchParams(params)
       const res = await fetch(dataURL + '?' + fixedParams, {
@@ -51,7 +50,12 @@ onBeforeMount(async () => {
       if (!res.ok) throw new Error("Failed when trying to read data")
       const resultJson = await res.json()
       initialValues = resultJson.data
-      
+      initialValues.status = initialValues.status == true ? 1 : 0
+      detailArr.value = initialValues.t_internal_d.map((dt) => ({
+        ...dt,
+        m_item_d_id: dt.m_item_d_id
+      }))
+
     } catch (err) {
       isBadForm.value = true
       swal.fire({
@@ -72,40 +76,19 @@ onBeforeMount(async () => {
 })
 
 const detailArr = ref([])
-const addDetail = () => {
-  const tempItem = {
-
-  }
-  detailArr.value = [...detailArr.value, tempItem]
+const addDetail = (dt) => {
+  const tempItem = (dt) => ({
+    stock: dt.qty_stock || 0
+  });
+  detailArr.value = [...detailArr.value, tempItem(dt)];
 }
 
 const removeItem = (index) => {
-detailArr.value.splice(index, 1);
+  detailArr.value.splice(index, 1);
 };
 
 function onBack() {
-  let isChanged = false
-  for (const key in initialValues) {
-    if (values[key] !== initialValues[key]) {
-      isChanged = true
-      break;
-    }
-  }
-
-  if (!isChanged) {
     router.replace('/' + modulPath)
-    return
-  }
-
-  swal.fire({
-    icon: 'warning',
-    text: 'Buang semua perubahan dan kembali ke list data?',
-    showDenyButton: true
-  }).then((res) => {
-    if (res.isConfirmed) {
-      router.replace('/' + modulPath)
-    }
-  })
 }
 
 function onReset() {
@@ -123,42 +106,59 @@ function onReset() {
 }
 
 async function onSave() {
-  //values.tags = JSON.stringify(values.tags)
-    values.is_active = (values.is_active === true) ? 1 : 0;
-      try {
-        const isCreating = ['Create','Copy','Tambah'].includes(actionText.value)
-        const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`
-        isRequesting.value = true
-        const res = await fetch(dataURL, {
-          method: isCreating ? 'POST' : 'PUT',
-          
-          headers: {
-            'Content-Type': 'Application/json',
-            Authorization: `${store.user.token_type} ${store.user.token}`
-          },
-          body: JSON.stringify(values)
-          
-        })
-        
-        if (!res.ok) {
-          if ([400, 422].includes(res.status)) {
-            const responseJson = await res.json()
-            formErrors.value = responseJson.errors || {}
-            throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data")
-          } else {
-            throw ("Failed when trying to post data")
-          }
-        }
-        router.replace('/' + modulPath + '?reload='+(Date.parse(new Date())))
-      } catch (err) {
-        isBadForm.value = true
-        swal.fire({
-          icon: 'error',
-          text: err
-        })
+  try {
+    const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value)
+    const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`
+    isRequesting.value = true
+
+    values.status = values.status ? 1 : 0;
+
+    const cleanDetails = detailArr.value.map(item => {
+      const cleaned = { ...item };
+
+      cleaned.is_bundling = item.is_bundling ? 1 : 0;
+
+      if (cleaned.is_bundling === 1) {
+        cleaned.m_item_d_id = cleaned.m_item_d_text;
       }
-      isRequesting.value = false
+
+      return cleaned;
+    });
+
+    values.t_internal_d = cleanDetails;
+
+    console.log('IKI VALUES COK :', values);
+
+    const res = await fetch(dataURL, {
+      method: isCreating ? 'POST' : 'PUT',
+      headers: {
+        'Content-Type': 'Application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      body: JSON.stringify(values)
+    })
+
+    if (!res.ok) {
+      if ([400, 422].includes(res.status)) {
+        const responseJson = await res.json()
+        formErrors.value = responseJson.errors || {}
+        throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data")
+      } else {
+        throw ("Failed when trying to post data")
+      }
+    }
+    router.replace('/' + modulPath + '?reload=' + (Date.parse(new Date())))
+  } catch (err) {
+    isBadForm.value = true
+    swal.fire({
+      icon: 'error',
+      text: err
+    })
+  }
+  isRequesting.value = false
 }
+
+
 
 //  @else----------------------- LANDING
 const landing = reactive({
@@ -210,7 +210,7 @@ const landing = reactive({
       class: 'bg-green-600 text-light-100',
       // show: () => store.user.data.direktorat==='ADMIN INSTANSI',
       click(row) {
-        router.push(`${route.path}/${row.id}?`+tsId)
+        router.push(`${route.path}/${row.id}?` + tsId)
       }
     },
     {
@@ -219,7 +219,7 @@ const landing = reactive({
       class: 'bg-blue-600 text-light-100',
       // show: () => store.user.data.direktorat==='ADMIN INSTANSI',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Edit&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Edit&` + tsId)
       }
     },
     {
@@ -228,7 +228,7 @@ const landing = reactive({
       class: 'bg-gray-600 text-light-100',
       // show: () => store.user.data.direktorat==='ADMIN INSTANSI',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Copy&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Copy&` + tsId)
       }
     }
   ],
@@ -240,7 +240,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield:'this.id, this.kode, this.deskripsi, this.group, this.is_active',
+      searchfield: 'this.no_pemakaian, this.date, this.catatan, this.status',
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -259,23 +259,23 @@ const landing = reactive({
   },
   {
     headerName: 'No. Pemakaian Stock',
-    field: 'no_pemakaian_stok',
+    field: 'no_pemakaian',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    cellClass: [ 'border-r', '!border-gray-200']
+    cellClass: ['border-r', '!border-gray-200']
   },
   {
     headerName: 'Tanggal',
-    field: 'tanggal',
+    field: 'date',
     filter: true,
     sortable: true,
     filter: 'ColFilter',
     resizable: true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200']
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Catatan',
@@ -284,20 +284,22 @@ const landing = reactive({
     sortable: true,
     filter: 'ColFilter',
     resizable: true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200']
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200']
   },
   {
-  headerName: 'Status', 
-  field: 'is_active', 
-  flex: 1, 
-  cellClass: ['border-r', '!border-gray-200', 'justify-center'],
-  sortable: true, 
-  filter: 'ColFilter', 
-  cellRenderer: ({ value }) =>
-  value === true
-  ? '<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>'
-  : '<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Inactive</span>'
+    headerName: 'Status',
+    field: 'status',
+    filter: true,
+    resizable: true,
+    sortable: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+    cellRenderer: ({ value }) => {
+      return value === true
+        ? `<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>`
+        : `<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Inactive</span>`
+    }
   }
   ]
 })
@@ -305,9 +307,9 @@ const landing = reactive({
 const filterButton = ref(null);
 
 function filterShowData(params) {
-    filterButton.value = filterButton.value === params ? null : params;
-    landing.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
-    apiTable.value.reload();
+  filterButton.value = filterButton.value === params ? null : params;
+  landing.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
+  apiTable.value.reload();
 }
 
 
@@ -321,4 +323,4 @@ onActivated(() => {
 })
 
 //  @endif -------------------------------------------------END
-watchEffect(()=>store.commit('set', ['isRequesting', isRequesting.value]))
+watchEffect(() => store.commit('set', ['isRequesting', isRequesting.value]))

@@ -77,6 +77,21 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
                     "price_old" => $view_stock ? $view_stock->price : 0,
                     "note" => $dt->catatan
                 ]);
+
+                // Ambil info is_bundling dari m_item
+                $item = \DB::table('m_item')->where('id', $dt->m_item_id)->first();
+
+                // Jika is_bundling = false / 0 baru insert ke m_item_d
+                if ($item && ($item->is_bundling === false || $item->is_bundling === null)) {
+                    \DB::table('m_item_d')->insert([
+                        'm_item' => $dt->m_item_id,
+                        'no_lpb' => $data->no_lpb . '-' . $data->tanggal_lpb, // perbaikan operator
+                        'catatan' => $dt->catatan,
+                        'used' => 0
+                        // 'created_at' => now(),
+                        // 'updated_at' => now(),
+                    ]);
+                }
             }
             // END INSERTSTOCK
             $status = $this->where("id", $id)->update(["status" => "POST"]);

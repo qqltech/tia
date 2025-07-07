@@ -189,6 +189,46 @@ class t_purchase_order extends \App\Models\BasicModels\t_purchase_order
         }
     }
 
+    public function custom_multi_progress($req)
+    {
+        \DB::beginTransaction();
+
+        try {
+            foreach ($req->items as $item) {
+                $conf = [
+                    "app_id" => $item['id'],
+                    "app_type" => $item['type'], // APPROVED, REVISED, REJECTED
+                    "app_note" => $item['note'] ?? null,
+                ];
+
+                $app = $this->approval->approvalProgress($conf, true);
+
+                if ($app->status) {
+                    $data = $this->find($app->trx_id);
+
+                    $data->update([
+                        "status" => $app->finish ? $item['type'] : "IN APPROVAL"
+                    ]);
+                }
+
+                if ($item['type'] === "APPROVED") {
+                    $get_trx_id = generate_approval::find($item['id']);
+                    if ($get_trx_id) {
+                        $trx_id = $get_trx_id->trx_id;
+                        t_purchase_order::where('id', $trx_id)->update(['status' => 'APPROVED']);
+                    }
+                }
+            }
+
+            \DB::commit();
+            return $this->helper->customResponse("Proses multi-approval berhasil!");
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->helper->responseCatch($e);
+        }
+    }
+
     public function custom_detail($req)
     {
         $id = $req->id ?? 66;

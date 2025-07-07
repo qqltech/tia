@@ -15,6 +15,8 @@ class mitem extends Migration
             //$table->dropColumn([ ]);
             // $table->bigInteger('uom_id')->nullable(false)->comment('{"src": "set.m_general.id"}')->change();
             // $table->string('tipe_item', 30)->change();
+
+            $table->boolean('is_bundling')->default(0)->nullable();
         });
     }
 }
