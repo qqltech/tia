@@ -23,8 +23,22 @@ class m_item extends Model
     public $columnsFull = ["id:bigint","kode:string:191","tanggal:date","nama_item:string:100","tipe_item:string:30","is_active:boolean","creator_id:integer","last_editor_id:integer","created_at:datetime","updated_at:datetime","deleted_id:integer","deleted_at:datetime","uom_id:bigint","is_bundling:boolean"];
     public $rules       = [];
     public $joins       = ["set.m_general.id=m_item.uom_id"];
+
     public $details     = ["m_item_d"];
-    public $heirs       = ["tes_d","t_lpb_d","t_purchase_order_d","t_pemakaian_stok_d","t_internal_d","r_stock_d","t_confirm_asset"];
+public $heirs = [
+    "tes_d",
+    "t_lpb_d",
+    "t_purchase_order_d",
+    "t_pemakaian_stok_d",
+    "t_internal_d",
+    "r_stock_d",
+    "t_confirm_asset"
+];
+
+//    public $heirs       = ["tes_d","t_lpb_d","t_purchase_order_d","t_pemakaian_stok_d","t_internal_d","r_stock_d","t_confirm_asset"];
+
+//   public $heirs       = ["r_stock_d","t_confirm_asset","t_lpb_d","t_pemakaian_stok_d","t_purchase_order_d","tes_d"];
+
     public $detailsChild= [];
     public $detailsHeirs= ["t_internal_d"];
     public $unique      = [

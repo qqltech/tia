@@ -21,7 +21,7 @@ class m_role extends Model
     public $rules       = [];
     public $joins       = [];
     public $details     = ["set.m_role_d"];
-    public $heirs       = ["set.m_role_access","set.m_responsibility_d","set.m_approval_det","set.generate_approval_det"];
+    public $heirs       = ["set.generate_approval_det","set.m_approval_det","set.m_responsibility_d","set.m_role_access"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

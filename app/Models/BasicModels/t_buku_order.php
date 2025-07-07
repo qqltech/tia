@@ -24,9 +24,9 @@ class t_buku_order extends Model
     public $rules       = [];
     public $joins       = ["m_customer.id=t_buku_order.m_customer_id","set.m_general.id=t_buku_order.sektor","set.m_general.id=t_buku_order.pelabuhan_id","set.m_general.id=t_buku_order.kode_pelayaran_id","set.m_general.id=t_buku_order.tipe"];
     public $details     = ["t_buku_order_d_aju","t_buku_order_d_npwp","t_buku_order_detber"];
-    public $heirs       = ["t_angkutan","t_bon_dinas_luar_d","t_ppjk","t_surat_jalan","t_komisi","t_komisi","t_komisi_d","t_tagihan_d_npwp","t_spk_angkutan","t_spk_angkutan","t_bll","t_nota_rampung","t_komisi_undername","t_buku_penyesuaian","t_dp_penjualan","t_bkk","t_bkm","t_tagihan_lain_lain","t_tagihan","t_bkm_non_order","t_spk_lain"];
+    public $heirs       = ["t_bkk","t_bon_dinas_luar_d","t_bll","t_buku_penyesuaian","t_bkm","t_bkm_non_order","t_dp_penjualan","t_komisi_d","t_komisi","t_komisi","t_komisi_undername","t_nota_rampung","t_ppjk","t_tagihan_d_npwp","t_surat_jalan","t_tagihan","t_spk_angkutan","t_spk_angkutan","t_spk_lain","t_angkutan","t_tagihan_lain_lain"];
     public $detailsChild= [];
-    public $detailsHeirs= ["t_surat_jalan","t_spk_angkutan","t_spk_angkutan","t_nota_rampung_d","t_spk_lain"];
+    public $detailsHeirs= ["t_nota_rampung_d","t_surat_jalan","t_spk_angkutan","t_spk_angkutan","t_spk_lain"];
     public $unique      = [];
     public $required    = [""];
     public $createable  = ["tgl","tipe_order","no_buku_order","m_customer_id","jenis_barang","sektor","tujuan_asal","moda_transportasi","coo","hc","status","tanggal_closing_doc","jam_closing_doc","tanggal_closing_cont","jam_closing_cont","no_bl","tanggal_bl","no_invoice","tanggal_invoice","tanggal_pengkont","tanggal_pemasukan","jumlah_coo","lembar_coo","jumlah_coo_ulang","lembar_coo_ulang","nama_pelayaran","no_boking","voyage","gw","nw","catatan","nama_kapal","dispensasi_closing_cont","dispensasi_closing_doc","angkutan","jumlah_kemasan","creator_id","last_editor_id","delete_id","delete_at","pelabuhan_id","lokasi_stuffing","kode_pelayaran_id","tipe","tgl_etd_eta","genzet"];
