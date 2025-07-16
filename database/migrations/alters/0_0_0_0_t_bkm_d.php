@@ -10,6 +10,7 @@ class tbkmd extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
+            $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}')->nullable(true);
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
             // $table->integer('t_bkm_id')->comment('{"fk":"t_bkm.id"}')->nullable(true)->change();

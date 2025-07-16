@@ -22,7 +22,7 @@ class tbondinasluar extends Migration
             $table->string('no_bkk', 100);
             $table->decimal('total_amt', 18, 4);
             $table->bigInteger('m_kary_id')->comment('{"src":"set.m_kary.id"}');
-            $table->bigInteger('m_supplier_id')->comment('{"src":"m_supplier.id"}');
+            $table->bigInteger('m_supplier_id')->comment('{"src":"m_supplier.id"}')->nullable();
             $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->text('catatan')->nullable();
             $table->bigInteger('jumlah_print')->default(0)->nullable();

@@ -12,7 +12,9 @@ class coba2 extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id()->from(1);
-
+asdasd
+asdasd
+asdsa
             $table->string('samplecolumn',100)->nullable();
 
             // $table->integer('creator_id')->nullable();

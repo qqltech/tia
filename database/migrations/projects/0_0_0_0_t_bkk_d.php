@@ -16,6 +16,7 @@ class tbkkd extends Migration
             $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');
             $table->decimal('nominal', 18, 4);
             $table->text('keterangan')->nullable();
+            $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
             
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
