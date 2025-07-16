@@ -21,7 +21,7 @@ class generate_approval_det extends Model
     public $rules       = [];
     public $joins       = ["set.generate_approval.id=set.generate_approval_det.generate_approval_id","set.m_role.id=set.generate_approval_det.m_role_id","default_users.id=set.generate_approval_det.default_user_id","default_users.id=set.generate_approval_det.action_user_id","default_users.id=set.generate_approval_det.creator_id","default_users.id=set.generate_approval_det.last_editor_id"];
     public $details     = [];
-    public $heirs       = ["set.generate_approval","set.generate_approval_log"];
+    public $heirs       = ["set.generate_approval_log","set.generate_approval"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

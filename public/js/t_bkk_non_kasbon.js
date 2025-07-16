@@ -324,6 +324,14 @@ const initArr = {
 const detailArr = reactive([]);
 let coaList = reactive([]);
 
+function addRow() {
+  detailArr.push({
+     t_buku_order_id: '',      // atau isi default jika ada
+    // catatan: '',        // field yang kamu gunakan di tabel
+    // _lastInput: null,
+    // tambahkan field lain sesuai kebutuhan
+  });
+}
 
 // GET DATA FROM API
 onBeforeMount(async () => {

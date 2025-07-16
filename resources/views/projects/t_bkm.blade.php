@@ -82,16 +82,17 @@
         label="No. BKM" placeholder="No. BKM" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.nama_penerima"
-        :errorText="formErrors.nama_penerima?'failed':''" @input="v=>values.nama_penerima=v" :hints="formErrors.nama_penerima"
-        label="Nama Penyetor" placeholder="Nama Penyetor" :check="false" />
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3"
+        :value="values.nama_penerima" :errorText="formErrors.nama_penerima?'failed':''"
+        @input="v=>values.nama_penerima=v" :hints="formErrors.nama_penerima" label="Nama Penyetor"
+        placeholder="Nama Penyetor" :check="false" />
     </div>
     <div>
       <FieldX :bind="{ readonly: !actionText, disabled:!actionText, clearable:false }" class="w-full !mt-3"
         :value="values.tanggal" :errorText="formErrors.tanggal?'failed':''" @input="v=>values.tanggal=v"
         :hints="formErrors.tanggal" :check="false" type="date" label="Tanggal BKM" placeholder="Pilih Tanggal BKM" />
     </div>
-    <div>
+    <!-- <div>
       <FieldPopup :bind="{ readonly: !actionText, disabled:!actionText, clearable:false }" label="No. Buku Order"
         class="w-full !mt-3" valueField="id" displayField="no_buku_order" :value="values.t_buku_order_id"
         @input="(v)=>values.t_buku_order_id=v" :errorText="formErrors.t_buku_order_id?'failed':''"
@@ -150,7 +151,7 @@
             cellClass: ['border-r', '!border-gray-200', 'justify-start']
           }
           ]" />
-    </div>
+    </div> -->
 
     <div class="w-full !mt-3">
       <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, readonly: !actionText }" displayField="deskripsi"
@@ -299,7 +300,7 @@
 
   <!-- detail -->
   <div class="p-4">
-    <ButtonMultiSelect title="Add Detail" @add="onDetailAdd" :api="{
+    <!-- <ButtonMultiSelect title="Add Detail" @add="onDetailAdd" :api="{
         url: `${store.server.url_backend}/operation/m_coa`,
           headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
           params: { 
@@ -363,8 +364,14 @@
         class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
         <icon fa="plus" size="sm mr-0.5" /> Add Detail
       </div>
-    </ButtonMultiSelect>
-
+    </ButtonMultiSelect> -->
+    <div class="flex items-center space-x-2 py-2" v-if="actionText">
+      <div @click="addRow"
+        class="cursor-pointer w-[90.55px] h-[28px] bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded flex items-center justify-center">
+        <icon fa="plus" class="mr-1" />
+        Add To List
+      </div>
+    </div>
     <div class="mt-4">
       <table class="w-full overflow-x-auto table-auto border border-[#CACACA]">
         <thead>
@@ -372,6 +379,10 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-start w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               No.
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Nomor Order
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
@@ -401,9 +412,37 @@
               {{ i + 1 }}.
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldX :bind="{ readonly: true, clearable:false }" class="w-full py-2 !mt-0" :value="item.kode"
-                :check="false" @input="v=>item.kode=v" :errorText="formErrors.kode?'failed':''"
-                :hints="formErrors.kode" />
+              <FieldSelect :bind="{ disabled: !actionText, clearable:false }" :value="item.t_buku_order_id"
+                @input="v=>item.t_buku_order_id=v" :errorText="formErrors.t_buku_order_id?'failed':''"
+                :hints="formErrors.t_buku_order_id" valueField="id" displayField="no_buku_order" :api="{
+                    url: `${store.server.url_backend}/operation/t_buku_order`,
+                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                    params: {
+                      simplest:true,
+                      transform:false,
+                      join:false
+                    }
+                }" placeholder="" label="" fa-icon="" :check="false" />
+
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldSelect :bind="{ disabled: !actionText, clearable:false }" :value="item.m_coa_id"
+                @input="v=>item.m_coa_id=v" :errorText="formErrors.m_coa_id?'failed':''" :hints="formErrors.m_coa_id"
+                @update:valueFull="(dt) => {
+              if(dt){
+                item.nama = dt['nama_coa']
+                item.kode = dt['nomor']
+              }
+            }" valueField="id" displayField="nomor" :api="{
+                    url: `${store.server.url_backend}/operation/m_coa`,
+                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                    params: {
+                      selectfield: `this.id, this.nomor, this.nama_coa`,
+                      simplest:true,
+                      transform:false,
+                      join:false
+                    }
+                }" placeholder="" label="" fa-icon="" :check="false" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldX :bind="{ readonly: true, clearable:false }" class="w-full py-2 !mt-0" :value="item.nama"

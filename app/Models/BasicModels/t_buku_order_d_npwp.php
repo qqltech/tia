@@ -24,7 +24,7 @@ class t_buku_order_d_npwp extends Model
     public $rules       = [];
     public $joins       = ["t_buku_order.id=t_buku_order_d_npwp.t_buku_order_id","set.m_general.id=t_buku_order_d_npwp.ukuran","set.m_general.id=t_buku_order_d_npwp.jenis","set.m_general.id=t_buku_order_d_npwp.sektor","set.m_general.id=t_buku_order_d_npwp.depo","set.m_kary.id=t_buku_order_d_npwp.m_petugas_pengkont_id","set.m_kary.id=t_buku_order_d_npwp.m_petugas_pemasukan_id"];
     public $details     = [];
-    public $heirs       = ["t_nota_rampung_d","t_surat_jalan","t_spk_angkutan","t_spk_angkutan","t_spk_lain"];
+    public $heirs       = ["t_surat_jalan","t_spk_angkutan","t_spk_angkutan","t_nota_rampung_d","t_spk_lain"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

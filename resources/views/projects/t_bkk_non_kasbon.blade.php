@@ -1,8 +1,8 @@
 <!-- LANDING TABLE -->
 @if(!$req->has('id'))
 <div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
-   <div class="pl-4 pt-2">
-    <h1 class="text-xl font-semibold">BKK (Non Kasbon)</h1>
+  <div class="pl-4 pt-2">
+    <h1 class="text-xl font-semibold">BKK</h1>
   </div>
   <div class="flex justify-between items-center gap-x-4 p-4">
 
@@ -76,8 +76,8 @@
     <div class="flex items-center gap-2">
       <Icon fa="arrow-left" class="cursor-pointer mr-2 font-bold hover:text-white" title="Kembali" @click="onBack" />
       <div class="flex flex-col py-1 gap-1">
-        <h1 class="text-lg font-bold leading-none">Form BKK Non Kasbon</h1>
-        <p class="text-gray-100 leading-none">Transaction BKK Non Kasbon</p>
+        <h1 class="text-lg font-bold leading-none">Form BKK</h1>
+        <p class="text-gray-100 leading-none">Transaction BKK</p>
       </div>
     </div>
   </div>
@@ -120,7 +120,8 @@
         :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v"
         :hints="formErrors.tanggal" :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
     </div>
-    <div class="w-full !mt-3">
+
+    <!-- <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="v=>{
           if(v){
             data.t_buku_order_id=v
@@ -167,7 +168,7 @@
               cellClass: ['border-r', '!border-gray-200', 'justify-center']
             }
             ]" />
-    </div>
+    </div> -->
 
     <div>
       <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"
@@ -377,7 +378,7 @@
 
   <div class="<md:col-span-1 col-span-3 p-2 grid <md:grid-cols-1 grid-cols-3 gap-2">
     <div class="overflow-x-auto <md:col-span-1 col-span-3">
-      <ButtonMultiSelect @add="addDetailArr" :api="{
+      <!-- <ButtonMultiSelect @add="addDetailArr" :api="{
         url: `${store.server.url_backend}/operation/m_coa`,
         headers: {
           'Content-Type': 'Application/json', 
@@ -450,13 +451,24 @@
           <icon fa="plus" size="sm" />
           <span>Add To List</span>
         </div>
-      </ButtonMultiSelect>
+      </ButtonMultiSelect> -->
+      <div class="flex items-center space-x-2 py-2" v-if="actionText">
+        <div @click="addRow"
+          class="cursor-pointer w-[90.55px] h-[28px] bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded flex items-center justify-center">
+          <icon fa="plus" class="mr-1" />
+          Add To List
+        </div>
+      </div>
       <table class="w-full overflow-x-auto table-auto border border-[#CACACA] mt-4">
         <thead>
           <tr class="border">
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
               No.
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+              Nomor Order
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
@@ -486,7 +498,36 @@
               {{ i + 1 }}.
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <p class="text-black leading-none">{{ detailArr[i].nomor }}</p>
+              <FieldSelect :bind="{ disabled: !actionText, clearable:false }" :value="item.t_buku_order_id"
+                @input="v=>item.t_buku_order_id=v" :errorText="formErrors.t_buku_order_id?'failed':''"
+                :hints="formErrors.t_buku_order_id" valueField="id" displayField="no_buku_order" :api="{
+                    url: `${store.server.url_backend}/operation/t_buku_order`,
+                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                    params: {
+                      simplest:true,
+                      transform:false,
+                      join:false
+                    }
+                }" placeholder="" label="" fa-icon="" :check="false" />
+
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldSelect :bind="{ disabled: !actionText, clearable:false }" :value="item.m_coa_id"
+                @input="v=>item.m_coa_id=v" :errorText="formErrors.m_coa_id?'failed':''" :hints="formErrors.m_coa_id"
+                @update:valueFull="(dt) => {
+              if(dt){
+                item.nama_coa = dt['nama_coa']
+              }
+            }" valueField="id" displayField="nomor" :api="{
+                    url: `${store.server.url_backend}/operation/m_coa`,
+                    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+                    params: {
+                      selectfield: `this.id, this.nomor, this.nama_coa`,
+                      simplest:true,
+                      transform:false,
+                      join:false
+                    }
+                }" placeholder="" label="" fa-icon="" :check="false" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <p class="text-black leading-none">{{ detailArr[i].nama_coa }}</p>

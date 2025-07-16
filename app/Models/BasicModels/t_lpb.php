@@ -24,7 +24,7 @@ class t_lpb extends Model
     public $rules       = [];
     public $joins       = ["t_purchase_order.id=t_lpb.t_po_id","m_supplier.id=t_lpb.m_supplier_id"];
     public $details     = ["t_lpb_d"];
-    public $heirs       = ["t_confirm_asset","t_purchase_invoice"];
+    public $heirs       = ["t_purchase_invoice","t_confirm_asset"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [

@@ -17,10 +17,10 @@ class t_tagihan_d_tarif extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","persentase_konsolidator_jasa"];
+    protected $fillable = ["t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","persentase_konsolidator_jasa","by_tambah"];
 
-    public $columns     = ["id","t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","persentase_konsolidator_jasa"];
-    public $columnsFull = ["id:bigint","t_tagihan_id:integer","m_jasa_id:integer","m_tarif_id:integer","satuan:float","tarif:decimal","catatan:text","ppn:boolean","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","persentase_konsolidator_jasa:decimal"];
+    public $columns     = ["id","t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","persentase_konsolidator_jasa","by_tambah"];
+    public $columnsFull = ["id:bigint","t_tagihan_id:integer","m_jasa_id:integer","m_tarif_id:integer","satuan:float","tarif:decimal","catatan:text","ppn:boolean","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","persentase_konsolidator_jasa:decimal","by_tambah:decimal"];
     public $rules       = [];
     public $joins       = ["t_tagihan.id=t_tagihan_d_tarif.t_tagihan_id","m_jasa.id=t_tagihan_d_tarif.m_jasa_id","m_tarif.id=t_tagihan_d_tarif.m_tarif_id"];
     public $details     = [];
@@ -29,9 +29,9 @@ class t_tagihan_d_tarif extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["m_jasa_id"];
-    public $createable  = ["t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","persentase_konsolidator_jasa"];
-    public $updateable  = ["t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","persentase_konsolidator_jasa"];
-    public $searchable  = ["id","t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","persentase_konsolidator_jasa"];
+    public $createable  = ["t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","persentase_konsolidator_jasa","by_tambah"];
+    public $updateable  = ["t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","persentase_konsolidator_jasa","by_tambah"];
+    public $searchable  = ["id","t_tagihan_id","m_jasa_id","m_tarif_id","satuan","tarif","catatan","ppn","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","persentase_konsolidator_jasa","by_tambah"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

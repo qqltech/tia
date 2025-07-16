@@ -24,7 +24,7 @@ class m_tarif extends Model
     public $rules       = [];
     public $joins       = ["m_customer.id=m_tarif.m_customer_id","set.m_general.id=m_tarif.sektor","set.m_general.id=m_tarif.jenis"];
     public $details     = ["m_tarif_d_jasa","m_tarif_d_lain_lain"];
-    public $heirs       = ["m_customer_d_tarif","t_tagihan_d_tarif"];
+    public $heirs       = ["t_tagihan_d_tarif","m_customer_d_tarif"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

@@ -17,10 +17,10 @@ class t_angkutan extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","custom_stuple","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
+    protected $fillable = ["no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","custom_stuple"];
 
-    public $columns     = ["id","no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","custom_stuple","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","no_draft:string:20","t_buku_order_id:integer","no_angkutan:string:191","status:string:10","pph:boolean","tanggal:date","party:string:191","custom_stuple:boolean","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","custom_stuple"];
+    public $columnsFull = ["id:bigint","no_draft:string:20","t_buku_order_id:integer","no_angkutan:string:191","status:string:10","pph:boolean","tanggal:date","party:string:191","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","custom_stuple:boolean"];
     public $rules       = [];
     public $joins       = ["t_buku_order.id=t_angkutan.t_buku_order_id"];
     public $details     = ["t_angkutan_d"];
@@ -29,9 +29,9 @@ class t_angkutan extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = [""];
-    public $createable  = ["no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","custom_stuple","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $updateable  = ["no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","custom_stuple","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $searchable  = ["id","no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","custom_stuple","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","custom_stuple"];
+    public $updateable  = ["no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","custom_stuple"];
+    public $searchable  = ["id","no_draft","t_buku_order_id","no_angkutan","status","pph","tanggal","party","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","custom_stuple"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

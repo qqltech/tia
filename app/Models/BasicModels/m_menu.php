@@ -21,7 +21,7 @@ class m_menu extends Model
     public $rules       = [];
     public $joins       = [];
     public $details     = [];
-    public $heirs       = ["set.m_approval","set.m_role_d"];
+    public $heirs       = ["set.m_role_d","set.m_approval"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

@@ -18,7 +18,7 @@ class tbkk extends Migration
             $table->string('tipe_bkk', 100);
             $table->string('nama_penerima', 100)->nullable();
             // $table->string('no_reference', 100);
-            $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
+            // $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
             $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}');
             $table->date('tanggal');
             $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');

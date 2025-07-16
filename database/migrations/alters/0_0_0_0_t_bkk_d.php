@@ -10,12 +10,12 @@ class tbkkd extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
-            $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}')->nullable();
             //$table->string('_existColumnName_')->change();
             // $table->integer('t_bkk_id')->comment('{"fk":"t_bkk.id"}')->nullable()->change();
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
             $table->text('keterangan')->nullable()->change();
+            $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}')->nullable();
         });
     }
 }

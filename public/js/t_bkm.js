@@ -90,6 +90,15 @@ const onReset = async (alert = false) => {
   }, 100)
 }
 
+function addRow() {
+  detailArr.value.push({
+     t_buku_order_id: '',      // atau isi default jika ada
+    // catatan: '',        // field yang kamu gunakan di tabel
+    // _lastInput: null,
+    // tambahkan field lain sesuai kebutuhan
+  });
+}
+
 onBeforeMount(async () => {
   onReset();
   if (isRead) {

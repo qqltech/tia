@@ -15,9 +15,9 @@ class tbkm extends Migration
             $table->string('no_bkm', 20)->nullable();
             $table->string('no_draft', 20)->nullable();
             $table->string('status');
-            $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
             $table->date('tanggal');
             $table->string('nama_penerima', 100)->nullable();
+            // $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}');
             // $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');
             $table->decimal('total_amt', 18, 4);
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');

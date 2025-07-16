@@ -17,10 +17,10 @@ class t_bkm_d extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["t_bkm_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at","t_buku_order_id"];
+    protected $fillable = ["t_bkm_id","m_coa_id","nominal","keterangan","t_buku_order_id","creator_id","last_editor_id","deleted_id","deleted_at"];
 
-    public $columns     = ["id","t_bkm_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","t_buku_order_id"];
-    public $columnsFull = ["id:bigint","t_bkm_id:integer","m_coa_id:integer","nominal:decimal","keterangan:text","creator_id:integer","last_editor_id:integer","deleted_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","t_buku_order_id:integer"];
+    public $columns     = ["id","t_bkm_id","m_coa_id","nominal","keterangan","t_buku_order_id","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
+    public $columnsFull = ["id:bigint","t_bkm_id:integer","m_coa_id:integer","nominal:decimal","keterangan:text","t_buku_order_id:integer","creator_id:integer","last_editor_id:integer","deleted_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
     public $rules       = [];
     public $joins       = ["t_bkm.id=t_bkm_d.t_bkm_id","m_coa.id=t_bkm_d.m_coa_id","t_buku_order.id=t_bkm_d.t_buku_order_id"];
     public $details     = [];
@@ -29,9 +29,9 @@ class t_bkm_d extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["m_coa_id","nominal","t_buku_order_id"];
-    public $createable  = ["t_bkm_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at","t_buku_order_id"];
-    public $updateable  = ["t_bkm_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at","t_buku_order_id"];
-    public $searchable  = ["id","t_bkm_id","m_coa_id","nominal","keterangan","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","t_buku_order_id"];
+    public $createable  = ["t_bkm_id","m_coa_id","nominal","keterangan","t_buku_order_id","creator_id","last_editor_id","deleted_id","deleted_at"];
+    public $updateable  = ["t_bkm_id","m_coa_id","nominal","keterangan","t_buku_order_id","creator_id","last_editor_id","deleted_id","deleted_at"];
+    public $searchable  = ["id","t_bkm_id","m_coa_id","nominal","keterangan","t_buku_order_id","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
