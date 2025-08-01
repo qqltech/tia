@@ -99,6 +99,45 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         }
     }
 
+     public function custom_multi_progress($req)
+    {
+        \DB::beginTransaction();
+
+            try {
+                foreach ($req->items as $item) {
+                  $conf = [
+                  "app_id" => $item['id'],
+                  "app_type" => $item['type'], // APPROVED, REVISED, REJECTED,
+                  "app_note" => $item['note'], // alasan approve
+                  ];
+
+                  $app = $this->approval->approvalProgress($conf, true);
+                  if ($app->status) {
+                      $data = $this->find($app->trx_id);
+                      if ($app->finish) {
+                          $data->update([
+                              "status" => $req->type
+                          ]);
+
+                          if($req->type == 'APPROVED'){
+                              $this->autoJurnal($data->id);
+                          }
+                        
+                      } else {
+                          $data->update([
+                              "status" => "IN APPROVAL",
+                          ]);
+                      }
+                  }
+                } 
+                 \DB::commit();
+                return $this->helper->customResponse("Proses multi-approval berhasil");
+        } catch (\Exception $e) {
+                \DB::rollback();
+                return $this->helper->responseCatch($e);
+            }
+    }
+
     public function custom_progress($req)
     {
         // Start a database transaction

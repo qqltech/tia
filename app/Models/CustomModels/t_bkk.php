@@ -130,7 +130,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
                         "status" => $req->type,
                     ]);
                     if ($req->type == "APPROVED") {
-                        $this->autoJurnal($data->id);
+                        $this->autoJurnal($data->id, false);
                     }
                 } else {
                     $data->update([
@@ -173,7 +173,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
                     $get_trx_id = generate_approval::find($item['id']);
                     if ($get_trx_id) {
                             $trx_id = $get_trx_id->trx_id;
-                            $this->autoJurnal($data->id);
+                            $this->autoJurnal($data->id, true);
                     }
                 }
 
@@ -204,7 +204,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         return response($data);
     }
 
-    private function autoJurnal($id)
+    private function autoJurnal($id, $typeApproveMulti = false)
     {
         // debet = detil, credit = header.
         $trx = \DB::selectOne("select a.* from t_bkk a where a.id = ?", [$id]);
@@ -255,9 +255,18 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
             "detail" => array_merge($debetArr, $creditArr),
         ];
 
-        $r_gl = new r_gl();
-        $data = $r_gl->autoJournal($obj);
+       $check_r_gl = \DB::selectOne("
+    select a.* from r_gl a 
+    where a.type = 'BKK (Non Kasbon)' 
+    AND a.ref_table = 't_bkk' 
+    AND a.ref_id = ?", [$trx->id]);
 
+        if($check_r_gl && $typeApproveMulti){
+            return ["status" => true];
+        }else {
+            $r_gl = new r_gl();
+            $data = $r_gl->autoJournal($obj);
+        }
         return ["status" => true];
     }
 }
