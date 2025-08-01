@@ -37,7 +37,7 @@ const table = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.no_bkk, this.tanggal, this.tipe_bkk, this.total_amt'
+      searchfield: 'this.no_bkk, this.no_reference, this.tanggal, this.tipe_bkk, this.total_amt'
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };
@@ -55,6 +55,17 @@ const table = reactive({
   {
     headerName: 'No. BKK',
     field: 'no_bkk',
+    filter: true,
+    sortable: true,
+    flex: 1,
+    filter: 'ColFilter',
+    resizable: true,
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
+  },
+  {
+    headerName: 'No. Reference',
+    field: 'no_reference',
     filter: true,
     sortable: true,
     flex: 1,
@@ -453,6 +464,64 @@ function onBack() {
   router.replace('/' + modulPath)
 }
 
+const selectedItems = ref([])
+
+async function sendMultipleApproval() {
+  if (!selectedItems.value.length) {
+    return swal.fire({
+      icon: 'warning',
+      text: 'Pilih data yang ingin diajukan approval',
+      confirmButtonColor: '#1469AE'
+    });
+  }
+
+  swal.fire({
+    icon: 'question',
+    text: 'Ajukan approval untuk data terpilih?',
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+    showDenyButton: true
+  }).then(async (res) => {
+    if (!res.isConfirmed) return;
+
+    try {
+      isRequesting.value = true;
+
+      for (const item of selectedItems.value) {
+        const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/send_approval`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'Application/json',
+            Authorization: `${store.user.token_type} ${store.user.token}`,
+          },
+          body: JSON.stringify({ id: item.id })
+        });
+
+        const json = await res.json();
+        if (!res.ok) {
+          throw new Error(json.message || 'Gagal mengirim approval');
+        }
+      }
+
+      swal.fire({
+        icon: 'success',
+        text: 'Berhasil mengirim semua data ke proses approval'
+      });
+
+      router.replace('/notifikasi?reload=true');
+
+    } catch (err) {
+      swal.fire({
+        icon: 'error',
+        text: err.toString(),
+        confirmButtonColor: '#1469AE'
+      });
+    } finally {
+      isRequesting.value = false;
+    }
+  });
+}
+
 async function sendApproval() {
   swal.fire({
     icon: 'warning',
@@ -530,6 +599,72 @@ async function sendApproval() {
   })
 }
 
+async function Multiprogress(status) {
+  if (!selectedItems.value.length) {
+    return swal.fire({
+      icon: 'warning',
+      text: 'Pilih data yang ingin diproses',
+      confirmButtonColor: '#1469AE'
+    });
+  }
+
+  const confirmText = status === 'APPROVED' ? 'Setujui?' :
+    status === 'REJECTED' ? 'Tolak?' : 'Revisi?';
+
+  swal.fire({
+    icon: 'question',
+    text: confirmText,
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+    showDenyButton: true
+  }).then(async (res) => {
+    if (!res.isConfirmed) return;
+
+    try {
+      isRequesting.value = true;
+
+      const items = selectedItems.value.map(i => ({
+        id: i.id,
+        type: status,
+        note: `Processed via multiple approval - ${status}`
+      }));
+
+      console.log(JSON.stringify({ items }));
+      const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/multi_progress`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`
+        },
+        body: JSON.stringify({ items })
+      });
+
+
+      
+      const json = await res.json();
+
+      if (!res.ok) {
+        throw new Error(json.message || 'Gagal memproses approval');
+      }
+
+      swal.fire({
+        icon: 'success',
+        text: json.message
+      });
+
+      router.replace('/notifikasi?reload=true');
+
+    } catch (err) {
+      swal.fire({
+        icon: 'error',
+        text: err.toString()
+      });
+    } finally {
+      isRequesting.value = false;
+    }
+  });
+}
+
 async function progress(status) {
   swal.fire({
     icon: 'warning',
@@ -580,6 +715,80 @@ async function progress(status) {
     }
   })
 }
+
+async function onDetailAdd() {
+  if (!selectedItems.value.length) {
+    return swal.fire({
+      icon: 'warning',
+      text: 'Pilih data terlebih dahulu untuk diajukan approval',
+      confirmButtonColor: '#1469AE'
+    });
+  }
+
+  const confirm = await swal.fire({
+    icon: 'question',
+    text: 'Ajukan approval untuk semua data yang dipilih?',
+    iconColor: '#1469AE',
+    confirmButtonText: 'Ya, ajukan',
+    showCancelButton: true,
+    cancelButtonText: 'Batal',
+    confirmButtonColor: '#1469AE'
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  try {
+    isRequesting.value = true;
+
+    const failedItems = [];
+
+    for (const item of selectedItems.value) {
+      console.log('Sending approval for ID', item.id);
+      const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/send_approval`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`,
+          Source: 'web'
+        },
+        body: JSON.stringify({ id: item.id })
+      });
+
+      const json = await res.json();
+      console.log('Response:', json);
+
+      if (!res.ok) {
+        failedItems.push({ id: item.id, message: json.message || 'Gagal' });
+      }
+    }
+
+    if (failedItems.length === 0) {
+      swal.fire({
+        icon: 'success',
+        text: 'Semua data berhasil diajukan ke proses approval'
+      });
+      router.replace('/notifikasi?reload=true');
+    } else {
+      const messages = failedItems.map(f => `ID ${f.id}: ${f.message}`).join('\n');
+      swal.fire({
+        icon: 'error',
+        title: 'Beberapa data gagal diajukan',
+        text: messages,
+        confirmButtonColor: '#1469AE'
+      });
+    }
+
+  } catch (err) {
+    swal.fire({
+      icon: 'error',
+      text: 'Terjadi kesalahan saat mengirim approval: ' + err.message,
+      confirmButtonColor: '#1469AE'
+    });
+  } finally {
+    isRequesting.value = false;
+  }
+}
+
 
 watch(() => detailArr, () => {
   data.total_amt = 0;

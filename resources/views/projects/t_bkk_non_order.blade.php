@@ -4,6 +4,7 @@
   <div class="pl-4 pt-2">
     <h1 class="text-xl font-semibold">BKK (Non Order)</h1>
   </div>
+
   <div class="flex justify-between items-center gap-x-4 p-4">
 
     <!-- FILTER -->
@@ -50,6 +51,89 @@
 
     <!-- ACTION BUTTON -->
     <div class="flex items-center gap-x-4">
+      <ButtonMultiSelect title="Multiple Approval" @add="onDetailAdd" :api="{
+          url: `${store.server.url_backend}/operation/${endpointApi}`,
+          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          onsuccess:(response)=>{
+            response.data = [...response.data].map((dt)=>{
+              Object.keys(dt).forEach(k=>dt['m_tabung.'+k] = dt[k])
+              return dt
+            })
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
+        }" :columns="[{
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            headerName: 'No',
+            valueGetter:(params)=>{
+              return ''
+            },
+            width:60,
+            sortable: false, resizable: true, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+          },
+          {
+            flex: 1,
+            headerName:'No BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'No Reference',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_reference',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tanggal',
+            sortable: false, resizable: true, filter: false,
+            field: 'tanggal',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tipe BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'tipe_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Total Amount',
+            sortable: false, resizable: true, filter: false,
+            field: 'total_amt',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Status',
+            sortable: false, resizable: true, filter: false,
+            field: 'status',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          }
+          ]"
+          @selection-change="selectedItems = $event"
+          >
+        <div class="flex items-center space-x-2">
+          <div
+            class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+            <icon fa="print" />
+            Multiple Approval
+          </div>
+        </div>
+      </ButtonMultiSelect>
+
       <RouterLink :to="$route.path + '/create?' + (Date.parse(new Date()))" class="border border-blue-600 
       text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
       transition-colors duration-300">

@@ -214,10 +214,10 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         }
 
         $getdebet = \DB::select(
-            "select cbkd.m_coa_id, sum(cbkd.nominal) amount from t_bkk cbk
+            "select cbkd.m_coa_id, sum(cbkd.nominal) amount, cbkd.keterangan from t_bkk cbk
         join t_bkk_d cbkd on cbkd.t_bkk_id = cbk.id
         where cbk.id = ?
-        group by cbkd.m_coa_id",
+        group by cbkd.m_coa_id, cbkd.keterangan",
             [$id]
         );
 
@@ -230,7 +230,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
                 "m_coa_id" => $dbt->m_coa_id,
                 "seq" => $seq + 1,
                 "debet" => (float) $dbt->amount,
-                "desc" => $trx->keterangan,
+                "desc" => $dbt->keterangan,
             ];
             $amount += (float) $dbt->amount;
             $seq++;

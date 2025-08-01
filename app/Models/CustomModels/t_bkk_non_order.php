@@ -199,10 +199,10 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         $trx = \DB::selectOne('select a.* from t_bkk_non_order a where a.id = ?', [ $id ]);
         if(!$trx)  return ['status'=>true];
 
-        $getdebet = \DB::select("select cbkd.m_coa_id, sum(cbkd.nominal) amount from t_bkk_non_order cbk
+        $getdebet = \DB::select("select cbkd.m_coa_id, cbkd.keterangan, sum(cbkd.nominal) amount from t_bkk_non_order cbk
         join t_bkk_non_order_d cbkd on cbkd.t_bkk_non_order_id = cbk.id
         where cbk.id = ?
-        group by cbkd.m_coa_id", [$id]);
+        group by cbkd.m_coa_id, cbkd.keterangan", [$id]);
 
         $seq = 0;
         $debetArr = [];
@@ -213,7 +213,7 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
                 "m_coa_id" => $dbt->m_coa_id,
                 "seq" => $seq+1,
                 "debet" => (float) $dbt->amount,
-                "desc" => $trx->keterangan
+                "desc" => $dbt->keterangan
             ];
             $amount += (float) $dbt->amount;
             $seq++;

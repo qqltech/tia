@@ -437,7 +437,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.no_draft, this.no_bkm, m_business_unit.nama, this.tanggal, m_akun_pembayaran.nama_coa, this.total_amt, this.status, this.keterangan'
+      searchfield: 'this.no_draft, this.no_bkm, this.no_ref, m_business_unit.nama, this.tanggal, m_akun_pembayaran.nama_coa, this.total_amt, this.status, this.keterangan'
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -486,6 +486,17 @@ const landing = reactive({
     resizable: true,
     wrapText: true,
     cellClass: ['border-r', '!border-gray-200', 'justify-start']
+  },
+  {
+    headerName: 'No. Reference',
+    field: 'no_ref',
+    filter: true,
+    sortable: true,
+    flex: 1,
+    filter: 'ColFilter',
+    resizable: true,
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Tanggal',
