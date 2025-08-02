@@ -423,6 +423,7 @@ const landing = reactive({
               let dataURL;
               if (row.tipe_bkk == "Buku Order") dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_approval`;
               else if (row.tipe_bkk == "Non Buku Order") dataURL = `${store.server.url_backend}/operation/${endpointApiNonOrder}/send_approval`;
+              else if (row.tipe_bkk == "BKK Biasa") dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_approval`;
 
               isRequesting.value = true
               const res = await fetch(dataURL, {
