@@ -27,6 +27,57 @@ const userId = btoa(store.user.data['id']);
 
 // @if( !$id ) | --- LANDING TABLE --- |
 
+async function onDetailAdd() {
+  if (this.selectedItems.length === 0) {
+    this.$swal.fire({
+      icon: 'warning',
+      title: 'Tidak ada data terpilih',
+      text: 'Silakan pilih minimal satu data.',
+    });
+    return;
+  }
+
+  const confirm = await this.$swal.fire({
+    title: 'Ajukan Approval?',
+    text: `Sebanyak ${this.selectedItems.length} data akan diajukan.`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, ajukan',
+    cancelButtonText: 'Batal',
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  const ids = this.selectedItems.map(item => item.id); // pastikan ini benar
+
+  try {
+    const res = await this.$axios.post(
+      `${this.$store.state.server.url_backend}/operation/send_multiple_approval_bkk`, // composite API
+      { items: ids },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `${this.$store.state.user.token_type} ${this.$store.state.user.token}`,
+        },
+      }
+    );
+
+    this.$swal.fire({
+      icon: 'success',
+      title: 'Berhasil',
+      text: 'Data berhasil diajukan approval.',
+    });
+
+    this.selectedItems = []; // kosongkan selection
+  } catch (err) {
+    this.$swal.fire({
+      icon: 'error',
+      title: 'Gagal',
+      text: err?.response?.data?.message || 'Terjadi kesalahan saat mengirim approval.',
+    });
+  }
+}
+
 // TABLE
 const table = reactive({
   api: {
@@ -465,81 +516,6 @@ function onBack() {
 }
 
 const selectedItems = ref([])
-async function onDetailAdd() {
-  if (!selectedItems.value.length) {
-    return swal.fire({
-      icon: 'warning',
-      text: 'Pilih data terlebih dahulu untuk diajukan approval',
-      confirmButtonColor: '#1469AE'
-    });
-  }
-
-  const confirm = await swal.fire({
-    icon: 'question',
-    text: 'Ajukan approval untuk semua data yang dipilih?',
-    iconColor: '#1469AE',
-    confirmButtonText: 'Ya, ajukan',
-    showCancelButton: true,
-    cancelButtonText: 'Batal',
-    confirmButtonColor: '#1469AE'
-  });
-
-  if (!confirm.isConfirmed) return;
-
-  try {
-    isRequesting.value = true;
-
-    const failedItems = [];
-
-    for (const item of selectedItems.value) {
-      const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/send_approval`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'Application/json',
-          Authorization: `${store.user.token_type} ${store.user.token}`,
-          Source: 'web'
-        },
-        body: JSON.stringify({ id: item.id })
-      });
-
-      console.log('ID yang akan dikirim:', selectedItems.value.map(i => i.id))
-
-      const json = await res.json();
-
-      console.log('Response dari server:', json)
-
-
-      if (!res.ok) {
-        failedItems.push({ id: item.id, message: json.message || 'Gagal' });
-      }
-    }
-
-    if (failedItems.length === 0) {
-      await swal.fire({
-        icon: 'success',
-        text: 'Semua data berhasil diajukan ke proses approval'
-      });
-      router.replace('/notifikasi?reload=true');
-    } else {
-      const messages = failedItems.map(f => `ID ${f.id}: ${f.message}`).join('\n');
-      swal.fire({
-        icon: 'error',
-        title: 'Beberapa data gagal diajukan',
-        text: messages,
-        confirmButtonColor: '#1469AE'
-      });
-    }
-
-  } catch (err) {
-    swal.fire({
-      icon: 'error',
-      text: 'Terjadi kesalahan saat mengirim approval: ' + err.message,
-      confirmButtonColor: '#1469AE'
-    });
-  } finally {
-    isRequesting.value = false;
-  }
-}
 
 async function sendMultipleApproval() {
   if (!selectedItems.value.length) {
@@ -715,7 +691,7 @@ async function Multiprogress(status) {
       });
 
 
-      
+
       const json = await res.json();
 
       if (!res.ok) {

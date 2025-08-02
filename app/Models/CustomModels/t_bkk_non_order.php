@@ -10,7 +10,7 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
     {
         parent::__construct();
         $this->helper = getCore("Helper");
-         $this->approval = getCore("Approval");
+        $this->approval = getCore("Approval");
     }
     
     public $fileColumns    = [ /*file_column*/ ];
