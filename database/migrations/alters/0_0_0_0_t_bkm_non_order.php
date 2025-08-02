@@ -10,6 +10,7 @@ class tbkmnonorder extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
+           $table->string('nama_penerima', 100)->nullable();
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
