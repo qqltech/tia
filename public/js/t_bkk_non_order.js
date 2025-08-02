@@ -495,14 +495,19 @@ async function onDetailAdd() {
       const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/send_approval`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'Application/json',
           Authorization: `${store.user.token_type} ${store.user.token}`,
           Source: 'web'
         },
         body: JSON.stringify({ id: item.id })
       });
 
+      console.log('ID yang akan dikirim:', selectedItems.value.map(i => i.id))
+
       const json = await res.json();
+
+      console.log('Response dari server:', json)
+
 
       if (!res.ok) {
         failedItems.push({ id: item.id, message: json.message || 'Gagal' });

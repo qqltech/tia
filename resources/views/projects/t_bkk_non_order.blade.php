@@ -56,7 +56,7 @@
           headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
           onsuccess:(response)=>{
             response.data = [...response.data].map((dt)=>{
-              Object.keys(dt).forEach(k=>dt['m_tabung.'+k] = dt[k])
+              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
               return dt
             })
             response.page = response.current_page
