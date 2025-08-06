@@ -101,7 +101,7 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
             // 'm_cust_id'         => $trx->m_cust_id,
             'desc'              => $trx->keterangan,
             'm_business_unit_id' => $trx->m_business_unit_id,
-            'no_reference'      => $trx->no_reference,
+            'no_reference'      => $trx->no_ref,
             'detail'            => array_merge($debetArr, $creditArr)
         ];
 
