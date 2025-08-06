@@ -63,10 +63,9 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
         $trx = \DB::selectOne('select a.* from t_bkm a where a.id = ?', [ $id ]);
         if(!$trx)  return ['status'=>true];
 
-        $getcredit = \DB::select("select cbmd.m_coa_id, sum(cbmd.nominal) amount from t_bkm cbm
+        $getcredit = \DB::select("select cbmd.m_coa_id, cbmd.nominal as amount, cbmd.keterangan from t_bkm cbm
         join t_bkm_d cbmd on cbmd.t_bkm_id = cbm.id
-        where cbm.id = ?
-        group by cbmd.m_coa_id", [$id]);
+        where cbm.id = ?", [$id]);
 
         $seq = 1;
         $creditArr = [];
@@ -77,7 +76,7 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
                 "m_coa_id" => $cr->m_coa_id,
                 "seq" => $seq+1,
                 "credit" => (float) $cr->amount,
-                "desc" => $trx->keterangan
+                "desc" => $cr->keterangan
             ];
             $amount += (float) $cr->amount;
             $seq++;
@@ -101,6 +100,7 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
             'ref_no'            => $trx->no_bkm,
             // 'm_cust_id'         => $trx->m_cust_id,
             'desc'              => $trx->keterangan,
+            'm_business_unit_id' => $trx->m_business_unit_id,
             'detail'            => array_merge($debetArr, $creditArr)
         ];
 

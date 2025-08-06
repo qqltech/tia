@@ -25,6 +25,7 @@ class tbkm extends Migration
             $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->text('keterangan')->nullable();
             $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}');
+             $table->string('no_reference',50);
 
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

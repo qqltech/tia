@@ -14,6 +14,7 @@ const modulPath = route.params.modul
 const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
+const idMulti = ref([])
 const tsId = `ts=` + (Date.parse(new Date()))
 
 const isApproval = route.query.is_approval;
@@ -27,55 +28,122 @@ const userId = btoa(store.user.data['id']);
 
 // @if( !$id ) | --- LANDING TABLE --- |
 
-async function onDetailAdd() {
-  if (this.selectedItems.length === 0) {
-    this.$swal.fire({
-      icon: 'warning',
-      title: 'Tidak ada data terpilih',
-      text: 'Silakan pilih minimal satu data.',
-    });
-    return;
-  }
+const onDetailAdd = (e) => {
+  const newIds = e.map(row => row.id);
+  idMulti.value = [...new Set([...idMulti.value, ...newIds])]
 
-  const confirm = await this.$swal.fire({
-    title: 'Ajukan Approval?',
-    text: `Sebanyak ${this.selectedItems.length} data akan diajukan.`,
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Ya, ajukan',
-    cancelButtonText: 'Batal',
-  });
+  multiSendApproval()
+  console.log('INI MULTI ID (no duplicate) :', idMulti);
+}
 
-  if (!confirm.isConfirmed) return;
+async function multiSendApproval() {
+  let data = {}
+  swal.fire({
+    icon: 'warning',
+    text: 'Send Multi Approval?',
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
 
-  const ids = this.selectedItems.map(item => item.id); // pastikan ini benar
-
-  try {
-    const res = await this.$axios.post(
-      `${this.$store.state.server.url_backend}/operation/send_multiple_approval_bkk`, // composite API
-      { items: ids },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `${this.$store.state.user.token_type} ${this.$store.state.user.token}`,
-        },
+    showDenyButton: true
+  }).then(async (res) => {
+    if (res.isConfirmed) {
+      try {
+        const dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_multiple_approval_bkk`
+        isRequesting.value = true
+        const res = await fetch(dataURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'Application/json',
+            Authorization: `${store.user.token_type} ${store.user.token}`
+          },
+          body: JSON.stringify({ items: idMulti.value })
+        })
+        if (!res.ok) {
+          if ([400, 422, 500].includes(res.status)) {
+            const responseJson = await res.json()
+            formErrors.value = responseJson.errors || {}
+            throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to Send Approval")
+          } else {
+            throw ("Failed when trying to Send Approval")
+          }
+        }
+        const responseJson = await res.json()
+        swal.fire({
+          icon: 'success',
+          text: responseJson.message
+        })
+        // const resultJson = await res.json()
+      } catch (err) {
+        isBadForm.value = true
+        swal.fire({
+          icon: 'error',
+          iconColor: '#1469AE',
+          confirmButtonColor: '#1469AE',
+          text: err
+        })
       }
-    );
+      isRequesting.value = false;
+      router.replace('/' + modulPath);
+    }
+  })
+}
 
-    this.$swal.fire({
-      icon: 'success',
-      title: 'Berhasil',
-      text: 'Data berhasil diajukan approval.',
-    });
+async function multiProgress(status) {
+  const selectedIds = []
+  const items = selectedIds.map(id => ({
+    id,
+    type: status
+  }))
 
-    this.selectedItems = []; // kosongkan selection
-  } catch (err) {
-    this.$swal.fire({
-      icon: 'error',
-      title: 'Gagal',
-      text: err?.response?.data?.message || 'Terjadi kesalahan saat mengirim approval.',
-    });
-  }
+
+  swal.fire({
+    icon: 'warning',
+    text: status == 'APPROVED' ? 'Approve?' : status == 'REJECTED' ? 'Reject?' : 'Revise?',
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+
+    showDenyButton: true
+  }).then(async (res) => {
+    if (res.isConfirmed) {
+      try {
+        const dataURL = `${store.server.url_backend}/operation/${endpointApi}/multi_progress`
+        isRequesting.value = true
+        const res = await fetch(dataURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'Application/json',
+            Authorization: `${store.user.token_type} ${store.user.token}`
+          },
+          body: JSON.stringify({ items })
+        })
+        if (!res.ok) {
+          if ([400, 422, 500].includes(res.status)) {
+            const responseJson = await res.json()
+            formErrors.value = responseJson.errors || {}
+            throw (responseJson.message + " " + responseJson.data.errorText || "Failed when trying to Approved")
+          } else {
+            throw ("Failed when trying to Approved")
+          }
+        }
+        const responseJson = await res.json()
+        swal.fire({
+          icon: 'success',
+          text: responseJson.message
+        })
+        // const resultJson = await res.json()
+      } catch (err) {
+        isBadForm.value = true
+        swal.fire({
+          icon: 'error',
+          iconColor: '#1469AE',
+          confirmButtonColor: '#1469AE',
+          text: err
+        })
+      }
+      isRequesting.value = false;
+      router.replace('/notifikasi?reload=true');
+    }
+  })
 }
 
 // TABLE
@@ -515,64 +583,6 @@ function onBack() {
   router.replace('/' + modulPath)
 }
 
-const selectedItems = ref([])
-
-async function sendMultipleApproval() {
-  if (!selectedItems.value.length) {
-    return swal.fire({
-      icon: 'warning',
-      text: 'Pilih data yang ingin diajukan approval',
-      confirmButtonColor: '#1469AE'
-    });
-  }
-
-  swal.fire({
-    icon: 'question',
-    text: 'Ajukan approval untuk data terpilih?',
-    iconColor: '#1469AE',
-    confirmButtonColor: '#1469AE',
-    showDenyButton: true
-  }).then(async (res) => {
-    if (!res.isConfirmed) return;
-
-    try {
-      isRequesting.value = true;
-
-      for (const item of selectedItems.value) {
-        const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/send_approval`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'Application/json',
-            Authorization: `${store.user.token_type} ${store.user.token}`,
-          },
-          body: JSON.stringify({ id: item.id })
-        });
-
-        const json = await res.json();
-        if (!res.ok) {
-          throw new Error(json.message || 'Gagal mengirim approval');
-        }
-      }
-
-      swal.fire({
-        icon: 'success',
-        text: 'Berhasil mengirim semua data ke proses approval'
-      });
-
-      router.replace('/notifikasi?reload=true');
-
-    } catch (err) {
-      swal.fire({
-        icon: 'error',
-        text: err.toString(),
-        confirmButtonColor: '#1469AE'
-      });
-    } finally {
-      isRequesting.value = false;
-    }
-  });
-}
-
 async function sendApproval() {
   swal.fire({
     icon: 'warning',
@@ -648,72 +658,6 @@ async function sendApproval() {
       router.replace('/' + modulPath);
     }
   })
-}
-
-async function Multiprogress(status) {
-  if (!selectedItems.value.length) {
-    return swal.fire({
-      icon: 'warning',
-      text: 'Pilih data yang ingin diproses',
-      confirmButtonColor: '#1469AE'
-    });
-  }
-
-  const confirmText = status === 'APPROVED' ? 'Setujui?' :
-    status === 'REJECTED' ? 'Tolak?' : 'Revisi?';
-
-  swal.fire({
-    icon: 'question',
-    text: confirmText,
-    iconColor: '#1469AE',
-    confirmButtonColor: '#1469AE',
-    showDenyButton: true
-  }).then(async (res) => {
-    if (!res.isConfirmed) return;
-
-    try {
-      isRequesting.value = true;
-
-      const items = selectedItems.value.map(i => ({
-        id: i.id,
-        type: status,
-        note: `Processed via multiple approval - ${status}`
-      }));
-
-      console.log(JSON.stringify({ items }));
-      const res = await fetch(`${store.server.url_backend}/operation/${endpointApi}/multi_progress`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${store.user.token_type} ${store.user.token}`
-        },
-        body: JSON.stringify({ items })
-      });
-
-
-
-      const json = await res.json();
-
-      if (!res.ok) {
-        throw new Error(json.message || 'Gagal memproses approval');
-      }
-
-      swal.fire({
-        icon: 'success',
-        text: json.message
-      });
-
-      router.replace('/notifikasi?reload=true');
-
-    } catch (err) {
-      swal.fire({
-        icon: 'error',
-        text: err.toString()
-      });
-    } finally {
-      isRequesting.value = false;
-    }
-  });
 }
 
 async function progress(status) {

@@ -19,6 +19,7 @@ class rgl extends Migration
             $table->text('ref_no');
             $table->bigInteger('m_cust_id')->comment('{"src": "m_cust.id"}')->nullable();
             $table->bigInteger('m_supp_id')->comment('{"src": "m_supp.id"}')->nullable();
+            $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable();
             $table->text('desc')->nullable();
             $table->string('status', 20);
 

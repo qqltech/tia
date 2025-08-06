@@ -50,10 +50,9 @@ class t_bkm_non_order extends \App\Models\BasicModels\t_bkm_non_order
         $trx = \DB::selectOne('select a.* from t_bkm_non_order a where a.id = ?', [ $id ]);
         if(!$trx)  return ['status'=>true];
 
-        $getcredit = \DB::select("select cbmd.m_coa_id, sum(cbmd.nominal) amount from t_bkm_non_order cbm
+        $getcredit = \DB::select("select cbmd.m_coa_id, cbmd.nominal as amount, cbmd.keterangan from t_bkm_non_order cbm
         join t_bkm_non_order_d cbmd on cbmd.t_bkm_non_order_id = cbm.id
-        where cbm.id = ?
-        group by cbmd.m_coa_id", [$id]);
+        where cbm.id = ?", [$id]);
 
         $seq = 1;
         $creditArr = [];
@@ -64,7 +63,7 @@ class t_bkm_non_order extends \App\Models\BasicModels\t_bkm_non_order
                 "m_coa_id" => $cr->m_coa_id,
                 "seq" => $seq+1,
                 "credit" => (float) $cr->amount,
-                "desc" => $trx->keterangan
+                "desc" => $cr->keterangan
             ];
             $amount += (float) $cr->amount;
             $seq++;
@@ -87,6 +86,7 @@ class t_bkm_non_order extends \App\Models\BasicModels\t_bkm_non_order
             'ref_id'            => $trx->id,
             'ref_no'            => $trx->no_bkm,
             // 'm_cust_id'         => $trx->m_cust_id,
+            'm_business_unit_id' => $trx->m_business_unit_id,
             'desc'              => $trx->keterangan,
             'detail'            => array_merge($debetArr, $creditArr)
         ];

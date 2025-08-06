@@ -159,23 +159,23 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
                     "app_id" => $item['id'],
                     "app_type" => $item['type'], // APPROVED, REVISED, REJECTED,
                     "app_note" => $item['note'], // alasan approve
-                ];
+                    ];
                 
-                $app = $this->approval->approvalProgress($conf, true);
-                if ($app->status) {
-                    $data = $this->find($app->trx_id);
-                    $data->update([
-                        "status" => "IN APPROVAL",
-                    ]);
-                }
-
-                if($item['type'] === "APPROVED") {
-                    $get_trx_id = generate_approval::find($item['id']);
-                    if ($get_trx_id) {
-                            $trx_id = $get_trx_id->trx_id;
-                            $this->autoJurnal($data->id, true);
+                    $app = $this->approval->approvalProgress($conf, true);
+                    if ($app->status) {
+                        $data = $this->find($app->trx_id);
+                        $data->update([
+                            "status" => "IN APPROVAL",
+                        ]);
                     }
-                }
+
+                    if($item['type'] === "APPROVED") {
+                        $get_trx_id = generate_approval::find($item['id']);
+                        if ($get_trx_id) {
+                                $trx_id = $get_trx_id->trx_id;
+                                $this->autoJurnal($data->id, true);
+                        }
+                    }
 
                
 
@@ -251,14 +251,11 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
             "ref_id" => $trx->id,
             "ref_no" => $trx->no_bkk,
             "desc" => $trx->keterangan,
+            "m_business_unit_id" => $trx->m_business_unit_id,
             "detail" => array_merge($debetArr, $creditArr),
         ];
 
-       $check_r_gl = \DB::selectOne("
-    select a.* from r_gl a 
-    where a.type = 'BKK (Non Kasbon)' 
-    AND a.ref_table = 't_bkk' 
-    AND a.ref_id = ?", [$trx->id]);
+       $check_r_gl = \DB::selectOne("select a.* from r_gl a where a.ref_table = 't_bkk' AND a.ref_id = ?", [$trx->id]);
 
         if($check_r_gl && $typeApproveMulti){
             return ["status" => true];

@@ -3,7 +3,7 @@
 namespace App\Models\CustomModels;
 
 class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
-{    
+{
     private $helper;
     private $approval;
     public function __construct()
@@ -12,11 +12,13 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         $this->helper = getCore("Helper");
         $this->approval = getCore("Approval");
     }
-    
-    public $fileColumns    = [ /*file_column*/ ];
 
-    public $createAdditionalData = ["creator_id"=>"auth:id"];
-    public $updateAdditionalData = ["last_editor_id"=>"auth:id"];
+    public $fileColumns = [
+        /*file_column*/
+    ];
+
+    public $createAdditionalData = ["creator_id" => "auth:id"];
+    public $updateAdditionalData = ["last_editor_id" => "auth:id"];
 
     public function custom_print()
     {
@@ -25,24 +27,25 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         return ["success" => true];
     }
 
-    public function createBefore( $model, $arrayData, $metaData, $id=null )
+    public function createBefore($model, $arrayData, $metaData, $id = null)
     {
         $newData = [
-            "no_bkk"=>$this->helper->generateNomor("No BKK Non Order"),
-            "no_draft"=>$this->helper->generateNomor("Draft BKK Non Order"),
-            "status"=>"DRAFT"
+            "no_bkk" => $this->helper->generateNomor("No BKK Non Order"),
+            "no_draft" => $this->helper->generateNomor("Draft BKK Non Order"),
+            "status" => "DRAFT",
         ];
 
-      $newArrayData  = array_merge( $arrayData,$newData );
-      return [
-          "model"  => $model,
-          "data"   => $newArrayData,
-          // "errors" => ['error1']
-      ];
+        $newArrayData = array_merge($arrayData, $newData);
+        return [
+            "model" => $model,
+            "data" => $newArrayData,
+            // "errors" => ['error1']
+        ];
     }
-    
-    public function scopeWithDetail($model){
-        return $model->with(['t_bkk_non_order_d']);
+
+    public function scopeWithDetail($model)
+    {
+        return $model->with(["t_bkk_non_order_d"]);
     }
 
     public function custom_post()
@@ -52,7 +55,59 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         return ["success" => true];
     }
 
-     public function custom_send_approval()
+    public function custom_send_multiple_approval_bkk($req)
+{
+    $items = $req->items ?? $req->id ?? [];
+
+    if (!is_array($items)) {
+        $items = [$items];
+    }
+
+    if (count($items) === 0) {
+        return $this->helper->responseCatch(
+            ["message" => "Data 'items' tidak ditemukan dalam request"],
+            400
+        );
+    }
+
+    \DB::beginTransaction();
+
+    try {
+        foreach ($items as $id) {
+            $trx = \DB::table("t_bkk_non_order")->where("id", $id)->first();
+            if (!$trx) {
+                throw new \Exception("Data ID $id tidak ditemukan");
+            }
+
+            $result = $this->createAppTicket($id);
+            if (!$result) {
+                throw new \Exception("Gagal membuat approval untuk ID $id");
+            }
+
+            // Update status setelah berhasil membuat tiket approval
+            \DB::table("t_bkk_non_order")
+                ->where("id", $id)
+                ->update(["status" => "IN APPROVAL"]);
+        }
+
+        \DB::commit();
+        return response()->json([
+            "message" => "Semua data berhasil diajukan approval.",
+            "success_ids" => $items,
+        ]);
+    } catch (\Exception $e) {
+        \DB::rollback();
+        return $this->helper->responseCatch(
+            ["message" => "Gagal mengajukan approval: " . $e->getMessage()],
+            500
+        );
+    }
+}
+
+
+
+
+    public function custom_send_approval()
     {
         $app = $this->createAppTicket(req("id"));
         if (!$app) {
@@ -79,7 +134,7 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
     private function createAppTicket($id)
     {
         $tempId = $id;
-        $trx = \DB::table('t_bkk_non_order')->find($tempId);
+        $trx = \DB::table("t_bkk_non_order")->find($tempId);
         $conf = [
             "app_name" => "APPROVAL BKK NON ORDER",
             "trx_id" => $trx->id,
@@ -99,44 +154,45 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         }
     }
 
-     public function custom_multi_progress($req)
-    {
-        \DB::beginTransaction();
+    public function custom_multi_progress($req)
+{
+    \DB::beginTransaction();
 
-            try {
-                foreach ($req->items as $item) {
-                  $conf = [
-                  "app_id" => $item['id'],
-                  "app_type" => $item['type'], // APPROVED, REVISED, REJECTED,
-                  "app_note" => $item['note'], // alasan approve
-                  ];
+    try {
+        foreach ($req->items as $item) {
+            $conf = [
+                "app_id" => $item["id"],
+                "app_type" => $item["type"] ?? $req->type, // fallback ke request utama
+                "app_note" => $item["note"] ?? $req->note, // fallback juga
+            ];
 
-                  $app = $this->approval->approvalProgress($conf, true);
-                  if ($app->status) {
-                      $data = $this->find($app->trx_id);
-                      if ($app->finish) {
-                          $data->update([
-                              "status" => $req->type
-                          ]);
+            $app = $this->approval->approvalProgress($conf, true);
+            if ($app->status) {
+                $data = $this->find($app->trx_id);
+                if ($app->finish) {
+                    $data->update([
+                        "status" => $conf['app_type'],
+                    ]);
 
-                          if($req->type == 'APPROVED'){
-                              $this->autoJurnal($data->id);
-                          }
-                        
-                      } else {
-                          $data->update([
-                              "status" => "IN APPROVAL",
-                          ]);
-                      }
-                  }
-                } 
-                 \DB::commit();
-                return $this->helper->customResponse("Proses multi-approval berhasil");
-        } catch (\Exception $e) {
-                \DB::rollback();
-                return $this->helper->responseCatch($e);
+                    if ($conf['app_type'] == "APPROVED") {
+                        $this->autoJurnal($data->id);
+                    }
+                } else {
+                    $data->update([
+                        "status" => "IN APPROVAL",
+                    ]);
+                }
             }
+        }
+
+        \DB::commit();
+        return $this->helper->customResponse("Proses multi-approval berhasil");
+    } catch (\Exception $e) {
+        \DB::rollback();
+        return $this->helper->responseCatch($e);
     }
+}
+
 
     public function custom_progress($req)
     {
@@ -155,13 +211,12 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
                 $data = $this->find($app->trx_id);
                 if ($app->finish) {
                     $data->update([
-                        "status" => $req->type
+                        "status" => $req->type,
                     ]);
 
-                    if($req->type == 'APPROVED'){
+                    if ($req->type == "APPROVED") {
                         $this->autoJurnal($data->id);
                     }
-                   
                 } else {
                     $data->update([
                         "status" => "IN APPROVAL",
@@ -194,26 +249,34 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         return response($data);
     }
 
-    private function autoJurnal($id){
+    private function autoJurnal($id)
+    {
         // debet = detil, credit = header.
-        $trx = \DB::selectOne('select a.* from t_bkk_non_order a where a.id = ?', [ $id ]);
-        if(!$trx)  return ['status'=>true];
+        $trx = \DB::selectOne(
+            "select a.* from t_bkk_non_order a where a.id = ?",
+            [$id]
+        );
+        if (!$trx) {
+            return ["status" => true];
+        }
 
-        $getdebet = \DB::select("select cbkd.m_coa_id, cbkd.keterangan, sum(cbkd.nominal) amount from t_bkk_non_order cbk
+        $getdebet = \DB::select(
+            "select cbkd.m_coa_id, cbkd.keterangan, cbkd.nominal as amount from t_bkk_non_order cbk
         join t_bkk_non_order_d cbkd on cbkd.t_bkk_non_order_id = cbk.id
-        where cbk.id = ?
-        group by cbkd.m_coa_id, cbkd.keterangan", [$id]);
+        where cbk.id = ?",
+            [$id]
+        );
 
         $seq = 0;
         $debetArr = [];
         $amount = 0;
 
-        foreach($getdebet as $dbt){
+        foreach ($getdebet as $dbt) {
             $debetArr[] = (object) [
                 "m_coa_id" => $dbt->m_coa_id,
-                "seq" => $seq+1,
+                "seq" => $seq + 1,
                 "debet" => (float) $dbt->amount,
-                "desc" => $dbt->keterangan
+                "desc" => $dbt->keterangan,
             ];
             $amount += (float) $dbt->amount;
             $seq++;
@@ -224,24 +287,24 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
         $credit = new \stdClass();
         $credit->m_coa_id = $trx->m_perkiraan_id;
         $credit->seq = 1;
-        $credit->credit = ((float) @$amount ?? 0);
+        $credit->credit = (float) @$amount ?? 0;
         $credit->desc = $trx->keterangan;
         $creditArr[] = $credit;
 
         $obj = [
-            'date'              => $trx->tanggal,
-            'form'              => "BKK (Non Order)",
-            'ref_table'         => 't_bkk_non_order',
-            'ref_id'            => $trx->id,
-            'ref_no'            => $trx->no_bkk,
-            'desc'              => $trx->keterangan,
-            'detail'            => array_merge($debetArr, $creditArr)
+            "date" => $trx->tanggal,
+            "form" => "BKK (Non Order)",
+            "ref_table" => "t_bkk_non_order",
+            "ref_id" => $trx->id,
+            "ref_no" => $trx->no_bkk,
+            "desc" => $trx->keterangan,
+            "m_business_unit_id" => $trx->m_business_unit_id,
+            "detail" => array_merge($debetArr, $creditArr),
         ];
 
-        $r_gl = new r_gl;
+        $r_gl = new r_gl();
         $data = $r_gl->autoJournal($obj);
 
-        return ['status'=>true];
+        return ["status" => true];
     }
-    
 }

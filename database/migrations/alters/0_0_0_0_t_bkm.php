@@ -10,9 +10,10 @@ class tbkm extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
+             $table->string('no_reference',50);
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            $table->dropColumn(['t_buku_order_id','m_coa_id']);
+            // $table->dropColumn(['t_buku_order_id','m_coa_id']);
             // $table->text('keterangan')->nullable(true)->change();
             // $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable()->change();
             // $table->string('nama_penyetor', 100)->nullable();

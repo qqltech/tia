@@ -54,6 +54,10 @@
       <ButtonMultiSelect title="Multiple Approval" @add="onDetailAdd" :api="{
           url: `${store.server.url_backend}/operation/${endpointApi}`,
           headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          params:{
+            searchfield: 'this.no_bkk, this.no_reference, this.tanggal, this.total_amt, this.status',
+            where: `this.status= 'DRAFT'`
+          },
           onsuccess:(response)=>{
             response.data = [...response.data].map((dt)=>{
               Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
@@ -120,7 +124,14 @@
             sortable: false, resizable: true, filter: false,
             field: 'status',
             cellClass: ['justify-center','!border-gray-200'],
-            filter:'ColFilter'
+            filter:'ColFilter',
+            cellClass: (params) => {
+              const classes = ['justify-center', '!border-gray-200']
+              if (params.value === 'DRAFT') {
+                classes.push('text-gray-400')
+              }
+              return classes
+            }
           }
           ]"
           @selection-change="selectedItems = $event"
@@ -128,7 +139,7 @@
         <div class="flex items-center space-x-2">
           <div
             class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
-            <icon fa="print" />
+            <icon fa="arrow-up-right-from-square" />
             Multiple Approval
           </div>
         </div>

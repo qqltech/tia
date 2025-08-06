@@ -19,6 +19,7 @@ class r_gl extends \App\Models\BasicModels\r_gl
         $date = $obj['date'] ?? date('Y-m-d');
         $type = $obj['form'];
         $ref_table = $obj['ref_table'];
+        $business_unit = @$obj['m_business_unit_id'] ?? null;
         $ref_id = $obj['ref_id'];
         $ref_no = $obj['ref_no'];
         $m_cust_id = @$obj['m_cust_id'] ?? null;
@@ -42,6 +43,7 @@ class r_gl extends \App\Models\BasicModels\r_gl
                 'm_supp_id' => $m_supp_id,
                 'desc' => $desc,
                 'status' => $status,
+                'm_business_unit_id' => $business_unit,
                 'creator_id' => @auth()->user()->id
             ]);
 
