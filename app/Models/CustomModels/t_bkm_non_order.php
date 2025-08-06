@@ -87,6 +87,7 @@ class t_bkm_non_order extends \App\Models\BasicModels\t_bkm_non_order
             'ref_no'            => $trx->no_bkm,
             // 'm_cust_id'         => $trx->m_cust_id,
             'm_business_unit_id' => $trx->m_business_unit_id,
+            'no_reference'      => $trx->no_ref,
             'desc'              => $trx->keterangan,
             'detail'            => array_merge($debetArr, $creditArr)
         ];

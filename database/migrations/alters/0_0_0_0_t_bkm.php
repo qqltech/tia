@@ -10,7 +10,7 @@ class tbkm extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
-             $table->string('no_reference',50);
+             $table->string('no_reference',50)->nullable();
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
             // $table->dropColumn(['t_buku_order_id','m_coa_id']);

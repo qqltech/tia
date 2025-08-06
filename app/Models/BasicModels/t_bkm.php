@@ -17,10 +17,10 @@ class t_bkm extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at"];
+    protected $fillable = ["no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at","no_reference"];
 
-    public $columns     = ["id","no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","no_bkm:string:20","no_draft:string:20","status:string:191","tanggal:date","nama_penerima:string:100","total_amt:decimal","m_akun_pembayaran_id:integer","tipe_pembayaran:integer","m_akun_bank_id:integer","keterangan:text","m_business_unit_id:integer","creator_id:integer","last_editor_id:integer","deleted_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","no_reference"];
+    public $columnsFull = ["id:bigint","no_bkm:string:20","no_draft:string:20","status:string:191","tanggal:date","nama_penerima:string:100","total_amt:decimal","m_akun_pembayaran_id:integer","tipe_pembayaran:integer","m_akun_bank_id:integer","keterangan:text","m_business_unit_id:integer","creator_id:integer","last_editor_id:integer","deleted_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","no_reference:string:50"];
     public $rules       = [];
     public $joins       = ["m_coa.id=t_bkm.m_akun_pembayaran_id","set.m_general.id=t_bkm.tipe_pembayaran","m_coa.id=t_bkm.m_akun_bank_id","set.m_business_unit.id=t_bkm.m_business_unit_id"];
     public $details     = ["t_bkm_d"];
@@ -29,9 +29,9 @@ class t_bkm extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["status","tanggal","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_business_unit_id"];
-    public $createable  = ["no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at"];
-    public $updateable  = ["no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at"];
-    public $searchable  = ["id","no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at","no_reference"];
+    public $updateable  = ["no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at","no_reference"];
+    public $searchable  = ["id","no_bkm","no_draft","status","tanggal","nama_penerima","total_amt","m_akun_pembayaran_id","tipe_pembayaran","m_akun_bank_id","keterangan","m_business_unit_id","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","no_reference"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

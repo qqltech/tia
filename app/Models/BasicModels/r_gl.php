@@ -17,10 +17,10 @@ class r_gl extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","m_business_unit_id"];
+    protected $fillable = ["date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","m_business_unit_id","no_reference"];
 
-    public $columns     = ["id","date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","m_business_unit_id"];
-    public $columnsFull = ["id:bigint","date:date","type:string:200","ref_table:text","ref_id:bigint","ref_no:text","m_cust_id:bigint","m_supp_id:bigint","desc:text","status:string:20","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","m_business_unit_id:integer"];
+    public $columns     = ["id","date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","m_business_unit_id","no_reference"];
+    public $columnsFull = ["id:bigint","date:date","type:string:200","ref_table:text","ref_id:bigint","ref_no:text","m_cust_id:bigint","m_supp_id:bigint","desc:text","status:string:20","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","m_business_unit_id:integer","no_reference:string:100"];
     public $rules       = [];
     public $joins       = ["m_cust.id=r_gl.m_cust_id","m_supp.id=r_gl.m_supp_id","set.m_business_unit.id=r_gl.m_business_unit_id"];
     public $details     = ["r_gl_d"];
@@ -29,9 +29,9 @@ class r_gl extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["date","type","ref_table","ref_id","ref_no","status"];
-    public $createable  = ["date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","m_business_unit_id"];
-    public $updateable  = ["date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","m_business_unit_id"];
-    public $searchable  = ["id","date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","m_business_unit_id"];
+    public $createable  = ["date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","m_business_unit_id","no_reference"];
+    public $updateable  = ["date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","m_business_unit_id","no_reference"];
+    public $searchable  = ["id","date","type","ref_table","ref_id","ref_no","m_cust_id","m_supp_id","desc","status","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","m_business_unit_id","no_reference"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

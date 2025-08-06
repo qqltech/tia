@@ -22,6 +22,7 @@ class rgl extends Migration
             $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable();
             $table->text('desc')->nullable();
             $table->string('status', 20);
+            $table->string('no_reference', 100);
 
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

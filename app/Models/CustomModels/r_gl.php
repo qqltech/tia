@@ -20,6 +20,7 @@ class r_gl extends \App\Models\BasicModels\r_gl
         $type = $obj['form'];
         $ref_table = $obj['ref_table'];
         $business_unit = @$obj['m_business_unit_id'] ?? null;
+        $no_reference = @$obj['no_reference'] ?? null;
         $ref_id = $obj['ref_id'];
         $ref_no = $obj['ref_no'];
         $m_cust_id = @$obj['m_cust_id'] ?? null;
@@ -44,6 +45,7 @@ class r_gl extends \App\Models\BasicModels\r_gl
                 'desc' => $desc,
                 'status' => $status,
                 'm_business_unit_id' => $business_unit,
+                'no_reference' => $no_reference ?? null,
                 'creator_id' => @auth()->user()->id
             ]);
 

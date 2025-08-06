@@ -252,6 +252,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
             "ref_no" => $trx->no_bkk,
             "desc" => $trx->keterangan,
             "m_business_unit_id" => $trx->m_business_unit_id,
+            "no_reference" => $trx->no_reference,
             "detail" => array_merge($debetArr, $creditArr),
         ];
 

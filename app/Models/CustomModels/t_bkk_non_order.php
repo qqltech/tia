@@ -56,56 +56,55 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
     }
 
     public function custom_send_multiple_approval_bkk($req)
-{
-    $items = $req->items ?? $req->id ?? [];
+    {
+        $items = $req->items ?? ($req->id ?? []);
 
-    if (!is_array($items)) {
-        $items = [$items];
-    }
-
-    if (count($items) === 0) {
-        return $this->helper->responseCatch(
-            ["message" => "Data 'items' tidak ditemukan dalam request"],
-            400
-        );
-    }
-
-    \DB::beginTransaction();
-
-    try {
-        foreach ($items as $id) {
-            $trx = \DB::table("t_bkk_non_order")->where("id", $id)->first();
-            if (!$trx) {
-                throw new \Exception("Data ID $id tidak ditemukan");
-            }
-
-            $result = $this->createAppTicket($id);
-            if (!$result) {
-                throw new \Exception("Gagal membuat approval untuk ID $id");
-            }
-
-            // Update status setelah berhasil membuat tiket approval
-            \DB::table("t_bkk_non_order")
-                ->where("id", $id)
-                ->update(["status" => "IN APPROVAL"]);
+        if (!is_array($items)) {
+            $items = [$items];
         }
 
-        \DB::commit();
-        return response()->json([
-            "message" => "Semua data berhasil diajukan approval.",
-            "success_ids" => $items,
-        ]);
-    } catch (\Exception $e) {
-        \DB::rollback();
-        return $this->helper->responseCatch(
-            ["message" => "Gagal mengajukan approval: " . $e->getMessage()],
-            500
-        );
+        if (count($items) === 0) {
+            return $this->helper->responseCatch(
+                ["message" => "Data 'items' tidak ditemukan dalam request"],
+                400
+            );
+        }
+
+        \DB::beginTransaction();
+
+        try {
+            foreach ($items as $id) {
+                $trx = \DB::table("t_bkk_non_order")
+                    ->where("id", $id)
+                    ->first();
+                if (!$trx) {
+                    throw new \Exception("Data ID $id tidak ditemukan");
+                }
+
+                $result = $this->createAppTicket($id);
+                if (!$result) {
+                    throw new \Exception("Gagal membuat approval untuk ID $id");
+                }
+
+                // Update status setelah berhasil membuat tiket approval
+                \DB::table("t_bkk_non_order")
+                    ->where("id", $id)
+                    ->update(["status" => "IN APPROVAL"]);
+            }
+
+            \DB::commit();
+            return response()->json([
+                "message" => "Semua data berhasil diajukan approval.",
+                "success_ids" => $items,
+            ]);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->helper->responseCatch(
+                ["message" => "Gagal mengajukan approval: " . $e->getMessage()],
+                500
+            );
+        }
     }
-}
-
-
-
 
     public function custom_send_approval()
     {
@@ -155,44 +154,45 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
     }
 
     public function custom_multi_progress($req)
-{
-    \DB::beginTransaction();
+    {
+        \DB::beginTransaction();
 
-    try {
-        foreach ($req->items as $item) {
-            $conf = [
-                "app_id" => $item["id"],
-                "app_type" => $item["type"] ?? $req->type, // fallback ke request utama
-                "app_note" => $item["note"] ?? $req->note, // fallback juga
-            ];
+        try {
+            foreach ($req->items as $item) {
+                $conf = [
+                    "app_id" => $item["id"],
+                    "app_type" => $item["type"] ?? $req->type, // fallback ke request utama
+                    "app_note" => $item["note"] ?? $req->note, // fallback juga
+                ];
 
-            $app = $this->approval->approvalProgress($conf, true);
-            if ($app->status) {
-                $data = $this->find($app->trx_id);
-                if ($app->finish) {
-                    $data->update([
-                        "status" => $conf['app_type'],
-                    ]);
+                $app = $this->approval->approvalProgress($conf, true);
+                if ($app->status) {
+                    $data = $this->find($app->trx_id);
+                    if ($app->finish) {
+                        $data->update([
+                            "status" => $conf["app_type"],
+                        ]);
 
-                    if ($conf['app_type'] == "APPROVED") {
-                        $this->autoJurnal($data->id);
+                        if ($conf["app_type"] == "APPROVED") {
+                            $this->autoJurnal($data->id);
+                        }
+                    } else {
+                        $data->update([
+                            "status" => "IN APPROVAL",
+                        ]);
                     }
-                } else {
-                    $data->update([
-                        "status" => "IN APPROVAL",
-                    ]);
                 }
             }
+
+            \DB::commit();
+            return $this->helper->customResponse(
+                "Proses multi-approval berhasil"
+            );
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->helper->responseCatch($e);
         }
-
-        \DB::commit();
-        return $this->helper->customResponse("Proses multi-approval berhasil");
-    } catch (\Exception $e) {
-        \DB::rollback();
-        return $this->helper->responseCatch($e);
     }
-}
-
 
     public function custom_progress($req)
     {
@@ -299,6 +299,7 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
             "ref_no" => $trx->no_bkk,
             "desc" => $trx->keterangan,
             "m_business_unit_id" => $trx->m_business_unit_id,
+            "no_reference" => $trx->no_reference,
             "detail" => array_merge($debetArr, $creditArr),
         ];
 

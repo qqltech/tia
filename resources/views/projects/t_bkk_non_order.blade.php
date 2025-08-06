@@ -124,18 +124,9 @@
             sortable: false, resizable: true, filter: false,
             field: 'status',
             cellClass: ['justify-center','!border-gray-200'],
-            filter:'ColFilter',
-            cellClass: (params) => {
-              const classes = ['justify-center', '!border-gray-200']
-              if (params.value === 'DRAFT') {
-                classes.push('text-gray-400')
-              }
-              return classes
-            }
+            filter:'ColFilter'
           }
-          ]"
-          @selection-change="selectedItems = $event"
-          >
+          ]" @selection-change="selectedItems = $event">
         <div class="flex items-center space-x-2">
           <div
             class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">

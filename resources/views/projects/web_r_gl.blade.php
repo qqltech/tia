@@ -55,9 +55,10 @@ $grand_credit = 0;
     <table class="gl-report-table">
         <thead>
             <tr>
-                <th style="width: 100px;">Tanggal</th>
+                 <th style="width: 100px;">Tanggal</th>
                 <th style="width: 80px;">Form</th>
                 <th style="width: 120px;">No Transaksi</th>
+                <th style="width: 120px;">No Referensi</th> 
                 <th style="width: 200px;">Chart of Account</th>
                 <th style="width: 100px;">Debet</th>
                 <th style="width: 100px;">Credit</th>
@@ -92,6 +93,7 @@ $grand_credit = 0;
                 </td>
                 <td rowspan="{{ $span }}" class="center-text">{{ $dt->type }}</td>
                 <td rowspan="{{ $span }}" class="center-text">{{ $dt->ref_no }}</td>
+                <td rowspan="{{ $span }}" class="center-text">{{ $dt->no_reference ?? '-' }}</td>
                 @endif
                 <td>
                     <strong>{{ $det->nomor }}</strong> - {{ $det->nama_coa }}
