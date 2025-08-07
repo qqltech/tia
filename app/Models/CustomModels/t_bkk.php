@@ -62,6 +62,57 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         return ["success" => true, "message" => "Post Data Berhasil"];
     }
 
+    public function custom_send_multiple_approval_bkk($req)
+    {
+        $items = $req->items ?? ($req->id ?? []);
+
+        if (!is_array($items)) {
+            $items = [$items];
+        }
+
+        if (count($items) === 0) {
+            return $this->helper->responseCatch(
+                ["message" => "Data 'items' tidak ditemukan dalam request"],
+                400
+            );
+        }
+
+        \DB::beginTransaction();
+
+        try {
+            foreach ($items as $id) {
+                $trx = \DB::table("t_bkk")
+                    ->where("id", $id)
+                    ->first();
+                if (!$trx) {
+                    throw new \Exception("Data ID $id tidak ditemukan");
+                }
+
+                $result = $this->createAppTicket($id);
+                if (!$result) {
+                    throw new \Exception("Gagal membuat approval untuk ID $id");
+                }
+
+                // Update status setelah berhasil membuat tiket approval
+                \DB::table("t_bkk")
+                    ->where("id", $id)
+                    ->update(["status" => "IN APPROVAL"]);
+            }
+
+            \DB::commit();
+            return response()->json([
+                "message" => "Data yang telah dipilih berhasil diajukan approval!",
+                "success_ids" => $items,
+            ]);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->helper->responseCatch(
+                ["message" => "Gagal mengajukan approval: " . $e->getMessage()],
+                500
+            );
+        }
+    }
+
     public function custom_send_approval()
     {
         $app = $this->createAppTicket(req("id"));
@@ -110,8 +161,49 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         }
     }
 
+    public function custom_multi_progress($req)
+    {
+        \DB::beginTransaction();
+
+        try {
+            foreach ($req->items as $item) {
+                $conf = [
+                    "app_id" => $item["id"],
+                    "app_type" => $item["type"] ?? $req->type, // fallback ke request utama
+                    "app_note" => $item["note"] ?? $req->note, // fallback juga
+                ];
+
+                $app = $this->approval->approvalProgress($conf, true);
+                if ($app->status) {
+                    $data = $this->find($app->trx_id);
+                    if ($app->finish) {
+                        $data->update([
+                            "status" => $conf["app_type"],
+                        ]);
+
+                        if ($conf["app_type"] == "APPROVED") {
+                            $this->autoJurnal($data->id);
+                        }
+                    } else {
+                        $data->update([
+                            "status" => "IN APPROVAL",
+                        ]);
+                    }
+                }
+            }
+
+            \DB::commit();
+            return $this->helper->customResponse(
+                "Proses multi-approval berhasil"
+            );
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->helper->responseCatch($e);
+        }
+    }
+
     public function custom_progress($req)
-    {   
+    {
         // Start a database transaction
         \DB::beginTransaction();
 
@@ -121,7 +213,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
                 "app_type" => $req->type, // APPROVED, REVISED, REJECTED,
                 "app_note" => $req->note, // alasan approve
             ];
-            
+
             $app = $this->approval->approvalProgress($conf, true);
             if ($app->status) {
                 $data = $this->find($app->trx_id);
@@ -148,46 +240,6 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         }
     }
 
-
-    public function custom_multi_progress($req)
-    {
-        \DB::beginTransaction();
-
-            try {
-                foreach ($req->items as $item) {
-                    $conf = [
-                    "app_id" => $item['id'],
-                    "app_type" => $item['type'], // APPROVED, REVISED, REJECTED,
-                    "app_note" => $item['note'], // alasan approve
-                    ];
-                
-                    $app = $this->approval->approvalProgress($conf, true);
-                    if ($app->status) {
-                        $data = $this->find($app->trx_id);
-                        $data->update([
-                            "status" => "IN APPROVAL",
-                        ]);
-                    }
-
-                    if($item['type'] === "APPROVED") {
-                        $get_trx_id = generate_approval::find($item['id']);
-                        if ($get_trx_id) {
-                                $trx_id = $get_trx_id->trx_id;
-                                $this->autoJurnal($data->id, true);
-                        }
-                    }
-
-               
-
-                } 
-                 \DB::commit();
-                return $this->helper->customResponse("Proses multi-approval berhasil");
-        } catch (\Exception $e) {
-                \DB::rollback();
-                return $this->helper->responseCatch($e);
-            }
-    }
-
     public function custom_detail($req)
     {
         $id = $req->id ?? 66;
@@ -208,7 +260,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
     {
         // debet = detil, credit = header.
         $trx = \DB::selectOne("select a.* from t_bkk a where a.id = ?", [$id]);
-        
+
         if (!$trx) {
             return ["status" => true];
         }
@@ -256,11 +308,14 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
             "detail" => array_merge($debetArr, $creditArr),
         ];
 
-       $check_r_gl = \DB::selectOne("select a.* from r_gl a where a.ref_table = 't_bkk' AND a.ref_id = ?", [$trx->id]);
+        $check_r_gl = \DB::selectOne(
+            "select a.* from r_gl a where a.ref_table = 't_bkk' AND a.ref_id = ?",
+            [$trx->id]
+        );
 
-        if($check_r_gl && $typeApproveMulti){
+        if ($check_r_gl && $typeApproveMulti) {
             return ["status" => true];
-        }else {
+        } else {
             $r_gl = new r_gl();
             $data = $r_gl->autoJournal($obj);
         }

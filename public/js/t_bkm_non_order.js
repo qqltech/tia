@@ -15,6 +15,7 @@ const modulPath = 't_bkm_non_order'
 const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
+const idMulti = ref([])
 const tsId = `ts=` + (Date.parse(new Date()))
 
 // ------------------------------ PERSIAPAN
@@ -233,6 +234,68 @@ async function onSave() {
 }
 
 //  @else----------------------- LANDING
+
+const onDetailAdd = (e) => {
+  const newIds = e.map(row => row.id);
+  idMulti.value = [...new Set([...idMulti.value, ...newIds])]
+
+  multiPost()
+  console.log('INI MULTI ID (no duplicate) :', idMulti.value);
+}
+
+async function multiPost() {
+  const result = await swal.fire({
+    icon: 'warning',
+    text: 'Send Multi Post?',
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+    showDenyButton: true
+  })
+
+  if (!result.isConfirmed) return
+
+  try {
+    const dataURL = `${store.server.url_backend}/operation/${endpointApi}/multiple_post`
+    isRequesting.value = true
+
+    const response = await fetch(dataURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      body: JSON.stringify({ items: idMulti.value })
+    })
+
+    const responseJson = await response.json()
+
+    if (!response.ok) {
+      const message = responseJson.message || 'Failed to Send Post'
+      const errorText = responseJson.data?.errorText || ''
+      formErrors.value = responseJson.errors || {}
+      throw `${message} ${errorText}`
+    }
+
+    await swal.fire({
+      icon: 'success',
+      text: responseJson.message || 'Post successful'
+    })
+///
+    idMulti.value = []
+    router.replace('/' + modulPath)
+
+  } catch (err) {
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      iconColor: '#1469AE',
+      confirmButtonColor: '#1469AE',
+      text: err.toString()
+    })
+  } finally {
+    isRequesting.value = false
+  }
+}
 
 const activeBtn = ref()
 
@@ -481,7 +544,7 @@ const landing = reactive({
     field: 'no_bkm',
     filter: true,
     sortable: true,
-    flex: 1,
+    flex: 1.5,
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
@@ -507,7 +570,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Akun',
@@ -518,7 +581,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Total Amount',
@@ -529,8 +592,11 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
-    cellRenderer: (p) => parseFloat(p.value || 0).toLocaleString('id')
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
+    valueFormatter: params => {
+      if (params == null) return '-';
+      return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+    }
   },
   {
     headerName: 'Catatan',

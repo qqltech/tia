@@ -115,8 +115,12 @@
             headerName:'Total Amount',
             sortable: false, resizable: true, filter: false,
             field: 'total_amt',
-            cellClass: ['justify-center','!border-gray-200'],
-            filter:'ColFilter'
+            cellClass: ['justify-end','!border-gray-200'],
+            filter:'ColFilter',
+            valueFormatter: params => {
+              if (params == null) return '-';
+              return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+            }
           },
           {
             flex: 1,

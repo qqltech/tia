@@ -94,7 +94,7 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
 
             \DB::commit();
             return response()->json([
-                "message" => "Semua data berhasil diajukan approval.",
+                "message" => "Data yang telah dipilih berhasil diajukan approval!",
                 "success_ids" => $items,
             ]);
         } catch (\Exception $e) {
