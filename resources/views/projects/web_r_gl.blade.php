@@ -1,8 +1,19 @@
 @php
-$data = \DB::select("SELECT * FROM r_gl ORDER BY date DESC");
+$req = app()->request;
+$businessUnitId = $req->m_business_unit_id;
+$params = [];
+$whereClause = "1=1";
+
+if ($businessUnitId) {
+    $whereClause .= " AND m_business_unit_id = ?";
+    $params[] = $businessUnitId;
+}
+
+$data = \DB::select("SELECT * FROM r_gl WHERE {$whereClause} ORDER BY date DESC", $params);
 $grand_debet = 0;
 $grand_credit = 0;
 @endphp
+
 
 <style>
     .gl-report-table {
@@ -130,7 +141,7 @@ $grand_credit = 0;
                 <td class="amount-cell" style="font-size: 14px;">
                     <strong>Rp {{ number_format($grand_credit, 2, ',', '.') }}</strong>
                 </td>
-                <td colspan="2"></td>
+                <td colspan="3"></td>
             </tr>
         </tbody>
     </table>
