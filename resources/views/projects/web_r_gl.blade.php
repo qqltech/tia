@@ -66,7 +66,7 @@ $grand_credit = 0;
     <table class="gl-report-table">
         <thead>
             <tr>
-                 <th style="width: 100px;">Tanggal</th>
+                <th style="width: 100px;">Tanggal</th>
                 <th style="width: 80px;">Form</th>
                 <th style="width: 120px;">No Transaksi</th>
                 <th style="width: 120px;">No Referensi</th> 

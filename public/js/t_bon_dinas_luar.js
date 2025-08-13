@@ -15,7 +15,7 @@ const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
-
+const idMulti = ref([])
 const isApproval = route.query.is_approval;
 
 let coaListEks = reactive([]);
@@ -32,7 +32,69 @@ onBeforeMount(() => {
   document.title = 'Transaction Bon Dinas Luar'
 })
 
+
 // @if( !$id ) | --- LANDING TABLE --- |
+const onDetailAdd = (e) => {
+  const newIds = e.map(row => row.id);
+  idMulti.value = [...new Set([...idMulti.value, ...newIds])]
+
+  multiPost()
+  console.log('INI MULTI ID (no duplicate) :', idMulti.value);
+}
+
+async function multiPost() {
+  const result = await swal.fire({
+    icon: 'warning',
+    text: 'Send Multi Post?',
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+    showDenyButton: true
+  })
+
+  if (!result.isConfirmed) return
+
+  try {
+    const dataURL = `${store.server.url_backend}/operation/${endpointApi}/multiple_post`
+    isRequesting.value = true
+
+    const response = await fetch(dataURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      body: JSON.stringify({ items: idMulti.value })
+    })
+
+    const responseJson = await response.json()
+
+    if (!response.ok) {
+      const message = responseJson.message || 'Failed to Send Post'
+      const errorText = responseJson.data?.errorText || ''
+      formErrors.value = responseJson.errors || {}
+      throw `${message} ${errorText}`
+    }
+
+    await swal.fire({
+      icon: 'success',
+      text: responseJson.message || 'Post successful'
+    })
+    
+    idMulti.value = []
+    router.replace('/' + modulPath)
+
+  } catch (err) {
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      iconColor: '#1469AE',
+      confirmButtonColor: '#1469AE',
+      text: err.toString()
+    })
+  } finally {
+    isRequesting.value = false
+  }
+}
 
 // TABLE
 const table = reactive({
@@ -68,7 +130,7 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Tanggal Bon Dinas Luar',
@@ -79,7 +141,7 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Nominal',
@@ -90,9 +152,10 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     valueFormatter: (params) => {
-      return new Intl.NumberFormat('id-ID').format(Number(params.value));
+      const value = Number(params.value) || 0;
+      return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
     }
   },
   {
@@ -121,9 +184,7 @@ const table = reactive({
         : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
           : (params.data['status'] == 'POST' ? `<span class="text-amber-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
             : (params.data['status'] == 'PRINTED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-              : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                : (params.data['status'] == 'APPROVED' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                  : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`)))))
+              : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`)))
     }
   },
   ],
@@ -447,7 +508,7 @@ async function tesPrint(bon_dinas_luar_id) {
     const bonData = bon_dl_data?.data ?? {};
 
     console.log(bonData, 'ini respon')
-    
+
     //Fieldata 1
     fieldData1 = {
       interface: thermal.interface,
@@ -569,11 +630,13 @@ async function tesPrint(bon_dinas_luar_id) {
         { "type": "println", "value": `Sudah di print : ${bonData?.jumlah_print}x` },
         { "type": "newLine" },
         { "type": "newLine" },
-        { "type": "tableCustom", "value": [
-          { "text": "", "align": "RIGHT", "cols": 16 },
-          { "text": "", "align": "RIGHT", "cols": 13 },
-          { "text": "RANGKAP 1", "align": "RIGHT", "cols": 16 }
-        ] },
+        {
+          "type": "tableCustom", "value": [
+            { "text": "", "align": "RIGHT", "cols": 16 },
+            { "text": "", "align": "RIGHT", "cols": 13 },
+            { "text": "RANGKAP 1", "align": "RIGHT", "cols": 16 }
+          ]
+        },
         { "type": "cut" }
       ]
     }
@@ -699,11 +762,13 @@ async function tesPrint(bon_dinas_luar_id) {
         { "type": "println", "value": `Sudah di print : ${bonData?.jumlah_print}x` },
         { "type": "newLine" },
         { "type": "newLine" },
-        { "type": "tableCustom", "value": [
-          { "text": "", "align": "RIGHT", "cols": 16 },
-          { "text": "", "align": "RIGHT", "cols": 13 },
-          { "text": "RANGKAP 2", "align": "RIGHT", "cols": 16 }
-        ] },
+        {
+          "type": "tableCustom", "value": [
+            { "text": "", "align": "RIGHT", "cols": 16 },
+            { "text": "", "align": "RIGHT", "cols": 13 },
+            { "text": "RANGKAP 2", "align": "RIGHT", "cols": 16 }
+          ]
+        },
         { "type": "cut" }
       ]
     }

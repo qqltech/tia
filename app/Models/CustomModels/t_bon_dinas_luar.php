@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\CustomModels;
+use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Http\Request;
 
 
@@ -57,6 +58,60 @@ class t_bon_dinas_luar extends \App\Models\BasicModels\t_bon_dinas_luar
         $status = $this->where("id", $id)->update(["status" => "POST"]);
         $this->autoJurnal($id);
         return ["success" => true, "message" => "Post Data Berhasil"];
+    }
+
+    public function custom_multiple_post($req)
+    {
+        $validator = Validator::make($req->all(), [
+            "items" => "required|array",
+            "items.*" => "integer|exists:t_bon_dinas_luar,id",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" => "Validasi gagal",
+                    "errors" => $validator->errors(),
+                ],
+                422
+            );
+        }
+
+        $validated = $validator->validated();
+        $success = [];
+        $failed = [];
+
+        foreach ($validated["items"] as $id) {
+            try {
+                $update = $this->where("id", $id)->update(["status" => "POST"]);
+
+                if ($update) {
+                    $this->autoJurnal($id);
+                    $success[] = $id;
+                } else {
+                    $failed[] = [
+                        "id" => $id,
+                        "reason" =>
+                            "Update status gagal atau data tidak ditemukan",
+                    ];
+                }
+            } catch (\Exception $e) {
+                $failed[] = [
+                    "id" => $id,
+                    "reason" => $e->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            "success" => true,
+            "message" => "Multiple post data berhasil!",
+            "total" => count($validated["items"]),
+            "sukses" => count($success),
+            "gagal" => count($failed),
+            "detail_gagal" => $failed,
+        ]);
     }
 
     // private function autoJurnal($id)

@@ -27,23 +27,84 @@
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           PRINTED
         </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('IN APPROVAL')" :class="filterButton === 'IN APPROVAL' ? 'bg-blue-600 text-white hover:bg-blue-600' 
-          : 'border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          IN APPROVAL
-        </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-green-600 text-white hover:bg-green-600' 
-          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          APPROVED
-        </button>
       </div>
     </div>
 
     <!-- ACTION BUTTON -->
     <div class="flex items-center gap-x-4">
+      <ButtonMultiSelect title="Multiple Post" @add="onDetailAdd" :api="{
+          url: `${store.server.url_backend}/operation/${endpointApi}`,
+          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          params:{
+            searchfield: 'this.no_bon_dinas_luar, this.tanggal, this.total_amt, this.status',
+            where: `this.status= 'DRAFT'`
+          },
+          onsuccess:(response)=>{
+            response.data = [...response.data].map((dt)=>{
+              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
+              return dt
+            })
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
+        }" :columns="[{
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            headerName: 'No',
+            valueGetter:(params)=>{
+              return ''
+            },
+            width:60,
+            sortable: false, resizable: true, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+          },
+          {
+            flex: 1,
+            headerName:'No. Bon Dinas Luar',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_bon_dinas_luar',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tanggal',
+            sortable: false, resizable: true, filter: false,
+            field: 'tanggal',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Nominal',
+            sortable: false, resizable: true, filter: false,
+            field: 'total_amt',
+            cellClass: ['justify-end','!border-gray-200'],
+            filter:'ColFilter',
+            valueFormatter: params => {
+              if (params.value == null) return '';
+              return 'Rp ' + params.value.toLocaleString('id-ID');
+            }
+          },
+          {
+            flex: 1,
+            headerName:'Status',
+            sortable: false, resizable: true, filter: false,
+            field: 'status',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          }
+          ]" @selection-change="selectedItems = $event">
+        <div class="flex items-center space-x-2">
+          <div
+            class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+            <icon fa="arrow-up-right-from-square" />
+            Multiple Post
+          </div>
+        </div>
+      </ButtonMultiSelect>
+
       <button class="border border-blue-600 
       text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
       transition-colors duration-300" @click="openModal('320', 'Eksport')">Create New Eksport</button>
@@ -63,7 +124,8 @@
     </template>
   </TableApi>
 </div>
-<div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto max-h-[100vh]">
+<div v-if="isModalOpen"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto max-h-[100vh]">
   <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">
@@ -408,9 +470,10 @@
             </td>
             <td class="p-2 border border-[#CACACA] text-center">{{ item.no_buku_order }}</td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldX :bind="{ readonly: !actionText}" class="w-full py-2 !mt-0"
-                :value="item.keterangan" @input="v=>item.keterangan=v" :errorText="formErrors.keterangan?'failed':''"
-                :hints="formErrors.keterangan" placeholder="Masukkan Keterangan" label="" type="textarea" :check="false" />
+              <FieldX :bind="{ readonly: !actionText}" class="w-full py-2 !mt-0" :value="item.keterangan"
+                @input="v=>item.keterangan=v" :errorText="formErrors.keterangan?'failed':''"
+                :hints="formErrors.keterangan" placeholder="Masukkan Keterangan" label="" type="textarea"
+                :check="false" />
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
               <FieldNumber :bind="{ readonly: !actionText }" class="m-0" :value="detailArr[i].sub_total"

@@ -61,7 +61,7 @@
         <div>
           <FieldSelect :bind="{ readonly: !actionText, clearable: false }" class="w-full !mt-3" :value="values.tipe"
             :errorText="formErrors.tipe ? 'failed' : ''" @input="v => values.tipe = v" :hints="formErrors.tipe"
-            :check="true" label="Tipe Export" :options="['Excel','PDF']" placeholder="Pilih Tipe Export"
+            :check="true" label="Tipe Export" :options="['Excel',PDF, 'HTML']" placeholder="Pilih Tipe Export"
             valueField="key" displayField="key" />
         </div>
       </div>
@@ -72,7 +72,7 @@
 
             @click="onGenerate"
           >
-          Lihat Laporan
+          Lihat Laporan 
         </button>
       </div>
       <!-- END COLUMN -->
