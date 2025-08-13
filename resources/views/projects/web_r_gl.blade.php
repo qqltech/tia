@@ -109,11 +109,11 @@ $grand_credit = 0;
                 <td>
                     <strong>{{ $det->nomor }}</strong> - {{ $det->nama_coa }}
                 </td>
-                <td class="amount-cell">
-                    {{ $det->debet > 0 ? 'Rp ' . number_format($det->debet, 2, ',', '.') : '-' }}
+                  <td class="amount-cell">
+                    {{ 'Rp ' . number_format($det->debet, 2, ',', '.') }}
                 </td>
                 <td class="amount-cell">
-                    {{ $det->credit > 0 ? 'Rp ' . number_format($det->credit, 2, ',', '.') : '-' }}
+                    {{ 'Rp ' . number_format($det->credit, 2, ',', '.') }}
                 </td>
                 <td>{{ $det->desc ?: '-' }}</td>
                 @if ($index === 0)
