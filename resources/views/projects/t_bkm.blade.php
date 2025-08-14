@@ -178,6 +178,11 @@
         label="No. BKM" placeholder="No. BKM" :check="false" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="values.no_reference"
+        :errorText="formErrors.no_reference?'failed':''" @input="v=>values.no_reference=v" :hints="formErrors.no_reference"
+        label="No. Reference" placeholder="No. Reference" :check="false" />
+    </div>
+    <div>
       <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3"
         :value="values.nama_penerima" :errorText="formErrors.nama_penerima?'failed':''"
         @input="v=>values.nama_penerima=v" :hints="formErrors.nama_penerima" label="Nama Penyetor"

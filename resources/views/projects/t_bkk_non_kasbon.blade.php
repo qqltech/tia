@@ -205,7 +205,12 @@
         placeholder="No. BKK" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-1/2 !mt-3"
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="data.no_reference"
+        :errorText="formErrors.no_reference?'failed':''" @input="v=>data.no_reference=v" :hints="formErrors.no_reference" label="No. Reference"
+        placeholder="No. Reference" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"
         :value="data.tanggal" :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v"
         :hints="formErrors.tanggal" :check="false" type="date" label="Tgl BKK" placeholder="Pilih Tgl BKK" />
     </div>

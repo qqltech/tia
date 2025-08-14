@@ -14,23 +14,22 @@
       <hr>
       <div class="p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 ">
         <!-- START COLUMN -->
-        <!-- <div>
-              <FieldSelect 
-                :bind="{ readonly: !actionText, clearable: false }" 
-                class="w-full !mt-3"
-                :value="values.tipe_report" 
-                :errorText="formErrors.tipe_report ? 'failed' : ''"
-                @input="v => values.tipe_report = v" 
-                :hints="formErrors.tipe_report" 
-                :check="false"
-                label="Tipe Laporan"
-                :options="['Summary','Detail']"
-                placeholder="Pilih Tipe Laporan"
-                valueField="key" 
-                displayField="key"
-            />
-          </div> -->
-        <div class="grid grid-cols-2 gap-2">
+        <div>
+          <FieldSelect :bind="{ readonly: !actionText, clearable: false }" class="w-full !mt-3"
+            :value="values.tipe_report" :errorText="formErrors.tipe_report ? 'failed' : ''"
+            @input="v => values.tipe_report = v" :hints="formErrors.tipe_report" :check="true" label="Tipe Laporan"
+            :options="['General Journal','General Ledger']" placeholder="Pilih Tipe Laporan" valueField="key"
+            displayField="key" />
+        </div>
+        <div v-if="values.tipe_report === 'General Ledger'">
+          <FieldX class="w-full !mt-3" :bind="{ readonly: false }" 
+            :value="values.select_month" :errorText="formErrors.select_month?'failed':''"
+            @input="v=>values.select_month=v" :hints="formErrors.select_month" 
+            placeholder="Periode" label="Periode" fa-icon="" :check="false" type="month"
+          />
+          
+        </div>
+        <div v-else class="grid grid-cols-2 gap-2">
           <div>
             <FieldX type="date" :bind="{ readonly: false }" class="w-full !mt-3" :value="values.periode_awal"
               label="Periode Awal" placeholder="Pilih Periode Awal" :errorText="formErrors.periode_awal?'failed':''"
@@ -43,8 +42,8 @@
           </div>
         </div>
         <div>
-          <FieldSelect :bind="{ readonly: !actionText, clearable: false }" class="w-full !mt-3" :value="values.m_business_unit_id"
-            :errorText="formErrors.m_business_unit_id ? 'failed' : ''" @input="v => {
+          <FieldSelect :bind="{ readonly: !actionText, clearable: false }" class="w-full !mt-3"
+            :value="values.m_business_unit_id" :errorText="formErrors.m_business_unit_id ? 'failed' : ''" @input="v => {
               values.m_business_unit_id = v;
               }" :hints="formErrors.m_business_unit_id" valueField="id" displayField="nama" :api="{
                 url: `${store.server.url_backend}/operation/m_business_unit`,
@@ -61,7 +60,7 @@
         <div>
           <FieldSelect :bind="{ readonly: !actionText, clearable: false }" class="w-full !mt-3" :value="values.tipe"
             :errorText="formErrors.tipe ? 'failed' : ''" @input="v => values.tipe = v" :hints="formErrors.tipe"
-            :check="true" label="Tipe Export" :options="['Excel',PDF, 'HTML']" placeholder="Pilih Tipe Export"
+            :check="true" label="Tipe Export" :options="['Excel','PDF', 'HTML']" placeholder="Pilih Tipe Export"
             valueField="key" displayField="key" />
         </div>
       </div>

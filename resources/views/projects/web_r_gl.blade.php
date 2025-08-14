@@ -20,7 +20,7 @@ $grand_credit = 0;
         border-collapse: collapse;
         width: 100%;
         font-family: Arial, sans-serif;
-        font-size: 12px;
+        font-size: 8px;
     }
 
     .gl-report-table th {
@@ -62,19 +62,19 @@ $grand_credit = 0;
 </style>
 
 <div style="margin: 20px 0;">
-    <h2 style="color: #333; margin-bottom: 20px;">Laporan General Ledger</h2>
+    <h3 style="color: #333; margin-bottom: 20px; text-align: center; font-weight: bold;">Laporan General Ledger</h3>
     <table class="gl-report-table">
         <thead>
             <tr>
-                <th style="width: 100px;">Tanggal</th>
-                <th style="width: 80px;">Form</th>
-                <th style="width: 120px;">No Transaksi</th>
-                <th style="width: 120px;">No Referensi</th> 
-                <th style="width: 200px;">Chart of Account</th>
-                <th style="width: 100px;">Debet</th>
-                <th style="width: 100px;">Credit</th>
-                <th style="width: 150px;">Catatan</th>
-                <th style="width: 150px;">Catatan GL</th>
+                <th style="width: 10%;">Tanggal</th>
+                <th>Form</th>
+                <th style="width: 12.22%;">No Transaksi</th>
+                <th>No Referensi</th> 
+                <th>Chart of Account</th>
+                <th>Debet</th>
+                <th>Credit</th>
+                <th>Catatan</th>
+                <th>Catatan GL</th>
             </tr>
         </thead>
         <tbody>
@@ -99,20 +99,20 @@ $grand_credit = 0;
             @endphp
             <tr>
                 @if ($index === 0)
-                <td rowspan="{{ $span }}" class="center-text">
+                <td rowspan="{{ $span }}" class="center-text" style="line-height: 3; width: 10%;">
                     {{ date('d/m/Y', strtotime($dt->date)) }}
                 </td>
-                <td rowspan="{{ $span }}" class="center-text">{{ $dt->type }}</td>
-                <td rowspan="{{ $span }}" class="center-text">{{ $dt->ref_no }}</td>
-                <td rowspan="{{ $span }}" class="center-text">{{ $dt->no_reference ?? '-' }}</td>
+                <td rowspan="{{ $span }}" class="center-text" style="line-height: 3;">{{ $dt->type }}</td>
+                <td rowspan="{{ $span }}" class="center-text" style="line-height: 3; width: 12.22%;">{{ $dt->ref_no }}</td>
+                <td rowspan="{{ $span }}" class="center-text" style="line-height: 3;">{{ $dt->no_reference ?? '-' }}</td>
                 @endif
                 <td>
                     <strong>{{ $det->nomor }}</strong> - {{ $det->nama_coa }}
                 </td>
-                  <td class="amount-cell">
+                  <td class="amount-cell" style="font-weight: bold;">
                     {{ 'Rp ' . number_format($det->debet, 2, ',', '.') }}
                 </td>
-                <td class="amount-cell">
+                <td class="amount-cell" style="font-weight: bold;">
                     {{ 'Rp ' . number_format($det->credit, 2, ',', '.') }}
                 </td>
                 <td>{{ $det->desc ?: '-' }}</td>

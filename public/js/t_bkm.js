@@ -373,7 +373,6 @@ const landing = reactive({
       icon: 'eye',
       title: "Read",
       class: 'bg-green-600 text-light-100',
-      // show: (row) => (currentMenu?.can_read)||store.user.data.username==='developer',
       click(row) {
         router.push(`${route.path}/${row.id}?` + tsId)
       }
@@ -383,7 +382,6 @@ const landing = reactive({
       title: "Edit",
       class: 'bg-blue-600 text-light-100',
       show: (row) => row.status == 'DRAFT',
-      // show: (row) => (currentMenu?.can_update)||store.user.data.username==='developer',
       click(row) {
         router.push(`${route.path}/${row.id}?action=Edit&` + tsId)
       }
@@ -509,7 +507,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.no_draft, this.no_bkm, m_business_unit.nama, this.tanggal, t_buku_order.no_buku_order, m_akun_pembayaran.nama_coa, this.total_amt, this.status, this.keterangan'
+      searchfield: 'this.no_draft, this.no_bkm, m_business_unit.nama, this.tanggal,  m_akun_pembayaran.nama_coa, this.total_amt, this.status, this.keterangan'
     },
     onsuccess(response) {
       response.page = response.current_page

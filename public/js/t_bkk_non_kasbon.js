@@ -212,7 +212,7 @@ const table = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     valueFormatter: params => {
       if (params == null) return '-';
       return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
