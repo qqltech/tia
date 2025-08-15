@@ -32,17 +32,17 @@ AND g2.date < ?
     <thead>
         <tr>
             <th colspan="6" style="text-align: center; background-color: #f0f0f0; padding: 10px;">
-                <div style="font-size: 16px;"><strong>TRIAL BALANCE</strong></div>
-                <div style="font-size: 14px;">Period: {{ date('d F Y', strtotime($start_date)) }} - {{ date('d F Y', strtotime($end_date)) }}</div>
+                <div style="font-size: 14px;"><strong>TRIAL BALANCE</strong></div>
+                <div style="font-size: 12px; font-style: italic;">Periode: {{ date('d F Y', strtotime($start_date)) }} - {{ date('d F Y', strtotime($end_date)) }}</div>
             </th>
         </tr>
-        <tr>
+        <tr style="text-align: center; font-weight: bold;">
             <th>Account Code</th>
             <th>Account Name</th>
-            <th style="text-align: right;">Opening Balance</th>
-            <th style="text-align: right;">Debit</th>
-            <th style="text-align: right;">Credit</th>
-            <th style="text-align: right;">Ending Balance</th>
+            <th>Opening Balance</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Ending Balance</th>
         </tr>
         <tr>
             <td colspan="6">
@@ -77,19 +77,19 @@ AND g2.date < ?
         <tr>
             <td>{{ $coa->nomor }}</td>
             <td>{{ $coa->nama_coa }}</td>
-            <td style="text-align: right;">{{ number_format($coa->opening_balance, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($debet, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($credit, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($ending_balance, 2) }}</td>
+            <td style="text-align: right;">Rp {{ number_format($coa->opening_balance, 2, ',', '.') }}</td>
+            <td style="text-align: right;">Rp {{ number_format($debet, 2, ',', '.') }}</td>
+            <td style="text-align: right;">Rp {{ number_format($credit, 2, ',', '.') }}</td>
+            <td style="text-align: right;">Rp {{ number_format($ending_balance, 2, ',', '.') }}</td>
         </tr>
         @endforeach
 
         <tr style="background-color: #d0d0d0;">
             <td colspan="2"><strong>TOTAL</strong></td>
-            <td style="text-align: right;"><strong>{{ number_format($grand_opening, 2) }}</strong></td>
-            <td style="text-align: right;"><strong>{{ number_format($grand_debet, 2) }}</strong></td>
-            <td style="text-align: right;"><strong>{{ number_format($grand_credit, 2) }}</strong></td>
-            <td style="text-align: right;"><strong>{{ number_format($grand_ending, 2) }}</strong></td>
+            <td style="text-align: right;"><strong>Rp {{ number_format($grand_opening, 2, ',', '.') }}</strong></td>
+            <td style="text-align: right;"><strong>Rp {{ number_format($grand_debet, 2, ',', '.') }}</strong></td>
+            <td style="text-align: right;"><strong>Rp {{ number_format($grand_credit, 2, ',', '.') }}</strong></td>
+            <td style="text-align: right;"><strong>Rp {{ number_format($grand_ending, 2, ',', '.') }}</strong></td>
         </tr>
     </tbody>
     </table>

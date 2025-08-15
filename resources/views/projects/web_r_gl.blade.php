@@ -9,6 +9,16 @@ if ($businessUnitId) {
     $params[] = $businessUnitId;
 }
 
+$periodeText = '';
+if ($req->periode_awal && $req->periode_akhir) {
+    $whereClause .= " AND date BETWEEN ? AND ?";
+    $params[] = $req->periode_awal;
+    $params[] = $req->periode_akhir;
+
+    // Format untuk ditampilkan di h5
+    $periodeText = date('F Y', strtotime($req->periode_awal));
+}
+
 $data = \DB::select("SELECT * FROM r_gl WHERE {$whereClause} ORDER BY date DESC", $params);
 $grand_debet = 0;
 $grand_credit = 0;
@@ -20,7 +30,7 @@ $grand_credit = 0;
         border-collapse: collapse;
         width: 100%;
         font-family: Arial, sans-serif;
-        font-size: 8px;
+        font-size: 6px;
     }
 
     .gl-report-table th {
@@ -62,15 +72,16 @@ $grand_credit = 0;
 </style>
 
 <div style="margin: 20px 0;">
-    <h3 style="color: #333; margin-bottom: 20px; text-align: center; font-weight: bold;">Laporan General Ledger</h3>
-    <table class="gl-report-table">
+    <h4 style="color: #333; margin-bottom: 20px; text-align: center; font-weight: bold;">Laporan General Ledger</h4>
+    <h6 style="text-align: center; font-style: italic;">Periode:&nbsp; {{ $periodeText ?: '-' }}</h6>
+    <table class="gl-report-table" style="line-height: 1.8;">
         <thead>
-            <tr>
-                <th style="width: 10%;">Tanggal</th>
+            <tr style="line-height: 2;">
+                <th style="width: 5%;">Tanggal</th>
                 <th>Form</th>
                 <th style="width: 12.22%;">No Transaksi</th>
                 <th>No Referensi</th> 
-                <th>Chart of Account</th>
+                <th style="width: 16.1%;">Chart of Account</th>
                 <th>Debet</th>
                 <th>Credit</th>
                 <th>Catatan</th>
@@ -97,16 +108,16 @@ $grand_credit = 0;
             $grand_debet += $det->debet;
             $grand_credit += $det->credit;
             @endphp
-            <tr>
+            <tr style="line-height: 1.8;">
                 @if ($index === 0)
-                <td rowspan="{{ $span }}" class="center-text" style="line-height: 3; width: 10%;">
+                <td rowspan="{{ $span }}" class="center-text" style="line-height: 3; width: 5%;">
                     {{ date('d/m/Y', strtotime($dt->date)) }}
                 </td>
                 <td rowspan="{{ $span }}" class="center-text" style="line-height: 3;">{{ $dt->type }}</td>
                 <td rowspan="{{ $span }}" class="center-text" style="line-height: 3; width: 12.22%;">{{ $dt->ref_no }}</td>
                 <td rowspan="{{ $span }}" class="center-text" style="line-height: 3;">{{ $dt->no_reference ?? '-' }}</td>
                 @endif
-                <td>
+                <td style="width: 16.1%; white-space: nowrap;">
                     <strong>{{ $det->nomor }}</strong> - {{ $det->nama_coa }}
                 </td>
                   <td class="amount-cell" style="font-weight: bold;">
@@ -131,14 +142,14 @@ $grand_credit = 0;
             @endforeach
 
             <!-- Grand Total Row -->
-            <tr class="grand-total">
-                <td colspan="4" style="text-align: right; font-size: 14px;">
-                    <strong>GRAND TOTAL</strong>
+            <tr class="grand-total" style="line-height: 1.8;">
+                <td colspan="5" style="text-align: right; font-size: 6px;">
+                    <span>GRAND TOTAL</span>
                 </td>
-                <td class="amount-cell" style="font-size: 14px;">
+                <td class="amount-cell">
                     <strong>Rp {{ number_format($grand_debet, 2, ',', '.') }}</strong>
                 </td>
-                <td class="amount-cell" style="font-size: 14px;">
+                <td class="amount-cell">
                     <strong>Rp {{ number_format($grand_credit, 2, ',', '.') }}</strong>
                 </td>
                 <td colspan="3"></td>

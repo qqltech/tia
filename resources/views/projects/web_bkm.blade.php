@@ -9,12 +9,15 @@ where du.id = ?
 $userValue = $user[0];
 
 $dataBkm = \DB::select('select
-tb.*,
-tbo.no_buku_order
-from t_bkm as tb
-left join t_buku_order tbo on tbo.id = tb.t_buku_order_id
-where tb.id = ?
-',[$req['id']]);
+    tbd.*,
+    tbo.no_buku_order,
+    tbk.*
+from t_bkm_d as tbd
+left join t_buku_order tbo on tbo.id = tbd.t_buku_order_id
+left join t_bkm tbk on tbk.id = tbd.t_bkm_id
+where tbd.id = ?',
+[$req['id']]);
+
 
 $detailBkm = \DB::select('select
 *, 

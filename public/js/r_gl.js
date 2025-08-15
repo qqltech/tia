@@ -147,12 +147,13 @@ const onGenerate = async () => {
   const paramsGet = tempGet.join("&")
 
   let urlPath = '';
-
+  
   if (values.tipe_report === 'General Journal') {
     urlPath = '/web/r_gj';
   } else if (values.tipe_report === 'General Ledger') {
     urlPath = '/web/r_gl';
   }
+
 
   // let urlPath = '/web/r_gl';
 
@@ -172,7 +173,7 @@ const onGenerate = async () => {
         tempDiv.innerHTML = html;
         const firstSpanElement = tempDiv.querySelector('span:first-of-type');
         if (firstSpanElement) {
-          firstSpanElement.style.fontSize = '14px';
+          firstSpanElement.style.fontSize = '10px';
         }
         const tableElement = tempDiv.querySelector('table');
         if (tableElement) {

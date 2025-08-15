@@ -5,7 +5,7 @@ $params = [];
 $whereClause = "1=1";
 
 if ($businessUnitId) {
-    $whereClause .= " AND m_business_unit_id = ?";
+    $whereClause .= " AND rgl.m_business_unit_id = ?";
     $params[] = $businessUnitId;
 }
 

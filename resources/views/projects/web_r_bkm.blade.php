@@ -115,7 +115,7 @@ $grand_total = 0;
 </style>
 
 <div style="margin: 20px 0;">
-    <h2 class="cash-in-header">Laporan General Ledger - Kas Masuk</h2>
+    <h2 class="cash-in-header" style="text-align: center;">Laporan General Ledger - Kas Masuk</h2>
     <table class="cash-in-report-table">
         <thead>
             <tr>
@@ -125,10 +125,10 @@ $grand_total = 0;
                 <th style="width: 120px;">Tipe Transaksi</th>
                 <th style="width: 150px;">COA (Akun)</th>
                 <th style="width: 200px;">Keterangan</th>
-                <th style="width: 120px;">Jumlah Masuk</th>
+                <th style="width: 140px;">Jumlah Masuk</th>
                 <th style="width: 100px;">Tabel Sumber</th>
                 <th style="width: 150px;">Customer/Supplier</th>
-                <th style="width: 120px;">Ref External</th>
+                <th style="width: 100px;">Ref External</th>
             </tr>
         </thead>
         <tbody>
