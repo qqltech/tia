@@ -91,7 +91,7 @@ LEFT JOIN m_coa c ON c.id=d.m_coa_id
 INNER JOIN r_gl gl ON gl.id = d.r_gl_id
 INNER JOIN set.m_general gen ON gen.id = c.kategori
 WHERE gen.deskripsi='NERACA'
-AND LEFT(c.nomor, 1)='1' -- 1 for AKTIVA
+AND LEFT(c.nomor, 1) IN ('1','2') -- 1, 2 for AKTIVA
 AND gl.date BETWEEN ? AND ?
 ORDER BY c.nomor", [$start_date, $end_date]);
 
@@ -105,7 +105,7 @@ LEFT JOIN m_coa c ON c.id=d.m_coa_id
 INNER JOIN r_gl gl ON gl.id = d.r_gl_id
 INNER JOIN set.m_general gen ON gen.id = c.kategori
 WHERE gen.deskripsi='NERACA'
-AND LEFT(c.nomor, 1) IN ('2', '3' ) -- 2 for KEWAJIBAN, 3 for EKUITAS
+AND LEFT(c.nomor, 1) IN ('3','4') -- 3 for KEWAJIBAN, 4 for EKUITAS
 AND gl.date BETWEEN ? AND ?
 ORDER BY c.nomor", [$start_date, $end_date]);
 
