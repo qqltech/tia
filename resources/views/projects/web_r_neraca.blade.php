@@ -75,9 +75,11 @@ $laba_rugi = $total_pendapatan - $total_biaya;
 $aktiva_parent = \DB::select("
 SELECT m_coa.id FROM m_coa
 INNER JOIN set.m_general gen ON gen.id = m_coa.kategori
-WHERE gen.deskripsi='NERACA'
-AND LEFT(nomor, 1)='1'
+WHERE LEFT(nomor, 1) IN ('1','2')
 LIMIT 1 ");
+
+
+//gen.deskripsi='NERACA'AND 
 
 $aktiva_parent_id = $aktiva_parent[0]->id ?? null;
 
@@ -90,10 +92,12 @@ FROM r_gl_d d
 LEFT JOIN m_coa c ON c.id=d.m_coa_id
 INNER JOIN r_gl gl ON gl.id = d.r_gl_id
 INNER JOIN set.m_general gen ON gen.id = c.kategori
-WHERE gen.deskripsi='NERACA'
-AND LEFT(c.nomor, 1) IN ('1','2') -- 1, 2 for AKTIVA
+WHERE LEFT(c.nomor, 1) IN ('1','2') -- 1, 2 for AKTIVA
 AND gl.date BETWEEN ? AND ?
 ORDER BY c.nomor", [$start_date, $end_date]);
+
+
+//gen.deskripsi='NERACA'AND 
 
 $pasiva = \DB::select("
 SELECT DISTINCT
@@ -104,10 +108,12 @@ FROM r_gl_d d
 LEFT JOIN m_coa c ON c.id=d.m_coa_id
 INNER JOIN r_gl gl ON gl.id = d.r_gl_id
 INNER JOIN set.m_general gen ON gen.id = c.kategori
-WHERE gen.deskripsi='NERACA'
-AND LEFT(c.nomor, 1) IN ('3','4') -- 3 for KEWAJIBAN, 4 for EKUITAS
+WHERE LEFT(c.nomor, 1) IN ('3','4') -- 3 for KEWAJIBAN, 4 for EKUITAS
 AND gl.date BETWEEN ? AND ?
 ORDER BY c.nomor", [$start_date, $end_date]);
+
+
+//gen.deskripsi='NERACA'AND 
 
 $total_aktiva = 0;
 $total_pasiva = 0;
@@ -163,7 +169,7 @@ $total_pasiva = 0;
                     $total_aktiva += $saldo_aktiva;
                     @endphp
                     <td>{{ $aktiva[$i]->nomor }}</td>
-                    <td>{{ $aktiva[$i]->name }}</td>
+                    <td>{{ $aktiva[$i]->nama_coa }}</td>
                     <td style="text-align: right;">{{ number_format($saldo_aktiva, 2) }}</td>
                     @else
                     <td></td>
@@ -190,7 +196,7 @@ $total_pasiva = 0;
                         $total_pasiva += $saldo_pasiva;
                         @endphp
                         <td>{{ $pasiva[$i]->nomor }}</td>
-                        <td>{{ $pasiva[$i]->name }}</td>
+                        <td>{{ $pasiva[$i]->nama_coa }}</td>
                         <td style="text-align: right;">{{ number_format($saldo_pasiva, 2) }}</td>
                         @else
                         <td></td>
