@@ -54,13 +54,14 @@ $grand_credit = 0;
       <th rowspan="2" style="width: 5%; line-height: 1.8;">No</th>
       <th rowspan="2" style="width: 10%; line-height: 1.8;">Tanggal</th>
       <th rowspan="2" style="width: 15%; line-height: 1.8;">Transaksi</th>
-      <th colspan="3" style="width: 51%; line-height: 1.8;">Amount</th>
+      <th rowspan="2" style="width: 10%; line-height: 1.8;">No. Reference</th>
+      <th colspan="3" style="width: 41%; line-height: 1.8;">Amount</th>
       <th rowspan="2" style="width: 17.5%; line-height: 1.8;">Catatan</th>
     </tr>
     <tr style="text-align: center; background-color: #f0f0f0; font-weight: bold; line-height: 1.8;">
-      <th style="width: 25%;">Nama COA</th>
-      <th style="width: 13%;">Debet</th>
-      <th style="width: 13%;">Credit</th>
+      <th style="width: 20%;">Nama COA</th>
+      <th style="width: 11%;">Debet</th>
+      <th style="width: 11%;">Credit</th>
     </tr>
   </thead>
 
@@ -98,10 +99,11 @@ $grand_credit = 0;
                 <td rowspan="{{ $span }}" style="text-align: center; width: 5%; ">{{ $key + 1 }}</td>
                 <td rowspan="{{ $span }}" style="text-align: center; width: 10%;">{{ date('d/m/Y', strtotime($dt->date)) }}</td>
                 <td rowspan="{{ $span }}" style="text-align: center; width: 15%;">{{ $dt->type }}</td>
+                <td rowspan="{{ $span }}" style="text-align: center; width: 10%;">{{ $dt->no_reference ?? '-' }}</td>
               @endif
-              <td style="text-align: left; width: 25%;">{{ $det->nama_coa }}</td>
-              <td style="text-align: right; width: 13%;">{{ 'Rp ' . number_format($det->debet, 2, ',', '.') }}</td>
-              <td style="text-align: right; width: 13%;">{{ 'Rp ' . number_format($det->credit, 2, ',', '.') }}</td>
+              <td style="text-align: left; width: 20%;">{{ $det->nama_coa }}</td>
+              <td style="text-align: right; width: 11%;">{{ 'Rp ' . number_format($det->debet, 2, ',', '.') }}</td>
+              <td style="text-align: right; width: 10%;">{{ 'Rp ' . number_format($det->credit, 2, ',', '.') }}</td>
               @if ($index === 0)
                 <td rowspan="{{ $span }}" style="text-align: left; width: 17.5%;">{{ $dt->desc }}</td>
               @endif

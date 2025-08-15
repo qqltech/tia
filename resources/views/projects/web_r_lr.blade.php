@@ -45,9 +45,9 @@ $total_biaya = 0;
             </th>
         </tr>
         <tr>
-            <th style="width: 15%;">Kode Akun</th>
-            <th style="width: 55%;">Nama Akun</th>
-            <th style="width: 30%; text-align: right;">Jumlah</th>
+            <th style="text-align: left;">Kode Akun</th>
+            <th style="text-align: left;">Nama Akun</th>
+            <th style="text-align: right;">Jumlah</th>
         </tr>
     </thead>
 

@@ -36,13 +36,13 @@ AND g2.date < ?
                 <div style="font-size: 12px; font-style: italic;">Periode: {{ date('d F Y', strtotime($start_date)) }} - {{ date('d F Y', strtotime($end_date)) }}</div>
             </th>
         </tr>
-        <tr style="text-align: center; font-weight: bold;">
+        <tr style="text-align: left; font-weight: bold;">
             <th>Account Code</th>
             <th>Account Name</th>
-            <th>Opening Balance</th>
-            <th>Debit</th>
-            <th>Credit</th>
-            <th>Ending Balance</th>
+            <th style="text-align: right;">Opening Balance</th>
+            <th style="text-align: right;">Debit</th>
+            <th style="text-align: right;">Credit</th>
+            <th style="text-align: right;">Ending Balance</th>
         </tr>
         <tr>
             <td colspan="6">
