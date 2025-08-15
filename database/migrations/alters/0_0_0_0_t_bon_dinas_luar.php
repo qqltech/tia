@@ -21,7 +21,8 @@ class tbondinasluar extends Migration
             // $table->bigInteger('jumlah_print')->default(0)->nullable()->change();
             // $table->boolean('is_printed')->default(0)->nullable()->change();
             // $table->bigInteger('m_supplier_id')->comment('{"src":"m_supplier.id"}')->nullable()->change();
-            $table->bigInteger('m_kary_id')->comment('{"src":"set.m_kary.id"}')->nullable()->change();
+            // $table->bigInteger('m_kary_id')->comment('{"src":"set.m_kary.id"}')->nullable()->change();
+            $table->bigInteger('jumlah_print')->default(0)->nullable();
         });
     }
     
