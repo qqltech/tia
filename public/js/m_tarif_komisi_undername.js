@@ -40,7 +40,7 @@ const handleKeyDown = (event) => {
 }
 
 onMounted(() => {
-   window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keydown', handleKeyDown);
 });
 
 
@@ -351,11 +351,12 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true, wrapText: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     valueFormatter: (params) => {
-
       if (params.value) {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+        return 'Rp ' + new Intl.NumberFormat('id-ID', {
+          minimumFractionDigits: 0
+        }).format(params.value);
       }
       return params.value;
     }
@@ -368,7 +369,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true, wrapText: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200', 'justify-center']
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
     headerName: 'Status',

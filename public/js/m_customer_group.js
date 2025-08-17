@@ -350,7 +350,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     cellRenderer: function (params) {
       return formatRupiah(params.value);
     }

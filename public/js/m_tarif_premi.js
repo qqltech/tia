@@ -15,20 +15,20 @@ const modulPath = route.params.modul
 const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
-const tsId = `ts=`+(Date.parse(new Date()))
+const tsId = `ts=` + (Date.parse(new Date()))
 // ------------------------------ PERSIAPAN
 const endpointApi = 'm_tarif_premi'
-onBeforeMount(()=>{
+onBeforeMount(() => {
   document.title = 'Master Tarif Premi'
 })
 
 //  @if( $id )------------------- JS CONTENT ! PENTING JANGAN DIHAPUS
 
 // HOT KEY
-onMounted(()=>{
+onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);
 })
-onBeforeUnmount(()=>{
+onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyDown);
 })
 
@@ -47,24 +47,24 @@ let values = reactive({
 })
 
 // DEFAULT VALUE BEFORE MOUNT --UBAH DISINI
-const defaultValues = ()=>{
+const defaultValues = () => {
   values.is_active = true
 }
 
 const onReset = async (alert = false) => {
   let next = false
-  if(alert){
+  if (alert) {
     swal.fire({
       icon: 'warning',
       text: 'Anda yakin akan mereset data ini?',
       showDenyButton: true
     }).then((res) => {
       if (res.isConfirmed) {
-        if(isRead){
+        if (isRead) {
           for (const key in initialValues) {
             values[key] = initialValues[key]
           }
-        }else{
+        } else {
           for (const key in values) {
             delete values[key]
           }
@@ -73,9 +73,9 @@ const onReset = async (alert = false) => {
       }
     })
   }
-  
-  setTimeout(()=>{
-    defaultValues() 
+
+  setTimeout(() => {
+    defaultValues()
   }, 100)
 }
 
@@ -87,12 +87,12 @@ const addDetail = () => {
   detailArr.value = [...detailArr.value, tempItem]
 }
 const onDetailAdd = (e) => {
-  e.forEach(row=>{
+  e.forEach(row => {
     detailArr.value.push(row)
   })
 }
 const removeDetail = (index) => {
-  detailArr.value.splice(index,1)
+  detailArr.value.splice(index, 1)
   // detailArr.value = detailArr.value.filter((e) => e.__id != index.__id)
 }
 // End Table Detail
@@ -138,62 +138,62 @@ onBeforeMount(async () => {
 
 function onBack() {
 
-    router.replace('/' + modulPath)
+  router.replace('/' + modulPath)
 
 }
 
 
 async function onSave() {
 
-    try {
-      // Inti onSave
-      const isCreating = ['Create','Copy','Tambah'].includes(actionText.value);
-      const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`;
-      isRequesting.value = true;
-      values.is_active = (values.is_active === true) ? 1 : 0;
-      const res = await fetch(dataURL, {
-        method: isCreating ? 'POST' : 'PUT',
-        headers: {
-          'Content-Type': 'Application/json',
-          Authorization: `${store.user.token_type} ${store.user.token}`
-        },
-        body: JSON.stringify(values)
-      });
-      if (!res.ok) {
-        if ([400, 422].includes(res.status)) {
-          const responseJson = await res.json();
-          formErrors.value = responseJson.errors || {};
-          throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Oops, sesuatu yang salah terjadi. Coba kembali nanti.");
-        } else {
-          throw ("Oops, sesuatu yang salah terjadi. Coba kembali nanti.");
-        }
+  try {
+    // Inti onSave
+    const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value);
+    const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`;
+    isRequesting.value = true;
+    values.is_active = (values.is_active === true) ? 1 : 0;
+    const res = await fetch(dataURL, {
+      method: isCreating ? 'POST' : 'PUT',
+      headers: {
+        'Content-Type': 'Application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      body: JSON.stringify(values)
+    });
+    if (!res.ok) {
+      if ([400, 422].includes(res.status)) {
+        const responseJson = await res.json();
+        formErrors.value = responseJson.errors || {};
+        throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Oops, sesuatu yang salah terjadi. Coba kembali nanti.");
+      } else {
+        throw ("Oops, sesuatu yang salah terjadi. Coba kembali nanti.");
       }
-      router.replace('/' + modulPath + '?reload='+(Date.parse(new Date())));
-    } catch (err) {
-      isBadForm.value = true;
-      swal.fire({
-        icon: 'warning',
-        text: err
-      });
     }
-    isRequesting.value = false;
-    }
+    router.replace('/' + modulPath + '?reload=' + (Date.parse(new Date())));
+  } catch (err) {
+    isBadForm.value = true;
+    swal.fire({
+      icon: 'warning',
+      text: err
+    });
+  }
+  isRequesting.value = false;
+}
 
 //  @else----------------------- LANDING
 const activeBtn = ref()
 
-function filterShowData(params,noBtn){
-  if(activeBtn.value === noBtn){
+function filterShowData(params, noBtn) {
+  if (activeBtn.value === noBtn) {
     activeBtn.value = null
-  }else{
+  } else {
     activeBtn.value = noBtn
   }
-  if(params){
+  if (params) {
     landing.api.params.where = `this.is_active=true`
-  }else if(activeBtn.value == null){
+  } else if (activeBtn.value == null) {
     // clear params filter
     landing.api.params.where = null
-  }else{
+  } else {
     landing.api.params.where = `this.is_active=false`
   }
 
@@ -249,7 +249,7 @@ const landing = reactive({
       class: 'bg-green-600 text-light-100',
       // show: (row) => (currentMenu?.can_read)||store.user.data.username==='developer',
       click(row) {
-        router.push(`${route.path}/${row.id}?`+tsId)
+        router.push(`${route.path}/${row.id}?` + tsId)
       }
     },
     {
@@ -258,7 +258,7 @@ const landing = reactive({
       class: 'bg-blue-600 text-light-100',
       // show: (row) => (currentMenu?.can_update)||store.user.data.username==='developer',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Edit&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Edit&` + tsId)
       }
     },
     {
@@ -266,7 +266,7 @@ const landing = reactive({
       title: "Copy",
       class: 'bg-gray-600 text-light-100',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Copy&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Copy&` + tsId)
       }
     }
   ],
@@ -296,74 +296,81 @@ const landing = reactive({
     cellClass: ['justify-center', 'bg-gray-50', 'border-r', '!border-gray-200']
   },
   {
-    headerName:'No.Premi',
+    headerName: 'No.Premi',
     field: 'no_tarif_premi',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
-    headerName:'Sektor',
+    headerName: 'Sektor',
     field: 'sektor.deskripsi',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
-    headerName:'No Head',
+    headerName: 'No Head',
     field: 'no_head.deskripsi',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
-    headerName:'Trip',
+    headerName: 'Trip',
     field: 'trip.deskripsi',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
-    headerName:'Premi',
+    headerName: 'Premi',
     field: 'premi',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellRenderer: (params) => {
+      return params.data['premi']
+        ? 'Rp ' + params.data['premi']
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        : '';
+    }
   },
   {
-    headerName:'Status',
-    field: 'is_active',  
+    headerName: 'Status',
+    field: 'is_active',
     sortable: true,
-    filter:false,
-    resizable: true,wrapText:true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-center'],
+    filter: false,
+    resizable: true, wrapText: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
     cellRenderer: ({ value }) => {
       return value === true
         ? `<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>`
         : `<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Inactive</span>`
     }
-  } 
+  }
   ]
 })
 
@@ -377,4 +384,4 @@ onActivated(() => {
 })
 
 //  @endif -------------------------------------------------END
-watchEffect(()=>store.commit('set', ['isRequesting', isRequesting.value]))
+watchEffect(() => store.commit('set', ['isRequesting', isRequesting.value]))

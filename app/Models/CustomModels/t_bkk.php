@@ -313,7 +313,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
             [$trx->id]
         );
 
-        if ($check_r_gl && $typeApproveMulti) {
+        if ($check_r_gl) {
             return ["status" => true];
         } else {
             $r_gl = new r_gl();

@@ -113,13 +113,17 @@ const table = reactive({
       headerName: 'Sangu',
       field: 'total_sangu',
       flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-end',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
       filter: 'ColFilter',
       cellRenderer: (params) => {
-        return params.data['total_sangu'] ? params.data['total_sangu'].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : '';
+        return params.data['total_sangu']
+          ? 'Rp ' + params.data['total_sangu']
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+          : '';
       }
     },
     {
@@ -653,11 +657,13 @@ async function tesPrint(spk_angkutan_id) {
         { "type": "newLine" },
         { "type": "newLine" },
         { "type": "newLine" },
-        { "type": "tableCustom", "value": [
-          { "text": "", "align": "RIGHT", "cols": 16 },
-          { "text": "", "align": "RIGHT", "cols": 13 },
-          { "text": "RANGKAP 1", "align": "RIGHT", "cols": 16 }
-        ] },
+        {
+          "type": "tableCustom", "value": [
+            { "text": "", "align": "RIGHT", "cols": 16 },
+            { "text": "", "align": "RIGHT", "cols": 13 },
+            { "text": "RANGKAP 1", "align": "RIGHT", "cols": 16 }
+          ]
+        },
         { "type": "cut" }
       ]
     }
@@ -848,11 +854,13 @@ async function tesPrint(spk_angkutan_id) {
         { "type": "newLine" },
         { "type": "newLine" },
         { "type": "newLine" },
-        { "type": "tableCustom", "value": [
-          { "text": "", "align": "RIGHT", "cols": 16 },
-          { "text": "", "align": "RIGHT", "cols": 13 },
-          { "text": "RANGKAP 2", "align": "RIGHT", "cols": 16 }
-        ] },
+        {
+          "type": "tableCustom", "value": [
+            { "text": "", "align": "RIGHT", "cols": 16 },
+            { "text": "", "align": "RIGHT", "cols": 13 },
+            { "text": "RANGKAP 2", "align": "RIGHT", "cols": 16 }
+          ]
+        },
         { "type": "cut" }
       ]
     }
@@ -942,10 +950,10 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
-  data: { 
-    status: 'DRAFT', 
-    is_con_edit: false, 
-    total_bon_tambahan: 0 
+  data: {
+    status: 'DRAFT',
+    is_con_edit: false,
+    total_bon_tambahan: 0
   },
   detail: [],
   t_spk_bon_detail: []
