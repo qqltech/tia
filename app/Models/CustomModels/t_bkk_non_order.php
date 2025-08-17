@@ -303,6 +303,15 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
             "detail" => array_merge($debetArr, $creditArr),
         ];
 
+         $check_r_gl = \DB::selectOne(
+            "select a.* from r_gl a where a.ref_table = 't_bkk_non_order' AND a.ref_id = ?",
+            [$trx->id]
+        );
+
+        if ($check_r_gl) {
+            return ["status" => true];
+        }
+
         $r_gl = new r_gl();
         $data = $r_gl->autoJournal($obj);
 
