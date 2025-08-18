@@ -20,6 +20,17 @@ class m_coa extends \App\Models\BasicModels\m_coa
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        if (isset($arrayData['nomor']) && !empty($arrayData['nomor'])) {
+        $existingRecord = $model::where('nomor', $arrayData['nomor'])->first();
+            if ($existingRecord) {
+                return [
+                    "errors" => [
+                        'nomor' => 'The nomor "' . $arrayData['nomor'] . '" already exists in the database'
+                    ]
+                ];
+            }
+        }
+
         $newData = [
             "kode_perkiraan" => $this->helper->generateNomor("Kode Coa"),
         ];
