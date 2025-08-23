@@ -18,7 +18,6 @@ class m_supplier extends \App\Models\BasicModels\m_supplier
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
-        
         $newData = [
             "kode" => $this->helper->generateNomor("Supplier"),
         ];
@@ -28,6 +27,22 @@ class m_supplier extends \App\Models\BasicModels\m_supplier
             "data" => $newArrayData,
             // "errors" => ['error1']
         ];
+    }
+
+
+    function createAfter($model, $arrayData, $metaData, $id=null )
+    {        
+      if($arrayData['tipe_id'] == $this->helper->getGeneralId('JENIS SUPPLIER','deskripsi','DEPO')){
+        $dataToInsert = [
+            'kode' => $arrayData['kode'],
+            'group' => 'DEPO',
+            'deskripsi' => $arrayData['nama'],
+            'is_active' => true, 
+            'trx_id' => $id,
+            'trx_table' => 'm_supplier',
+        ];
+        $insertedId = \DB::table('set.m_general')->insertGetId($dataToInsert);
+      }
     }
 
     public function transformRowData( array $row )

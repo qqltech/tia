@@ -16,7 +16,8 @@ class mgeneral extends Migration
             // $table->text('deskripsi2')->nullable();
             // $table->text('deskripsi3')->nullable();
             // $table->text('deskripsi4')->nullable();
-            
+            $table->integer('trx_id')->nullable();
+            $table->string('trx_table')->nullable();
         });
     }
 }

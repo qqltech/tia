@@ -18,6 +18,21 @@ class Helper
         $this->timestamp = \Carbon\Carbon::now();
     }
 
+
+    public function getGeneralId($group, $ref, $val){
+        $get_id = DB::table('set.m_general')
+            ->select('id')
+            ->where('group', '=', $group)
+            ->where($ref, '=', $val)
+            ->where('is_active', true)
+            ->first();
+        if (!$get_id) trigger_error("invalid $group $ref $val");
+        
+        return $get_id->id;
+    }
+
+    
+
     public function generateNomor($nama, $counter = true, $static = null)
     {
         // check header config

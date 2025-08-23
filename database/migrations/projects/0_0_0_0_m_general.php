@@ -22,6 +22,8 @@ class mgeneral extends Migration
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();
+            $table->integer('trx_id')->nullable();
+            $table->string('trx_table')->nullable();
             $table->timestamp('delete_at')->nullable();
             $table->timestamps();
         });

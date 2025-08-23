@@ -14,10 +14,10 @@ class m_general extends Model
     protected $table    = 'set.m_general';
     protected $guarded  = ['id'];
     protected $casts    = ['created_at'=> 'datetime:d-m-Y','updated_at'=>'datetime:d-m-Y'];
-    protected $fillable = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4"];
+    protected $fillable = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4","trx_id","trx_table"];
 
-    public $columns     = ["id","kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4"];
-    public $columnsFull = ["id:bigint","kode:string:191","group:string:191","is_active:boolean","deskripsi:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","deskripsi2:text","deskripsi3:text","deskripsi4:text"];
+    public $columns     = ["id","kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4","trx_id","trx_table"];
+    public $columnsFull = ["id:bigint","kode:string:191","group:string:191","is_active:boolean","deskripsi:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","deskripsi2:text","deskripsi3:text","deskripsi4:text","trx_id:integer","trx_table:string:191"];
     public $rules       = [];
     public $joins       = [];
     public $details     = [];
@@ -26,9 +26,9 @@ class m_general extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["kode","group","is_active","deskripsi"];
-    public $createable  = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4"];
-    public $updateable  = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4"];
-    public $searchable  = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4"];
+    public $createable  = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4","trx_id","trx_table"];
+    public $updateable  = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4","trx_id","trx_table"];
+    public $searchable  = ["kode","group","is_active","deskripsi","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","deskripsi2","deskripsi3","deskripsi4","trx_id","trx_table"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
