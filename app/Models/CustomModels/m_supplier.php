@@ -29,6 +29,31 @@ class m_supplier extends \App\Models\BasicModels\m_supplier
         ];
     }
 
+     function updateAfter($model, $arrayData, $metaData, $id = null)
+    {
+            // Ensure that the id is provided for the update
+            if (!$id) {
+                throw new Exception("ID must be provided for updating.");
+            }
+
+            // Check if the tipe_id matches the specified condition
+            if ($arrayData['tipe_id'] == $this->helper->getGeneralId('JENIS SUPPLIER', 'deskripsi', 'DEPO')) {
+                $dataToUpdate = [
+                    'kode' => $arrayData['kode'],
+                    'group' => 'DEPO',
+                    'deskripsi' => $arrayData['nama'],
+                    'is_active' => true,
+                    'trx_table' => 'm_supplier',
+                ];
+
+                // Update the existing record in the database
+                \DB::table('set.m_general')
+                    ->where('trx_id', $id)
+                    ->where('trx_table', 'm_supplier')
+                    ->update($dataToUpdate);
+            }
+    }
+
 
     function createAfter($model, $arrayData, $metaData, $id=null )
     {        
