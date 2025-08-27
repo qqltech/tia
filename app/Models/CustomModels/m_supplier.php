@@ -37,7 +37,7 @@ class m_supplier extends \App\Models\BasicModels\m_supplier
             }
 
             // Check if the tipe_id matches the specified condition
-            if ($arrayData['tipe_id'] == $this->helper->getGeneralId('JENIS SUPPLIER', 'deskripsi', 'DEPO')) {
+            if ($arrayData['jenis_id'] == $this->helper->getGeneralId('JENIS SUPPLIER', 'deskripsi', 'DEPO')) {
                 $dataToUpdate = [
                     'kode' => $arrayData['kode'],
                     'group' => 'DEPO',
@@ -54,10 +54,12 @@ class m_supplier extends \App\Models\BasicModels\m_supplier
             }
     }
 
+   
+
 
     function createAfter($model, $arrayData, $metaData, $id=null )
-    {        
-      if($arrayData['tipe_id'] == $this->helper->getGeneralId('JENIS SUPPLIER','deskripsi','DEPO')){
+    {       
+      if ($arrayData['jenis_id'] == $this->helper->getGeneralId('JENIS SUPPLIER', 'deskripsi', 'DEPO')) {
         $dataToInsert = [
             'kode' => $arrayData['kode'],
             'group' => 'DEPO',

@@ -36,10 +36,6 @@ const values = reactive({
 const negara_data = ref([])
 
 onBeforeMount(async () => {
-  await fetch('https://restcountries.com/v3.1/all').then((res)=>res.json()).then((json)=>{
-    const negara_temp = json.map((dt) => ({name: (dt.name.common === 'Israel') ? 'Israel Babi' : dt.name.common}));
-    negara_data.value = negara_temp;
-  })
 
   if (isRead) {
     //  READ DATA
