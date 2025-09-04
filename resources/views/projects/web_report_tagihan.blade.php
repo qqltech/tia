@@ -145,7 +145,7 @@ $temp = 'sebelas';
   WHERE t_tag.id = ?;
   ",[$req['id']]);
 
-  $dt=$dp_tagihan[0];
+  $dt=$dp_tagihan[0] ?? null;
 
   @endphp
 
@@ -570,14 +570,14 @@ $temp = 'sebelas';
       </td>
       <td
         style="border-style: solid; border-width: 0px 1px 1px 1px; width:29.5%; text-align: right; font-weight: Bold;">
-        {{ number_format($dt->total_amount, 2, ',', '.') }}
+        {{ number_format($dt->total_amount ?? 0, 2, ',', '.') }}
       </td>
     </tr>
   </table>
 
   <table cellpadding="3">
     @php
-    $kurang_bayar = $total_rp - $dt->total_amount;
+    $kurang_bayar = $total_rp - $dt->total_amount ?? 0;
     @endphp
     <tr>
       <td
