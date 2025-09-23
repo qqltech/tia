@@ -1,5 +1,5 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
-import { ref, readonly, reactive, inject, onMounted, onBeforeMount, watchEffect, onActivated } from 'vue'
+import { ref, readonly, reactive, inject, onMounted, onBeforeMount, watchEffect, onActivated, computed, watch, nextTick } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -27,7 +27,7 @@ let initialValues = {}
 const changedValues = []
 
 const values = reactive({
-      is_active : true
+  is_active : true,
 })
 
 onMounted(() => {
@@ -175,6 +175,30 @@ async function onSave() {
 }
 
 //  @else----------------------- LANDING
+const valuesLanding = reactive({
+  group: null
+})
+
+const tableParams = computed(() => ({
+  filter_group: valuesLanding.group,
+  simplest: true,
+}));
+
+let reloadTimer = null;
+
+watch(tableParams, () => {
+  if (reloadTimer) {
+    clearTimeout(reloadTimer);
+  }
+  reloadTimer = setTimeout(() => {
+    apiTable.value.reload();
+  }, 500);
+});
+
+onMounted(() => {
+  valuesLanding.group = list[0].nama 
+})
+
 const landing = reactive({
   actions: [
     {

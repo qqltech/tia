@@ -33,9 +33,22 @@
   <hr>
 
   <!-- TABLE -->
-  <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
-    class="max-h-[450px] pt-2 !px-4 !pb-8">
+  <TableApi ref="apiTable" :api="{
+    url: `${store.server.url_backend}/operation/m_general`,
+    headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}` },
+    params: tableParams
+  }" :columns="landing.columns" :actions="landing.actions" class="max-h-[450px] pt-2 !px-4 !pb-8">
     <template #header>
+
+      <FieldSelect class="flex !mt-0 w-full" :bind="{ readonly: actionText, disabled: actionText, clearable:true }"
+        :value="valuesLanding.group" @input="v=>valuesLanding.group=v" valueField="nama" displayField="nama" :api="{
+            url: `${store.server.url_backend}/operation/m_general/getGroup`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true
+            }
+        }" placeholder="Pilih Salah Satu" label="" :check="true" />
+
       <div class="pb-13 h-full"></div>
     </template>
   </TableApi>
@@ -77,37 +90,19 @@
         type="textarea" placeholder="Deskripsi" :check="false" />
     </div>
     <div class="w-full !mt-3">
-          <FieldX
-            class="!mt-0"
-            :bind="{ readonly: !actionText }" 
-            :value="values.deskripsi2" :errorText="formErrors.deskripsi2?'failed':''"
-            @input="v=>values.deskripsi2=v"
-            :hints="formErrors.deskripsi2" 
-            type="textarea"
-            placeholder="Deskripsi 2" :check="false"
-          />
+      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.deskripsi2"
+        :errorText="formErrors.deskripsi2?'failed':''" @input="v=>values.deskripsi2=v" :hints="formErrors.deskripsi2"
+        type="textarea" placeholder="Deskripsi 2" :check="false" />
     </div>
     <div class="w-full !mt-3">
-          <FieldX
-            class="!mt-0"
-            :bind="{ readonly: !actionText }" 
-            :value="values.deskripsi3" :errorText="formErrors.deskripsi3?'failed':''"
-            @input="v=>values.deskripsi3=v"
-            :hints="formErrors.deskripsi3" 
-            type="textarea"
-            placeholder="Deskripsi 3" :check="false"
-          />
+      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.deskripsi3"
+        :errorText="formErrors.deskripsi3?'failed':''" @input="v=>values.deskripsi3=v" :hints="formErrors.deskripsi3"
+        type="textarea" placeholder="Deskripsi 3" :check="false" />
     </div>
     <div class="w-full !mt-3">
-          <FieldX
-            class="!mt-0"
-            :bind="{ readonly: !actionText }" 
-            :value="values.deskripsi4" :errorText="formErrors.deskripsi4?'failed':''"
-            @input="v=>values.deskripsi4=v"
-            :hints="formErrors.deskripsi4" 
-            type="textarea"
-            placeholder="Deskripsi 4" :check="false"
-          />
+      <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.deskripsi4"
+        :errorText="formErrors.deskripsi4?'failed':''" @input="v=>values.deskripsi4=v" :hints="formErrors.deskripsi4"
+        type="textarea" placeholder="Deskripsi 4" :check="false" />
     </div>
     <div class="flex flex-col gap-2 pt-2 ml-1">
       <label class="text-gray-600 text-xs font-semibold">Status</label>

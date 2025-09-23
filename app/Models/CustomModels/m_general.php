@@ -16,6 +16,29 @@ class m_general extends \App\Models\BasicModels\m_general
     //public $createAdditionalData = ["creator_id"=>"auth:id"];
     //public $updateAdditionalData = ["last_editor_id"=>"auth:id"];
 
+    public function getGeneral(Request $req)
+    {
+        $query = \DB::table("set.m_general");
+
+        if ($req->has("group") && $req->group) {
+            $query->where("group", $req->group);
+        }
+
+        return $query->get();
+    }
+
+    public function custom_getGroup($req)
+    {
+        $data = \DB::table("set.m_general")
+            ->selectRaw('"group" as nama')
+            ->groupByRaw('"group"')
+            ->get();
+
+        return response()->json([
+            "data" => $data,
+        ]);
+    }
+
     public function getByGroup($nama_group)
     {
         return $this->where("group", $nama_group)->get();
@@ -49,6 +72,7 @@ class m_general extends \App\Models\BasicModels\m_general
         $reqGroup = request("group");
         return $this->where("group", $reqGroup);
     }
+
     // public function custom_saveKontainer()
     // {
     //     $reqGroup = app()->request;
