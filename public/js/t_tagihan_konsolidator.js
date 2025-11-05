@@ -634,6 +634,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
+      where: `this.persentase_konsolidator_kont IS NOT NULL`,
       searchfield: 'this.no_draft, this.no_tagihan, no_buku_order.no_buku_order, customer.nama_perusahaan, this.catatan'
     },
     onsuccess(response) {

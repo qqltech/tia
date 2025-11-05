@@ -4,31 +4,37 @@ $req = app()->request;
 // data tagihan
 $t_tagihan_kon = \DB::select("
 SELECT
-tt.no_tagihan,
-tt.no_faktur_pajak,
-tt.tgl as tgl_tagihan,
-tt.ppn,
-mc.nama_perusahaan,
-tbo.no_buku_order,
-tbo.id as t_buku_order_id,
-tbo.lokasi_stuffing,
-tbo.jenis_barang,
-tbo.nama_kapal,
-tbo.voyage,
-tbo.no_bl,
-tbo.tujuan_asal,
-tbo.no_invoice,
-tbo.tanggal_pengkont,
-mgnad.no_aju
-
+  tt.no_tagihan,
+  tt.no_faktur_pajak,
+  tt.tgl AS tgl_tagihan,
+  tt.ppn,
+  mc.nama_perusahaan,
+  tbo.no_buku_order,
+  tbo.id AS t_buku_order_id,
+  tbo.lokasi_stuffing,
+  tbo.jenis_barang,
+  tbo.nama_kapal,
+  tbo.voyage,
+  tbo.no_bl,
+  tbo.tujuan_asal,
+  tbo.no_invoice,
+  tbo.tanggal_pengkont,
+  mgnad.no_aju,
+  mg2.deskripsi AS ukuran
 FROM t_tagihan tt
 LEFT JOIN t_buku_order tbo ON tbo.id = tt.no_buku_order
 LEFT JOIN m_customer mc ON mc.id = tt.customer
 LEFT JOIN t_ppjk tppjk ON tppjk.t_buku_order_id = tbo.id
 LEFT JOIN m_generate_no_aju_d mgnad ON mgnad.id = tppjk.no_ppjk_id
 LEFT JOIN m_generate_no_aju mgna ON mgna.id = mgnad.m_generate_no_aju_id
-where tt.id=?
-",[$req['id']]);
+-- ✅ tambahkan join ini:
+LEFT JOIN t_tagihan_d_npwp ttdn ON ttdn.t_tagihan_id = tt.id
+LEFT JOIN set.m_general mg2 ON mg2.id = ttdn.ukuran
+
+WHERE tt.id = ?
+LIMIT 1
+", [$req['id']]);
+
 
 $tk=$t_tagihan_kon[0];
 
@@ -256,7 +262,7 @@ function terbilang($number) {
   :
     </td>
     <td style="text-align: left; padding: 10px; width: 22%; ">
-      1 x 400 <br>
+      {{ $n->ukuran ?? '-' }} <br>
   {{ $tk->jenis_barang }}<br>
   {{ $resultNoContainer ?? '-' }} <br>
   {{ $tk->lokasi_stuffing ?? '-' }} <br>

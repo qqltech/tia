@@ -54,7 +54,7 @@ const table = reactive({
       headerName: 'No. Premi',
       field: 'no_premi',
       flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
@@ -64,7 +64,7 @@ const table = reactive({
       headerName: 'Tanggal',
       field: 'tgl',
       flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
@@ -74,14 +74,15 @@ const table = reactive({
       headerName: 'Total Nominal',
       field: 'total_premi',
       flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-end',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
       filter: 'ColFilter',
-      // cellRenderer: (params) =>{
-      //   params.data.
-      // }
+      valueFormatter: (params) => {
+        const value = Number(params.value) || 0;
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+      }
     },
     {
       headerName: 'Catatan',
@@ -98,7 +99,7 @@ const table = reactive({
       field: 'status',
       flex: 1,
       filter:false,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
@@ -403,6 +404,7 @@ onBeforeMount(async () => {
         getDetailNPWPContainer(res.data['t_detail_npwp_container_1_id'], res.data['t_detail_npwp_container_2_id']);
         data.no_container = res.data['no_container_1'];
         data.no_angkutan = res.data['t_buku_order_1.angkutan'];
+        data.head_deskripsi2 = res.data['head.kode'];
         data.tanggal_out = res.data.tanggal_out;
         data.waktu_out = res.data.waktu_out;
         data.no_bon_sementara = res.data.no_bon_sementara;
@@ -418,6 +420,7 @@ onBeforeMount(async () => {
         data.dari = res.data.dari;
       }
       else {
+        data.head_deskripsi2 ='';
         data.no_container = '';
         data.no_order = '';
         data.no_angkutan = '';
@@ -436,6 +439,9 @@ onBeforeMount(async () => {
         data.ke = '';
         data.dari = '';
       }
+
+      console.log('SPK response', res);
+      
     });
 
 
@@ -532,13 +538,13 @@ async function onSave() {
 }
 
 const getTarifPremi = async (t_1_id, t_2_id) => {
-  console.log("AAAAAAA  AAAAAAA", t_1_id, t_2_id)
+  // console.log("AAAAAAA  AAAAAAA", t_1_id, t_2_id)
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `${store.user.token_type} ${store.user.token}`,
   };
 
-  const dataURL = `${store.server.url_backend}/operation/m_tarif_premi/get_tarif_premi`;
+  const dataURL = `${store.server.url_backend}/operation/m_tarif_premi_bckp/get_tarif_premi`;
   const params = {
     get_tarif_premi: true,
     spk_id: data.t_spk_angkutan_id
@@ -552,7 +558,7 @@ const getTarifPremi = async (t_1_id, t_2_id) => {
 
   // FETCH HEADER DATA
   await fetchData(dataURL, params).then((res) => {
-    console.log('tarifff', res.premi);
+    // console.log('tarifff', res.premi);
     if (res.premi) data.tarif_premi = res.premi;
     else data.tarif_premi = '';
   });
@@ -581,7 +587,8 @@ const getDetailNPWPContainer = async (t_1_id, t_2_id) => {
   }
   else {
     data.ukuran_container = '-, ';
-    data.no_order = '-, ';
+    // data.no_order = '-, ';
+    data.no_order = ' ';
     data.no_angkutan = '-, ';
 
   }
@@ -614,7 +621,7 @@ const getDetailNPWPContainer = async (t_1_id, t_2_id) => {
 
 
 watch(() => [detailArr, data.tarif_premi, data.tol, data.total_sangu, data.hutang_dibayar], () => {
-  console.log('ini panjangggg', detailArr.length);
+  // console.log('ini panjangggg', detailArr.length);
   data.total_premi = 0;
   for (let idx = 0; idx < detailArr.length; idx++) {
     if (detailArr[idx].nominal) data.total_premi += Number(detailArr[idx].nominal);
@@ -623,6 +630,7 @@ watch(() => [detailArr, data.tarif_premi, data.tol, data.total_sangu, data.hutan
   if (data.tol) data.total_premi += Number(data.tol);
   if (data.total_sangu) data.total_premi -= Number(data.total_sangu);
   if (data.hutang_dibayar) data.total_premi -= Number(data.hutang_dibayar);
+
 }, { deep: true })
 
 // watch([() => data.tarif_premi, () => data.tol], () => {

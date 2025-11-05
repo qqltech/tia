@@ -79,7 +79,7 @@
             {'id' : 'DRAFT' , 'key' : 'Draft'}, 
             {'id': 'INPROCESS', 'key' : 'InProcess'},
             {'id': 'POSTED', 'key' : 'Posted'},
-          ]" placeholder="Status" :check="false" />
+          ]" placeholder="Status" :check="true" />
 
     <FieldPopup class="pt-1" :bind="{ disabled: !actionText, clearable:false }" :value="data.no_ppjk_id"
       @input="v=>data.no_ppjk_id=v" :errorText="formErrors.no_ppjk_id?'failed':''" :hints="formErrors.no_ppjk_id"
@@ -243,6 +243,14 @@
       placeholder="Tanggal SPPB" :check="false" type="date" />
     <FieldNumber class="pt-1" :bind="{ readonly: !actionText }" :value="data.invoice" @input="(v)=>data.invoice=v"
       :errorText="formErrors.invoice?'failed':''" :hints="formErrors.invoice" placeholder="Invoice" :check="false" />
+    <FieldNumber class="pt-1" :bind="{ readonly: !actionText }" :value="data.tarif_ppjk" @input="(v)=>data.tarif_ppjk=v"
+      :errorText="formErrors.tarif_ppjk?'failed':''" :hints="formErrors.tarif_ppjk" placeholder="Tarif PPJK" :check="false" />
+    <FieldNumber class="pt-1" :bind="{ readonly: !actionText, disabled: !actionText }" 
+      :value="data.admin_ppjk_id" :errorText="formErrors.admin_ppjk_id?'failed':''"
+      @input="v=>data.admin_ppjk_id=v" :hints="formErrors.admin_ppjk_id" 
+      placeholder="Admin PPJK" :check="false"
+    />
+    
     <FieldNumber class="pt-1" :bind="{ readonly: !actionText }" :value="data.ppn_pib" @input="(v)=>data.ppn_pib=v"
       :errorText="formErrors.ppn_pib?'failed':''" :hints="formErrors.ppn_pib" placeholder="PPN PIB" :check="false" />
     <!-- <FieldX :bind="{ readonly: true, disabled:true }" class="pt-1" :value="data.currency"

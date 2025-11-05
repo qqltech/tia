@@ -28,7 +28,7 @@ class t_bon_dinas_luar extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["tipe_order_id","tipe_kategori_id","no_bkk","total_amt","m_kary_id","m_supplier_id"];
+    public $required    = ["tipe_order_id","tipe_kategori_id","no_bkk","total_amt"];
     public $createable  = ["no_bon_dinas_luar","no_draft","status","tipe_order_id","tipe_kategori_id","tanggal","t_bkk_id","no_bkk","total_amt","m_kary_id","m_supplier_id","catatan","creator_id","last_editor_id","deleted_id","deleted_at","m_akun_bank_id","is_printed","jumlah_print"];
     public $updateable  = ["no_bon_dinas_luar","no_draft","status","tipe_order_id","tipe_kategori_id","tanggal","t_bkk_id","no_bkk","total_amt","m_kary_id","m_supplier_id","catatan","creator_id","last_editor_id","deleted_id","deleted_at","m_akun_bank_id","is_printed","jumlah_print"];
     public $searchable  = ["id","no_bon_dinas_luar","no_draft","status","tipe_order_id","tipe_kategori_id","tanggal","t_bkk_id","no_bkk","total_amt","m_kary_id","m_supplier_id","catatan","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","m_akun_bank_id","is_printed","jumlah_print"];

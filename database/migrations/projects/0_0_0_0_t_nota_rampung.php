@@ -33,6 +33,7 @@ class tnotarampung extends Migration
             $table->date('tgl_stack')->nullable();
             $table->string('no_eir',50)->nullable();
             $table->date('tgl_eir')->nullable();
+            $table->date('tgl_nr')->nullable();
             $table->decimal('grand_total',18,4)->default(0);
             $table->integer('tipe_nota_rampung')->comment('{"src":"set.m_general.id"}')->nullable();
             //penting

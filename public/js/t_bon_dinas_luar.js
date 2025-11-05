@@ -856,11 +856,21 @@ onBeforeMount(async () => {
     return response.json();
   };
   // FETCH HEADER DATA
+  // await fetchData(dataURL, {
+  //   simplest: true,
+  //   transform: false,
+  //   join: false,
+  //   where: `this.is_active=true AND this.nama_coa IN ('PENG CONT EXPORT', 'PEMASUKAN FULL+UMS', 'PEMBTALAN STEK+PPN', 'STUFFING', 'FIAT', 'KARANTINA', 'LIFT ON TIA', 'LIFT ON SUT', 'URUS COO', 'DOC FEE')`
+  // }).then((res) => {
+  //   coaListEks.push(...res.data);
+  // });
+  // console.log(coaListEks);
+
   await fetchData(dataURL, {
     simplest: true,
     transform: false,
     join: false,
-    where: 'this.is_active=true AND id IN (99, 114, 111, 101, 121, 209, 336, 337, 125, 193)'
+    where: 'this.is_active=true AND id IN (508, 457, 455, 446, 464, 543, 681, 682, 506, 528)'
   }).then((res) => {
     coaListEks.push(...res.data);
   });
@@ -870,7 +880,7 @@ onBeforeMount(async () => {
     simplest: true,
     transform: false,
     join: false,
-    where: 'this.is_active=true AND id IN (180, 169, 209)'
+    where: 'this.is_active=true AND id IN (515, 504, 543)'
   }).then((res) => {
     coaListImp.push(...res.data);
   });

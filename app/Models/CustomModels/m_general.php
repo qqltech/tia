@@ -73,6 +73,45 @@ class m_general extends \App\Models\BasicModels\m_general
         return $this->where("group", $reqGroup);
     }
 
+     public function custom_Filter($req)
+    {
+        // Ambil semua id HEAD aktif dari m_general
+        $allHeads = \DB::table("set.m_general")
+            ->select("id", "kode", "deskripsi", "group", "is_active")
+            ->where("is_active", true)
+            ->where("group", "HEAD")
+            ->orderBy("kode")
+            ->get();
+
+        // Ambil semua no_head_id yang sudah digunakan
+        $usedHeadIds = \DB::table("m_grup_head_d")
+            ->whereNotNull("no_head_id")
+            ->pluck("no_head_id")
+            ->toArray();
+
+        // Ambil semua id HEAD dari m_general
+        $allHeadIds = $allHeads->pluck("id")->toArray();
+
+        // Cari ID yang belum digunakan
+        $unusedHeadIds = array_diff($allHeadIds, $usedHeadIds);
+
+        // Filter data yang belum terpakai
+        $availableHeads = $allHeads->whereIn('id', $unusedHeadIds)->values();
+
+        return response()->json([
+            "data" => $availableHeads,
+            "success" => true,
+            "count" => $availableHeads->count(),
+        ]);
+    }
+
+    //untuk mengambil Trip
+    // public function scopeEditTrip()
+    // {
+    //     $reqGroup = request("group");
+    //     return $this->where("group", $reqGroup);
+    // }
+
     // public function custom_saveKontainer()
     // {
     //     $reqGroup = app()->request;

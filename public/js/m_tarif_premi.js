@@ -17,7 +17,7 @@ const apiTable = ref(null)
 const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
 // ------------------------------ PERSIAPAN
-const endpointApi = 'm_tarif_premi'
+const endpointApi = 'm_tarif_premi_bckp'
 onBeforeMount(() => {
   document.title = 'Master Tarif Premi'
 })
@@ -315,18 +315,18 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
-    headerName: 'No Head',
-    field: 'no_head.deskripsi',
+    headerName: 'Grup Head',
+    field: 'grup_head.nama_grup',
     filter: true,
     sortable: true,
     flex: 1,
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Trip',
@@ -337,7 +337,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Premi',
@@ -348,7 +348,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     cellRenderer: (params) => {
       return params.data['premi']
         ? 'Rp ' + params.data['premi']

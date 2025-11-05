@@ -13,8 +13,8 @@
           Active
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('InActive')" :class="filterButton === 'InActive' ? 'bg-sky-600 text-white hover:bg-sky-600' 
-          : 'border border-sky-600 text-sky-600 bg-white hover:bg-sky-600 hover:text-white'"
+        <button @click="filterShowData('InActive')" :class="filterButton === 'InActive' ? 'bg-red-600 text-white hover:bg-red-600' 
+          : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           InActive
         </button>

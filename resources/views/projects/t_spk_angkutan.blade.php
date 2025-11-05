@@ -39,6 +39,12 @@
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
           REJECTED
         </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('CANCEL')" :class="filterButton === 'CANCEL' ? 'bg-orange-600 text-white hover:bg-orange-600' 
+          : 'border border-orange-600 text-orange-600 bg-white hover:bg-orange-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          CANCEL
+        </button>
       </div>
     </div>
 
@@ -267,7 +273,8 @@
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
-                where:`this.group='SEKTOR'`
+                where:`this.group='SEKTOR'`,
+                paginate: 1000
               }
           }" label="Sektor 1" placeholder="Pilih Sektor 1" fa-icon="sort-desc" :check="false" />
 

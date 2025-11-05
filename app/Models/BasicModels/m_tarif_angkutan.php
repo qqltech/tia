@@ -17,21 +17,21 @@ class m_tarif_angkutan extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","kena_pajak"];
+    protected $fillable = ["kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","kena_pajak","ganti_solar_muter","ganti_solar_lain","atur_stapel_1","atur_stapel_2","tambahan_lain_1","tambahan_lain_2","ppn_id"];
 
-    public $columns     = ["id","kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","kena_pajak"];
-    public $columnsFull = ["id:bigint","kode:string:20","m_supplier_id:integer","tarif:decimal","tarif_pengawalan:decimal","is_active:boolean","sektor:integer","ukuran:integer","jenis:integer","tarif_stapel:decimal","jenis_pajak:integer","persen_pajak:decimal","catatan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","kena_pajak:boolean"];
+    public $columns     = ["id","kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","kena_pajak","ganti_solar_muter","ganti_solar_lain","atur_stapel_1","atur_stapel_2","tambahan_lain_1","tambahan_lain_2","ppn_id"];
+    public $columnsFull = ["id:bigint","kode:string:20","m_supplier_id:integer","tarif:decimal","tarif_pengawalan:decimal","is_active:boolean","sektor:integer","ukuran:integer","jenis:integer","tarif_stapel:decimal","jenis_pajak:integer","persen_pajak:decimal","catatan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","kena_pajak:boolean","ganti_solar_muter:decimal","ganti_solar_lain:decimal","atur_stapel_1:decimal","atur_stapel_2:decimal","tambahan_lain_1:decimal","tambahan_lain_2:decimal","ppn_id:integer"];
     public $rules       = [];
-    public $joins       = ["m_supplier.id=m_tarif_angkutan.m_supplier_id","set.m_general.id=m_tarif_angkutan.sektor","set.m_general.id=m_tarif_angkutan.ukuran","set.m_general.id=m_tarif_angkutan.jenis","set.m_general.id=m_tarif_angkutan.jenis_pajak"];
+    public $joins       = ["m_supplier.id=m_tarif_angkutan.m_supplier_id","set.m_general.id=m_tarif_angkutan.sektor","set.m_general.id=m_tarif_angkutan.ukuran","set.m_general.id=m_tarif_angkutan.jenis","set.m_general.id=m_tarif_angkutan.jenis_pajak","set.m_general.id=m_tarif_angkutan.ppn_id"];
     public $details     = [];
     public $heirs       = [];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["kode","m_supplier_id","tarif","sektor","ukuran","jenis"];
-    public $createable  = ["kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","kena_pajak"];
-    public $updateable  = ["kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","kena_pajak"];
-    public $searchable  = ["id","kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","kena_pajak"];
+    public $required    = ["kode","m_supplier_id","tarif","sektor","ukuran"];
+    public $createable  = ["kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","kena_pajak","ganti_solar_muter","ganti_solar_lain","atur_stapel_1","atur_stapel_2","tambahan_lain_1","tambahan_lain_2","ppn_id"];
+    public $updateable  = ["kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","kena_pajak","ganti_solar_muter","ganti_solar_lain","atur_stapel_1","atur_stapel_2","tambahan_lain_1","tambahan_lain_2","ppn_id"];
+    public $searchable  = ["id","kode","m_supplier_id","tarif","tarif_pengawalan","is_active","sektor","ukuran","jenis","tarif_stapel","jenis_pajak","persen_pajak","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","kena_pajak","ganti_solar_muter","ganti_solar_lain","atur_stapel_1","atur_stapel_2","tambahan_lain_1","tambahan_lain_2","ppn_id"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
@@ -58,5 +58,9 @@ class m_tarif_angkutan extends Model
     public function jenis_pajak() :\BelongsTo
     {
         return $this->belongsTo('App\Models\BasicModels\set.m_general', 'jenis_pajak', 'id');
+    }
+    public function ppn() :\BelongsTo
+    {
+        return $this->belongsTo('App\Models\BasicModels\set.m_general', 'ppn_id', 'id');
     }
 }

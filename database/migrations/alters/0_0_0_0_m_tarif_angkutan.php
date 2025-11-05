@@ -16,6 +16,14 @@ class mtarifangkutan extends Migration
             // $table->boolean('kena_pajak')->default(0)->nullable(0)->change();
             // $table->string('kode',20)->nullable(0)->change();
             // $table->boolean('kena_pajak')->default(0)->nullable();
+            // $table->integer('jenis')->comment('{"src":"set.m_general.id"}')->nullable()->change();
+            // $table->decimal('ganti_solar_muter',18,4)->nullable();
+            // $table->decimal('ganti_solar_lain',18,4)->nullable();
+            // $table->decimal('atur_stapel_1',18,4)->nullable();
+            // $table->decimal('atur_stapel_2',18,4)->nullable();
+            // $table->decimal('tambahan_lain_1',18,4)->nullable();
+            // $table->decimal('tambahan_lain_2',18,4)->nullable();
+            // $table->integer('ppn_id')->comment('{"src":"set.m_general.id"}')->nullable();
         });
     }
 }

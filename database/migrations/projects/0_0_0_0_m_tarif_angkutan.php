@@ -20,9 +20,10 @@ class mtarifangkutan extends Migration
             $table->boolean('is_active')->default(1)->nullable();
             $table->integer('sektor')->comment('{"src":"set.m_general.id"}');
             $table->integer('ukuran')->comment('{"src":"set.m_general.id"}');
-            $table->integer('jenis')->comment('{"src":"set.m_general.id"}');
+            $table->integer('jenis')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->decimal('tarif_stapel',18,4)->nullable();
             $table->integer('jenis_pajak')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->integer('ppn_id')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->decimal('persen_pajak',12,2)->nullable();
             $table->boolean('kena_pajak')->default(0)->nullable();
             $table->text('catatan')->nullable();

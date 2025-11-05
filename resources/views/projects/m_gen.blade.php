@@ -36,7 +36,12 @@
   <TableApi ref="apiTable" :api="{
     url: `${store.server.url_backend}/operation/m_general`,
     headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}` },
-    params: tableParams
+    params: tableParams,
+    onsuccess:(response) => {
+      response.page = response.current_page
+      response.hasNext = response.has_next
+      return response
+    }
   }" :columns="landing.columns" :actions="landing.actions" class="max-h-[450px] pt-2 !px-4 !pb-8">
     <template #header>
 

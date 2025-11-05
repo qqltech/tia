@@ -326,6 +326,17 @@ const landing = reactive({
     cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
+    headerName: 'Tipe Tarif',
+    field: 'tipe_tarif.deskripsi',
+    filter: true,
+    sortable: true,
+    flex: 1,
+    filter: 'ColFilter',
+    resizable: true,
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
+  },
+  {
     field: 'is_active',
     headerName: 'Status',
     filter: true,

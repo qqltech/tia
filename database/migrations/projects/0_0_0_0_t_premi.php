@@ -15,8 +15,9 @@ class tpremi extends Migration
             $table->string('no_draft',40)->nullable();
             $table->string('no_premi',40)->nullable();
             $table->integer('t_spk_angkutan_id')->comment('{"src":"t_spk_angkutan.id"}')->nullable();
-            $table->decimal('tol',18,2);
-            $table->text('catatan');
+            $table->integer('grup_head_id')->comment('{"src":"m_grup_head.id"}')->nullable();
+            $table->decimal('tol',18,2)->nullable();
+            $table->text('catatan')->change();
             $table->string("status", 10)->default("DRAFT")->nullable();
             $table->decimal('total_premi',18,2)->nullable();
             $table->date('tgl')->nullable();

@@ -24,13 +24,13 @@ class m_supplier extends Model
     public $rules       = [];
     public $joins       = ["set.m_general.id=m_supplier.tipe_id","set.m_general.id=m_supplier.jenis_id","set.m_general.id=m_supplier.top","set.m_general.id=m_supplier.bank"];
     public $details     = [];
-    public $heirs       = ["t_purchase_invoice","t_lpb","t_angkutan_d","t_angkutan_d","t_purchase_order","t_rencana_pembayaran_hutang_d","m_asset_d","m_tarif_angkutan","t_credit_note","temp_t_spk_angkutan","t_spk_angkutan","t_bon_dinas_luar","t_debit_note","t_jurnal_angkutan","t_pembayaran_hutang","t_jurnal_angkutan_d","t_jurnal_angkutan_d","t_spk_lain"];
+    public $heirs       = ["m_asset_d","t_bon_dinas_luar","temp_t_spk_angkutan","t_debit_note","t_jurnal_angkutan","t_jurnal_angkutan_d","t_jurnal_angkutan_d","t_lpb","t_credit_note","t_purchase_invoice","t_purchase_order","t_pembayaran_hutang","t_rencana_pembayaran_hutang_d","t_spk_angkutan","t_spk_lain","t_angkutan_d","t_angkutan_d","m_tarif_angkutan"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [
     "kode"=> "unique:m_supplier,kode"
 	];
-    public $required    = ["is_active","nama","tipe_id","jenis_id","top","alamat","pph","b2b","negara","provinsi","kota","kecamatan","bank","kode_bank","no_rekening","nama_rekening"];
+    public $required    = ["is_active","nama","tipe_id","jenis_id","top","alamat","pph","b2b","negara","provinsi","kota","kecamatan","no_rekening","nama_rekening"];
     public $createable  = ["kode","is_active","nama","tipe_id","jenis_id","pajak","top","nik","npwp","alamat","pph","b2b","link_b2b","negara","provinsi","kota","kecamatan","bank","kode_bank","no_rekening","nama_rekening","no_telp1","no_telp2","email","contact_person1","no_telp_contact_person1","email_contact_person1","contact_person2","email_contact_person2","no_telp_contact_person2","catatan","creator_id","last_editor_id","deleted_id","deleted_at"];
     public $updateable  = ["kode","is_active","nama","tipe_id","jenis_id","pajak","top","nik","npwp","alamat","pph","b2b","link_b2b","negara","provinsi","kota","kecamatan","bank","kode_bank","no_rekening","nama_rekening","no_telp1","no_telp2","email","contact_person1","no_telp_contact_person1","email_contact_person1","contact_person2","email_contact_person2","no_telp_contact_person2","catatan","creator_id","last_editor_id","deleted_id","deleted_at"];
     public $searchable  = ["id","kode","is_active","nama","tipe_id","jenis_id","pajak","top","nik","npwp","alamat","pph","b2b","link_b2b","negara","provinsi","kota","kecamatan","bank","kode_bank","no_rekening","nama_rekening","no_telp1","no_telp2","email","contact_person1","no_telp_contact_person1","email_contact_person1","contact_person2","email_contact_person2","no_telp_contact_person2","catatan","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at"];

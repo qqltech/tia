@@ -24,7 +24,7 @@ class m_customer extends Model
     public $rules       = [];
     public $joins       = ["m_customer_group.id=m_customer.m_customer_group_id","m_coa.id=m_customer.coa_piutang","set.m_general.id=m_customer.jabatan1","set.m_general.id=m_customer.jabatan2"];
     public $details     = ["m_customer_d_address","m_customer_d_nama","m_customer_d_npwp"];
-    public $heirs       = ["t_ppjk","t_asset_disposal","t_buku_order_d_aju","t_buku_order","t_komisi","m_tarif","t_credit_note","temp_t_spk_angkutan","temp_t_spk_angkutan","t_pembayaran_piutang","t_spk_angkutan","t_spk_angkutan","t_debit_note","m_tarif_komisi","m_tarif_komisi_undername","t_komisi_undername","t_dp_penjualan","t_tagihan_lain_lain","t_tagihan","t_spk_lain"];
+    public $heirs       = ["m_tarif","m_tarif_komisi","m_tarif_komisi_undername","temp_t_spk_angkutan","temp_t_spk_angkutan","t_buku_order_d_aju","t_buku_order","t_debit_note","t_dp_penjualan","t_credit_note","t_komisi","t_komisi_undername","t_ppjk","t_pembayaran_piutang","t_tagihan","t_spk_angkutan","t_spk_angkutan","t_spk_lain","t_asset_disposal","t_tagihan_lain_lain"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

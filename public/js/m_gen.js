@@ -195,9 +195,11 @@ watch(tableParams, () => {
   }, 500);
 });
 
-onMounted(() => {
-  valuesLanding.group = list[0].nama 
-})
+onMounted(() => {})
+
+// onMounted(() => {
+//   valuesLanding.group = list[0].nama 
+// })
 
 const landing = reactive({
   actions: [
@@ -277,8 +279,8 @@ const landing = reactive({
       authorization: `${store.user.token_type} ${store.user.token}`
     },
     params: {
-      simplest: true,
-      searchfield:'this.id, this.kode, this.deskripsi, this.group, this.is_active',
+      simplest: false,
+      searchfield:'this.id, this.kode, this.deskripsi, this.group, this.is_active'
     },
     onsuccess(response) {
       response.page = response.current_page

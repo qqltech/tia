@@ -20,9 +20,12 @@ class tpremi extends Migration
             // $table->date('tgl')->nullable();
             // $table->decimal('tarif_premi',18,4)->nullable();
             // $table->string("status", 20)->default("DRAFT")->nullable()->change();
-            $table->decimal('hutang_supir',18,4)->nullable();
-            $table->decimal('hutang_dibayar',18,4)->nullable();
-            $table->decimal('total_premi_diterima',18,4)->nullable();
+            // $table->decimal('hutang_supir',18,4)->nullable();
+            // $table->decimal('hutang_dibayar',18,4)->nullable();
+            // $table->decimal('total_premi_diterima',18,4)->nullable();
+            // $table->text('catatan')->nullable()->change();
+            // $table->integer('grup_head_id')->comment('{"src":"m_grup_head.id"}')->nullable();
+            // $table->decimal('tol',18,2)->nullable()->change();
         });
     }
 }

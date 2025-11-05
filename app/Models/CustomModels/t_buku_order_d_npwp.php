@@ -28,9 +28,22 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
         if(app()->request->no_cont){
             $data = ["no_cont"=>$row['no_prefix'].$row['no_suffix']];
         }
-        if(app()->request->getCustomer){
-            $result = m_customer::where('id',$row['t_buku_order.m_customer_id'])->first();
-            $row['t_buku_order.m_customer_kode'] = $result->kode;
+        if (app()->request->getCustomer) {
+            // jukuk id buku order
+            $getBukuOrder = t_buku_order::select('m_customer_id')
+                ->where('id', $row['t_buku_order_id'] ?? null)
+                ->first();
+
+            if ($getBukuOrder) {
+                $result = m_customer::select('kode')->find($getBukuOrder->m_customer_id);
+                if ($result) {
+                    $row['t_buku_order.m_customer_kode'] = $result->kode;
+                } else {
+                    $row['t_buku_order.m_customer_kode'] = null; // nek seumpamane customere gaono
+                }
+            } else {
+                $row['t_buku_order.m_customer_kode'] = null; // nek buku ordere gaono
+            }
         }
         if(app()->request->getNoContainer){
             $data = ["no_container_gabungan"=>$row['no_prefix'].$row['no_suffix']];

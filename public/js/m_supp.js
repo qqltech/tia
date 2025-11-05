@@ -14,11 +14,11 @@ const modulPath = route.params.modul
 const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
-const tsId = `ts=`+(Date.parse(new Date()))
+const tsId = `ts=` + (Date.parse(new Date()))
 
 // ------------------------------ PERSIAPAN
 const endpointApi = '/m_supplier'
-onBeforeMount(()=>{
+onBeforeMount(() => {
   document.title = 'Master Supplier'
 })
 
@@ -26,11 +26,11 @@ onBeforeMount(()=>{
 let initialValues = {}
 const changedValues = []
 const values = reactive({
-  tipe_id : 294,
-  negara : 'Indonesia',
-   is_active: true ,
-   b2b : true ,
-   pph : true
+  tipe_id: 294,
+  negara: 'Indonesia',
+  is_active: true,
+  b2b: true,
+  pph: true
 })
 
 const negara_data = ref([])
@@ -78,7 +78,7 @@ onBeforeMount(async () => {
 })
 
 // // VALIDATE EMAIL
-const isValidEmail=ref(true)
+const isValidEmail = ref(true)
 function validateEmail(val, property) {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) {
     formErrors.value[property] = undefined
@@ -86,7 +86,7 @@ function validateEmail(val, property) {
   } else {
     formErrors.value[property] = ['Please enter a valid email address']
     isValidEmail.value = false
-  } 
+  }
   values[property] = val
 }
 
@@ -94,9 +94,9 @@ function validateEmail(val, property) {
 function onBack() {
   if (route.query.view_gaji) {
     router.replace('/t_info_gaji')
-  } else if(route.query.view_gaji_final){
+  } else if (route.query.view_gaji_final) {
     router.replace('/t_info_gaji')
-  }else{
+  } else {
     router.replace('/' + modulPath)
   }
   return
@@ -123,41 +123,41 @@ async function onSave() {
       icon: 'error',
       text: 'Please enter a valid email address'
     });
-    return; 
+    return;
   }
-    try {
-      const isCreating = ['Create','Copy','Tambah'].includes(actionText.value);
-      const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`;
-      isRequesting.value = true;
-      values.is_active = values.is_active ? 1 : 0
-      values.b2b = values.b2b ? 1 : 0
-      values.pph = values.pph ? 1 : 0
-      const res = await fetch(dataURL, {
-        method: isCreating ? 'POST' : 'PUT',
-        headers: {
-          'Content-Type': 'Application/json',
-          Authorization: `${store.user.token_type} ${store.user.token}`
-        },
-        body: JSON.stringify(values)
-      });
-      if (!res.ok) {
-        if ([400, 422].includes(res.status)) {
-          const responseJson = await res.json();
-          formErrors.value = responseJson.errors || {};
-          throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data");
-        } else {
-          throw ("Failed when trying to post data");
-        }
+  try {
+    const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value);
+    const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`;
+    isRequesting.value = true;
+    values.is_active = values.is_active ? 1 : 0
+    values.b2b = values.b2b ? 1 : 0
+    values.pph = values.pph ? 1 : 0
+    const res = await fetch(dataURL, {
+      method: isCreating ? 'POST' : 'PUT',
+      headers: {
+        'Content-Type': 'Application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`
+      },
+      body: JSON.stringify(values)
+    });
+    if (!res.ok) {
+      if ([400, 422].includes(res.status)) {
+        const responseJson = await res.json();
+        formErrors.value = responseJson.errors || {};
+        throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data");
+      } else {
+        throw ("Failed when trying to post data");
       }
-      router.replace('/' + modulPath + '?reload='+(Date.parse(new Date())));
-    } catch (err) {
-      isBadForm.value = true;
-      swal.fire({
-        icon: 'error',
-        text: err
-      });
     }
-    isRequesting.value = false;
+    router.replace('/' + modulPath + '?reload=' + (Date.parse(new Date())));
+  } catch (err) {
+    isBadForm.value = true;
+    swal.fire({
+      icon: 'error',
+      text: err
+    });
+  }
+  isRequesting.value = false;
 }
 
 //  @else----------------------- LANDING
@@ -212,7 +212,7 @@ const landing = reactive({
       class: 'bg-green-600 text-light-100',
       // show: (row) => (currentMenu?.can_read)||store.user.data.username==='developer',
       click(row) {
-        router.push(`${route.path}/${row.id}?`+tsId)
+        router.push(`${route.path}/${row.id}?` + tsId)
       }
     },
     {
@@ -221,7 +221,7 @@ const landing = reactive({
       class: 'bg-blue-600 text-light-100',
       // show: (row) => (currentMenu?.can_update)||store.user.data.username==='developer',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Edit&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Edit&` + tsId)
       }
     },
     {
@@ -229,7 +229,7 @@ const landing = reactive({
       title: "Copy",
       class: 'bg-gray-600 text-light-100',
       click(row) {
-        router.push(`${route.path}/${row.id}?action=Copy&`+tsId)
+        router.push(`${route.path}/${row.id}?action=Copy&` + tsId)
       }
     }
   ],
@@ -241,7 +241,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.kode,this.is_active,this.nama,this.alamat,this.no_telp1,this.negara,this.kota'
+      searchfield: 'this.kode,this.is_active,this.nama,this.alamat,this.no_telp1,this.negara,this.kota,jenis.deskripsi'
     },
     onsuccess(response) {
       response.page = response.current_page
@@ -263,62 +263,65 @@ const landing = reactive({
     headerName: 'Kode',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
     field: 'nama',
     headerName: 'Nama Supplier',
     filter: true,
     sortable: true,
-    flex:1,
+    flex: 1,
     filter: 'ColFilter',
     resizable: true,
-    wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    wrapText: true,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
     field: 'alamat',
-    headerName:'Alamat',
+    headerName: 'Alamat',
     filter: true,
     sortable: true,
     filter: 'ColFilter',
-    resizable: true,wrapText:true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    resizable: true, wrapText: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
-    field: 'no_telp1',
-    headerName:'No.Tlp',
+    field: 'contact_person1',
+    headerName: 'Contact Person',
     filter: true,
     sortable: true,
     filter: 'ColFilter',
-    resizable: true,wrapText:true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    resizable: true, wrapText: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    valueFormatter: (params) => {
+      return params.value ? params.value : '-'
+    },
   },
   {
-    field: 'negara',
-    headerName:'Negara',
+    field: 'jenis.deskripsi',
+    headerName: 'Jenis Supplier',
     filter: true,
     sortable: true,
     filter: 'ColFilter',
-    resizable: true,wrapText:true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    resizable: true, wrapText: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
     field: 'kota',
-    headerName:'Kota',
+    headerName: 'Kota',
     filter: true,
     sortable: true,
     filter: 'ColFilter',
-    resizable: true,wrapText:true,
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    resizable: true, wrapText: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-start']
   },
   {
     headerName: 'Status',
@@ -326,8 +329,8 @@ const landing = reactive({
 
     // resizable: true,
     // valueGetter: (p) => p.node.data['status'].toLowerCase()==='active'? 'Aktif':'Tidak Aktif',
-    flex:1,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-center'],
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center'],
     cellRenderer: ({ value }) => {
       return value === true
         ? `<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>`
@@ -341,9 +344,9 @@ const landing = reactive({
 const filterButton = ref(null);
 
 function filterShowData(params) {
-    filterButton.value = filterButton.value === params ? null : params;
-    landing.api.params.where = filterButton.value !== null ? `this.is_active=${filterButton.value}` : null;
-    apiTable.value.reload();
+  filterButton.value = filterButton.value === params ? null : params;
+  landing.api.params.where = filterButton.value !== null ? `this.is_active=${filterButton.value}` : null;
+  apiTable.value.reload();
 }
 
 onActivated(() => {
@@ -356,4 +359,4 @@ onActivated(() => {
 });
 
 //  @endif -------------------------------------------------END
-watchEffect(()=>store.commit('set', ['isRequesting', isRequesting.value]))
+watchEffect(() => store.commit('set', ['isRequesting', isRequesting.value]))

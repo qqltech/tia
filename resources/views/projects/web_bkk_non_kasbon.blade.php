@@ -8,28 +8,29 @@ where du.id = ?
 ', [$userId]);
 $userValue = $user[0];
 
-$dataBkkNonKasbon = \DB::select('select
-*,
-tbo.no_buku_order
-from t_bkk as tb
-left join t_buku_order as tbo on tbo.id = tb.t_buku_order_id 
-where tb.id = ?
+$dataBkkNonKasbon = \DB::select('
+  select tb.*, tb.total_amt
+  from t_bkk as tb
+  where tb.id = ?
 ', [$req['id']]);
 
 $detailBkkNonKasbon = \DB::select('select
 *,
 mc.nomor as nomor_coa,
-mc.nama_coa
+mc.nama_coa,
+tbo.no_buku_order
 from t_bkk_d as tbd
 left join m_coa as mc on  mc.id = tbd.m_coa_id
+left join t_buku_order as tbo on tbo.id = tbd.t_buku_order_id
 where tbd.t_bkk_id = ?
 ', [$req['id']]);
 
 $n = $dataBkkNonKasbon[0];
+$dl = $detailBkkNonKasbon[0];
 $numbering = 1;
-$total_nominal=0;
-foreach($detailBkkNonKasbon as $dbnk){
-  $total_nominal+=floatval($dbnk->nominal);
+$total_nominal=null;
+foreach ($detailBkkNonKasbon as $dbnk) {
+    $total_nominal += floatval($dbnk->nominal);
 }
 
 
@@ -269,7 +270,7 @@ function terbilang($number) {
       <tr>
         <td style="width: 60%%;">No. Order
           <span style="margin-left: 2%;">:</span>
-          <span style="margin-left: 5%;">{{$n->no_buku_order}}</span>
+          <span style="margin-left: 5%;">{{$dl->no_buku_order}}</span>
         </td>
         <td style="width: 40%;">Penerima
           <span style="margin-left: 2%;">:</span>
@@ -316,7 +317,7 @@ function terbilang($number) {
               <td style="width: 5%;"></td>
               <td style="width: 18%;"></td>
               <td style="width: 25%; padding-left: 8%; font-weight: bold;">TOTAL&nbsp; :</td>
-              <td style="width: 32%; padding-left: 2%; text-align: center; font-weight: bold;">Rp {{number_format($total_nominal,2,',','.')}}</td>
+              <td style="width: 32%; padding-left: 2%; text-align: center; font-weight: bold;">Rp {{number_format($n->total_amt,2,',','.')}}</td>
               <td style="width: 21%;"></td>
             </tr>
           </table>

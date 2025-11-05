@@ -57,7 +57,7 @@ class temptspkangkutan extends Migration
 
             // $table->integer('creator_id')->nullable();
             // $table->integer('last_editor_id')->nullable();
-            // $table->timestamps();
+            $table->timestamps();
         });
 
         table_config($this->tableName, [

@@ -20,7 +20,11 @@ class tppjk extends Migration
             // $table->decimal('ppn_pib',18,4)->nullable()->change();
             // $table->renameColumn('no_ppjk','no_ppjk_lama');
             // $table->integer('no_ppjk_id')->nullable()->comment('{"src":"m_generate_no_aju_d.id"}');
-            $table->bigInteger('no_ppjk_id')->nullable()->comment('{"src":"m_generate_no_aju_d.id"}')->change();
+            // $table->bigInteger('no_ppjk_id')->nullable()->comment('{"src":"m_generate_no_aju_d.id"}')->change();
+            // $table->decimal('tarif_ppjk',18,4)->nullable();
+            // $table->decimal('admin_ppjk',18,4)->nullable();
+            // $table->dropColumn(['admin_ppjk']);
+            $table->integer('admin_ppjk_id')->nullable()->comment('{"src":"set.m_general.id"}');
         });
     }
 }

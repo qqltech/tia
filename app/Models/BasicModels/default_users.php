@@ -21,7 +21,7 @@ class default_users extends Model
     public $rules       = [];
     public $joins       = ["set.m_kary.id=default_users.m_employee_id"];
     public $details     = ["set.m_users_d","default_users_socialite"];
-    public $heirs       = ["generate_num","generate_num","set.generate_approval_log","set.generate_approval_log","set.generate_approval_log","set.m_role_access","generate_num_det","generate_num_det","generate_num_log","generate_num_log","generate_num_type","generate_num_type","set.m_approval_det","set.m_approval_det","set.m_approval_det","set.generate_approval","set.generate_approval","set.generate_approval","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det"];
+    public $heirs       = ["set.generate_approval","set.generate_approval","set.generate_approval","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det","set.generate_approval_log","set.generate_approval_log","set.generate_approval_log","set.m_approval_det","set.m_approval_det","set.m_approval_det","set.m_role_access","generate_num","generate_num","generate_num_type","generate_num_type","generate_num_det","generate_num_det","generate_num_log","generate_num_log"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [

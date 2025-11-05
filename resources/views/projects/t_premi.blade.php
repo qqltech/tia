@@ -107,14 +107,12 @@
         },
         params: {
           simplest:false,
-          // transform:false,
-          // join:true,
-          // override:true,
-          // where:`this.is_active=true`,
-          // searchfield:'this.no_id, this.nip, this.nama, this.alamat_domisili',
-          // selectfield: 'this.no_id,this.nip, this.nama, this.alamat_domisili' 
+          scopes: 'WithGrupHead',
+          searchfield:'this.no_spk, this.tipe_spk, supir.nama, sektor1.deskripsi, this.sangu',
         },
         onsuccess: (response) => {
+          response.page = response.current_page
+          response.hasNext = response.has_next
           return response;
         }
       }" displayField="no_spk" valueField="id" :bind="{ readonly: !actionText }" :value="data.t_spk_angkutan_id"
@@ -123,25 +121,30 @@
           // getTarifPremi(res);
         if(res){
           $log(res)
-          getTarifPremi(res.t_detail_npwp_container_1_id, res.t_detail_npwp_container_2_id);
+          getTarifPremi(res.id);
           getDetailNPWPContainer(res.t_detail_npwp_container_1_id, res.t_detail_npwp_container_2_id);
-          data.no_container = (res['no_container_1'] ?? '-') +', ' + (res['no_container_2'] ?? '-');
+          //data.no_container = (res['no_container_1'] ?? '-') +', ' + (res['no_container_2'] ?? '-');
+          data.no_container = (res['no_container_1'] ?? '-');
           data.tanggal_out = res.tanggal_out;
           data.waktu_out = res.waktu_out;
           data.no_bon_sementara = res.no_bon_sementara;
           data.tanggal_bon = res.tanggal_bon;
-          data.head_deskripsi2 = res['head.deskripsi2']
+          data.head_deskripsi2 = res['head.kode']
+          data.grup_head_id = res.grup_head_id
           data.tanggal_in = res.tanggal_in;
           data.waktu_in = res.waktu_in;
+          data.trip = res['trip.deskripsi']
           // data.ukuran_container = (res['t_detail_npwp_container_1.ukuran'] ?? '-')+', '+ (res['t_detail_npwp_container_2.ukuran'] ?? '-');
           data.m_karyawan_id = res['supir.id'];
           data.chasis = res.chasis;
           data.total_sangu = res.sangu;
-          data.sektor = (res['sektor1.deskripsi'] ?? '-') +', '+ (res['sektor1.deskripsi'] ?? '-');
+          data.sektor = (res['sektor1.deskripsi'] ?? '-');
           data.ke = res.ke;
           data.dari = res.dari;
         }
         else {
+          data.grup_head_id = '';
+          data.head_deskripsi2 = '';
           data.tarif_premi = '';
           data.no_container = '';
           data.no_order = '';
@@ -150,7 +153,7 @@
           data.waktu_out = '';
           data.no_bon_sementara = '';
           data.tanggal_bon = '';
-
+          data.trip = '';
           data.tanggal_in = '';
           data.waktu_in = '';
           data.ukuran_container = '';
@@ -180,7 +183,7 @@
         },
         {
           headerName: 'Tipe SPK',
-          field: 'tipe_spk',
+          field: 'tipe_spk.deskripsi',
           flex: 1,
           cellClass: ['border-r', '!border-gray-200', 'justify-start',],
           sortable: true, resizable: true, filter: false,
@@ -203,8 +206,12 @@
           headerName: 'Sangu',
           field: 'sangu',
           flex: 1,
-          cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+          cellClass: ['border-r', '!border-gray-200', 'justify-end',],
           sortable: true, resizable: true, filter: false,
+          valueFormatter: (params) => {
+            if (params.value == null) return '-';
+            return 'Rp ' + Number(params.value).toLocaleString('id-ID');
+          },
         },
       ]" />
     </div>
@@ -228,28 +235,16 @@
         :errorText="formErrors.no_order?'failed':''" :hints="formErrors.no_order" label="No. Order"
         placeholder="Masukan No. Order" :check="false" />
     </div>
-    <div>
+    <!-- <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.head_deskripsi2" @input="v=>data.head_deskripsi2=v"
         :errorText="formErrors.head_deskripsi2?'failed':''" :hints="formErrors.head_deskripsi2" label="No. Head"
         placeholder="Masukan No. Head" :check="false" />
-    </div>
+    </div> -->
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
-      <FieldX :bind="{ disabled: true, readonly: true }" class="w-full !mt-3" :value="data.tanggal_out"
-        :errorText="formErrors.tanggal_out?'failed' :''" @input="v=>data.tanggal_out=v" :hints="formErrors.tanggal_out"
-        :check="false" type="date" label="Tanggal Out" placeholder="Pilih Tanggal Out" />
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, readonly: true }" :value="data.waktu_out"
-        @input="v=>data.waktu_out=v" :errorText="formErrors.waktu_out?'failed':''" :hints="formErrors.waktu_out"
-        valueField="id" displayField="key" :options="[{'id' : 'Pagi', 'key' : 'Pagi'},
-      {'id' : 'Siang', 'key' : 'Siang'},
-      {'id' : 'Sore', 'key' : 'Sore'}]" placeholder="Pilih Waktu Out" label="Waktu Out" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.ukuran_container"
-        @input="v=>data.ukuran_container=v" :errorText="formErrors.ukuran_container?'failed':''"
-        :hints="formErrors.ukuran_container" label="Ukuran Container" placeholder="Masukan Ukuran Container"
-        :check="false" />
-    </div>
-    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.head_deskripsi2" @input="v=>data.head_deskripsi2=v"
+        :errorText="formErrors.head_deskripsi2?'failed':''" :hints="formErrors.head_deskripsi2" label="No. Head"
+        placeholder="Masukan No. Head" :check="false" />
+
       <FieldPopup class="w-full !mt-3" :api="{
         url: `${store.server.url_backend}/operation/m_kary`,
         headers: {
@@ -298,14 +293,57 @@
       ]" />
     </div>
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
+      <FieldX :bind="{ disabled: true, readonly: true }" class="w-full !mt-3" :value="data.tanggal_out"
+        :errorText="formErrors.tanggal_out?'failed' :''" @input="v=>data.tanggal_out=v" :hints="formErrors.tanggal_out"
+        :check="false" type="date" label="Tanggal Out" placeholder="Pilih Tanggal Out" />
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true, readonly: true }"
+        :value="data.waktu_out" @input="v=>data.waktu_out=v" :errorText="formErrors.waktu_out?'failed':''"
+        :hints="formErrors.waktu_out" valueField="id" displayField="deskripsi" :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              transform:false,
+              join:false,
+              where:`this.group='WAKTUOUT'`,
+            }
+        }" placeholder="Pilih Waktu Out" fa-icon="sort-desc" label="Waktu Out" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.ukuran_container"
+        @input="v=>data.ukuran_container=v" :errorText="formErrors.ukuran_container?'failed':''"
+        :hints="formErrors.ukuran_container" label="Ukuran Container" placeholder="Masukan Ukuran Container"
+        :check="false" />
+    </div>
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false, readonly: true }"
+        :value="data.grup_head_id" @input="v=>data.grup_head_id=v" :errorText="formErrors.grup_head_id?'failed':''"
+        :hints="formErrors.grup_head_id" valueField="id" displayField="nama_grup" :api="{
+            url: `${store.server.url_backend}/operation/m_grup_head`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              transform:false,
+              join:false,
+            }
+        }" placeholder="Masukkan Grup head" label="Grup head" :check="false" />
+    </div>
+    <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
       <FieldX :bind="{  disabled: true, readonly: true }" class="w-full !mt-3" :value="data.tanggal_in"
         :errorText="formErrors.tanggal_in?'failed' :''" @input="v=>data.tanggal_in=v" :hints="formErrors.tanggal_in"
         :check="false" type="date" label="Tanggal In" placeholder="Pilih Tanggal In" />
-      <FieldSelect class="w-full !mt-3" :bind="{  disabled: true, readonly: true }" :value="data.waktu_in"
-        @input="v=>data.waktu_in=v" :errorText="formErrors.waktu_in?'failed':''" :hints="formErrors.waktu_in"
-        valueField="id" displayField="key" :options="[{'id' : 'Pagi', 'key' : 'Pagi'},
-      {'id' : 'Siang', 'key' : 'Siang'},
-      {'id' : 'Sore', 'key' : 'Sore'}]" placeholder="Pilih Waktu In" label="Waktu In" :check="false" />
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true, readonly: true }"
+        :value="data.waktu_in" @input="v=>data.waktu_in=v" :errorText="formErrors.waktu_in?'failed':''"
+        :hints="formErrors.waktu_in" valueField="id" displayField="deskripsi" :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              transform:false,
+              join:false,
+              where:`this.group='WAKTUIN'`,
+            }
+        }" placeholder="Pilih Waktu Out" fa-icon="sort-desc" label="Waktu Out" :check="false" />
     </div>
     <div>
       <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="data.chasis"
@@ -320,6 +358,18 @@
           }" label="Chasis 1" placeholder="Pilih Chasis 1" fa-icon="sort-desc" :check="false" />
     </div>
     <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="data.trip"
+        @input="v=>data.trip=v" :errorText="formErrors.trip?'failed':''" :hints="formErrors.trip" valueField="id"
+        displayField="deskripsi" :api="{
+              url: `${store.server.url_backend}/operation/m_general`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                simplest:true,
+                where:`this.group='TRIP SPK ANGKUTAN'`
+              }
+          }" label="Trip" placeholder="Trip" fa-icon="sort-desc" :check="false" />
+    </div>
+    <div>
       <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="data.total_sangu"
         @input="v=>data.total_sangu=v" :errorText="formErrors.total_sangu?'failed':''" :hints="formErrors.total_sangu"
         placeholder="Total Sangu" :check="false" />
@@ -329,12 +379,12 @@
         :errorText="formErrors.sektor?'failed':''" :hints="formErrors.sektor" placeholder="Sektor" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.ke" @input="v=>data.ke=v"
-        :errorText="formErrors.ke?'failed':''" :hints="formErrors.ke" placeholder="Ke" :check="false" />
-    </div>
-    <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.dari" @input="v=>data.dari=v"
         :errorText="formErrors.dari?'failed':''" :hints="formErrors.dari" placeholder="Dari" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.ke" @input="v=>data.ke=v"
+        :errorText="formErrors.ke?'failed':''" :hints="formErrors.ke" placeholder="Ke" :check="false" />
     </div>
     <!-- <div>
       <FieldPopup class="w-full !mt-3" :api="{

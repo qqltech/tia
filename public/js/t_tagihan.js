@@ -561,7 +561,8 @@ const landing = reactive({
       title: "Cetak",
       class: 'bg-gray-600 text-light-100',
       click(row) {
-        window.open(`${store.server.url_backend}/web/report_tagihan?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
+        //window.open(`${store.server.url_backend}/web/report_tagihan?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
+        window.open(`${store.server.url_backend}/web/report_tagih?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
       }
     },
     {
@@ -622,6 +623,7 @@ const landing = reactive({
     },
     params: {
       simplest: true,
+      where: 'persentase_konsolidator_kont IS NULL',
       searchfield: 'this.no_draft, this.no_tagihan, no_buku_order.no_buku_order, customer.nama_perusahaan, this.catatan'
     },
     onsuccess(response) {

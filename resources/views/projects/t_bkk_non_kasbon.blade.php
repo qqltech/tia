@@ -602,7 +602,7 @@
                       transform:false,
                       join:false
                     }
-                }" placeholder="" label="" fa-icon="" :check="false" />
+                }" placeholder="" label="" fa-icon="" :check="true" />
 
             </td>
             <td class="p-2 border border-[#CACACA]">
@@ -621,7 +621,7 @@
                       transform:false,
                       join:false
                     }
-                }" placeholder="" label="" fa-icon="" :check="false" />
+                }" placeholder="" label="" fa-icon="" :check="true" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <p class="text-black leading-none">{{ detailArr[i].nama_coa }}</p>

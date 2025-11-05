@@ -135,10 +135,6 @@ onBeforeMount(async () => {
         }
       })
       const resultJson = await res.json();
-      if (resultJson.data) {
-        values.jenis_pajak = resultJson.data[0].id
-        values.persen_pajak = resultJson.data[0].deskripsi2
-      }
 
     } catch (err) {
       console.log(err)

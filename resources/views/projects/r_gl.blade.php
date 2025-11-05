@@ -4,8 +4,8 @@
     <div class="flex flex-col border rounded shadow-sm <md:w-full w-full bg-white">
       <div class="bg-blue-500 text-white rounded-t-md py-2 px-4">
         <div class="flex items-center">
-          <Icon fa="arrow-left" class="cursor-pointer mr-2 font-bold hover:text-yellow-500" title="Kembali"
-            @click="onBack" />
+          <!-- <Icon fa="arrow-left" class="cursor-pointer mr-2 font-bold hover:text-yellow-500" title="Kembali"
+            @click="onBack" /> -->
           <div>
             <h1 class="text-20px font-bold mb-4 mt-4">Laporan General Ledger</h1>
           </div>

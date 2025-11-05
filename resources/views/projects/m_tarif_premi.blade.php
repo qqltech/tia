@@ -44,12 +44,38 @@
   </div>
   <div class="p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 ">
     <!-- START COLUMN -->
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false }" :value="values.grup_head_id"
+        @input="v=>values.grup_head_id=v" :errorText="formErrors.grup_head_id?'failed':''"
+        :hints="formErrors.grup_head_id" valueField="id" displayField="nama_grup" :api="{
+            url: `${store.server.url_backend}/operation/m_grup_head`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+            }
+        }" placeholder="Pilih salah satu grup" label="Nama Grup Head" :check="true" />
+
+    </div>
+    <div></div>
+    <div></div>
+
     <!-- No Tarif Premi Column -->
     <div>
       <FieldSelect :bind="{ disabled: true }" class="w-full !mt-3 " :value="values.no_tarif_premi"
         :errorText="formErrors.no_tarif_premi?'failed':''" @input="v=>values.no_tarif_premi=v"
         :hints="formErrors.no_tarif_premi" label="No. Tarif Premi" placeholder="No. Tarif Premi" :check="false" />
     </div>
+
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>   
+    <div></div>
+    <div></div>
+    <div></div>
 
     <!-- Sektor Coloumn -->
     <div class=" w-full !mt-3">
@@ -60,12 +86,17 @@
                 headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                 params: {
                   simplest: true,
-                  where:`this.group='SEKTOR'`
+                  where:`this.group='SEKTOR'`,
+                  order_type: 'ASC',
+                  paginate: 999999999
                 }
             }" label="Tipe Sektor" placeholder="Pilih Tipe Sektor" fa-icon="sort-desc" :check="false" />
     </div>
+
+    <div></div>
+    <div></div>
     <!-- Tipe Kontainer Coloumn -->
-    <div class=" w-full !mt-3">
+    <!-- <div class=" w-full !mt-3">
       <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:true }" :value="values.tipe_kontainer"
         @input="v=>values.tipe_kontainer=v" :errorText="formErrors.tipe_kontainer?'failed':''"
         :hints="formErrors.tipe_kontainer" valueField="id" displayField="deskripsi" :api="{
@@ -76,22 +107,23 @@
                   where:`this.group='JENIS KONTAINER'`
                 }
             }" label="Jenis Kontainer" placeholder="Pilih Jenis Kontainer" fa-icon="sort-desc" :check="false" />
-    </div>
+    </div> -->
 
     <!-- m no head -->
-    <div class=" w-full !mt-3">
+    <!-- <div class=" w-full !mt-3">
       <FieldPopup class="!mt-0"
         :bind="{ readonly: !actionText }"
         :value="values.no_head" @input="(v)=>values.no_head=v"
         :errorText="formErrors.no_head?'failed':''" 
         :hints="formErrors.no_head" 
-        valueField="id" displayField="deskripsi"
+        valueField="id" displayField="kode"
         :api="{
           url: `${store.server.url_backend}/operation/m_general`,
           headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
           params: {
             simplest:true,
-            where:`this.group = 'HEAD'`
+            where:`this.group = 'HEAD'`,
+            searchfield: 'this.kode, this.deskripsi'
           }
         }"
         label="No Head" placeholder="Pilih No Head" :check="false" 
@@ -117,9 +149,9 @@
           cellClass: ['border-r', '!border-gray-200', 'justify-center']
         },
         ]"
-      />
-      
-      <!-- <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:true }" :value="values.m_spk_angkutan_id"
+      /> -->
+
+    <!-- <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:true }" :value="values.m_spk_angkutan_id"
         @input="v=>values.m_spk_angkutan_id=v" :errorText="formErrors.m_spk_angkutan_id?'failed':''"
         :hints="formErrors.m_spk_angkutan_id" valueField="id" displayField="no_spk" :api="{
                 url: `${store.server.url_backend}/operation/m_gen`,
@@ -128,18 +160,13 @@
                   simplest: true,
                 }
             }" label="No Spk Angkutan" placeholder="Pilih No Spk Angkutan" fa-icon="sort-desc" :check="false" /> -->
-    </div>
+    <!-- </div> -->
 
     <!-- Trip Coloumn -->
     <div>
-<FieldSelect
-        class="w-full !mt-3"
-        :bind="{ disabled: !actionText, clearable:false }"
-        :value="values.trip" @input="v=>values.trip=v"
-        :errorText="formErrors.trip?'failed':''" 
-        :hints="formErrors.trip"
-        valueField="id" displayField="deskripsi"
-        :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false }" :value="values.trip"
+        @input="v=>values.trip=v" :errorText="formErrors.trip?'failed':''" :hints="formErrors.trip" valueField="id"
+        displayField="deskripsi" :api="{
             url: `${store.server.url_backend}/operation/m_general`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
@@ -148,26 +175,23 @@
               join:false,
               where:`this.group='TRIP SPK ANGKUTAN'`
             }
-        }"
-        label="Trip" placeholder="Trip" fa-icon="sort-desc" :check="false"
-      />
+        }" label="Trip" placeholder="Trip" fa-icon="sort-desc" :check="false" />
 
       <!-- <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.trip"
         :errorText="formErrors.trip?'failed':''" @input="v=>values.trip=v" :hints="formErrors.trip"
         label="Trip" placeholder="Trip" :check="false" /> -->
     </div>
 
+    <div></div>
+    <div></div>
+
 
     <!-- Ukuran Kontainer Coloumn -->
     <div>
-      <FieldSelect
-        class="w-full !mt-3"
-        :bind="{ disabled: !actionText, clearable:false }"
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false }"
         :value="values.ukuran_container" @input="v=>values.ukuran_container=v"
-        :errorText="formErrors.ukuran_container?'failed':''" 
-        :hints="formErrors.ukuran_container"
-        valueField="id" displayField="deskripsi"
-        :api="{
+        :errorText="formErrors.ukuran_container?'failed':''" :hints="formErrors.ukuran_container" valueField="id"
+        displayField="deskripsi" :api="{
             url: `${store.server.url_backend}/operation/m_general`,
             headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
             params: {
@@ -176,14 +200,43 @@
               join:false,
               where:`this.group='UKURAN KONTAINER'`
             }
-        }"
-        placeholder="Ukuran Kontainer" fa-icon="sort-desc" :check="false"
-      />
-      
+        }" placeholder="Ukuran Kontainer" fa-icon="sort-desc" :check="false" />
+
       <!-- <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.premi"
         :errorText="formErrors.premi?'failed':''" @input="v=>values.premi=v" :hints="formErrors.premi" label="Premi"
         placeholder="Tuliskan Premi" :check="false" /> -->
     </div>
+
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div class="text-xl">TARIF</div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+
+     <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.sangu"
+        :errorText="formErrors.sangu?'failed':''" @input="v=>values.sangu=v" :hints="formErrors.sangu" label="Sangu"
+        placeholder="Masukkan Sangu" :check="false" />
+    </div>
+    <div></div>
 
     <!-- Tagihan Coloumn -->
     <div>
@@ -195,13 +248,48 @@
     <!-- Premi Coloumn -->
     <div>
       <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.premi"
-        :errorText="formErrors.premi?'failed':''" @input="v=>values.premi=v"
-        :hints="formErrors.premi" label="Premi" placeholder="Masukkan Premi" :check="false"
-        type="textarea" />
+        :errorText="formErrors.premi?'failed':''" @input="v=>values.premi=v" :hints="formErrors.premi" label="Premi"
+        placeholder="Masukkan Premi" :check="false" />
+    </div>
+    <div></div>
+
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tambahan_tagihan"
+        :errorText="formErrors.tambahan_tagihan?'failed':''" @input="v=>values.tambahan_tagihan=v" :hints="formErrors.tambahan_tagihan"
+        label="Tambahan Tagihan" placeholder="Masukan Tambahan Tagihan" :check="false" />
     </div>
 
-    <!-- Status Column -->
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tambahan_premi"
+        :errorText="formErrors.tambahan_premi?'failed':''" @input="v=>values.tambahan_premi=v" :hints="formErrors.tambahan_premi"
+        label="Tambahan Premi" placeholder="Masukan Tambahan Premi" :check="false" />
+    </div>
+    <div></div>
 
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.ganti_solar"
+        :errorText="formErrors.ganti_solar?'failed':''" @input="v=>values.ganti_solar=v" :hints="formErrors.ganti_solar"
+        label="Ganti Solar" placeholder="Masukan Ganti Solar" :check="false" />
+    </div>
+
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.ganti_solar_premi"
+        :errorText="formErrors.ganti_solar_premi?'failed':''" @input="v=>values.ganti_solar_premi=v" :hints="formErrors.ganti_solar_premi"
+        label="Ganti Solar Premi" placeholder="Masukan Ganti Solar Premi" :check="false" />
+    </div>
+    <div></div>
+
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tagihan_lain_lain"
+        :errorText="formErrors.tagihan_lain_lain?'failed':''" @input="v=>values.tagihan_lain_lain=v" :hints="formErrors.tagihan_lain_lain"
+        label="Tagihan Lain Lain" placeholder="Masukan Tagihan Lain Lain" :check="false" />
+    </div>
+
+    <div>
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.lain_lain"
+        :errorText="formErrors.lain_lain?'failed':''" @input="v=>values.lain_lain=v" :hints="formErrors.lain_lain"
+        label="Lain Lain" placeholder="Masukan Lain Lain" :check="false" />
+    </div>
 
     <!-- END COLUMN -->
     <!-- ACTION BUTTON START -->

@@ -84,6 +84,11 @@
                 //selectfield: 'id,no_buku_order,tgl',
                 scopes:'NotDuplicateForAngkutan',
                 searchfield: 'this.no_buku_order, this.tgl'
+              },
+              onsuccess:(response)=> {
+                response.page = response.current_page
+                response.hasNext = response.has_next
+                return response
               }
             }" placeholder="Pilih No. Buku Order" :check="false" :columns="[{
               headerName: 'No',

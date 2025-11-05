@@ -379,7 +379,7 @@
           authorization: `${store.user.token_type} ${store.user.token}`
         }, params: { 
             simplest: false, 
-            searchfield: 'this.kategori, this.debit_kredit',
+            searchfield: 'this.no_buku_order, this.jenis_barang, m_customer.nama_perusahaan',
             // notin: `this.id: ${detailArr.map((det)=> (det.t_buku_order_id))}`
             },
             onsuccess: (response) => {

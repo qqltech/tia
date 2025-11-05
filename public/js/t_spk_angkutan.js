@@ -153,9 +153,10 @@ const table = reactive({
               : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
                 : (params.data['status'] == 'APPROVED' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
                   : (params.data['status'] == 'REVISED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                    : (params.data['status'] == 'REJECT' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                      : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`)))))
-          )
+                    : (params.data['status'] == 'REJECTED' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                      : (params.data['status'] == 'CANCEL' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                        : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`))))))
+            )
       }
     },
   ],
@@ -183,12 +184,62 @@ const table = reactive({
       click: row => router.push(`${route.path}/${row.id}?action=Copy&${tsId}`)
     },
 
-    // {
-    //   title: 'askdjlksad', icon: 'copy', class: 'bg-gray-600 text-light-100',
-    //   async click(row) {
-    //     apiTable.value.reload()
-    //   }
-    // },
+    {
+      icon: 'ban',
+      title: "Cancel Data",
+      class: 'bg-orange-700 rounded-lg text-white',
+      // show: (row) => row['status']?.toUpperCase() == 'APPROVED' && store.user.data.tipe?.toUpperCase() === 'SUPER ADMIN',
+      async click(row) {
+        swal.fire({
+          icon: 'warning',
+          text: 'Yakin untuk cancel data?',
+          iconColor: '#1469AE',
+          confirmButtonColor: '#1469AE',
+          showDenyButton: true
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            try {
+              const dataURL = `${store.server.url_backend}/operation/${endpointApi}/cancel?id=${row.id}`
+              isRequesting.value = true
+              const res = await fetch(dataURL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'Application/json',
+                  Authorization: `${store.user.token_type} ${store.user.token}`
+                },
+                body: JSON.stringify({ id: row.id })
+              })
+              if (!res.ok) {
+                if ([400, 422, 500].includes(res.status)) {
+                  const responseJson = await res.json()
+                  formErrors.value = responseJson.errors || {}
+                  throw (responseJson?.message + " " + responseJson?.data?.errorText || "Failed when trying to cancel data")
+                } else {
+                  throw ("Failed when trying to cancel data")
+                }
+              }
+              // const responseJson = await res?.json()
+              swal.fire({
+                icon: 'success',
+                text: "Data Berhasil di Cancel!"
+              })
+              // const resultJson = await res.json()
+            } catch (err) {
+              isBadForm.value = true
+              swal.fire({
+                icon: 'error',
+                iconColor: '#1469AE',
+                confirmButtonColor: '#1469AE',
+                text: err
+              })
+            }
+            isRequesting.value = false
+
+            apiTable.value.reload()
+          }
+        })
+      }
+    },
     {
       icon: 'location-arrow',
       title: "Send Approval",
@@ -1263,22 +1314,23 @@ async function onSave() {
 
   try {
     let next = true
-    if (!data.waktu_out) {
-      swal.fire({
-        icon: 'warning',
-        text: `Waktu Out harus diisi`
-      })
-      next = false
-      return
-    }
-    if (!data.waktu_in) {
-      swal.fire({
-        icon: 'warning',
-        text: `Waktu In harus diisi`
-      })
-      next = false
-      return
-    }
+
+    // if (!data.waktu_out) {
+    //   swal.fire({
+    //     icon: 'warning',
+    //     text: `Waktu Out harus diisi`
+    //   })
+    //   next = false
+    //   return
+    // }
+    // if (!data.waktu_in) {
+    //   swal.fire({
+    //     icon: 'warning',
+    //     text: `Waktu In harus diisi`
+    //   })
+    //   next = false
+    //   return
+    // }
 
 
     const isCreating = ['Create', 'Copy'].includes(actionText.value);

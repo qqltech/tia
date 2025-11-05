@@ -199,7 +199,7 @@
 
     <div>
       <FieldX :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_stack"
-        :errorText="formErrors.tgl_stack?'failed':''" type="date" @input="values.tgl_stack"
+        :errorText="formErrors.tgl_stack?'failed':''" type="date" @input="v=>values.tgl_stack=v"
         :hints="formErrors.tgl_stack" :check="false" label="Tanggal Stack" placeholder="Pilih Tanggal Stack" />
     </div>
 
@@ -211,13 +211,13 @@
 
     <div>
       <FieldX :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_eir"
-        :errorText="formErrors.tgl_eir?'failed':''" @input="values.tgl_eir" type="date" :hints="formErrors.tgl_eir"
+        :errorText="formErrors.tgl_eir?'failed':''" @input="v=>values.tgl_eir=v" type="date" :hints="formErrors.tgl_eir"
         :check="false" label="Tanggal Eir" placeholder="Pilih Tanggal Eir" />
     </div>
 
     <div>
       <FieldX :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_nr"
-        :errorText="formErrors.tgl_nr?'failed':''" @input="values.tgl_nr" type="date" :hints="formErrors.tgl_nr"
+        :errorText="formErrors.tgl_nr?'failed':''" @input="v=>values.tgl_nr=v" type="date" :hints="formErrors.tgl_nr"
         :check="false" label="Tanggal Nota Rampung" placeholder="Pilih Tanggal Nota Rampung" />
     </div>
 

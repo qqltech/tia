@@ -48,7 +48,7 @@
       </div>
     </div>
   </div>
-  <div class="p-4 grid <md:grid-cols-1 grid-cols-3 gap-2 ">
+  <div class="p-4 grid <md:grid-cols-1 grid-cols-2 gap-2 gap-x-10 ">
     <!-- START COLUMN -->
 
     <!-- Kode Coloumn -->
@@ -57,6 +57,8 @@
         :errorText="formErrors.kode?'failed':''" @input="v=>values.kode=v" :hints="formErrors.kode" label="Kode"
         placeholder="Kode" :check="false" />
     </div>
+
+    <div></div>
 
     <!-- Kode Supplier Coloumn -->
     <div class="flex">
@@ -145,7 +147,7 @@
     </div>
 
     <!-- Tipe Container Coloumn -->
-    <div>
+    <!-- <div>
       <FieldSelect :bind="{ disabled: !actionText, readonly: !actionText }" class="w-full !mt-3" :value="values.jenis"
         @update:value="v => values.jenis = v" :errorText="formErrors.jenis ? 'failed' : ''" :hints="formErrors.jenis"
         valueField="id" displayField="deskripsi" placeholder="Jenis" label="Jenis" :check="true" @update:valueFull="(data)=>{
@@ -167,7 +169,7 @@
                 searchfield: 'this.deskripsi'
               },
             }" />
-    </div>
+    </div> -->
 
     <!-- Sektor Coloumn -->
     <div>
@@ -194,42 +196,109 @@
             }" />
     </div>
 
-    <!-- Tarif Stapel Coloumn -->
-    <div>
-      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif_stapel"
-        :errorText="formErrors.tarif_stapel?'failed':''" @input="v=>values.tarif_stapel=v"
-        :hints="formErrors.tarif_stapel" label="Tarif Stapel" placeholder="Tarif Stapel" :check="false" />
+    <!-- Tarif Coloumn -->
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.tarif"
+        :errorText="formErrors.tarif?'failed':''" @input="v=>values.tarif=v" :hints="formErrors.tarif" label="Tarif"
+        placeholder="Tarif Angkutan" :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ CONT</button>
     </div>
 
-    <!-- Tarif Coloumn -->
-    <div>
-      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tarif"
-        :errorText="formErrors.tarif?'failed':''" @input="v=>values.tarif=v" :hints="formErrors.tarif" label="Tarif"
-        placeholder="Tarif" :check="false" />
+    <!-- Tarif Stapel Coloumn -->
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.tarif_stapel"
+        :errorText="formErrors.tarif_stapel?'failed':''" @input="v=>values.tarif_stapel=v"
+        :hints="formErrors.tarif_stapel" label="Tarif Stapel" placeholder="Tarif Stapel" :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ HARI</button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.ganti_solar_muter"
+        :errorText="formErrors.ganti_solar_muter?'failed':''" @input="v=>values.ganti_solar_muter=v"
+        :hints="formErrors.ganti_solar_muter" label="Ganti Solar Muter" placeholder="Masukkan ganti solar muter"
+        :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ CONT</button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.ganti_solar_lain"
+        :errorText="formErrors.ganti_solar_lain?'failed':''" @input="v=>values.ganti_solar_lain=v"
+        :hints="formErrors.ganti_solar_lain" label="Ganti Solar Lain" placeholder="Masukkan ganti solar lain"
+        :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ CONT</button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.atur_stapel_1"
+        :errorText="formErrors.atur_stapel_1?'failed':''" @input="v=>values.atur_stapel_1=v"
+        :hints="formErrors.atur_stapel_1" label="Atur Stapel 1" placeholder="Masukkan atur stapel 1" :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ HARI</button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.atur_stapel_2"
+        :errorText="formErrors.atur_stapel_2?'failed':''" @input="v=>values.atur_stapel_2=v"
+        :hints="formErrors.atur_stapel_2" label="Atur Stapel 2" placeholder="Masukkan atur stapel 2" :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ HARI</button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.tarif_pengawalan"
+        :errorText="formErrors.tarif_pengawalan?'failed':''" @input="v=>values.tarif_pengawalan=v"
+        :hints="formErrors.tarif_pengawalan" label="Tarif Pengawalan" placeholder="Masukkan tarif pengawalan" :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ CONT</button>
     </div>
 
     <!-- Kena Pajak Column -->
     <div class="grid grid-cols-3 gap-y-2 gap-x-2 items-start">
 
-      <!-- Checkbox "Ya" -->
-      <div class="flex-auto items-center text-cyan-400">
-        <span class="flex font-semibold !text-gray-500 p-0.5">Kena Pajak</span>
-        <input :bind="{ disabled: !actionText, readonly: !actionText } "type="checkbox"  v-model="values.kena_pajak" class="mr-2" 
-        style="width: 20px; height: 20px;">
-        <label class="flex-auto items-center" for="kenaPajakCheckbox">Ya</label>
-      </div>
-
-      <FieldSelect v-if="values.kena_pajak" :bind="{ disabled: !values.kena_pajak || !actionText, readonly: !actionText}" class="flex-auto w-full !mt-3"
-        :value="values.jenis_pajak" :errorText="formErrors.jenis_pajak?'failed' :''" @input="v=>values.jenis_pajak=v"
-        :hints="formErrors.jenis_pajak" :check="false" valueField="id" displayField="deskripsi"
-        placeholder="Jenis Pajak" label="Jenis Pajak" :check="false" @update:valueFull="(data)=>{
+      <FieldSelect :bind="{ disabled: !actionText, readonly: !actionText}" class="flex-auto w-full !mt-3"
+        :value="values.ppn_id" :errorText="formErrors.ppn_id?'failed' :''" @input="v=>{
+          if(v){
+            values.ppn_id=v
+          }else{
+            values.ppn_id=null
+          }
+          values.persen_pajak=null
+        }" :hints="formErrors.ppn_id" :check="true" valueField="id" displayField="deskripsi" placeholder="PPN"
+        label="PPN" :check="false" @update:valueFull="(data)=>{
         $log(data)
         if (data) {
           values.sektor = data['m_general.id'];
           values.persen_pajak = data['deskripsi2'];
         } else {
           values.sektor = ''; 
-          values.persen_pajak = ''; 
+          values.persen_pajak = '';
+        }
+          return response;
+        }" :api="{
+              url: `${store.server.url_backend}/operation/m_general`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                where:
+                `this.group = 'JENIS PPN' AND this.is_active = 'true' `,
+                searchfield: 'this.deskripsi',
+                selectfield: 'this.deskripsi,this.deskripsi2,this.id'
+              },
+            }" />
+
+      <FieldSelect :bind="{ disabled: !actionText, readonly: !actionText}" class="flex-auto w-full !mt-3"
+        :value="values.jenis_pajak" :errorText="formErrors.jenis_pajak?'failed' :''" @input="v=>{
+          if(v){
+            values.jenis_pajak=v
+          }else{
+            values.jenis_pajak=null
+          }
+          values.persen_pajak=null
+        }" :hints="formErrors.jenis_pajak" :check="true" valueField="id" displayField="deskripsi" placeholder="PPH"
+        label="PPH" :check="false" @update:valueFull="(data)=>{
+        $log(data)
+        if (data) {
+          values.sektor = data['m_general.id'];
+          values.persen_pajak = data['deskripsi2'];
+        } else {
+          values.sektor = ''; 
+          values.persen_pajak = '';
         }
           return response;
         }" :api="{
@@ -243,10 +312,24 @@
               },
             }" />
 
-      <FieldNumber v-if="values.kena_pajak" class="flex-auto w-full !mt-3" :bind="{ readonly: true }" :value="values.persen_pajak"
+      <FieldNumber class="flex-auto w-full !mt-3" :bind="{ readonly: true }" :value="values.persen_pajak"
         @input="v=>values.persen_pajak=v" :errorText="formErrors.persen_pajak?'failed':''"
         :hints="formErrors.persen_pajak" valueField="id" displayField="key" placeholder="Persen Pajak"
-        label="Persen Pajak" :check="false"/>
+        label="Persen Pajak" :check="false" />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.tambahan_lain_1"
+        :errorText="formErrors.tambahan_lain_1?'failed':''" @input="v=>values.tambahan_lain_1=v"
+        :hints="formErrors.tambahan_lain_1" label="Tambahan Lain 1" placeholder="Masukkan tambahan lain 1" :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ CONT</button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[85%] !mt-3" :value="values.tambahan_lain_2"
+        :errorText="formErrors.tambahan_lain_2?'failed':''" @input="v=>values.tambahan_lain_2=v"
+        :hints="formErrors.tambahan_lain_2" label="Tambahan Lain 2" placeholder="Masukkan tambahan lain 2" :check="false" />
+      <button class="border-1 rounded w-[60px] !mt-3 ml-0 h-[34px] text-gray-400 bg-gray-100">/ CONT</button>
     </div>
 
     <div>

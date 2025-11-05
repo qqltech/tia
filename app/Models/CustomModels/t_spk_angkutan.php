@@ -550,5 +550,74 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
             "status" =>"PRINTED"
             ]);
     }
+
+    public function scopeWithGrupHead($query)
+    {
+        return $query
+            ->leftJoin('set.m_general as mg', 'mg.id', '=', 't_spk_angkutan.head')
+            ->leftJoin('m_grup_head_d as mghd', 'mghd.no_head_id', '=', 'mg.id')
+            ->leftJoin('m_grup_head as mgh', 'mgh.id', '=', 'mghd.m_grup_head_id')
+            ->where('mg.group', 'HEAD')
+            ->addSelect([
+                't_spk_angkutan.*',
+                'mgh.id as grup_head_id',
+                'mgh.no_head as grup_head_no',
+                'mgh.nama_grup as grup_head_nama',
+            ]);
+    }
+
+    public function custom_cancel(\Illuminate\Http\Request $req)
+    {
+        try {
+            $id = $req->id;
+
+            // Validasi input
+            if (!$id) {
+                return response()->json([
+                    'message' => 'ID tidak ditemukan.'
+                ], 400);
+            }
+
+            // Ambil data t_spk_angkutan
+            $spk = \DB::table('t_spk_angkutan')->where('id', $id)->first();
+
+            if (!$spk) {
+                return response()->json([
+                    'message' => 'Data SPK Angkutan tidak ditemukan.'
+                ], 404);
+            }
+
+            // Update status ke CANCEL
+            \DB::table('t_spk_angkutan')
+                ->where('id', $id)
+                ->update([
+                    'status' => 'CANCEL',
+                    'updated_at' => now()
+                ]);
+
+            // Update t_premi yang berelasi, set tarif_premi = 0
+            \DB::table('t_premi')
+                ->where('t_spk_angkutan_id', $id)
+                ->update([
+                    'tarif_premi' => 0,
+                    'updated_at' => now()
+                ]);
+
+            return response()->json([
+                'message' => 'Data berhasil di-cancel.',
+                'data' => [
+                    't_spk_angkutan_id' => $id
+                ]
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat cancel data.',
+                'data' => [
+                    'errorText' => $e->getMessage()
+                ]
+            ], 500);
+        }
+    }
+
      
 }

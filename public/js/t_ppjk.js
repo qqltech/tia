@@ -200,6 +200,8 @@ const handleKeyDown = (event) => {
 
 onMounted(() => {
   // window.addEventListener('keydown', handleKeyDown);
+  fetchAdminPPJK()
+  fetchTarifPPJK()
 
   const today = new Date();
   // Format tanggal sesuai dengan "dd-mm-yyyy"
@@ -213,9 +215,10 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
-  data: { id: null, status: 'DRAFT' },
+  data: { id: null, status: 'DRAFT',admin_ppjk_id : 1256 },
   currency: 'IDR',
-  nilai_kurs: 1
+  nilai_kurs: 1,
+  
 }
 
 const data = reactive({ ...default_value.data });
@@ -226,11 +229,59 @@ const headers = {
   Authorization: `${store.user.token_type} ${store.user.token}`,
 };
 
+const fetchTarifPPJK = async () => {
+  try {
+    const response = await fetch(
+      `${store.server.url_backend}/operation/m_general?simplest=true&where=this.group='TARIF PPJK'`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`
+        }
+      }
+    )
+
+    const result = await response.json()
+
+    if (result?.data?.length) {
+      // misal ambil yang pertama sebagai default
+      const admin = result.data[0]
+      data.tarif_ppjk = admin.deskripsi
+    }
+  } catch (error) {
+    console.error('Gagal mengambil data ADMIN PPJK:', error)
+  }
+}
+
 const fetchData = async (url, params = {}) => {
   const queryString = new URLSearchParams(params).toString();
   const response = await fetch(`${url}?${queryString}`, { headers });
   return response.json();
 };
+
+const fetchAdminPPJK = async () => {
+  try {
+    const response = await fetch(
+      `${store.server.url_backend}/operation/m_general?simplest=true&where=this.group='ADMIN PPJK'`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`
+        }
+      }
+    )
+
+    const result = await response.json()
+
+    if (result?.data?.length) {
+      // misal ambil yang pertama sebagai default
+      const admin = result.data[0]
+      data.admin_ppjk_id = admin.deskripsi
+    }
+  } catch (error) {
+    console.error('Gagal mengambil data ADMIN PPJK:', error)
+  }
+}
 
 // GET DATA FROM API
 onBeforeMount(async () => {

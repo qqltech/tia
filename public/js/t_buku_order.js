@@ -405,6 +405,14 @@ const landing = reactive({
       }
     },
     {
+      icon: 'money-bill-1',
+      title: "Cetak Biaya Tagihan",
+      class: 'bg-purple-600 text-light-100',
+      click(row) {
+        window.open(`${store.server.url_backend}/web/biaya_tagihan?export=pdf&size=a4&orientation=potrait&id=${row.id}`)
+      }
+    },
+    {
       icon: 'location-arrow',
       title: "Post Data",
       class: 'bg-rose-700 rounded-lg text-white',
@@ -571,6 +579,16 @@ const landing = reactive({
   {
     field: 'tgl',
     headerName: 'Tanggal',
+    filter: true,
+    sortable: true,
+    filter: 'ColFilter',
+    resizable: true, wrapText: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
+  },
+  {
+    field: 'voyage',
+    headerName: 'Voyage',
     filter: true,
     sortable: true,
     filter: 'ColFilter',

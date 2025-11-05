@@ -13,7 +13,9 @@ class msupplier extends Migration
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
-            $table->integer('top')->comment('{"src": "set.m_general.id"}');
+            // $table->integer('top')->comment('{"src": "set.m_general.id"}');
+            // $table->integer('bank')->comment('{"src":"set.m_general.id"}')->nullable()->change();
+            // $table->string('kode_bank', 10)->nullable()->change();
         });
     }
 }

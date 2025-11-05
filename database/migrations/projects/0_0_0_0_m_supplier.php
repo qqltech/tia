@@ -29,8 +29,8 @@ class msupplier extends Migration
             $table->string('provinsi', 120);
             $table->string('kota', 120);
             $table->string('kecamatan', 120);
-            $table->integer('bank')->comment('{"src":"set.m_general.id"}');
-            $table->string('kode_bank', 10);
+            $table->integer('bank')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->string('kode_bank', 10)->nullable();
             $table->string('no_rekening', 20);
             $table->string('nama_rekening', 100);
             $table->string('no_telp1', 20)->nullable();

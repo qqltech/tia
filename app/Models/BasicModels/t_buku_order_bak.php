@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models\BasicModels;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Traits\ModelTrait;
+
+class t_buku_order_bak extends Model
+{   
+    use ModelTrait;
+
+    protected $table    = 't_buku_order_bak';
+    protected $guarded  = ['id'];
+    protected $casts    = ['created_at'=> 'datetime:d-m-Y','updated_at'=>'datetime:d-m-Y'];
+    protected $fillable = ["tgl","tipe_order","no_buku_order","m_customer_id","jenis_barang","sektor","tujuan_asal","moda_transportasi","coo","hc","status","tanggal_closing_doc","jam_closing_doc","tanggal_closing_cont","jam_closing_cont","no_bl","tanggal_bl","no_invoice","tanggal_invoice","tanggal_pengkont","tanggal_pemasukan","jumlah_coo","lembar_coo","jumlah_coo_ulang","lembar_coo_ulang","nama_pelayaran","no_boking","voyage","gw","nw","catatan","nama_kapal","dispensasi_closing_cont","dispensasi_closing_doc","angkutan","jumlah_kemasan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","pelabuhan_id","lokasi_stuffing","kode_pelayaran_id","tipe","tgl_etd_eta","genzet"];
+
+    public $columns     = ["id","tgl","tipe_order","no_buku_order","m_customer_id","jenis_barang","sektor","tujuan_asal","moda_transportasi","coo","hc","status","tanggal_closing_doc","jam_closing_doc","tanggal_closing_cont","jam_closing_cont","no_bl","tanggal_bl","no_invoice","tanggal_invoice","tanggal_pengkont","tanggal_pemasukan","jumlah_coo","lembar_coo","jumlah_coo_ulang","lembar_coo_ulang","nama_pelayaran","no_boking","voyage","gw","nw","catatan","nama_kapal","dispensasi_closing_cont","dispensasi_closing_doc","angkutan","jumlah_kemasan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","pelabuhan_id","lokasi_stuffing","kode_pelayaran_id","tipe","tgl_etd_eta","genzet"];
+    public $columnsFull = ["id:bigint","tgl:date","tipe_order:string:10","no_buku_order:string:20","m_customer_id:integer","jenis_barang:string:250","sektor:integer","tujuan_asal:string:100","moda_transportasi:string:50","coo:string:50","hc:string:50","status:string:10","tanggal_closing_doc:date","jam_closing_doc:time","tanggal_closing_cont:date","jam_closing_cont:time","no_bl:string:50","tanggal_bl:date","no_invoice:string:250","tanggal_invoice:date","tanggal_pengkont:date","tanggal_pemasukan:date","jumlah_coo:integer","lembar_coo:integer","jumlah_coo_ulang:integer","lembar_coo_ulang:integer","nama_pelayaran:string:250","no_boking:string:20","voyage:string:20","gw:string:20","nw:string:20","catatan:text","nama_kapal:string:100","dispensasi_closing_cont:boolean","dispensasi_closing_doc:boolean","angkutan:string:100","jumlah_kemasan:integer","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","pelabuhan_id:integer","lokasi_stuffing:string:191","kode_pelayaran_id:integer","tipe:integer","tgl_etd_eta:date","genzet:string:100"];
+    public $rules       = [];
+    public $joins       = [];
+    public $details     = [];
+    public $heirs       = [];
+    public $detailsChild= [];
+    public $detailsHeirs= [];
+    public $unique      = [];
+    public $required    = [""];
+    public $createable  = ["tgl","tipe_order","no_buku_order","m_customer_id","jenis_barang","sektor","tujuan_asal","moda_transportasi","coo","hc","status","tanggal_closing_doc","jam_closing_doc","tanggal_closing_cont","jam_closing_cont","no_bl","tanggal_bl","no_invoice","tanggal_invoice","tanggal_pengkont","tanggal_pemasukan","jumlah_coo","lembar_coo","jumlah_coo_ulang","lembar_coo_ulang","nama_pelayaran","no_boking","voyage","gw","nw","catatan","nama_kapal","dispensasi_closing_cont","dispensasi_closing_doc","angkutan","jumlah_kemasan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","pelabuhan_id","lokasi_stuffing","kode_pelayaran_id","tipe","tgl_etd_eta","genzet"];
+    public $updateable  = ["tgl","tipe_order","no_buku_order","m_customer_id","jenis_barang","sektor","tujuan_asal","moda_transportasi","coo","hc","status","tanggal_closing_doc","jam_closing_doc","tanggal_closing_cont","jam_closing_cont","no_bl","tanggal_bl","no_invoice","tanggal_invoice","tanggal_pengkont","tanggal_pemasukan","jumlah_coo","lembar_coo","jumlah_coo_ulang","lembar_coo_ulang","nama_pelayaran","no_boking","voyage","gw","nw","catatan","nama_kapal","dispensasi_closing_cont","dispensasi_closing_doc","angkutan","jumlah_kemasan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","pelabuhan_id","lokasi_stuffing","kode_pelayaran_id","tipe","tgl_etd_eta","genzet"];
+    public $searchable  = ["tgl","tipe_order","no_buku_order","m_customer_id","jenis_barang","sektor","tujuan_asal","moda_transportasi","coo","hc","status","tanggal_closing_doc","jam_closing_doc","tanggal_closing_cont","jam_closing_cont","no_bl","tanggal_bl","no_invoice","tanggal_invoice","tanggal_pengkont","tanggal_pemasukan","jumlah_coo","lembar_coo","jumlah_coo_ulang","lembar_coo_ulang","nama_pelayaran","no_boking","voyage","gw","nw","catatan","nama_kapal","dispensasi_closing_cont","dispensasi_closing_doc","angkutan","jumlah_kemasan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","pelabuhan_id","lokasi_stuffing","kode_pelayaran_id","tipe","tgl_etd_eta","genzet"];
+    public $deleteable  = true;
+    public $cascade     = true;
+    public $deleteOnUse = false;
+
+    
+    
+    
+}

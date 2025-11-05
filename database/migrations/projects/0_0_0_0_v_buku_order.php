@@ -25,6 +25,7 @@ class vbukuorder extends Migration
                 t_buku_order.nama_pelayaran,
                 t_buku_order.kode_pelayaran_id,
                 t_buku_order.pelabuhan_id,
+                t_buku_order.voyage,
                 t_buku_order.status,
 
                 m_customer.kode AS \"m_customer_kode\",

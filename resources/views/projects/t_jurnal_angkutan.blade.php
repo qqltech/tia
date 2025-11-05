@@ -89,6 +89,7 @@
           headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
           params: {
             simplest:true,
+            where: `jenis.deskripsi = 'Angkutan'`,
             searchfield: 'this.kode , this.nama , this.is_active'
             },
           }" displayField="kode" valueField="id" :bind="{ readonly: !actionText }" :value="values.m_supplier_id"

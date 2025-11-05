@@ -254,7 +254,7 @@ const landing = reactive({
     params: {
       simplest: true,
       where : `this.group = 'JENIS KONTAINER' OR this.group = 'TIPE KONTAINER' OR this.group = 'UKURAN KONTAINER'`,
-       searchfield:'this.deskripsi',
+      searchfield:'this.deskripsi',
     },
     onsuccess(response) {
       response.page = response.current_page
