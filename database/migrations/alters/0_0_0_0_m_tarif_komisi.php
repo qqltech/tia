@@ -16,6 +16,11 @@ class mtarifkomisi extends Migration
             // $table->string('tipe_komisi')->nullable();
             // $table->bigInteger('m_customer_id')->comment('{"src":"m_customer.id"}')->nullable();
             // $table->bigInteger('tipe_order')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->boolean('is_container_tarif_20')->default(0)->nullable()->change();
+            // $table->boolean('is_container_tarif_40')->default(0)->nullable()->change();
+            // $table->boolean('is_tarif_dokumen')->default(0)->nullable()->change();
+            // $table->boolean('is_tarif_order')->default(0)->nullable()->change();
+            // $table->boolean('is_invoice_minimal')->default(0)->nullable()->change();
         });
     }
 }

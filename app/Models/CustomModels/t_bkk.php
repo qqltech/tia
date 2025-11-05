@@ -101,7 +101,8 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
 
             \DB::commit();
             return response()->json([
-                "message" => "Data yang telah dipilih berhasil diajukan approval!",
+                "message" =>
+                    "Data yang telah dipilih berhasil diajukan approval!",
                 "success_ids" => $items,
             ]);
         } catch (\Exception $e) {
@@ -113,9 +114,66 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         }
     }
 
+    // public function custom_send_approval()
+    // {
+    //     // $app = $this->createAppTicket(req("id"));
+    //     $id = request("id");
+
+    //     // Pastikan $id selalu string/integer tunggal, bukan array
+    //     if (is_array($id)) {
+    //         $id = $id[0] ?? null;
+    //     }
+
+    //     if (!$id) {
+    //         return [
+    //             "success" => false,
+    //             "message" => "ID tidak valid",
+    //         ];
+    //     }
+
+    //     // Jalankan seperti biasa
+    //     $app = $this->createAppTicket($id);
+    //     if (!$app) {
+    //         return $this->helper->customResponse(
+    //             "Terjadi kesalahan, coba kembali nanti",
+    //             400
+    //         );
+    //     }
+
+    //     if (app()->request->header("Source") != "mobile") {
+    //         $req = app()->request;
+    //         $spd = t_bkk::find($req->id);
+    //         if ($spd) {
+    //             $spd->update([
+    //                 "status" => "IN APPROVAL",
+    //             ]);
+    //         }
+    //     }
+
+    //     return $this->helper->customResponse(
+    //         "Permintaan approval berhasil dibuat"
+    //     );
+    // }
+
     public function custom_send_approval()
     {
-        $app = $this->createAppTicket(req("id"));
+        // $app = $this->createAppTicket(req("id"));
+        $id = request("id");
+
+        // Pastikan $id selalu string/integer tunggal, bukan array
+        if (is_array($id)) {
+            $id = $id[0] ?? null;
+        }
+
+        if (!$id) {
+            return [
+                "success" => false,
+                "message" => "ID tidak valid",
+            ];
+        }
+
+        // Jalankan seperti biasa
+        $app = $this->createAppTicket($id);
         if (!$app) {
             return $this->helper->customResponse(
                 "Terjadi kesalahan, coba kembali nanti",
@@ -141,6 +199,7 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
     private function createAppTicket($id)
     {
         $tempId = $id;
+        
         $trx = \DB::table("t_bkk")->find($tempId);
         $conf = [
             "app_name" => "APPROVAL BKK",

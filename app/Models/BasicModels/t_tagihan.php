@@ -28,7 +28,7 @@ class t_tagihan extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["no_buku_order","customer","status","tgl","total_amount","ppn","grand_total_amount"];
+    public $required    = ["no_buku_order","customer","status","tgl","ppn"];
     public $createable  = ["no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak","total_jasa_cont_ppjk","total_lain2_ppn","total_jasa_angkutan","total_lain_non_ppn","tgl_nota","persentase_konsolidator_kont"];
     public $updateable  = ["no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak","total_jasa_cont_ppjk","total_lain2_ppn","total_jasa_angkutan","total_lain_non_ppn","tgl_nota","persentase_konsolidator_kont"];
     public $searchable  = ["id","no_draft","no_tagihan","no_buku_order","customer","status","tgl","tipe_tagihan","total_amount","ppn","grand_total_amount","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","total_kontainer","total_lain","total_ppn","total_setelah_ppn","total_tarif_jasa","piutang","no_faktur_pajak","total_jasa_cont_ppjk","total_lain2_ppn","total_jasa_angkutan","total_lain_non_ppn","tgl_nota","persentase_konsolidator_kont"];

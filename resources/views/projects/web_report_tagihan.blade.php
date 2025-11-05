@@ -577,7 +577,7 @@ $temp = 'sebelas';
 
   <table cellpadding="3">
     @php
-    $kurang_bayar = $total_rp - $dt->total_amount ?? 0;
+    $kurang_bayar = $total_rp - ($dt->total_amount ?? 0);
     @endphp
     <tr>
       <td

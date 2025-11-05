@@ -7,17 +7,9 @@
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('Active')" :class="filterButton === 'Active' ? 'bg-green-600 text-white hover:bg-green-600' 
-          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          Active
-        </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('InActive')" :class="filterButton === 'InActive' ? 'bg-sky-600 text-white hover:bg-sky-600' 
-          : 'border border-sky-600 text-sky-600 bg-white hover:bg-sky-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          InActive
-        </button>
+        <button @click="filterShowData(true,1)" :class="activeBtn === 1?'bg-green-600 text-white hover:bg-green-400':'border border-green-600 text-green-600 bg-white  hover:bg-green-600 hover:text-white'" class="duration-300 transform hover:-translate-y-0.5 rounded-md py-1 px-2">Active</button>
+        <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
+        <button @click="filterShowData(false,2)" :class="activeBtn === 2?'bg-red-600 text-white hover:bg-red-400':'border border-red-600 text-red-600 bg-white  hover:bg-red-600 hover:text-white'" class="duration-300 transform hover:-translate-y-0.5 rounded-md py-1 px-2">InActive</button>
       </div>
     </div>
 
@@ -97,7 +89,7 @@
         @click="onBack" />
       <div>
         <h1 class="text-20px font-bold">Form Tarif Komisi</h1>
-        <p class="text-gray-100">Form unutk Pengisian Tarif Komisi</p>
+        <p class="text-gray-100">Form untuk Pengisian Tarif Komisi</p>
       </div>
     </div>
   </div>
@@ -189,6 +181,7 @@
     <div class="flex items-center gap-x-2">
       <input
           :bind="{ readonly: !actionText }"
+          :disabled="!actionText"
           class="!mt-3"
           type="checkbox"
           id="CustomStupleBox"
@@ -206,6 +199,7 @@
     <div class="flex items-center gap-x-2">
       <input
           :bind="{ readonly: !actionText }"
+          :disabled="!actionText"
           class="!mt-3"
           type="checkbox"
           id="CustomStupleBox"
@@ -222,6 +216,7 @@
     <div class="flex items-center gap-x-2">
       <input
           :bind="{ readonly: !actionText }"
+          :disabled="!actionText"
           class="!mt-3"
           type="checkbox"
           id="CustomStupleBox"
@@ -237,6 +232,7 @@
     <div class="flex items-center gap-x-2">
       <input
           :bind="{ readonly: !actionText }"
+          :disabled="!actionText"
           class="!mt-3"
           type="checkbox"
           id="CustomStupleBox"
@@ -245,13 +241,14 @@
         />
       <FieldNumber :bind="{ readonly: !actionText || !data.is_tarif_order }" class="w-full !mt-3" :value="data.tarif_order"
         :errorText="formErrors.tarif_order ? 'failed' : ''" @input="v => data.tarif_order = v"
-        :hints="formErrors.tarif_order" label="Tarif Dokumen" placeholder="Tarif Dokumen" :check="false" />
+        :hints="formErrors.tarif_order" label="Tarif Order" placeholder="Tarif Order" :check="false" />
     </div>
 
     <!-- Invoice Minimal Coloumn -->
     <div class="flex items-center gap-x-2" v-if="data.tipe === 'SUT'">
       <input
           :bind="{ readonly: !actionText }"
+          :disabled="!actionText"
           class="!mt-3"
           type="checkbox"
           id="CustomStupleBox"
@@ -308,7 +305,7 @@
   </div>
   <hr>
   <div class="flex flex-row items-center justify-end space-x-2 p-2">
-    <i class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
+    <i v-show="actionText" class="text-gray-500 text-[12px]">Tekan CTRL + S untuk shortcut Save Data</i>
     <button
         class="bg-red-600 text-white font-semibold hover:bg-red-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         v-show="actionText"

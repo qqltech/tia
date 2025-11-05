@@ -559,9 +559,17 @@ const landing = reactive({
     {
       icon: 'print',
       title: "Cetak",
-      class: 'bg-gray-600 text-light-100',
+      class: 'bg-yellow-600 text-light-100',
       click(row) {
         window.open(`${store.server.url_backend}/web/report_tagihan?export=pdf&size=a4&orientation=potrait&group=SATUAN%20JASA&id=${row.id}`)
+      }
+    },
+    {
+      icon: 'money-bill-1',
+      title: "Cetak Biaya Tagihan",
+      class: 'bg-purple-600 text-light-100',
+      click(row) {
+        window.open(`${store.server.url_backend}/web/biaya_tagihan?export=pdf&size=a4&orientation=potrait&id=${row.id}`)
       }
     },
     {
@@ -677,11 +685,11 @@ const landing = reactive({
     field: 'customer.nama_perusahaan',
     filter: true,
     sortable: true,
-    flex: 1,
+    flex: 1.5,
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Tanggal',
@@ -692,7 +700,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   // {
   //   headerName: 'No.Faktur Pajak',
@@ -714,7 +722,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     valueFormatter: (params) => {
 
       if (params.value) {

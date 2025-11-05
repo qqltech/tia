@@ -26,7 +26,7 @@ const setTipe = (val) => {
 const tsId = `ts=` + (Date.parse(new Date()))
 
 // ENDPOINT API
-const endpointApi = '/m_tarif_komisi'
+const endpointApi = 'm_tarif_komisi'
 onBeforeMount(() => {
   document.title = 'Master Tarif Komisi'
 })
@@ -59,7 +59,7 @@ const table = reactive({
     },
     {
       headerName: 'Kode Tarif Komisi',
-      field: 'kode_tarif_komisi',
+      field: 'kode',
       filter: true,
       sortable: true,
       flex: 1,
@@ -69,28 +69,116 @@ const table = reactive({
       cellClass: ['border-r', '!border-gray-200', 'justify-start']
     },
     {
-      headerName: 'Status',
-      field: 'is_active',
-      flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      headerName: 'Tipe Tarif Komisi',
+      field: 'tipe_komisi',
+      filter: true,
       sortable: true,
-      // resizable: true,
-      // wrapText: true,
+      flex: 1,
       filter: 'ColFilter',
-      cellRenderer: (params) => {
-        return params.data['is_active'] == 1
-          ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['is_active']?.toUpperCase()}</span>`
-          : (params.data['is_active'] == 'DRAFT' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['is_active']?.toUpperCase()}</span>`
-            : (params.data['is_active'] == 'POST' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['is_active']?.toUpperCase()}</span>`
-              : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['is_active']?.toUpperCase()}</span>`))
+      resizable: true,
+      wrapText: true,
+      cellClass: ['border-r', '!border-gray-200', 'justify-center']
+    },
+    {
+      headerName: 'Tipe Order',
+      field: 'tipe_order.deskripsi',
+      filter: true,
+      sortable: true,
+      flex: 1,
+      filter: 'ColFilter',
+      resizable: true,
+      wrapText: true,
+      cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+      valueGetter: (params) => {
+        return params.data?.tipe_order?.deskripsi || '-';
       }
     },
+    {
+      headerName: 'Customer',
+      field: 'm_customer.nama_perusahaan',
+      filter: true,
+      sortable: true,
+      flex: 1.5,
+      filter: 'ColFilter',
+      resizable: true,
+      wrapText: true,
+      cellClass: ['border-r', '!border-gray-200', 'justify-center']
+    },
+    {
+      headerName: 'Tarif 20',
+      field: 'container_tarif_20',
+      filter: true,
+      sortable: true,
+      flex: 1,
+      filter: 'ColFilter',
+      resizable: true,
+      wrapText: true,
+      cellClass: ['border-r', '!border-gray-200', 'justify-end'],
+      valueFormatter: (params) => {
+        if (params.value == null || params.value === '') return '-';
+        return 'Rp ' + Number(params.value).toLocaleString('id-ID');
+      }
+    },
+    {
+      headerName: 'Tarif 40',
+      field: 'container_tarif_40',
+      filter: true,
+      sortable: true,
+      flex: 1,
+      filter: 'ColFilter',
+      resizable: true,
+      wrapText: true,
+      cellClass: ['border-r', '!border-gray-200', 'justify-end'],
+      valueFormatter: (params) => {
+        if (params.value == null || params.value === '') return '-';
+        return 'Rp ' + Number(params.value).toLocaleString('id-ID');
+      }
+    },
+    {
+      headerName: 'Tarif Dokumen',
+      field: 'tarif_dokumen',
+      filter: true,
+      sortable: true,
+      flex: 1,
+      filter: 'ColFilter',
+      resizable: true,
+      wrapText: true,
+      cellClass: ['border-r', '!border-gray-200', 'justify-end'],
+      valueFormatter: (params) => {
+        const val = params.value;
+        if (val == null || val === '' || isNaN(val)) return '-';
+        return 'Rp ' + Number(val).toLocaleString('id-ID');
+      }
+    },
+    {
+      headerName: 'Tarif Order',
+      field: 'tarif_order',
+      filter: true,
+      sortable: true,
+      flex: 1,
+      filter: 'ColFilter',
+      resizable: true,
+      wrapText: true,
+      cellClass: ['border-r', '!border-gray-200', 'justify-end'],
+      valueFormatter: (params) => {
+        const val = params.value;
+        if (val == null || val === '' || isNaN(val)) return '-';
+        return 'Rp ' + Number(val).toLocaleString('id-ID');
+      }
+    },
+    {
+      headerName: 'Status', field: 'is_active', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+      sortable: true, filter: 'ColFilter', cellRenderer: ({ value }) =>
+        value === true
+          ? '<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>'
+          : '<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Inactive</span>'
+    }
   ],
   actions: [
     {
       title: 'Hapus', icon: 'trash', class: 'bg-red-600 text-light-100',
       click: deleteData,
-      show: (row) => row.status === 'DRAFT',
+      // show: (row) => row.status === 'DRAFT',
     },
     {
       title: 'Read', icon: 'eye', class: 'bg-green-600 text-light-100',
@@ -98,8 +186,7 @@ const table = reactive({
     },
     {
       title: 'Edit', icon: 'edit', class: 'bg-blue-600 text-light-100',
-      click: row => router.push(`${route.path}/${row.id}?action=Edit&${tsId}`),
-      show: (row) => row.status === 'DRAFT' || row.status === 'REVISED',
+      click: row => router.push(`${route.path}/${row.id}?action=Edit&${tsId}`)
     },
     {
       title: 'Copy', icon: 'copy', class: 'bg-gray-600 text-light-100',
@@ -202,11 +289,23 @@ async function deleteData(row) {
 }
 
 // FILTER
-const filterButton = ref(null);
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
+const activeBtn = ref()
+function filterShowData(params, noBtn) {
+  if (activeBtn.value === noBtn) {
+    activeBtn.value = null
+  } else {
+    activeBtn.value = noBtn
+  }
+  if (params) {
+    landing.api.params.where = `this.is_active=true`
+  } else if (activeBtn.value == null) {
+    // clear params filter
+    landing.api.params.where = null
+  } else {
+    landing.api.params.where = `this.is_active=false`
+  }
+
+  apiTable.value.reload()
 }
 
 onActivated(() => {
@@ -268,6 +367,7 @@ onBeforeMount(async () => {
       if (!res.ok) throw new Error("Failed when trying to read data")
       const resultJson = await res.json()
       initialValues = resultJson.data
+      console.log(initialValues)
     } catch (err) {
       isBadForm.value = true
       swal.fire({
@@ -283,7 +383,7 @@ onBeforeMount(async () => {
   }
 
   for (const key in initialValues) {
-    values[key] = initialValues[key]
+    data[key] = initialValues[key]
   }
 })
 

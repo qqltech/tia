@@ -20,12 +20,13 @@ class ttagihan extends Migration
             $table->string('status',10);
             $table->date('tgl');
             $table->string('tipe_tagihan')->nullable();
-            $table->decimal('total_amount',18,4);
+            $table->decimal('total_amount',18,4)->nullable();
             $table->decimal('ppn',18,4);
             $table->decimal('piutang',18,4)->nullable();
             // $table->decimal('tarif_coo',18,4);
             // $table->decimal('tarif_ppjk',18,4);
             $table->decimal('grand_total',18,4)->nullable();
+            $table->decimal('grand_total_amount',18,4)->nullable();
             $table->date('tgl_nota')->nullable();
             
             $table->text('catatan')->nullable();

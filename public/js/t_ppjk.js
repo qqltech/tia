@@ -266,6 +266,7 @@ onBeforeMount(async () => {
     if (actionText.value === 'Copy') {
       data.id = null;
       data.status = 'DRAFT';
+      data.no_draft = null
     }
 
     if (data.status !== 'DRAFT') {

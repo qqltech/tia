@@ -174,12 +174,10 @@
         params: {
           // scopes:'GetNoOrder',
           simplest:false,
-          // transform:true,
-          // join:true,
+          //where: `this.m_customer_id = ${data.m_customer_id}`,
           // override:true,
           // where:`this.id NOT IN(${dataOrderId.join(', ')}) AND this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id: 0 }`,
-          searchfield: 'this.no_suffix, this.no_prefix, this.jenis',
-          // selectfield: 'this.no_id,this.no_prefix, this.nama, this.alamat_domisili' 
+          //searchfield: 'this.no_suffix, this.no_prefix, this.jenis'
         },
         onsuccess: (response) => {
           return response;
