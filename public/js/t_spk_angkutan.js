@@ -188,7 +188,7 @@ const table = reactive({
       icon: 'ban',
       title: "Cancel Data",
       class: 'bg-orange-700 rounded-lg text-white',
-      // show: (row) => row['status']?.toUpperCase() == 'APPROVED' && store.user.data.tipe?.toUpperCase() === 'SUPER ADMIN',
+      show: (row) => row.status == 'APPROVED',
       async click(row) {
         swal.fire({
           icon: 'warning',

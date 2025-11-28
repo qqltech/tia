@@ -21,6 +21,7 @@ class tpurchaseorder extends Migration
             // $table->bigInteger('ppn')->comment('{"src":"set.m_general.id"}')->nullable()->change();
             // \DB::statement('alter table t_purchase_order alter column ppn type bigint using ppn::bigint');
             // $table->bigInteger('tipe_po')->comment('{"src":"set.m_business_unit.id"}')->nullable();
+            // $table->decimal('ppn_persen',18,4)->nullable();
         });
     }
 }

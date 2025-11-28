@@ -320,7 +320,14 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
     public function custom_print()
     {
         $id = request("id");
-        // $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]);
+        return ["success" => true];
+    }
+
+    public function custom_print_biaya()
+    {
+        $id = request("id");
+        $status = $this->where("id", $id)->update(["status" => "CLOSED"]);
         return ["success" => true];
     }
 

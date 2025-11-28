@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\CustomModels;
+use Carbon\Carbon;
 
 class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
 {
@@ -328,7 +329,7 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
             "form_name" => "t_spk_angkutan",
             "trx_nomor" => $trx->no_spk,
             "trx_date" => Date("Y-m-d"),
-            "trx_creator_id" => $trx->creator_id,
+            "trx_creator_id" => $trx->creator_id ?? 1,
         ];
 
         $app = $this->approval->approvalCreateTicket($conf);
@@ -571,53 +572,63 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         try {
             $id = $req->id;
 
-            // Validasi input
             if (!$id) {
-                return response()->json([
-                    'message' => 'ID tidak ditemukan.'
-                ], 400);
+                return response()->json(['message' => 'ID tidak ditemukan.'], 400);
             }
 
             // Ambil data t_spk_angkutan
             $spk = \DB::table('t_spk_angkutan')->where('id', $id)->first();
-
             if (!$spk) {
-                return response()->json([
-                    'message' => 'Data SPK Angkutan tidak ditemukan.'
-                ], 404);
+                return response()->json(['message' => 'Data SPK Angkutan tidak ditemukan.'], 404);
             }
 
-            // Update status ke CANCEL
+            \DB::beginTransaction();
+
+            // Update status SPK menjadi CANCEL
             \DB::table('t_spk_angkutan')
                 ->where('id', $id)
                 ->update([
                     'status' => 'CANCEL',
-                    'updated_at' => now()
+                    'updated_at' => \Carbon\Carbon::now()
                 ]);
 
-            // Update t_premi yang berelasi, set tarif_premi = 0
-            \DB::table('t_premi')
+            // Ambil semua t_premi yang terkait
+            $premis = \DB::table('t_premi')
                 ->where('t_spk_angkutan_id', $id)
-                ->update([
-                    'tarif_premi' => 0,
-                    'updated_at' => now()
-                ]);
+                ->get();
+
+            // Pastikan total_sangu dari t_spk_angkutan dalam bentuk numerik
+            $total_sangu_spk = floatval($spk->total_sangu ?? 0);
+
+            foreach ($premis as $premi) {
+                $tarif_premi = 0;
+                $total_premi = $total_sangu_spk - $tarif_premi;
+
+                \DB::table('t_premi')
+                    ->where('id', $premi->id)
+                    ->update([
+                        'tarif_premi' => $tarif_premi,
+                        'total_premi' => $total_premi,
+                        'updated_at' => \Carbon\Carbon::now()
+                    ]);
+            }
+
+            \DB::commit();
 
             return response()->json([
-                'message' => 'Data berhasil di-cancel.',
-                'data' => [
-                    't_spk_angkutan_id' => $id
-                ]
+                'message' => 'Data berhasil di-cancel dan premi diperbarui.',
+                'data' => ['t_spk_angkutan_id' => $id]
             ], 200);
+
         } catch (\Throwable $e) {
+            \DB::rollBack();
+
             return response()->json([
                 'message' => 'Terjadi kesalahan saat cancel data.',
-                'data' => [
-                    'errorText' => $e->getMessage()
-                ]
+                'data' => ['errorText' => $e->getMessage()]
             ], 500);
         }
     }
 
-     
+
 }

@@ -12,8 +12,9 @@ class tlpbd extends Migration
         Schema::table($this->tableName, function (Blueprint $table) {
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            //$table->dropColumn([ ]);
+            // $table->dropColumn(['uom_id']);
             // $table->decimal('harga',18,4)->nullable(false)->change();
+            // $table->boolean('is_bundling')->nullable();
         });
     }
 }

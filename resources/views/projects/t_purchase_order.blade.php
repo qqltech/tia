@@ -136,6 +136,10 @@
         :check="false" />
     </div>
     <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_po" @input="v=>data.no_po=v"
+        :errorText="formErrors.no_po?'failed':''" :hints="formErrors.no_po" placeholder="No. PO" :check="false" />
+    </div>
+    <div>
       <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="data.status"
         @input="v=>data.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status" valueField="id"
         displayField="key" :options="[{'id' : 'Posted' , 'key' : 'Posted'},
@@ -148,6 +152,22 @@
       <FieldX :bind="{ disabled: true, readonly: true}" class="w-full !mt-3" :value="data.tanggal"
         :errorText="formErrors.tanggal?'failed' :''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
         :check="false" type="date" label="Tanggal" placeholder="Pilih Tanggal" />
+    </div>
+    <div>
+      <FieldSelect class="w-full !mt-3" valueField="id" :bind="{ disabled: !actionText, clearable:true }"
+        displayField="nama" :value="data.tipe_po" @input="(v)=>data.tipe_po=v"
+        :errorText="formErrors.tipe_po?'failed':''" :hints="formErrors.tipe_po" :api="{
+              url: `${store.server.url_backend}/operation/m_business_unit`,
+              headers: { 'Content-Type': 'Application/json', 
+              Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                //scopes: 'NoFakturNew,NoFakturPI'
+              }
+            }" label="Cabang" fa-icon="sort-desc" placeholder="Pilih Cabang" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.tipe" @input="v=>data.tipe=v"
+        :errorText="formErrors.tipe?'failed':''" :hints="formErrors.tipe" placeholder="Tipe" :check="false" />
     </div>
     <div>
       <FieldPopup class="w-full !mt-3" :api="{
@@ -220,10 +240,6 @@
       ]" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_po" @input="v=>data.no_po=v"
-        :errorText="formErrors.no_po?'failed':''" :hints="formErrors.no_po" placeholder="No. PO" :check="false" />
-    </div>
-    <div>
       <FieldPopup class="w-full !mt-3" :api="{
         url: `${store.server.url_backend}/operation/m_supplier`,
         headers: {
@@ -284,16 +300,6 @@
       ]" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.tipe" @input="v=>data.tipe=v"
-        :errorText="formErrors.tipe?'failed':''" :hints="formErrors.tipe" placeholder="Tipe" :check="false" />
-    </div>
-    <div>
-      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="data.estimasi_kedatangan"
-        :errorText="formErrors.estimasi_kedatangan?'failed':''" @input="v=>data.estimasi_kedatangan=v"
-        :hints="formErrors.estimasi_kedatangan" :check="false" type="date" label="Estimasi Kedatangan"
-        placeholder="Pilih Estimasi Kedatangan" />
-    </div>
-    <div>
       <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.termin"
         @input="v=>data.termin=v" :errorText="formErrors.termin?'failed':''" :hints="formErrors.termin" valueField="id"
         displayField="deskripsi" :api="{
@@ -306,14 +312,23 @@
           }" label="Termin" fa-icon="sort-desc" placeholder="Pilih Termin" :check="false" />
     </div>
     <div>
-      <!-- <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.ppn"
-        @input="v=>data.ppn=v" :errorText="formErrors.ppn?'failed':''" :hints="formErrors.ppn" valueField="id"
-        displayField="key" :options="[{'id' : 'INCLUDE' , 'key' : 'INCLUDE'},
-      {'id' : 'EXCLUDE', 'key' : 'EXCLUDE'}]" placeholder="PPN" label="PPN" fa-icon="sort-desc" :check="false" /> -->
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.ppn"
-        @input="v=>data.ppn=v" :errorText="formErrors.ppn?'failed':''" :hints="formErrors.ppn" valueField="id"
-        displayField="deskripsi" :options="allPpnOptions" placeholder="PPN" label="PPN" fa-icon="sort-desc"
-        :check="false" />
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3"
+        :value="data.estimasi_kedatangan" :errorText="formErrors.estimasi_kedatangan?'failed':''"
+        @input="v=>data.estimasi_kedatangan=v" :hints="formErrors.estimasi_kedatangan" :check="false" type="date"
+        label="Estimasi Kedatangan" placeholder="Pilih Estimasi Kedatangan" />
+    </div>
+    <div class="flex gap-x-2">
+      <FieldSelect class="w-[45%] !mt-3" :bind="{ disabled: !actionText, clearable:true }" :value="data.ppn"
+        @input="v=>data.ppn=v" @update:valueFull="(response)=>{
+        $log(response);
+        data.ppn_persen = response.deskripsi2
+        }" :errorText="formErrors.ppn?'failed':''" :hints="formErrors.ppn" valueField="id" displayField="deskripsi"
+        :options="allPpnOptions" placeholder="Pilih PPN" label="PPN" fa-icon="sort-desc" :check="false" />
+
+      <FieldNumber v-if="ppnType === 'EXCLUDE'" class="w-[40%] !mt-3" :bind="{ readonly: true }"
+        :value="data.ppn_persen" :errorText="formErrors.ppn_persen?'failed':''" @input="v=>data.ppn_persen=v"
+        :hints="formErrors.ppn_persen" :check="false" />
+      <button class="border-1 rounded w-[45px] !mt-3 col-span-2 ml-0 h-[34px] text-gray-400 bg-gray-100">%</button>
     </div>
     <div class="flex flex-col gap-2" v-if="data.tipe=='Asset'">
       <label
@@ -340,20 +355,8 @@
       </div>
     </div>
 
-    <div>
-      <FieldSelect class="w-full !mt-3" valueField="id" :bind="{ disabled: !actionText, clearable:true }" displayField="nama" :value="data.tipe_po"
-        @input="(v)=>data.tipe_po=v" :errorText="formErrors.tipe_po?'failed':''" :hints="formErrors.tipe_po" :api="{
-              url: `${store.server.url_backend}/operation/m_business_unit`,
-              headers: { 'Content-Type': 'Application/json', 
-              Authorization: `${store.user.token_type} ${store.user.token}`},
-              params: {
-                //scopes: 'NoFakturNew,NoFakturPI'
-              }
-            }" label="Tipe PO" fa-icon="sort-desc" placeholder="Pilih Tipe PO" :check="false" />
-    </div>
-
-    <div v-if="data.tipe=='Asset'">
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.b2b_link" @input="v=>data.b2b_link=v"
+    <div v-if="data.tipe=='Asset' && data.b2b == true">
+      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.b2b_link" @input="v=>data.b2b_link=v"
         :errorText="formErrors.b2b_link?'failed':''" :hints="formErrors.b2b_link" placeholder="B2B Link"
         :check="false" />
     </div>
@@ -361,7 +364,7 @@
       <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.catatan" @input="v=>data.catatan=v"
         :hints="formErrors.catatan" :check="false" type="textarea" label="Catatan" placeholder="Catatan" />
     </div>
-    <div>
+    <div v-if="route.query.is_approval">
       <FieldX :bind="{ readonly: data.status != 'IN APPROVAL' }" class="w-full !mt-3" :value="data.alasan_revisi"
         :errorText="formErrors.alasan_revisi?'failed':''" @input="v=>data.alasan_revisi=v"
         :hints="formErrors.alasan_revisi" :check="false" type="textarea" label="Alasan Revisi"
@@ -383,7 +386,9 @@
             simplest: true, 
             searchfield: 'this.kode, this.nama_item, this.tipe_item',
             notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`,
-            where: `this.is_active = true AND this.tipe_item = 'ITEM'`
+            //where: `this.is_active = true AND this.tipe_item = 'ITEM'`
+            scopes: 'GetQTY',
+            where: `this.is_active = true`
             },
             onsuccess: (response) => {
               response.data = [...response.data].map((dt) => {
@@ -393,12 +398,12 @@
                   kode: dt.kode,
                   nama_item: dt.nama_item,
                   tipe_item: dt.tipe_item,
-                  quantity: 0,
+                  quantity: dt.qty_stock,
                   disc1: 0,
                   disc2: 0,
                   harga: 0,
                   total_amount: 0,
-                  satuan: 'Pcs',
+                  satuan: dt['uom.deskripsi'],
                   catatan: '',
                   is_bundling: dt.is_bundling,
                 }
@@ -452,7 +457,9 @@
             simplest: true, 
             searchfield: 'this.kode, this.nama, this.tipe_item',
             notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`,
-            where: `this.is_active = true AND this.tipe_item = 'ASSET'`
+            //where: `this.is_active = true AND this.tipe_item = 'ASSET'`,
+            where: `this.is_active = true`,
+            scopes: 'GetQTY',
             },
             onsuccess: (response) => {
               response.data = [...response.data].map((dt) => {
@@ -462,12 +469,12 @@
                   kode: dt.kode,
                   nama_item: dt.nama_item,
                   tipe_item: dt.tipe_item,
-                  quantity: 0,
+                  quantity: dt.qty_stock,
                   disc1: 0,
                   disc2: 0,
                   harga: 0,
                   total_amount: 0,
-                  satuan: 'Pcs',
+                  satuan: dt['uom.deskripsi'],
                   catatan: '',
                 }
               })
@@ -632,20 +639,20 @@
                 :hints="formErrors.total_disc" :check="false" />
               <!-- <p class="text-black leading-none">{{ detailArr[i].total_disc }}</p> -->
             </td>
-            <td class="p-1 text-center border border-[#CACACA]">
-              <div class="flex w-10 space-x-2">
+            <td class="p-1 text-center justify-center items-center border border-[#CACACA]">
+              <div>
                 <div class="flex justify-center items-center space-x-1">
                   <input
-                  class="h-6 w-6 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   type="checkbox"
                   :disabled="!actionText"
                   v-model="detailArr[i].is_bundling"
                   @change="changeIsBundling(i)"
                 />
                 </div>
-                <div class="flex items-center justify-start">
+                <!-- <div class="flex items-center justify-start">
                   <i class="text-green-500">IYA</i>
-                </div>
+                </div> -->
               </div>
             </td>
             <td class="p-1 text-center border border-[#CACACA]">
@@ -723,13 +730,8 @@
                 <td class="border px-2 py-1 font-medium ">No PO</td>
                 <td class="border px-2 py-1 font-medium ">Qty</td>
                 <td class="border px-2 py-1 font-medium ">Harga</td>
-                <td class="border px-2 py-1 font-medium ">Disc1 (%)</td>
-                <td class="border px-2 py-1 font-medium ">Disc2 (%)</td>
-                <td class="border px-2 py-1 font-medium ">Disc Amount</td>
-                <td class="border px-2 py-1 font-medium ">Total Amount</td>
                 <td class="border px-2 py-1 font-medium ">Total Diskon</td>
-                <td class="border px-2 py-1 font-medium ">Netto</td>
-                <!-- <td class="border px-2 py-1 font-medium ">Status Tracking</td> -->
+                <td class="border px-2 py-1 font-medium ">Total Amount</td>
               </tr>
             </thead>
             <tr class="border" v-if="dataHistoryDataItem?.items.length" v-for="d,i in dataHistoryDataItem?.items"
@@ -739,13 +741,8 @@
               <td class="border px-2 py-1">{{ d['t_no_po.no_po'] ?? '-' }}</td>
               <td class="border px-2 py-1">{{ d.quantity ? (d.quantity).toLocaleString('id'):'-' }}</td>
               <td class="border px-2 py-1">{{ d.harga ? (d.harga).toLocaleString('id'):'-' }}</td>
-              <td class="border px-2 py-1">{{ d.disc1 ? (d.disc1).toLocaleString('id'):'-' }}</td>
-              <td class="border px-2 py-1">{{ d.disc2 ? (d.disc2).toLocaleString('id'):'-' }}</td>
-              <td class="border px-2 py-1">{{ d.disc_amt ? (d.disc_amt).toLocaleString('id'):'-' }}</td>
-              <td class="border px-2 py-1">{{ d.total_amt ? (d.total_amt).toLocaleString('id'):'-' }}</td>
               <td class="border px-2 py-1">{{ d.total_disc ? (d.total_disc).toLocaleString('id'):'-' }}</td>
-              <td class="border px-2 py-1">{{ d.netto ? (d.netto).toLocaleString('id'):'-' }}</td>
-              <!-- <td class="border px-2 py-1">{{ d.status ?? '-' }}</td> -->
+              <td class="border px-2 py-1">{{ d.total_amt ? (d.total_amt).toLocaleString('id'):'-' }}</td>
             </tr>
             <tr v-else class="text-center">
               <td colspan="11" class="py-[20px]">

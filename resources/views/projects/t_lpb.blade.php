@@ -16,7 +16,6 @@
                 <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
             </div>
         </div>
-
     <div>
       <RouterLink :to="$route.path+'/create?'+(Date.parse(new Date()))"
         class="border border-blue-600 text-blue-600 bg-white  hover:bg-blue-600 hover:text-white duration-300 transform hover:-translate-y-0.5 rounded-md py-1 px-2">
@@ -69,6 +68,7 @@
               }else{
                 values.m_supplier_id=null
               }   
+              $log(v)
             }"
             :api="{
               url: `${store.server.url_backend}/operation/t_purchase_order`,
@@ -304,23 +304,20 @@
                 />
               </td>
               <td class="p-2 border border-[#CACACA]">
-                <FieldSelect :bind="{ disabled: !actionText, clearable:true }" class="w-full py-2 !mt-0" :value="item.uom"
+                <FieldSelect :bind="{ disabled: true, clearable:true }" class="w-full py-2 !mt-0" :value="item.uom_id"
                   @input="v=>{
                       if(v){
-                        item.uom=v
+                        item.uom_id=v
                       }else{
-                        item.uom=null
+                        item.uom_id=null
                       }
-                    }" :errorText="formErrors.uom?'failed':''" :hints="formErrors.uom" valueField="deskripsi"
+                    }" :errorText="formErrors.uom_id?'failed':''" :hints="formErrors.uom_id" valueField="id"
                   displayField="deskripsi" :api="{
                         url: `${store.server.url_backend}/operation/m_general`,
                         headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                         params: {
                           simplest:true,
-                          transform:false,
-                          join:false,
                           where:`this.is_active=true and this.group='UOM'`
-
                         }
                     }" placeholder="Pilih UoM" label="" :check="false" />
               </td>
@@ -338,8 +335,8 @@
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldX :bind="{ readonly: true, clearable:false }"
-                  class="w-full py-2 !mt-0" :value="item.bundling" @input="v=>item.bundling=v"
-                  :errorText="formErrors.bundling?'failed':''" :hints="formErrors.bundling"
+                  class="w-full py-2 !mt-0" :value="item.is_bundling" @input="v=>item.is_bundling=v"
+                  :errorText="formErrors.is_bundling?'failed':''" :hints="formErrors.is_bundling"
                   :check="false"
                 />
               </td>

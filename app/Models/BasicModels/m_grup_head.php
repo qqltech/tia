@@ -24,7 +24,7 @@ class m_grup_head extends Model
     public $rules       = [];
     public $joins       = [];
     public $details     = ["m_grup_head_d"];
-    public $heirs       = ["t_premi","m_tarif_premi_bckp"];
+    public $heirs       = ["m_tarif_premi_bckp","t_premi"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

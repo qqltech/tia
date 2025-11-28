@@ -152,7 +152,191 @@
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div>
+        <ButtonMultiSelect title="Preview Print" @add="onPreview" :api="{
+          url: `${store.server.url_backend}/operation/${endpointApi}`,
+          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          params:{
+            searchfield: 'this.no_draft, this.no_bkk, this.tipe_bkk, this.tanggal, this.total_amt, this.status',
+            //where: `this.status = 'APPROVED'`
+          },
+          onsuccess:(response)=>{
+            response.data = [...response.data].map((dt)=>{
+              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
+              return dt
+            })
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
+        }" :columns="[{
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            headerName: 'No',
+            valueGetter:(params)=>{
+              return ''
+            },
+            width:60,
+            sortable: false, resizable: true, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+          },
+          {
+            flex: 1,
+            headerName:'No Draft',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_draft',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'No BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tanggal',
+            sortable: false, resizable: true, filter: false,
+            field: 'tanggal',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tipe BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'tipe_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Total Amount',
+            sortable: false, resizable: true, filter: false,
+            field: 'total_amt',
+            cellClass: ['justify-end','!border-gray-200'],
+            filter:'ColFilter',
+            valueFormatter: params => {
+              if (params == null) return '-';
+              return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+            }
+          },
+          {
+            flex: 1,
+            headerName:'Status',
+            sortable: false, resizable: true, filter: false,
+            field: 'status',
+            filter:'ColFilter',
+            cellClassRules: {
+              'text-green-600': params => params.value === 'APPROVED',
+              'text-purple-600': params => params.value === 'PRINTED',
+              'text-gray-600': params => params.value === 'DRAFT',
+            },
+            cellClass: ['justify-center','!border-gray-200']
+          }
+          ]" @selection-change="selectedItems = $event">
+          <div class="flex items-center space-x-2">
+            <div
+              class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+              <icon fa="eye" />
+              Preview Print
+            </div>
+          </div>
+        </ButtonMultiSelect>
+      </div>
+      <div>
+        <ButtonMultiSelect title="Multiple Print" @add="onPrint" :api="{
+          url: `${store.server.url_backend}/operation/${endpointApi}`,
+          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          params:{
+            searchfield: 'this.no_draft, this.no_bkk, this.tipe_bkk, this.tanggal, this.total_amt, this.status',
+            where: `this.status = 'APPROVED'`
+          },
+          onsuccess:(response)=>{
+            response.data = [...response.data].map((dt)=>{
+              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
+              return dt
+            })
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
+        }" :columns="[{
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            headerName: 'No',
+            valueGetter:(params)=>{
+              return ''
+            },
+            width:60,
+            sortable: false, resizable: true, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+          },
+          {
+            flex: 1,
+            headerName:'No Draft',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_draft',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'No BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tanggal',
+            sortable: false, resizable: true, filter: false,
+            field: 'tanggal',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tipe BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'tipe_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Total Amount',
+            sortable: false, resizable: true, filter: false,
+            field: 'total_amt',
+            cellClass: ['justify-end','!border-gray-200'],
+            filter:'ColFilter',
+            valueFormatter: params => {
+              if (params == null) return '-';
+              return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+            }
+          },
+          {
+            flex: 1,
+            headerName:'Status',
+            sortable: false, resizable: true, filter: false,
+            field: 'status',
+            cellClass: ['justify-center','!border-gray-200', 'text-green-600'],
+            filter:'ColFilter'
+          }
+          ]" @selection-change="selectedItems = $event">
+          <div class="flex items-center space-x-2">
+            <div
+              class="bg-amber-600 text-white font-semibold hover:bg-amber-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+              <icon fa="print" />
+              Multiple Print
+            </div>
+          </div>
+        </ButtonMultiSelect>
+      </div>
     </template>
   </TableApi>
 </div>
@@ -206,8 +390,8 @@
     </div>
     <div>
       <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" :value="data.no_reference"
-        :errorText="formErrors.no_reference?'failed':''" @input="v=>data.no_reference=v" :hints="formErrors.no_reference" label="No. Reference"
-        placeholder="No. Reference" :check="false" />
+        :errorText="formErrors.no_reference?'failed':''" @input="v=>data.no_reference=v"
+        :hints="formErrors.no_reference" label="No. Reference" placeholder="No. Reference" :check="false" />
     </div>
     <div>
       <FieldX :bind="{ readonly: !actionText, disabled: !actionText, clearable:false }" class="w-full !mt-3"

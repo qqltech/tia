@@ -36,7 +36,7 @@ const table = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.no_draft, this.no_po',
+      searchfield: 'this.id, this.no_draft, this.no_po, m_supplier.nama',
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };

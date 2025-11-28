@@ -325,6 +325,36 @@ async function onSave() {
 
 //  @else----------------------- LANDING
 
+async function onPreview(rows = []) {
+  const ids = [...new Set(rows.map(r => r.id).filter(Boolean))]
+
+  if (!ids.length) {
+    await swal.fire({
+      icon: 'warning',
+      text: 'Tidak ada item yang dipilih untuk dicetak'
+    })
+    return
+  }
+
+  isRequesting.value = true
+
+  try {
+    const previewUrl = `${store.server.url_backend}/web/biaya_tagihan_p?${ids.map(i => `id[]=${i}`).join('&')}`
+    window.open(previewUrl, '_blank')
+
+    router.replace('/' + modulPath)
+  } catch (err) {
+    console.error(err)
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      text: err?.message || err
+    })
+  } finally {
+    isRequesting.value = false
+  }
+}
+
 
 const filterButton = ref(null);
 
@@ -408,8 +438,47 @@ const landing = reactive({
       icon: 'money-bill-1',
       title: "Cetak Biaya Tagihan",
       class: 'bg-purple-600 text-light-100',
-      click(row) {
-        window.open(`${store.server.url_backend}/web/biaya_tagihan?export=pdf&size=a4&orientation=potrait&id=${row.id}`)
+      show: (row) => row.status === 'POST',
+      async click(row) {
+        try {
+          const dataURL = `${store.server.url_backend}/operation/t_buku_order/print_biaya?id=${row.id}`;
+          isRequesting.value = true;
+          const response = await fetch(dataURL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `${store.user.token_type} ${store.user.token}`
+            },
+          });
+
+          if (!response.ok) {
+            const responseJson = await response.json();
+            if ([400, 422, 500].includes(response.status)) {
+              formErrors.value = responseJson.errors || {};
+              throw new Error(responseJson?.message + " " + responseJson?.data?.errorText || "Failed when trying to post data");
+            } else {
+              throw new Error("Failed when trying to print data");
+            }
+          }
+
+          const responseJson = await response.json();
+          swal.fire({
+            icon: 'success',
+            text: responseJson?.message || 'PRINTED'
+          });
+          window.open(`${store.server.url_backend}/web/biaya_tagihan?export=pdf&size=a4&orientation=potrait&id=${row.id}`)
+        } catch (err) {
+          isBadForm.value = true;
+          swal.fire({
+            icon: 'error',
+            iconColor: '#1469AE',
+            confirmButtonColor: '#1469AE',
+            text: err.message
+          });
+        } finally {
+          isRequesting.value = false;
+          apiTable.value.reload();
+        }
       }
     },
     {
@@ -473,7 +542,7 @@ const landing = reactive({
       icon: 'print',
       title: "Cetak",
       class: 'bg-amber-600 text-light-100',
-      // show: (row) => row['status'] !== 'DRAFT',
+      show: (row) => row.status === 'DRAFT',
       async click(row) {
         try {
           const dataURL = `${store.server.url_backend}/operation/t_buku_order/print?id=${row.id}`;
@@ -528,7 +597,7 @@ const landing = reactive({
       searchfield: 'this.tgl, this.no_buku_order, this.no_invoice, this.no_bl, this.nama_kapal, this.jenis_barang, this.tujuan_asal, this.nama_pelayaran, this.kode_pelayaran_id, this.pelabuhan_id, this.m_customer_kode, this.m_customer_nama_perusahaan, this.t_no_aju, this.t_ppjk_no_peb_pib, this.no_eir, this.prefix, this.sufix'
     },
     onsuccess(response) {
-      console.log("response"+response);
+      console.log("response" + response);
       response.page = response.current_page
       response.hasNext = response.has_next
       return response
@@ -610,15 +679,9 @@ const landing = reactive({
         ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
         : (params.data['status'] == 'POST' ? `<span class="text-yellow-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
           : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-            : (params.data['status'] == 'completed' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-              : (params.data['status'] == 11 ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                : (params.data['status'] == 21 ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                  : (params.data['status'] == 5 ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                    : (params.data['status'] == 6 ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                      : (params.data['status'] == 7 ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                        : (params.data['status'] == 9 ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                          : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Status Tidak Terdaftar</span>`))))))))
-        )
+            : (params.data['status'] == 'PRINTED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+              : (params.data['status'] == 'CLOSED' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Status Tidak Terdaftar</span>`))))
     }
   }
   ]

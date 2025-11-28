@@ -77,6 +77,58 @@
         />
       </div>
       <div>
+         <FieldSelect
+          :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
+          :value="values.category"  @input="v=>{
+            if(v){
+              values.category=v
+            }else{
+              values.category=null
+            }
+          }"
+          :errorText="formErrors.category?'failed':''" 
+          :hints="formErrors.category"
+          valueField="name" displayField="name"
+          :api="{
+              url: `${store.server.url_backend}/operation/m_tipe`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                simplest:true,
+                transform:false,
+                join:false,
+                where:'this.is_active=true'
+              }
+          }"
+          placeholder="Pilih Category" label="Category" :check="true"
+        />
+      </div>
+      <div>
+         <FieldSelect
+          :bind="{ disabled: !actionText, clearable:true }" class="w-full !mt-3"
+          :value="values.coa_disposal"  @input="v=>{
+            if(v){
+              values.coa_disposal=v
+            }else{
+              values.coa_disposal=null
+            }
+          }"
+          :errorText="formErrors.coa_disposal?'failed':''" 
+          :hints="formErrors.coa_disposal"
+          valueField="name" displayField="name"
+          :api="{
+              url: `${store.server.url_backend}/operation/m_tipe`,
+              headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+              params: {
+                simplest:true,
+                transform:false,
+                join:false,
+                where:'this.is_active=true'
+              }
+          }"
+          placeholder="Pilih Coa Disposal" label=" Coa Disposal" :check="true"
+        />
+      </div>
+      <div>
         <FieldX :bind="{ readonly: true }" class="w-full !mt-3"
           :value="values.no" :errorText="formErrors.no?'failed':''"
           @input="v=>values.no=v" :hints="formErrors.no" 
@@ -144,6 +196,70 @@
           label="Tanggal"
           placeholder="Pilih Tanggal"
         />
+      </div>
+      <div>
+        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3"
+          :value="values.tanggal_disposal" :errorText="formErrors.tanggal_disposal?'failed':''"
+          @input="v=>checkTglEdDate(v)"  :hints="formErrors.tanggal_disposal" 
+          :check="false"
+          type="date"
+          label="Tanggal Disposal"
+          placeholder="Pilih Tanggal Disposal"
+        />
+      </div>
+      <div>
+        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3"
+          :value="values.jatuh_tempo" :errorText="formErrors.jatuh_tempo?'failed':''"
+          @input="v=>checkTglEdDate(v)"  :hints="formErrors.jatuh_tempo" 
+          :check="false"
+          type="date"
+          label="Tanggal Jatuh Tempo"
+          placeholder="Pilih Tanggal Jatuh Tempo"
+        />
+      </div>
+      <div>
+        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3"
+          :value="values.catatan_asset" :errorText="formErrors.catatan_asset?'failed':''"
+          @input="v=>checkTglEdDate(v)"  :hints="formErrors.catatan_asset" 
+          :check="false"
+          type="textarea"
+          label="Catatan Asset"
+          placeholder="Catatan Asset"
+        />
+      </div>
+      <div>
+        <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3"
+          :value="values.total_dpp" :errorText="formErrors.total_dpp?'failed':''"
+          @input="v=>checkTglEdDate(v)"  :hints="formErrors.total_dpp" 
+          :check="false"
+          label="Total dpp"
+          placeholder="Total dpp"
+        />
+      </div>
+      <div>
+        <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3"
+          :value="values.total_pajak" :errorText="formErrors.total_pajak?'failed':''"
+          @input="v=>checkTglEdDate(v)"  :hints="formErrors.total_pajak" 
+          :check="false"
+          label="Total Pajak"
+          placeholder="Total Pajak"
+        />
+      </div>
+      <div>
+        <FieldUpload
+          :value="values.berkas_acara" @input="(v)=>values.berkas_acara=v" :maxSize="10"
+          :reducerDisplay="val=>!val?null:val.split(':::')[val.split(':::').length-1]"
+          :api="{
+            url: 'endpoint',
+            headers: { Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: { field: 'berkas_acara' },
+            onsuccess: response=>response,
+            onerror:(error)=>{},
+           }"
+           :hints="formErrors.berkas_acara" placeholder="Berkas Acara" label="Berkas Acara" fa-icon="upload"
+           accept="*" :check="false"  
+        />
+        
       </div>
       <div>
         <FieldPopup 
@@ -395,92 +511,74 @@
         </button>
 
       <div class="mt-4">
-        <table class="w-full overflow-x-auto table-auto border border-[#CACACA]">
-          <thead>
-            <tr class="border">
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize p-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
-                No.
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Periode
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Penyusutan
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Nilai Buku
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Akumulasi
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
-                Status
-              </td>
-              <td
-                class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA] w-[5%]">
-                Action
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, i) in detailArr" :key="item.id" class="border-t" v-if="detailArr.length > 0">
-              <td class="p-2 text-center border border-[#CACACA]">
-                {{ i + 1 }}.
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldX :bind="{ disabled: !actionText, clearable:false }"
-                  class="w-full py-2 !mt-0" :value="item.periode" @input="v=>item.periode=v"
-                  :errorText="formErrors.periode?'failed':''" :hints="formErrors.periode"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                  class="w-full py-2 !mt-0" :value="item.penyusutan" @input="v=>item.penyusutan=v"
-                  :errorText="formErrors.penyusutan?'failed':''" :hints="formErrors.penyusutan"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                  class="w-full py-2 !mt-0" :value="item.nilai_buku" @input="v=>item.nilai_buku=v"
-                  :errorText="formErrors.nilai_buku?'failed':''" :hints="formErrors.nilai_buku"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                  class="w-full py-2 !mt-0" :value="item.akumulasi" @input="v=>item.akumulasi=v"
-                  :errorText="formErrors.akumulasi?'failed':''" :hints="formErrors.akumulasi"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <FieldNumber :bind="{ disabled: !actionText, clearable:false }"
-                  class="w-full py-2 !mt-0" :value="item.status" @input="v=>item.status=v"
-                  :errorText="formErrors.status?'failed':''" :hints="formErrors.status"
-                />
-              </td>
-              <td class="p-2 border border-[#CACACA]">
-                <div class="flex justify-center">
-                  <button type="button" @click="removeDetail(i)" :disabled="!actionText" title="Hapus">
-                      <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path id="Vector" d="M14 1H10.5L9.5 0H4.5L3.5 1H0V3H14M1 16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H11C11.5304 18 12.0391 17.7893 12.4142 17.4142C12.7893 17.0391 13 16.5304 13 16V4H1V16Z" fill="#F24E1E"/>
-                      </svg>
-                    </button>
-                </div>
+        <table class="w-[100%] lg:w-full overflow-x-auto table-auto border border-[#CACACA] mt-4">
+            <thead>
+              <tr class="border">
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  No.
+                </td>
 
-              </td>
-            </tr>
-            <tr v-else class="text-center">
-              <td colspan="7" class="py-[20px]">
-                No data to show
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  Tanggal Penyusutan</td>
+
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  Nilai Akun Sblm Penyusutan</td>
+
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  Nilai Buku Sblm Penyusutan</td>
+
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  Nilai Penyusutan</td>
+
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  Nilai Akum Stl Penyusutan</td>
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  Nilai Buku Stl Penyusutan</td>
+
+                <td
+                  class="text-[#8f8f8f] font-semibold text-[14px] text-capitalize p-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
+                  Status</td>
+            </thead>
+            <tbody>
+              <tr v-if="detailArr.length === 0" class="text-center">
+                <td colspan="9" class="py-[20px] justify-center items-center">No data to show</td>
+              </tr>
+              <tr v-for="(item, i) in detailArr" :key="i" class="border-t" v-if="detailArr.length > 0">
+                <td class="p-2 text-center border border-[#CACACA]">
+                  {{ i + 1 }}.
+                </td>
+                <td class="p-2 border border-[#CACACA] text-center">
+                  {{item['tanggal_penyusutan'] ?? '-'}}
+                </td>
+                <td class="p-2 text-center border border-[#CACACA]">
+                  Rp{{item['nilai_akun_sebelum_penyusutan'] ? parseFloat(item['nilai_akun_sebelum_penyusutan']).toLocaleString('id'):'-' }}
+                </td>
+                <td class="p-2 text-center border border-[#CACACA]">
+                  Rp{{item['nilai_buku_sebelum_penyusutan']? parseFloat(item['nilai_buku_sebelum_penyusutan']).toLocaleString('id'):'-'}}
+                </td>
+                <td class="p-2 text-center border border-[#CACACA]">
+                  Rp{{item['nilai_penyusutan']? parseFloat(item['nilai_penyusutan']).toLocaleString('id'):'-'}}
+                </td>
+                <td class="p-2 text-center border border-[#CACACA]">
+                  Rp{{item['nilai_akumulasi_setelah_penyusutan']? parseFloat(item['nilai_akumulasi_setelah_penyusutan']).toLocaleString('id'):'-'}}
+                </td>
+                <td class="p-2 text-center border border-[#CACACA]">
+                  Rp{{item['nilai_buku_setelah_penyusutan']? parseFloat(item['nilai_buku_setelah_penyusutan']).toLocaleString('id'):'-'}}
+                </td>
+                <td class="border border-[#CACACA]">
+                  <FieldX :bind="{ readonly: true ,disabled : true}" class="!mt-0" :value="item.status"
+                    @input="v=>item.status=v" :check="false" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
       </div>
     </div>
 

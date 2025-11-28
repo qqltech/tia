@@ -254,5 +254,22 @@ class t_purchase_order extends \App\Models\BasicModels\t_purchase_order
     });
 }
 
+    public function scopeGetPOD($query)
+    {
+        return $query->select(
+                't_purchase_order.*',
+                't_purchase_order_d.*',
+                'm_item.*',
+                'uoms.*',
+                't_lpb.*',
+                // 't_lpb_d.*'
+            )
+            ->join('t_purchase_order_d', 't_purchase_order.id', '=', 't_purchase_order_d.t_purchase_order_id')
+            ->join('m_item', 't_purchase_order_d.m_item_id', '=', 'm_item.id')
+            ->join('t_lpb', 't_purchase_order.id', '=', 't_lpb.t_po_id')
+            // ->join('t_lpb_d', 't_lpb.id', '=', 't_lpb_d.t_lpb_id')
+            ->join('set.m_general as uoms', 'm_item.uom_id', '=', 'uoms.id');
+    }
+
 
 }

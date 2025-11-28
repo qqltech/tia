@@ -82,7 +82,7 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
                 $item = \DB::table('m_item')->where('id', $dt->m_item_id)->first();
 
                 // Jika is_bundling = false / 0 baru insert ke m_item_d
-                if ($item && ($item->is_bundling === false || $item->is_bundling === null)) {
+                if ($item && ($dt->is_bundling === false || $dt->is_bundling === null)) {
                     \DB::table('m_item_d')->insert([
                         'm_item' => $dt->m_item_id,
                         'no_lpb' => $data->no_lpb . '-' . $data->tanggal_lpb, // perbaikan operator
@@ -97,11 +97,11 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
             $status = $this->where("id", $id)->update(["status" => "POST"]);
 
             \DB::commit();
-            return ["success" => true];
+            return ["success" => true, "message" => "Data berhasil di Post."];
             
         } catch( \Exception $e){
             \DB::rollback();
-            return response(["error" => true, "success" => false], 422);
+            return response(["error" => true, "success" => false, "message", $e->getMessage()], 422);
         }
     }
 

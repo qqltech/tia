@@ -25,6 +25,7 @@ class mcustomer extends Migration
             // $table->integer('jabatan2')->comment('{"src":"set.m_general.id"}')->nullable()->change();
             // $table->integer('coa_piutang')->comment('{"src":"m_coa.id"}')->nullable()->change();
             // $table->integer('m_customer_group_id')->comment('{"src":"m_customer_group.id"}')->nullable()->change();
+            $table->boolean('is_special_case')->nullable()->default(0);
         });
     }
 }

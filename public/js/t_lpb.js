@@ -102,14 +102,15 @@ async function addAllDetail(data) {
       });
     }
 
-    console.log(resultData)
+    console.log('kemem',resultData)
 
     resultData.forEach((item) => {
+      item['uom_id'] = item['m_item.uom_id']
       item['kode'] = item['m_item.kode']
       item['nama'] = item['m_item.nama_item']
       item['harga'] = item['harga']
       item['t_po_d_id'] = item['clone_id']
-      item['bundling'] = item['is_bundling'] == true ? 'Ya' : 'Tidak'
+      item['is_bundling'] = item['is_bundling'] == true ? 'Ya' : 'Tidak'
       detailArr.value.push(item);
     });
 

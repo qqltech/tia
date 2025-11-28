@@ -17,7 +17,8 @@ class tlpbd extends Migration
             $table->integer('t_po_d_id')->comment('{"src":"t_purchase_order_d.id"}');
             $table->integer('qty');
             $table->decimal('harga',18,4);
-            $table->string('uom', 10);
+            $table->bigInteger('uom_id')->comment('{"src":"set.m_general.id"}');
+            $table->boolean('is_bundling')->nullable();
             $table->text('catatan')->nullable();
 
             $table->integer('creator_id')->nullable();

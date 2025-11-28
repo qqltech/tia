@@ -20,8 +20,8 @@ class default_users extends Model
     public $columnsFull = ["id:bigint","name:string:191","email:string:191","username:string:60","email_verified_at:datetime","password:string:191","comp_id:bigint","is_active:boolean","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","remember_token:string:100","created_at:datetime","updated_at:datetime","m_employee_id:integer","tipe:string:15","catatan:text"];
     public $rules       = [];
     public $joins       = ["set.m_kary.id=default_users.m_employee_id"];
-    public $details     = ["set.m_users_d","default_users_socialite"];
-    public $heirs       = ["set.generate_approval","set.generate_approval","set.generate_approval","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det","set.generate_approval_log","set.generate_approval_log","set.generate_approval_log","set.m_approval_det","set.m_approval_det","set.m_approval_det","set.m_role_access","generate_num","generate_num","generate_num_type","generate_num_type","generate_num_det","generate_num_det","generate_num_log","generate_num_log"];
+    public $details     = ["default_users_socialite","set.m_users_d"];
+    public $heirs       = ["generate_num","generate_num","generate_num_det","generate_num_det","generate_num_log","generate_num_log","generate_num_type","generate_num_type","set.generate_approval","set.generate_approval","set.generate_approval","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det","set.generate_approval_det","set.generate_approval_log","set.generate_approval_log","set.generate_approval_log","set.m_approval_det","set.m_approval_det","set.m_approval_det","set.m_role_access"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [
@@ -37,13 +37,13 @@ class default_users extends Model
     public $deleteOnUse = false;
 
     
-    public function m_users_d() :\HasMany
-    {
-        return $this->hasMany('App\Models\BasicModels\m_users_d', 'default_users_id', 'id');
-    }
     public function default_users_socialite() :\HasMany
     {
         return $this->hasMany('App\Models\BasicModels\default_users_socialite', 'default_users_id', 'id');
+    }
+    public function m_users_d() :\HasMany
+    {
+        return $this->hasMany('App\Models\BasicModels\m_users_d', 'default_users_id', 'id');
     }
     
     

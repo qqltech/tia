@@ -21,7 +21,7 @@ class m_kary extends Model
     public $rules       = [];
     public $joins       = ["set.m_general.id=set.m_kary.bank_id","set.m_business_unit.id=set.m_kary.bu_id","m_coa.id=set.m_kary.piutang_id"];
     public $details     = [];
-    public $heirs       = ["default_users","t_bon_dinas_luar","temp_t_spk_angkutan","t_confirm_asset","t_buku_order_d_npwp","t_buku_order_d_npwp","t_dinas_luar","t_spk_angkutan","t_bon_spk_lain"];
+    public $heirs       = ["default_users","t_bon_dinas_luar","t_bon_spk_lain","t_buku_order_d_npwp","t_buku_order_d_npwp","t_confirm_asset","t_dinas_luar","t_spk_angkutan","temp_t_spk_angkutan"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

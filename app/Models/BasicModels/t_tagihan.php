@@ -23,8 +23,8 @@ class t_tagihan extends Model
     public $columnsFull = ["id:bigint","no_draft:string:191","no_tagihan:string:191","no_buku_order:integer","customer:integer","status:string:10","tgl:date","tipe_tagihan:string:191","total_amount:decimal","ppn:decimal","grand_total_amount:decimal","catatan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","grand_total:decimal","total_kontainer:decimal","total_lain:decimal","total_ppn:decimal","total_setelah_ppn:decimal","total_tarif_jasa:decimal","piutang:decimal","no_faktur_pajak:string:191","tgl_nota:date","total_jasa_cont_ppjk:decimal","total_lain2_ppn:decimal","total_jasa_angkutan:decimal","total_lain_non_ppn:decimal","persentase_konsolidator_kont:decimal"];
     public $rules       = [];
     public $joins       = ["t_buku_order.id=t_tagihan.no_buku_order","m_customer.id=t_tagihan.customer"];
-    public $details     = ["t_tagihan_d_npwp","t_tagihan_d_tarif","t_tagihan_d_lain"];
-    public $heirs       = ["t_debit_note_d","t_credit_note_d","t_pembayaran_piutang_d","t_sub_debit_note","t_sub_credit_note"];
+    public $details     = ["t_tagihan_d_lain","t_tagihan_d_npwp","t_tagihan_d_tarif"];
+    public $heirs       = ["t_credit_note_d","t_debit_note_d","t_pembayaran_piutang_d","t_sub_credit_note","t_sub_debit_note"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
@@ -37,6 +37,10 @@ class t_tagihan extends Model
     public $deleteOnUse = false;
 
     
+    public function t_tagihan_d_lain() :\HasMany
+    {
+        return $this->hasMany('App\Models\BasicModels\t_tagihan_d_lain', 't_tagihan_id', 'id');
+    }
     public function t_tagihan_d_npwp() :\HasMany
     {
         return $this->hasMany('App\Models\BasicModels\t_tagihan_d_npwp', 't_tagihan_id', 'id');
@@ -44,10 +48,6 @@ class t_tagihan extends Model
     public function t_tagihan_d_tarif() :\HasMany
     {
         return $this->hasMany('App\Models\BasicModels\t_tagihan_d_tarif', 't_tagihan_id', 'id');
-    }
-    public function t_tagihan_d_lain() :\HasMany
-    {
-        return $this->hasMany('App\Models\BasicModels\t_tagihan_d_lain', 't_tagihan_id', 'id');
     }
     
     

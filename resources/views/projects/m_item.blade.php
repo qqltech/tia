@@ -114,14 +114,22 @@
               }
           }" placeholder="Pilih UOM" label="UOM" :check="true" />
     </div>
-    <div>
+    <!-- <div>
       <FieldX :bind="{ disabled: true, readonly: true }" class="w-full !mt-3"
       :value="!values.is_bundling
         ? (computedQuantity !== undefined ? computedQuantity.toString() : '0')
-        : (values?.qty_stock?.toString() || '0')"
+        : (values.qty_stock.toString())"
         :check="false"
         label="Quantity"
         placeholder="Quantity" />
+    </div> -->
+    <div>
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3"
+        :value="values.is_bundling" :errorText="formErrors.is_bundling?'failed':''"
+        @input="v=>values.is_bundling=v" :hints="formErrors.is_bundling"
+        label="Quantity"
+        placeholder="Quantity"
+        :check="false" />
     </div>
     <div>
       <FieldSelect

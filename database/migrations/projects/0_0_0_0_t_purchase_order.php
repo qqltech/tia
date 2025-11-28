@@ -25,6 +25,7 @@ class tpurchaseorder extends Migration
             $table->string('tipe',20)->nullable();
             $table->integer('termin')->comment('{"src":"set.m_general.id"}');
             $table->string('ppn',30);
+            $table->decimal('ppn_persen',18,4)->nullable();
             $table->decimal('total_amount',18,4);
             $table->decimal('dpp',18,4);
             $table->decimal('total_ppn',18,4);

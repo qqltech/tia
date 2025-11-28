@@ -33,7 +33,7 @@ onBeforeUnmount(()=>{
 })
 
 const handleKeyDown = (event) => {
-  console.log(event)
+  // console.log(event)
   if (event?.ctrlKey && event?.key === 's' && actionText?.value) {
     event.preventDefault(); // Prevent the default behavior (e.g., saving the page)
     onSave();
@@ -65,7 +65,7 @@ async function addDetail() {
         
         const resultData = await res.json()
 
-        console.log(resultData.length)
+        // console.log(resultData.length)
 
         if(!resultData?.length) {
           swal.fire({
@@ -100,6 +100,7 @@ async function addDetail() {
                 // staple: staple
                 staple:0,
                 custom_stuple: values['custom_stuple'],
+
                 trip_desc: item['trip_kode']??'-',
                 trip: item['trip'],
                 head_desc: item['head_kode']??'-',
@@ -118,9 +119,9 @@ async function addDetail() {
 
 //////  START FUNGSI UPDATE DATA STAPLE ////////////////////////////////////////////////////////////
 
-const updateStaple = async (values) => {
-  const { tanggal_out, tanggal_in, jam_out, jam_in, custom_stuple } = values;
-  
+const updateStaple = async (val) => {
+  const { tanggal_out, tanggal_in, jam_out, jam_in, custom_stuple } = val;
+  const is_special_case = values.is_special_case; 
   if (tanggal_out && tanggal_in && jam_out && jam_in) {
     const dataToPost = {
       tanggal_out,
@@ -129,7 +130,7 @@ const updateStaple = async (values) => {
       jam_in,
       custom_stuple,
     };
-    
+
     const apiEndpoint = `${store.server.url_backend}/operation/t_angkutan/getStaple/`;
 
     try {
@@ -148,7 +149,7 @@ const updateStaple = async (values) => {
       
       const responseData = await response.json();
       
-      values.staple = responseData['staple_result'];
+      val.staple = responseData['staple_result'];
       
     } catch (error) {
       console.error('Error posting data:', error);
@@ -234,8 +235,10 @@ onBeforeMount(async () => {
       const resultJson = await res.json();
       initialValues = resultJson.data;
       initialValues.pph = initialValues.pph == 1 ? true : false;
-      initialValues.code_customer = initialValues.kode_cust;
-      console.log(initialValues.t_angkutan_d,'t_angkutan_d')
+      // initialValues.code_customer = initialValues.kode_cust;
+      initialValues.code_customer = initialValues.customer.kode;
+      initialValues.is_special_case = initialValues.customer.is_special_case;
+      // console.log(initialValues.t_angkutan_d,'t_angkutan_d')
 
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;
@@ -243,7 +246,7 @@ onBeforeMount(async () => {
       
       // Menambahkan Data Ke Array
       initialValues.t_angkutan_d?.forEach((item) => {
-        console.log(initialValues.t_angkutan_d,'aaaaaa')
+        // console.log(initialValues.t_angkutan_d,'aaaaaa')
         if (actionText.value?.toLowerCase() === 'copy') {
           delete item.uid;
           initialValues.status = 'DRAFT'

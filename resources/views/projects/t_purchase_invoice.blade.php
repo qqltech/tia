@@ -105,7 +105,7 @@
         placeholder="No. PI" :check="false" />
     </div>
     <div>
-      <FieldPopup :bind="{ readonly: !actionText }" label="No. PO" class="w-full !mt-3" valueField="id"
+      <!-- <FieldPopup :bind="{ readonly: !actionText }" label="No. PO" class="w-full !mt-3" valueField="id"
         displayField="t_po.no_po" :value="data.t_lpb_id" @input="(v)=>data.t_lpb_id=v"
         :errorText="formErrors.t_lpb_id?'failed':''" :hints="formErrors.t_lpb_id" @update:valueFull="(response)=>{
         // if(response == undefined) data.tipe_po =''; else data.tipe_po=response.tipe;
@@ -188,6 +188,80 @@
               sortable: false, resizable: true, filter: 'ColFilter',
               cellClass: ['border-r', '!border-gray-200', 'justify-start']
             }
+            ]" /> -->
+      <FieldPopup class="w-full !mt-3" :bind="{ readonly: !actionText }" :value="data.t_po_id"
+        @input="(v)=>data.t_po_id=v" :errorText="formErrors.t_po_id?'failed':''" :hints="formErrors.t_po_id"
+        valueField="id" displayField="no_po" @update:valueFull="(response)=>{
+          // if(response == undefined) data.tipe_po =''; else data.tipe_po=response.tipe;
+          if(response == undefined) {
+            detailArr.splice(0, 100);
+            data.tanggal_lpb = '';
+            data.jenis_ppn = '';
+            data.m_supplier_id = '';
+            data.no_po = '';
+            data.tipe_po = '';
+            // data.t_lpb_id = '';
+          }
+          else {
+            // data.t_lpb_id = response.id;
+            data.tanggal_lpb = response.tanggal_lpb;
+            data.jenis_ppn = response.ppn;
+            data.m_supplier_id = response.m_supplier_id;
+            data.no_po = response.no_po;
+            data.tipe_po = response.tipe;
+            poChanged(response.id);
+          }
+          $log(response);
+        }" :api="{
+          url: `${store.server.url_backend}/operation/t_purchase_order`,
+          headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+          params: {
+            simplest:true,
+            scopes: 'GetPOD',
+            searchfield: 'this.no_draft, this.no_po, this.tanggal, this.tipe, this.status, this.catatan',
+          }
+        }" placeholder="Pilih No. PO" label="No. PO" :check="false" :columns="[{
+              headerName: 'No',
+              valueGetter:(p)=>p.node.rowIndex + 1,
+              width: 60,
+              sortable: false, resizable: false, filter: false,
+              cellClass: ['justify-center', 'bg-gray-50']
+            },
+            {
+              flex: 1,
+              field: 'no_draft',
+              headerName:  'No. Draft',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            },
+            {
+              flex: 1,
+              field: 'no_po',
+              headerName:  'No. PO',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            },
+            {
+              flex: 1,
+              field: 'tanggal',
+              headerName:  'Tanggal',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            },
+            {
+              flex: 1,
+              field: 'tipe',
+              headerName:  'Tipe',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            },
+            {
+              flex: 1,
+              field: 'catatan',
+              headerName:  'Catatan',
+              sortable: false, resizable: true, filter: 'ColFilter',
+              cellClass: ['border-r', '!border-gray-200', 'justify-start']
+            }
             ]" />
     </div>
     <div>
@@ -211,7 +285,7 @@
       }" label="Tipe Pembayaran" fa-icon="sort-desc" placeholder="Pilih Tipe Pembayaran" :check="false" />
     </div>
     <div>
-      <FieldPopup class="w-full !mt-3" v-if="data.tipe_pembayaran_id == 839":api="{
+      <FieldPopup class="w-full !mt-3" v-if="data.tipe_pembayaran_id == 839" :api="{
         url: `${store.server.url_backend}/operation/m_coa`,
         headers: {
           'Content-Type': 'Application/json',
@@ -233,8 +307,8 @@
       }" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }" :value="data.m_coa_id"
         @input="(v)=>data.m_coa_id=v" @update:valueFull="(response)=>{
         $log(response);
-      }" :errorText="formErrors.m_coa_id?'failed':''" class="w-full !mt-3"
-        :hints="formErrors.m_coa_id" placeholder="Pilih Akun Pembayaran" :check='false' :columns="[
+      }" :errorText="formErrors.m_coa_id?'failed':''" class="w-full !mt-3" :hints="formErrors.m_coa_id"
+        placeholder="Pilih Akun Pembayaran" :check='false' :columns="[
         {
           headerName: 'No',
           valueGetter:(p)=>p.node.rowIndex + 1,
@@ -380,9 +454,10 @@
       ]" />
     </div> -->
     <div>
-      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" valueField="id" displayField="no_faktur_pajak" :value="data.no_faktur_pajak"
-        @input="(v)=>data.no_faktur_pajak=v" :errorText="formErrors.no_faktur_pajak?'failed':''"
-        :hints="formErrors.no_faktur_pajak"  label="No. Faktur Pajak" placeholder="Pilih No. Faktur Pajak" :check="false" />
+      <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" valueField="id"
+        displayField="no_faktur_pajak" :value="data.no_faktur_pajak" @input="(v)=>data.no_faktur_pajak=v"
+        :errorText="formErrors.no_faktur_pajak?'failed':''" :hints="formErrors.no_faktur_pajak" label="No. Faktur Pajak"
+        placeholder="Pilih No. Faktur Pajak" :check="false" />
     </div>
     <div>
       <!-- <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.t_lpb_id"
@@ -478,9 +553,10 @@
           valueField="id" displayField="key"
           :options="[{'id' : 1 , 'key' : 'INCLUDE', 'persen': 2},{'id': 2, 'key' : 'NOT INCLUDE', 'persen': 0}]"
           label="PPH" fa-icon="sort-desc" placeholder="Pilih PPH" :check="false" /> -->
-        <FieldSelect :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" valueField="id" displayField="deskripsi" :value="data.jenis_pph"
-          @input="(v)=>data.jenis_pph=v" :errorText="formErrors.jenis_pph?'failed':''" :hints="formErrors.jenis_pph"
-          :options="allPphOptions" @update:valueFull="(res)=>{
+        <FieldSelect :bind="{ readonly: !actionText, disabled: !actionText }" class="w-full !mt-3" valueField="id"
+          displayField="deskripsi" :value="data.jenis_pph" @input="(v)=>data.jenis_pph=v"
+          :errorText="formErrors.jenis_pph?'failed':''" :hints="formErrors.jenis_pph" :options="allPphOptions"
+          @update:valueFull="(res)=>{
             if(res) {
               data.persen_pph = res.deskripsi2;
             }
@@ -639,9 +715,9 @@
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center border bg-[#f8f8f8] border-[#CACACA]">
               Catatan</td>
-            <td v-show="actionText"
+            <!-- <td v-show="actionText"
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center w-[5%] border bg-[#f8f8f8] border-[#CACACA]">
-              Action</td>
+              Action</td> -->
           </tr>
         </thead>
         <tbody>
@@ -719,7 +795,7 @@
                 :errorText="formErrors.catatan?'failed':''" @input="v=>detailArr[i].catatan=v"
                 :hints="formErrors.catatan" :check="false" />
             </td>
-            <td v-show="actionText" class="p-1 border border-[#CACACA]">
+            <!-- <td v-show="actionText" class="p-1 border border-[#CACACA]">
               <div class="flex justify-center">
                 <button type="button" @click="delDetailArr(i)" :disabled="!actionText">
                   <svg width="14" height="14" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -727,7 +803,7 @@
                   </svg>
                 </button>
               </div>
-            </td>
+            </td> -->
           </tr>
           <tr v-show="detailArr.length <= 0" class="text-center">
             <td colspan="15" class="py-[20px]">

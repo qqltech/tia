@@ -27,6 +27,8 @@ onBeforeMount(() => {
 const userId = btoa(store.user.data['id']);
 
 // @if( !$id ) | --- LANDING TABLE --- |
+const selectedItems = ref([])
+
 const onDetailAdd = (e) => {
   const newIds = e.map(row => row.id);
   idMulti.value = [...new Set([...idMulti.value, ...newIds])]
@@ -143,6 +145,110 @@ async function multiProgress(status) {
       router.replace('/notifikasi?reload=true');
     }
   })
+}
+
+async function onPreview(rows = []) {
+  const ids = [...new Set(rows.map(r => r.id).filter(Boolean))]
+
+  if (!ids.length) {
+    await swal.fire({
+      icon: 'warning',
+      text: 'Tidak ada item yang dipilih untuk dicetak'
+    })
+    return
+  }
+
+  isRequesting.value = true
+
+  try {
+    const previewUrl = `${store.server.url_backend}/web/bkk_non_kasbon_multiple_p?${ids.map(i => `id[]=${i}`).join('&')}&user=${userId}`
+    window.open(previewUrl, '_blank')
+
+    router.replace('/' + modulPath)
+  } catch (err) {
+    console.error(err)
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      text: err?.message || err
+    })
+  } finally {
+    isRequesting.value = false
+  }
+}
+
+async function onPrint(rows = []) {
+  const ids = [...new Set(rows.map(r => r.id).filter(Boolean))]
+
+  if (!ids.length) {
+    await swal.fire({
+      icon: 'warning',
+      text: 'Tidak ada item yang dipilih untuk dicetak'
+    })
+    return
+  }
+
+  // Ask for confirmation before proceeding
+  const confirm = await swal.fire({
+    icon: 'warning',
+    text: ` Yakin print ${ids.length} BKK?`,
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+    showDenyButton: true
+  })
+
+  if (!confirm.isConfirmed) return
+
+  isRequesting.value = true
+
+  try {
+    const previewUrl = `${store.server.url_backend}/web/bkk_non_kasbon_multiple?${ids.map(i => `id[]=${i}`).join('&')}&user=${userId}`
+    window.open(previewUrl, '_blank')
+
+    const updatePromises = ids.map(id =>
+      fetch(`${store.server.url_backend}/operation/${endpointApi}/print?id=${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'Application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`
+        }
+      }).then(async res => {
+        if (!res.ok) {
+          let text = await res.text()
+          throw new Error(`Failed marking id ${id} as printed. Status ${res.status}. ${text}`)
+        }
+        return res.json().catch(() => ({}))
+      })
+    )
+
+    // Wait for all requests to settle and collect results
+    const settled = await Promise.allSettled(updatePromises)
+    const rejected = settled.filter(s => s.status === 'rejected')
+
+    if (rejected.length > 0) {
+      const messages = rejected.map((r) => r.reason?.message || JSON.stringify(r.reason)).slice(0, 5).join('\n')
+      await swal.fire({
+        icon: 'warning',
+        text: `Beberapa item gagal di-update sebagai printed:\n${messages}`
+      })
+    } else {
+      await swal.fire({
+        icon: 'success',
+        text: `Semua ${ids.length} item berhasil ditandai sebagai printed`
+      })
+    }
+
+    router.replace('/' + modulPath)
+  } catch (err) {
+    console.error(err)
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      text: err?.message || err
+    })
+  } finally {
+    isRequesting.value = false
+  }
 }
 
 // TABLE
@@ -444,7 +550,7 @@ let coaList = reactive([]);
 
 function addRow() {
   detailArr.push({
-     t_buku_order_id: '',      // atau isi default jika ada
+    t_buku_order_id: '',      // atau isi default jika ada
     // catatan: '',        // field yang kamu gunakan di tabel
     // _lastInput: null,
     // tambahkan field lain sesuai kebutuhan
@@ -723,12 +829,13 @@ async function progress(status) {
 
 watch(() => detailArr, () => {
   data.total_amt = 0;
-  console.log(detailArr[0].nominal)
+  // console.log(detailArr[0].nominal)
 
   for (let idx = 0; idx < detailArr.length; idx++) {
-    console.log(detailArr[idx].nominal, 'AAAAAAAAA')
+    console.log(detailArr[idx].nominal, 'iki nominal')
     if (detailArr[idx].nominal != undefined) {
       data.total_amt += Number(detailArr[idx].nominal)
+      console.log(data.total_amt, 'iki total')
     }
   }
 

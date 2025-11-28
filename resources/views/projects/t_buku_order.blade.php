@@ -21,6 +21,18 @@
                         class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
                     POST
                 </button>
+        <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
+        <button @click="filterShowData('PRINTED')" :class="filterButton === 'PRINTED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
+                        : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
+                        class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
+                    PRINTED
+                </button>
+        <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
+        <button @click="filterShowData('CLOSED')" :class="filterButton === 'CLOSED' ? 'bg-red-600 text-white hover:bg-red-600' 
+                        : 'border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white'"
+                        class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
+                    CLOSED
+                </button>
       </div>
     </div>
 
@@ -33,9 +45,113 @@
   </div>
   <hr>
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
-    class="max-h-[450px]">
-    <!-- <template #header>
-    </template> -->
+    class="max-h-[500px] pt-2 !px-4 !pb-8">
+    <template #header>
+      <div>
+        <ButtonMultiSelect title="Preview Biaya" @add="onPreview" :api="{
+          url: `${store.server.url_backend}/operation/${endpointApi}`,
+          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          params:{
+            searchfield: 'this.no_buku_order, m_customer.kode, m_customer.nama_perusahaan, this.tgl, this.voyage, this.status',
+            //where: `this.status = 'APPROVED'`
+          },
+          onsuccess:(response)=>{
+            response.data = [...response.data].map((dt)=>{
+              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
+              return dt
+            })
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
+        }" :columns="[{
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            headerName: 'No',
+            valueGetter:(params)=>{
+              return ''
+            },
+            width:60,
+            sortable: false, resizable: true, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+          },
+          {
+            field: 'no_buku_order',
+            headerName: 'Nomor Order',
+            filter: true,
+            sortable: true,
+            flex: 1,
+            filter: 'ColFilter',
+            resizable: true,
+            wrapText: true,
+            cellClass: ['border-r', '!border-gray-200', 'justify-start']
+          },
+          {
+            field: 'm_customer.kode',
+            headerName: 'Kode Customer',
+            filter: true,
+            sortable: true,
+            flex: 1,
+            filter: 'ColFilter',
+            resizable: true,
+            wrapText: true,
+            cellClass: ['border-r', '!border-gray-200', 'justify-start']
+          },
+          {
+            field: 'm_customer.nama_perusahaan',
+            headerName: 'Customer',
+            filter: true,
+            sortable: true,
+            flex: 1,
+            filter: 'ColFilter',
+            resizable: true,
+            wrapText: true,
+            cellClass: ['border-r', '!border-gray-200', 'justify-start']
+          },
+          {
+            field: 'tgl',
+            headerName: 'Tanggal',
+            filter: true,
+            sortable: true,
+            filter: 'ColFilter',
+            resizable: true, wrapText: true,
+            flex: 1,
+            cellClass: ['border-r', '!border-gray-200', 'justify-center']
+          },
+          {
+            field: 'voyage',
+            headerName: 'Voyage',
+            filter: true,
+            sortable: true,
+            filter: 'ColFilter',
+            resizable: true, wrapText: true,
+            flex: 1,
+            cellClass: ['border-r', '!border-gray-200', 'justify-center']
+          },
+          {
+            flex: 1,
+            headerName:'Status',
+            sortable: false, resizable: true, filter: false,
+            field: 'status',
+            filter:'ColFilter',
+            cellClassRules: {
+              'text-green-600': params => params.value === 'APPROVED',
+              'text-purple-600': params => params.value === 'PRINTED',
+              'text-gray-600': params => params.value === 'DRAFT',
+            },
+            cellClass: ['justify-center','!border-gray-200']
+          }
+          ]" @selection-change="selectedItems = $event">
+          <div class="flex items-center space-x-2">
+            <div
+              class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+              <icon fa="eye" />
+              Preview Biaya
+            </div>
+          </div>
+        </ButtonMultiSelect>
+      </div>
+    </template>
   </TableApi>
 </div>
 @else

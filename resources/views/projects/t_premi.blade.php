@@ -1,5 +1,6 @@
 <!-- LANDING TABLE -->
 @if(!$req->has('id'))
+@verbatim
 <div class="bg-white rounded-md min-h-[520px] border-t-10 border-blue-500">
   <div class="pl-4 pt-2 pb-2">
     <h1 class="text-xl font-semibold">PREMI</h1>
@@ -60,13 +61,149 @@
   <hr>
 
   <!-- TABLE -->
-  <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
-  !pb-8">
+  <TableApi ref="apiTable" :api="table.api" :columns="table.columns" :actions="table.actions"
+    class="max-h-[500px] pt-2 !px-4 !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div>
+        <button
+          class="pr-2 border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5 transition-colors duration-300"
+          @click="openModal"
+        >
+          Laporan Premi
+        </button>
+      </div>
+
+      <!-- Modal -->
+      <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div class="bg-white rounded-2xl shadow-lg w-[600px] max-h-[90vh] relative overflow-hidden flex flex-col">
+          <!-- Header -->
+          <div class="flex items-center justify-between pl-6 pt-6 pr-6 pb-2 border-b">
+            <h1 class="text-lg font-semibold text-gray-800">LAPORAN PREMI</h1>
+            <button
+              class="border border-gray-300 text-gray-500 bg-white hover:bg-gray-100 rounded-md w-8 h-8 flex items-center justify-center text-sm"
+              @click="closeModal"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Konten Scrollable -->
+          <div class="p-6 overflow-y-auto flex-1">
+            <div class="flex items-center space-x-2 mb-4">
+              <label class="text-sm whitespace-nowrap">Nama Supir :</label>
+              <FieldSelect class="w-1/2" :bind="{ clearable: true }" :value="values.nama_supir" @input="onSelectSupir"
+                :errorText="formErrors.nama_supir ? 'failed' : ''" :hints="formErrors.nama_supir" valueField="id"
+                displayField="nama" :api="{
+                  url: `${store.server.url_backend}/operation/m_kary`,
+                  headers: {
+                    'Content-Type': 'Application/json',
+                    Authorization: `${store.user.token_type} ${store.user.token}`,
+                  },
+                  params: { simplest: true, paginate: 999999999999999 },
+                }" placeholder="Pilih Salah satu" label="" :check="true" />
+            </div>
+
+            <div class="flex items-center space-x-2 mb-4">
+              <label class="text-sm whitespace-nowrap">Periode &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</label>
+
+              <FieldX class="w-[30%]" :bind="{ }" :value="values.start_date"
+                :errorText="formErrors.start_date ? 'failed' : ''" @input="v => onDateChange('start_date', v)"
+                :hints="formErrors.start_date" placeholder="Start date" label="" type="date" :check="false" />
+
+              <p>s/d</p>
+
+              <FieldX class="w-[30%]" :bind="{ }" :value="values.end_date"
+                :errorText="formErrors.end_date ? 'failed' : ''" @input="v => onDateChange('end_date', v)"
+                :hints="formErrors.end_date" placeholder="End date" label="" type="date" :check="false" />
+            </div>
+
+            <!-- Table Premi -->
+            <div class="mt-6 border rounded-lg overflow-x-auto">
+              <table class="min-w-full border-collapse">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="px-3 py-2 border text-center w-10">#</th>
+                    <th class="px-3 py-2 border text-center text-sm font-semibold text-gray-700">Nomor SPK</th>
+                    <th class="px-3 py-2 border text-center text-sm font-semibold text-gray-700">Sangu</th>
+                    <th class="px-3 py-2 border text-center text-sm font-semibold text-gray-700">Premi</th>
+                    <th class="px-3 py-2 border text-center text-sm font-semibold text-gray-700">Tol</th>
+                    <th class="px-3 py-2 border text-center text-sm font-semibold text-gray-700">Total Premi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in laporanPremi" :key="i" class="hover:bg-gray-50">
+                    <td class="px-3 py-2 border text-center">
+                      <input type="checkbox" v-model="row._checked" />
+                    </td>
+                    <td class="px-3 py-2 border text-sm text-left text-gray-700">
+                      {{ row['t_spk_angkutan.no_spk'] }}
+                    </td>
+                    <td class="px-3 py-2 border text-sm text-right text-gray-700">
+                      {{ formatCurrency(row['t_spk_angkutan.total_sangu']) }}
+                    </td>
+                    <td class="px-3 py-2 border text-sm text-right text-gray-700">
+                      {{ formatCurrency(row.tarif_premi) }}
+                    </td>
+                    <td class="px-3 py-2 border text-sm text-right text-gray-700">
+                      {{ formatCurrency(row.tol) }}
+                    </td>
+                    <td class="px-3 py-2 border text-sm text-right font-medium text-gray-900">
+                      {{ formatCurrency(row.total_premi) }}
+                    </td>
+                  </tr>
+
+                  <tr v-if="laporanPremi.length === 0">
+                    <td colspan="6" class="text-center text-gray-400 py-3 border">Tidak ada data</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex items-center space-x-2 mb-4 pl-20 !mt-3">
+              <label class="text-sm whitespace-nowrap">Kurang bayar &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+              <FieldNumber class="w-1/2" :bind="{ readonly: true, disabled: true }" :value="values.hutang_supir" @input="(v)=>values.hutang_supir=v"
+                :errorText="formErrors.hutang_supir?'failed':''" :hints="formErrors.hutang_supir"
+                placeholder="Kurang Bayar" label="" :check="false" />
+            </div>
+
+            <div class="flex items-center space-x-2 mb-4 pl-20 !mt-3">
+              <label class="text-sm whitespace-nowrap">Yang dibayarkan &nbsp;&nbsp;:</label>
+              <FieldNumber class="w-1/2" :bind="{ }" :value="values.hutang_dibayar"
+                @input="(v)=>values.hutang_dibayar=v" :errorText="formErrors.hutang_dibayar?'failed':''"
+                :hints="formErrors.hutang_dibayar" placeholder="Yang dibayarkan" label="" :check="false" />
+            </div>
+
+            <div class="flex items-center space-x-2 mb-4 pl-20 !mt-3">
+              <label class="text-sm whitespace-nowrap">Yang diterima &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+              <FieldNumber class="w-1/2" :bind="{ readonly: true, disabled: true }" :value="values.total_premi_diterima"
+                @input="(v)=>{ values.total_premi_diterima = v; values.total_premi = v }" :errorText="formErrors.total_premi_diterima?'failed':''"
+                :hints="formErrors.total_premi_diterima" placeholder="Yang diditerima" label="" :check="false" />
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-4 border-t flex justify-end space-x-2 bg-white">
+              <button
+                class="border border-blue-600 bg-blue-600 text-white hover:bg-blue-700 rounded px-3 py-1 text-sm"
+                @click="onPrintButton" :disabled="isRequesting"
+              >
+              <icon fa="print" />
+                Print
+              </button>
+              <!-- <button
+                class="border border-amber-600 bg-amber-600 text-white hover:bg-amber-700 rounded px-3 py-1 text-sm"
+                @click="onPost" :disabled="isRequesting"
+              >
+              <icon fa="paper-plane" />
+                Post
+              </button> -->
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
   </TableApi>
 </div>
+@endverbatim
 @else
 
 <!-- FORM DATA -->
@@ -241,9 +378,9 @@
         placeholder="Masukan No. Head" :check="false" />
     </div> -->
     <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start">
-      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.head_deskripsi2" @input="v=>data.head_deskripsi2=v"
-        :errorText="formErrors.head_deskripsi2?'failed':''" :hints="formErrors.head_deskripsi2" label="No. Head"
-        placeholder="Masukan No. Head" :check="false" />
+      <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.head_deskripsi2"
+        @input="v=>data.head_deskripsi2=v" :errorText="formErrors.head_deskripsi2?'failed':''"
+        :hints="formErrors.head_deskripsi2" label="No. Head" placeholder="Masukan No. Head" :check="false" />
 
       <FieldPopup class="w-full !mt-3" :api="{
         url: `${store.server.url_backend}/operation/m_kary`,
@@ -549,24 +686,6 @@
     <label class="!mt-4 !ml-3"> Total Premi : </label>
     <FieldNumber :bind="{ readonly: true }" class="w-full content-center !mt-3" :value="data.total_premi"
       @input="v=>data.total_premi=v" :errorText="formErrors.total_premi?'failed':''" :hints="formErrors.total_premi"
-      :check="false" />
-  </div>
-  <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start justify-center w-md mb-3">
-    <label class="!mt-4 !ml-3"> Hutang Supir : </label>
-    <FieldNumber :bind="{ readonly: !actionText }" class="w-full content-center !mt-3" :value="data.hutang_supir"
-      @input="v=>data.hutang_supir=v" :errorText="formErrors.hutang_supir?'failed':''" :hints="formErrors.hutang_supir"
-      :check="false" />
-  </div>
-  <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start justify-center w-md mb-3">
-    <label class="!mt-4 !ml-3"> Hutang Supir Yang Mau Dibayarkan : </label>
-    <FieldNumber :bind="{ readonly: !actionText }" class="w-full content-center !mt-3" :value="data.hutang_dibayar"
-      @input="v=>data.hutang_dibayar=v" :errorText="formErrors.hutang_dibayar?'failed':''" :hints="formErrors.hutang_dibayar"
-      :check="false" />
-  </div>
-  <div class="grid grid-cols-2 gap-y-2 gap-x-2 items-start justify-center w-md mb-3">
-    <label class="!mt-4 !ml-3"> Total Premi Yang Diterima : </label>
-    <FieldNumber :bind="{ readonly: !actionText }" class="w-full content-center !mt-3" :value="data.total_premi_diterima"
-      @input="v=>data.total_premi_diterima=v" :errorText="formErrors.total_premi_diterima?'failed':''" :hints="formErrors.total_premi_diterima"
       :check="false" />
   </div>
   <!-- ACTION BUTTON FORM -->

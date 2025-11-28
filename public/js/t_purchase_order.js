@@ -1,5 +1,5 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
-import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch } from 'vue'
+import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch, computed } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -44,7 +44,7 @@ const table = reactive({
     },
     params: {
       simplest: true,
-      searchfield: 'this.id, this.no_draft, this.no_po',
+      searchfield: 'this.id, this.no_draft, this.no_po, tipe_po.nama, this.tanggal, m_supplier.nama, this.tipe, this.catatan, this.status',
     },
     onsuccess(response) {
       return { ...response, page: response.current_page, hasNext: response.has_next };
@@ -69,16 +69,6 @@ const table = reactive({
       filter: 'ColFilter',
     },
     {
-      headerName: 'Business Unit',
-      field: 'tipe_po.nama',
-      flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
-      sortable: true,
-      // resizable: true,
-      // wrapText: true,
-      filter: 'ColFilter',
-    },
-    {
       headerName: 'No. PO',
       field: 'no_po',
       flex: 1,
@@ -89,10 +79,20 @@ const table = reactive({
       filter: 'ColFilter',
     },
     {
+      headerName: 'Business Unit',
+      field: 'tipe_po.nama',
+      flex: 1.5,
+      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
+    },
+    {
       headerName: 'Tanggal',
       field: 'tanggal',
       flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
@@ -101,7 +101,7 @@ const table = reactive({
     {
       headerName: 'Supplier',
       field: 'm_supplier.nama',
-      flex: 1,
+      flex: 2,
       cellClass: ['border-r', '!border-gray-200', 'justify-start',],
       sortable: true,
       // resizable: true,
@@ -112,7 +112,7 @@ const table = reactive({
       headerName: 'Tipe',
       field: 'tipe',
       flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
@@ -132,7 +132,7 @@ const table = reactive({
       headerName: 'Status',
       field: 'status',
       flex: 1,
-      cellClass: ['border-r', '!border-gray-200', 'justify-start',],
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       // resizable: true,
       // wrapText: true,
@@ -295,7 +295,18 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
-  data: { status: 'DRAFT', total_amount: 0, b2b: true, dpp: 0, total_ppn: 0, tipe: route.query.tipe, grand_total: 0, no_draft: 'Generate by System', no_po: 'Generate by System' },
+  data: { 
+    status: 'DRAFT', 
+    total_amount: 0,
+    b2b: false, 
+    dpp: 0, 
+    total_ppn: 0, 
+    tipe: route.query.tipe, 
+    grand_total: 0, 
+    total_ppn: 0,
+    grand_total: 0,
+    no_draft: 'Generate by System', 
+    no_po: 'Generate by System' },
   detail: []
 }
 
@@ -483,7 +494,6 @@ const getPOD = async (id) => {
 }
 
 
-
 const allPpnOptions = ref([]);
 
 const getPpnOption = async () => {
@@ -512,7 +522,10 @@ const getPpnOption = async () => {
   })
 }
 
-
+const ppnType = computed(() => {
+  const ppn = allPpnOptions.value.find(pre => pre.id == data.ppn);
+  return ppn ? ppn.deskripsi : null;
+});
 
 // GET DATA FROM API
 onBeforeMount(async () => {
@@ -620,7 +633,7 @@ onBeforeMount(async () => {
 // ADD & DELETE DETAIL
 const addDetailArr = (params) => {
   detailArr.push(...params);
-  console.log(detailArr);
+  // console.log(detailArr);
 }
 
 const delDetailArr = (index) => {
@@ -707,7 +720,8 @@ watch(() => detailArr, () => {
     data.total_amount += detailArr[idx].total_amount;
     if (detailArr[idx].disc1 > 100) detailArr[idx].disc1 = 100;
     if (detailArr[idx].disc2 > 100) detailArr[idx].disc2 = 100;
-    if (detailArr[idx].quantity <= 0) detailArr[idx].quantity = 1;
+    // if (detailArr[idx].quantity <= 0) detailArr[idx].quantity = 1;
+    //console.log(detailArr[idx].quantity)
     const count_amt_disc1 = detailArr[idx].harga * (detailArr[idx].disc1 / 100);
     detailArr[idx].disc_amt = (detailArr[idx].harga - count_amt_disc1) * (detailArr[idx].disc2 / 100) + count_amt_disc1;
     detailArr[idx].total_disc = detailArr[idx].disc_amt * detailArr[idx].quantity;
@@ -715,7 +729,7 @@ watch(() => detailArr, () => {
   }
   const ppnidx = allPpnOptions.value.findIndex(pre => pre.id == data.ppn);
   data.persen_ppn = allPpnOptions.value[ppnidx].deskripsi2;
-  console.log(ppnidx, data.persen_ppn)
+  //console.log(ppnidx, data.persen_ppn)
   if (allPpnOptions.value[ppnidx].deskripsi == "EXCLUDE") {
     data.dpp = data.total_amount - data.total_disc_amount;
     data.total_ppn = data.dpp * (data.persen_ppn / 100);
@@ -723,6 +737,8 @@ watch(() => detailArr, () => {
   else if (allPpnOptions.value[ppnidx].deskripsi == "INCLUDE") {
     data.dpp = ((data.total_amount - data.total_disc_amount) / (1 + (data.persen_ppn / 100)));
     data.total_ppn = (data.total_amount - data.total_disc_amount) - data.dpp;
+    data.dpp = Math.round(data.dpp);
+    data.total_ppn = Math.round(data.total_ppn);
   }
   data.grand_total = data.dpp + data.total_ppn;
 
@@ -732,7 +748,7 @@ watch(() => detailArr, () => {
 watch(() => data.ppn, () => {
   const ppnidx = allPpnOptions.value.findIndex(pre => pre.id == data.ppn);
   data.persen_ppn = allPpnOptions.value[ppnidx].deskripsi2;
-  console.log(ppnidx, data.persen_ppn)
+  //console.log(ppnidx, data.persen_ppn)
   if (allPpnOptions.value[ppnidx].deskripsi == "EXCLUDE") {
     data.dpp = data.total_amount - data.total_disc_amount;
     data.total_ppn = data.dpp * (data.persen_ppn / 100);
@@ -745,6 +761,11 @@ watch(() => data.ppn, () => {
 
 }, { deep: true })
 
+watch(() => data.b2b, (val) => {
+  if (!val) {
+    data.b2b_link = "";
+  }
+});
 
 // watch(() => data.ppn, () => {
 //   if (data.ppn == "EXCLUDE") {
@@ -824,7 +845,7 @@ async function sendApproval() {
           }
           return response.json(); // Parse JSON from the response body
         }).then(async data => {
-          console.log('Parsed response JSON:', data);
+          //console.log('Parsed response JSON:', data);
           data.id = data.id;
           const dataURL = `${store.server.url_backend}/operation/${endpointApi}/send_approval`
           isRequesting.value = true

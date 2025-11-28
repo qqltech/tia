@@ -310,6 +310,14 @@
         :errorText="formErrors.longtitude?'failed':''" @input="v=>values.longtitude=v" :hints="formErrors.longtitude"
         :check="false" label="Longtitude" placeholder="Longtitude" />
     </div>
+    <div class="flex flex-col gap-[6px]">
+      <label class="text-xs text-slate-600 font-semibold">Special Case</label>
+      <input class="relative h-[16px] w-7 p-px appearance-none rounded-full bg-white border disabled:!cursor-default
+                hover:cursor-pointer after:content-[''] after:h-[10.5px] after:w-[10.5px] after:rounded-full after:border-none
+                after:absolute after:mt-[0.9px] focus:outline-none after:ml-[0.95px] checked:after:right-[1.25px] disabled:opacity-75
+                after:bg-slate-600 border-slate-600 checked:after:bg-slate-600 checked:border-slate-600"
+                type="checkbox" role="switch" :disabled="false" v-model="values.is_special_case" />
+    </div>
     <div v-if="!actionText" class="flex space-x-3 !mt-4 text-blue-600">
       <label class="col-start text-black gap-3" for="CustomStupleBox">Custom Stuple</label>
       <input type="checkbox" id="CustomStupleBox" v-model="values.custom_stuple" style="width: 20px; height: 20px;">

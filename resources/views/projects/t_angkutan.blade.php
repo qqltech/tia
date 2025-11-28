@@ -71,8 +71,9 @@
         :check="false" type="date" label="Tanggal" placeholder="Pilih Tanggal" />
     </div>
     <div>
-      <FieldPopup :bind="{ readonly: !actionText }" label="No. Buku Order" class="w-full !mt-3" valueField="id" displayField="no_buku_order"
-        :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v" @update:valueFull="v=>{
+      <FieldPopup :bind="{ readonly: !actionText }" label="No. Buku Order" class="w-full !mt-3" valueField="id"
+        displayField="no_buku_order" :value="values.t_buku_order_id" @input="(v)=>values.t_buku_order_id=v"
+        @update:valueFull="v=>{
               detailArr = []              
               values['custom_stuple']=(v?v['m_customer.custom_stuple']:null)
               values['code_customer']=(v?v['m_customer.kode']:null)
@@ -122,8 +123,8 @@
     </div>
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="values.code_customer"
-        :errorText="formErrors.code_customer?'failed':''" @input="v=>values.code_customer=v" :hints="formErrors.code_customer" :check="false"
-        label="Kode Customer" placeholder="Kode Customer" />
+        :errorText="formErrors.code_customer?'failed':''" @input="v=>values.code_customer=v"
+        :hints="formErrors.code_customer" :check="false" label="Kode Customer" placeholder="Kode Customer" />
     </div>
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="values.party"
@@ -291,9 +292,7 @@
                 :check="false" label="" placeholder="" />
             </td>
             <td class="p-2 border border-[#CACACA]" style="min-width: 150px !important;">
-              <FieldSelect
-                :bind="{ disabled:true, readonly:true }"
-                class="w-full !mt-3" :value="item.ukuran" @input="v=>{
+              <FieldSelect :bind="{ disabled:true, readonly:true }" class="w-full !mt-3" :value="item.ukuran" @input="v=>{
                     if(v){
                       item.ukuran=v
                     }else{

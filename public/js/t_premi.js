@@ -1,13 +1,22 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
-import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch } from 'vue'
+import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch, computed } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
 const store = inject('store')
 const swal = inject('swal')
 
-const isRead = route.params.id && route.params.id !== 'create'
-const actionText = ref(route.params.id === 'create' ? 'Create' : route.query.action)
+// reactive mode helpers
+const isRead = computed(() => !!route.params.id && route.params.id !== 'create')
+const actionText = computed(() => (route.params.id === 'create' ? 'Create' : (route.query.action || '')))
+/*
+  isView true hanya jika ada id dan tidak ada query.action (mis. /module/123).
+  Jika route menggunakan ?action=Edit maka isView = false.
+*/
+const isView = computed(() => isRead.value && !route.query.action)
+
+
+console.log(isView.value)
 const isBadForm = ref(false)
 const isRequesting = ref(false)
 const modulPath = route.params.modul
@@ -25,6 +34,535 @@ onBeforeMount(() => {
 })
 
 // @if( !$id ) | --- LANDING TABLE --- |
+
+const isOpen = ref(false)
+
+const values = reactive({
+  nama_supir: null,
+  start_date: null,
+  end_date: null,
+  hutang_supir: 0,
+  hutang_dibayar: 0,
+  total_premi_diterima: 0
+})
+
+const laporanPremi = ref([])
+const laporanPremiAll = ref([])
+
+// --- Open / Close modal ---
+const openModal = async () => {
+  isOpen.value = true
+  await getLaporanPremi()
+}
+
+const closeModal = () => {
+  isOpen.value = false
+}
+
+// --- untuk mengambil data t_premi ---
+const getLaporanPremi = async () => {
+  try {
+    const response = await fetch(`${store.server.url_backend}/operation/t_premi?paginate=999999999`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    })
+    if (!response.ok) throw new Error('Gagal memuat data')
+    const result = await response.json()
+    laporanPremiAll.value = result.data || []
+    applyFilters()
+  } catch (error) {
+    console.error('Error mengambil data t_premi:', error)
+    swal({
+      icon: 'error',
+      title: 'Gagal memuat data!',
+      text: error.message,
+    })
+  }
+}
+
+// Helpers to parse tanggal_spk
+const getTanggalSpkFromRow = (row) => {
+  let dateStr = null
+
+  if (row['t_spk_angkutan.tanggal_spk']) {
+    dateStr = row['t_spk_angkutan.tanggal_spk']
+  } else if (row.t_spk_angkutan && row.t_spk_angkutan.tanggal_spk) {
+    dateStr = row.t_spk_angkutan.tanggal_spk
+  }
+
+  if (!dateStr) return null
+
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) {
+    // try parsing dd/mm/yyyy → yyyy-mm-dd
+    const maybe = new Date(dateStr.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'))
+    return isNaN(maybe.getTime()) ? null : maybe
+  }
+
+  return d
+}
+
+
+const formatToISODate = (d) => {
+  const date = d instanceof Date ? d : new Date(d)
+  if (isNaN(date.getTime())) return null
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+// Ensure each displayed row has a _checked boolean
+const normalizeDisplayedRows = (rows) => {
+  return rows.map(r => {
+    // keep previous checked state if any
+    return Object.assign({}, r, { _checked: r._checked === true })
+  })
+}
+
+// Apply filters: nama_supir + tanggal range; also ensure _checked present
+const applyFilters = () => {
+  let rows = Array.isArray(laporanPremiAll.value) ? laporanPremiAll.value.slice() : []
+
+  if (values.nama_supir) {
+    rows = rows.filter((r) => {
+      const supirField = r['t_spk_angkutan.supir'] ?? (r.t_spk_angkutan && r.t_spk_angkutan.supir)
+      if (supirField == null) return false
+      if (typeof supirField === 'object') {
+        return String(supirField.id) === String(values.nama_supir)
+      }
+      return String(supirField) === String(values.nama_supir)
+    })
+  } else {
+    // if no supir selected we should not display any rows (enforce requirement)
+    rows = []
+  }
+
+  if (values.start_date || values.end_date) {
+    const start = values.start_date ? new Date(values.start_date) : null
+    const end = values.end_date ? new Date(values.end_date) : null
+    const endInclusive = end ? new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999) : null
+
+    rows = rows.filter((r) => {
+      const d = getTanggalSpkFromRow(r)
+      if (!d) return false
+      if (start && d < start) return false
+      if (endInclusive && d > endInclusive) return false
+      return true
+    })
+  }
+
+  // normalize selection state for displayed rows only
+  laporanPremi.value = normalizeDisplayedRows(rows)
+
+  // recalc hutang
+  kurangBayar()
+}
+
+// When a supir is selected from FieldSelect
+const onSelectSupir = (v) => {
+  // FieldSelect may emit the id (primitive) or an object (with id). Normalize to id.
+  if (v && typeof v === 'object' && ('id' in v)) {
+    values.nama_supir = v.id
+  } else {
+    values.nama_supir = v || null
+  }
+
+  if (values.nama_supir) {
+    // auto-set start/end from available rows for that supir (if any)
+    const targetRows = laporanPremiAll.value.filter((r) => {
+      const supirField = r['t_spk_angkutan.supir'] ?? (r.t_spk_angkutan && r.t_spk_angkutan.supir)
+      if (supirField == null) return false
+      if (typeof supirField === 'object') return String(supirField.id) === String(values.nama_supir)
+      return String(supirField) === String(values.nama_supir)
+    })
+
+    const dates = targetRows
+      .map((r) => getTanggalSpkFromRow(r))
+      .filter((d) => d !== null)
+      .map((d) => d.getTime())
+
+    if (dates.length > 0) {
+      const min = new Date(Math.min(...dates))
+      const max = new Date(Math.max(...dates))
+      values.start_date = formatToISODate(min)
+      values.end_date = formatToISODate(max)
+    } else {
+      values.start_date = null
+      values.end_date = null
+    }
+  } else {
+    values.start_date = null
+    values.end_date = null
+  }
+
+  // clear previous checks whenever filter changes
+  clearSelections()
+  applyFilters()
+}
+
+const onDateChange = (field, v) => {
+  values[field] = v || null
+  clearSelections()
+  applyFilters()
+}
+
+// Clear selection flags on all data
+const clearSelections = () => {
+  laporanPremi.value = laporanPremi.value.map(r => Object.assign({}, r, { _checked: false }))
+  laporanPremiAll.value = laporanPremiAll.value.map(r => Object.assign({}, r, { _checked: false }))
+}
+
+// Sum logic
+const formatCurrency = (value) => {
+  if (value === null || value === undefined || value === '') return 'Rp 0'
+  const num = parseFloat(value) || 0
+  return 'Rp ' + num.toLocaleString('id-ID')
+}
+
+// Select-all helper (only for displayed rows)
+const allDisplayedSelected = computed(() => {
+  if (!laporanPremi.value || laporanPremi.value.length === 0) return false
+  return laporanPremi.value.every(r => r._checked === true)
+})
+const selectedRows = computed(() => {
+  return (laporanPremi.value || []).filter(r => r._checked)
+})
+
+const kurangBayar = () => {
+  if (!Array.isArray(selectedRows.value)) {
+    values.hutang_supir = 0
+    values.total_premi_diterima = (parseFloat(values.hutang_supir) || 0) - (parseFloat(values.hutang_dibayar) || 0)
+    return
+  }
+
+  const sum = selectedRows.value.reduce((acc, row) => {
+    const v = parseFloat(row.total_premi)
+    return acc + (isNaN(v) ? 0 : v)
+  }, 0)
+
+  values.hutang_supir = sum
+  const dibayar = parseFloat(values.hutang_dibayar) || 0
+  values.total_premi_diterima = values.hutang_supir - dibayar
+}
+
+// Watches
+watch(selectedRows, () => {
+  kurangBayar()
+})
+
+watch(
+  [() => values.hutang_supir, () => values.hutang_dibayar],
+  () => {
+    const dibayar = parseFloat(values.hutang_dibayar) || 0
+    values.total_premi_diterima = (parseFloat(values.hutang_supir) || 0) - dibayar
+  }
+)
+
+
+const selectedIds = computed(() => {
+  return selectedRows.value.map(r => r.id).filter(Boolean)
+})
+
+const toggleSelectAll = (checked) => {
+  laporanPremi.value = laporanPremi.value.map(r => Object.assign({}, r, { _checked: !!checked }))
+}
+
+// Print: validate and perform same logic as original printPremi but using selectedIds
+// const onPrintButton = async () => {
+//   // Validasi: supir harus dipilih, tanggal range harus diisi
+//   console.log('laporanPremi (displayed):', laporanPremi.value)
+//   console.log('selectedRows:', selectedRows.value)
+//   console.log('selectedIds raw:', selectedRows.value.map(r => r.id))
+//   if (!values.nama_supir) {
+//     if (swal && swal.fire) await swal.fire({ icon: 'warning', text: 'Silakan pilih Nama Supir terlebih dahulu.' })
+//     return
+//   }
+//   if (!values.start_date || !values.end_date) {
+//     if (swal && swal.fire) await swal.fire({ icon: 'warning', text: 'Silakan isi Periode (start_date dan end_date).' })
+//     return
+//   }
+
+//   const ids = [...new Set(selectedIds.value)]
+//   console.log('iki cuk :', ids)
+//   if (!ids.length) {
+//     if (swal && swal.fire) await swal.fire({ icon: 'warning', text: 'Pilih minimal satu baris yang akan dicetak.' })
+//     return
+//   }
+
+//   // Extra safety: ensure each selected row still matches driver + date filters
+//   const invalid = selectedRows.value.some(r => {
+//     const supirField = r['t_spk_angkutan.supir'] ?? (r.t_spk_angkutan && r.t_spk_angkutan.supir)
+//     const supirMatch = supirField && (typeof supirField === 'object' ? String(supirField.id) === String(values.nama_supir) : String(supirField) === String(values.nama_supir))
+//     if (!supirMatch) return true
+
+//     const d = getTanggalSpkFromRow(r)
+//     if (!d) return true
+//     const start = new Date(values.start_date)
+//     const endInclusive = new Date(new Date(values.end_date).getFullYear(), new Date(values.end_date).getMonth(), new Date(values.end_date).getDate(), 23, 59, 59, 999)
+//     if (d < start || d > endInclusive) return true
+
+//     return false
+//   })
+
+//   if (invalid) {
+//     if (swal && swal.fire) await swal.fire({ icon: 'warning', text: 'Beberapa baris terpilih tidak sesuai dengan filter Supir / Periode. Silakan periksa kembali.' })
+//     return
+//   }
+
+//   const confirm = swal && swal.fire ? await swal.fire({
+//     icon: 'warning',
+//     text: `Yakin print ${ids.length} laporan premi?`,
+//     iconColor: '#1469AE',
+//     confirmButtonColor: '#1469AE',
+//     showDenyButton: true
+//   }) : { isConfirmed: true }
+
+//   if (!confirm.isConfirmed) return
+
+//   isRequesting.value = true
+//   try {
+//     if (!window.premiCounter) {
+//       window.premiCounter = 0;
+//     }
+
+//     function generateKode() {
+//       window.premiCounter++;
+//       const bulan = new Date().getMonth() + 1;
+//       const tahun = new Date().getFullYear().toString().slice(-2);
+//       const romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][bulan - 1];
+
+//       return String(window.premiCounter).padStart(3, '0') + "/PRMI/" + romawi + "/" + tahun;
+//     }
+
+//     const kode = generateKode();
+//     const queryParams = [
+//       ...ids.map((i) => `id[]=${encodeURIComponent(i)}`),
+//       `supir_id=${encodeURIComponent(values.nama_supir)}`,
+//       `start_date=${encodeURIComponent(values.start_date)}`,
+//       `end_date=${encodeURIComponent(values.end_date)}`,
+//       `hutang_supir=${encodeURIComponent(values.hutang_supir ?? 0)}`,
+//       `hutang_dibayar=${encodeURIComponent(values.hutang_dibayar ?? 0)}`,
+//       `total_premi_diterima=${encodeURIComponent(values.total_premi_diterima ?? 0)}`
+//     ].join("&");
+//     const previewUrl = `${store.server.url_backend}/web/laporan_premi?${queryParams}&kode=${kode}`
+//     window.open(previewUrl, '_blank')
+
+//     const updatePromises = ids.map(id =>
+//       fetch(`${store.server.url_backend}/operation/${endpointApi}/print?id=${id}`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           Authorization: `${store.user.token_type} ${store.user.token}`
+//         }
+//       }).then(async res => {
+//         if (!res.ok) {
+//           let text = await res.text()
+//           throw new Error(`Gagal menandai id ${id} sebagai printed. Status ${res.status}. ${text}`)
+//         }
+//         return res.json().catch(() => ({}))
+//       })
+//     )
+
+//     const settled = await Promise.allSettled(updatePromises)
+//     const rejected = settled.filter(s => s.status === 'rejected')
+
+//     if (rejected.length > 0) {
+//       const messages = rejected
+//         .map(r => r.reason?.message || JSON.stringify(r.reason))
+//         .slice(0, 5)
+//         .join('\n')
+//       if (swal && swal.fire) {
+//         await swal.fire({
+//           icon: 'warning',
+//           text: `Beberapa item gagal di-update sebagai printed:\n${messages}`
+//         })
+//       }
+//     } else {
+//       if (swal && swal.fire) {
+//         await swal.fire({
+//           icon: 'success',
+//           text: `Semua ${ids.length} laporan premi berhasil ditandai sebagai printed`
+//         })
+//       }
+//     }
+
+//     router.replace('/' + route.params.modul)
+//   } catch (err) {
+//     console.error(err)
+//     if (swal && swal.fire) {
+//       await swal.fire({
+//         icon: 'error',
+//         text: err?.message || String(err)
+//       })
+//     }
+//   } finally {
+//     isRequesting.value = false
+//   }
+// }
+
+const onPrintButton = async () => {
+  try {
+    isRequesting.value = true;
+
+    // Ambil rows: mendukung ref atau array plain
+    const rows = Array.isArray(laporanPremi) ? laporanPremi : (laporanPremi?.value ?? []);
+
+    // Jika ada selectedIds (ref) gunakan itu sebagai prioritas (fallback ke row._checked)
+    let ids = [];
+    if (typeof selectedIds !== 'undefined' && selectedIds?.value && Array.isArray(selectedIds.value) && selectedIds.value.length) {
+      ids = [...new Set(selectedIds.value)];
+    } else {
+      ids = rows
+        .filter(r => r && r._checked)
+        .map(r => r.id ?? r['id'] ?? r['premi_id'] ?? r['t_spk_angkutan.id'] ?? r['t_spk_angkutan_id'] ?? null)
+        .filter(Boolean);
+    }
+
+    if (!ids.length) {
+      if (swal && swal.fire) await swal.fire({ icon: 'warning', text: 'Pilih minimal satu baris sebelum mencetak.' });
+      return;
+    }
+
+    // Validasi supir & periode
+    if (!values.nama_supir) {
+      if (swal && swal.fire) await swal.fire({ icon: 'warning', text: 'Silakan pilih Nama Supir terlebih dahulu.' });
+      return;
+    }
+    if (!values.start_date || !values.end_date) {
+      if (swal && swal.fire) await swal.fire({ icon: 'warning', text: 'Silakan isi Periode (start_date dan end_date).' });
+      return;
+    }
+
+    // Simpan laporan premi di server (endpoint Anda)
+    const res = await fetch(`${store.server.url_backend}/operation/t_premi/laporan`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+      body: JSON.stringify({
+        supir_id: values.nama_supir,
+        start_date: values.start_date,
+        end_date: values.end_date,
+        hutang_supir: values.hutang_supir ?? 0,
+        hutang_dibayar: values.hutang_dibayar ?? 0,
+        total_premi_diterima: values.total_premi_diterima ?? 0,
+        id: ids // kirim array id yang dipilih
+      }),
+    });
+
+    if (!res.ok) {
+      const responseJson = await res.json().catch(() => ({}));
+      if (swal && swal.fire) await swal.fire({ icon: 'error', text: responseJson.message || 'Gagal simpan data Premi' });
+      return;
+    }
+
+    // Jika simpan berhasil, buat kode dan preview URL lalu buka preview di tab baru
+    // (kode mengikuti logic lama: counter global + romawi bulan + 2-digit tahun)
+    if (!window.premiCounter) window.premiCounter = 0;
+    function generateKode() {
+      window.premiCounter++;
+      const bulan = new Date().getMonth() + 1;
+      const tahun = new Date().getFullYear().toString().slice(-2);
+      const romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][bulan - 1];
+      return String(window.premiCounter).padStart(3, '0') + "/PRMI/" + romawi + "/" + tahun;
+    }
+    const kode = generateKode();
+
+    const queryParams = [
+      ...ids.map((i) => `id[]=${encodeURIComponent(i)}`),
+      `supir_id=${encodeURIComponent(values.nama_supir)}`,
+      `start_date=${encodeURIComponent(values.start_date)}`,
+      `end_date=${encodeURIComponent(values.end_date)}`,
+      `hutang_supir=${encodeURIComponent(values.hutang_supir ?? 0)}`,
+      `hutang_dibayar=${encodeURIComponent(values.hutang_dibayar ?? 0)}`,
+      `total_premi_diterima=${encodeURIComponent(values.total_premi_diterima ?? 0)}`
+    ].join("&");
+    const previewUrl = `${store.server.url_backend}/web/laporan_premi?${queryParams}&kode=${encodeURIComponent(kode)}`;
+
+    // Buka preview
+    try {
+      window.open(previewUrl, '_blank');
+    } catch (e) {
+      // Jika blocking popup, beri tahu user
+      console.warn('Gagal membuka preview di tab baru', e);
+      if (swal && swal.fire) await swal.fire({ icon: 'info', text: 'Preview diblokir oleh browser. Silakan periksa popup atau buka URL preview secara manual.' });
+    }
+
+    // Update total_premi terima (jika endpoint ada)
+    const updatePremi = await fetch(`${store.server.url_backend}/operation/t_premi/update_premi_terima`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+      body: JSON.stringify({
+        id: ids,
+        total_premi: values.total_premi_diterima ?? 0
+      }),
+    });
+
+    if (!updatePremi.ok) {
+      const respUpd = await updatePremi.json().catch(() => ({}));
+      if (swal && swal.fire) await swal.fire({ icon: 'error', text: respUpd.message || 'Gagal update total premi' });
+      return;
+    }
+
+    // Opsional: tandai printed per id (seperti implementasi lama)
+    const updatePrintedPromises = ids.map(id =>
+      fetch(`${store.server.url_backend}/operation/${endpointApi}/print?id=${encodeURIComponent(id)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`
+        }
+      }).then(async res => {
+        if (!res.ok) {
+          let text = await res.text().catch(() => '');
+          throw new Error(`Gagal menandai id ${id} sebagai printed. Status ${res.status}. ${text}`);
+        }
+        return res.json().catch(() => ({}));
+      })
+    );
+
+    const settled = await Promise.allSettled(updatePrintedPromises);
+    const rejected = settled.filter(s => s.status === 'rejected');
+
+    if (rejected.length > 0) {
+      const messages = rejected.map(r => r.reason?.message || JSON.stringify(r.reason)).slice(0, 5).join('\n');
+      if (swal && swal.fire) {
+        await swal.fire({ icon: 'warning', text: `Beberapa item gagal di-update sebagai printed:\n${messages}` });
+      }
+    } else {
+      if (swal && swal.fire) {
+        await swal.fire({ icon: 'success', text: `Semua ${ids.length} laporan premi berhasil diproses` });
+      }
+    }
+
+    router.replace('/' + route.params.modul);
+  } catch (err) {
+    console.error(err);
+    if (swal && swal.fire) {
+      await swal.fire({ icon: 'error', text: err?.message || String(err) });
+    }
+  } finally {
+    isRequesting.value = false;
+  }
+};
+
+const onPost = () => {
+  // keep existing Post behavior or implement as needed
+  swal.fire({ icon: 'info', text: 'Feature Post belum diimplementasikan.' })
+}
+
+// reapply filters when master data changes
+watch(laporanPremiAll, () => {
+  applyFilters()
+})
 
 // TABLE
 const table = reactive({
@@ -98,7 +636,7 @@ const table = reactive({
       headerName: 'Status',
       field: 'status',
       flex: 1,
-      filter:false,
+      filter: false,
       cellClass: ['border-r', '!border-gray-200', 'justify-center',],
       sortable: true,
       // resizable: true,
@@ -138,7 +676,7 @@ const table = reactive({
     {
       icon: 'location-arrow',
       title: "Post Data",
-      class: 'bg-rose-700 rounded-lg text-white',
+      class: 'bg-rose-700 text-white',
       show: (row) => row.status === 'DRAFT',
       async click(row) {
         swal.fire({
@@ -303,7 +841,6 @@ onActivated(() => {
   }
 });
 
-
 // @else | --- FORM DATA --- |
 
 // HOT KEY (CTRL+S)
@@ -338,7 +875,7 @@ onBeforeMount(async () => {
     data.tgl = getCurrentDateFormatted();
   }
 
-  if (!isRead) return;
+  if (!isRead.value) return;
 
   try {
     let trx_id;
@@ -420,7 +957,7 @@ onBeforeMount(async () => {
         data.dari = res.data.dari;
       }
       else {
-        data.head_deskripsi2 ='';
+        data.head_deskripsi2 = '';
         data.no_container = '';
         data.no_order = '';
         data.no_angkutan = '';
@@ -441,7 +978,7 @@ onBeforeMount(async () => {
       }
 
       console.log('SPK response', res);
-      
+
     });
 
 
@@ -496,8 +1033,8 @@ function onBack() {
 }
 
 async function onSave() {
-  console.log(data, detailArr);
-  console.log('ini panjangggg', detailArr.length);
+  //console.log(data, detailArr);
+  //console.log('ini panjangggg', detailArr.length);
   const result = await swal.fire({
     icon: 'warning', text: 'Simpan data?', showDenyButton: true,
   });
@@ -620,18 +1157,96 @@ const getDetailNPWPContainer = async (t_1_id, t_2_id) => {
 }
 
 
-watch(() => [detailArr, data.tarif_premi, data.tol, data.total_sangu, data.hutang_dibayar], () => {
-  // console.log('ini panjangggg', detailArr.length);
-  data.total_premi = 0;
-  for (let idx = 0; idx < detailArr.length; idx++) {
-    if (detailArr[idx].nominal) data.total_premi += Number(detailArr[idx].nominal);
-  }
-  if (data.tarif_premi) data.total_premi += Number(data.tarif_premi);
-  if (data.tol) data.total_premi += Number(data.tol);
-  if (data.total_sangu) data.total_premi -= Number(data.total_sangu);
-  if (data.hutang_dibayar) data.total_premi -= Number(data.hutang_dibayar);
+// watch(
+//   () => [detailArr, data.tarif_premi, data.tol, data.total_sangu, data.hutang_dibayar],
+//   () => {
+//     let total = 0;
 
-}, { deep: true })
+//     // Hitung total dari detail nominal
+//     for (let idx = 0; idx < detailArr.length; idx++) {
+//       if (detailArr[idx].nominal) total += Number(detailArr[idx].nominal);
+//     }
+
+//     // Tambahkan tarif premi jika > 0
+//     if (data.tarif_premi && Number(data.tarif_premi) > 0) {
+//       total += Number(data.tarif_premi);
+//     }
+
+//     // Tambahkan tol jika ada
+//     if (data.tol) total += Number(data.tol);
+
+//     // Kurangi total sangu (kalau ada)
+//     if (data.total_sangu) total -= Number(data.total_sangu);
+
+//     // Kurangi hutang dibayar (kalau ada)
+//     if (data.hutang_dibayar) total -= Number(data.hutang_dibayar);
+
+//     // Kalau tarif premi 0, pastikan tidak membuat hasil jadi minus
+//     if (Number(data.tarif_premi) === 0 && total < 0) {
+//       total = Math.abs(total);
+//     }
+
+//     data.total_premi = total;
+//   },
+//   { deep: true }
+// );
+
+// Watch pengganti — paste menggantikan watch lama
+watch(
+  // Trigger: perhatikan perubahan panjang & nominal detail, serta field-field yang relevan
+  () => [
+    Array.isArray(detailArr) ? detailArr.length : 0,
+    Array.isArray(detailArr) ? detailArr.map(d => String(d?.nominal ?? '')).join('|') : '',
+    data.tarif_premi,
+    data.tol,
+    data.total_sangu,
+    data.hutang_dibayar
+  ],
+  () => {
+    const toNum = v => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+       // MODE VIEW: gunakan value yang dikirim server, jangan hitung ulang
+    if (isView.value) {
+      // API kadang mengirim string, parse aman jadi number
+      const parsed = parseFloat(data.total_premi)
+      data.total_premi = Number.isFinite(parsed) ? parsed : 0
+      return
+    }
+
+    // Jumlahkan nominal dari detailArr (jika ada)
+    let totalDetail = 0;
+    if (Array.isArray(detailArr)) {
+      for (let i = 0; i < detailArr.length; i++) {
+        totalDetail += toNum(detailArr[i]?.nominal);
+      }
+    }
+
+    // Basis perhitungan: total_sangu (positif)
+    let total = toNum(data.total_sangu);
+
+    // Tambahkan tarif premi (boleh nol)
+    total += toNum(data.tarif_premi);
+
+    // Tambahkan tol
+    total += toNum(data.tol);
+
+    // Tambahkan detail
+    total += totalDetail;
+
+    // Kurangi hutang yang dibayar
+    total -= toNum(data.hutang_dibayar);
+
+    // Safety: pastikan tidak NaN/Infinity
+    if (!Number.isFinite(total)) total = 0;
+
+    // Simpan hasil
+    data.total_premi = total;
+  },
+  { immediate: true } // immediate agar nilai terhitung saat mount
+);
 
 // watch([() => data.tarif_premi, () => data.tol], () => {
 //   data.total_premi = 0;

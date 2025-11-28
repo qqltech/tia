@@ -86,7 +86,7 @@ onBeforeMount(async () => {
       const resultJson = await res.json()
       initialValues = resultJson.data
       initialValues.is_active = initialValues.is_active ? 1 : 0
-      initialValues.is_bundling = initialValues.is_bundling ? true : false
+      initialValues.is_bundling = initialValues.qty_stock
 
       initialValues.detailArr = initialValues.m_item_d;
       console.log('Detail Array:', initialValues.detailArr);
