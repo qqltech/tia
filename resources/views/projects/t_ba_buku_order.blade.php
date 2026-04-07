@@ -44,7 +44,12 @@
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
     class="max-h-[450px] pt-2 !px-4 !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -100,6 +105,7 @@
           headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
           params: {
             simplest:true,
+            where: 'this.is_closed = false',
           }
         }" placeholder="Pilih No. Order" :check="false" :columns="[{
           headerName: 'No',

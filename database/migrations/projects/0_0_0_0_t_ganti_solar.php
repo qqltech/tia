@@ -26,6 +26,7 @@ class tgantisolar extends Migration
             // $table->decimal('premi',18,4)->nullable();
             // $table->decimal('sangu',18,4)->nullable();
             $table->decimal('nominal',18,4)->nullable(); //sangu - premi = nominal
+            $table->date('filter_tahun')->nullable();
             // $table->text('catatan')->nullable();
             
             

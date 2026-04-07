@@ -1,6 +1,6 @@
 <!-- LANDING -->
 @if(!$req->has('id'))
-<div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-gray-500">
+<div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
   <div class="pl-2.5 pt-2 pb-2">
     <h1 class="text-xl font-semibold">ITEM</h1>
   </div>
@@ -30,7 +30,7 @@
 <!-- CONTENT -->
 @verbatim
 <div class="flex flex-col border rounded-md shadow-md md:w-full w-full p-0 bg-white border-none">
-  <div class="bg-gray-500 text-white rounded-t-md py-2 px-4">
+  <div class="bg-blue-500 text-white rounded-t-md py-2 px-4">
     <div class="flex items-center">
       <Icon fa="arrow-left" class="cursor-pointer mr-2 font-bold hover:text-yellow-500" title="Kembali" @click="onBack" />
       <div>
@@ -125,10 +125,10 @@
     </div> -->
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3"
-        :value="values.is_bundling" :errorText="formErrors.is_bundling?'failed':''"
-        @input="v=>values.is_bundling=v" :hints="formErrors.is_bundling"
-        label="Quantity"
-        placeholder="Quantity"
+        :value="values.qty_stock" :errorText="formErrors.qty_stock?'failed':''"
+        @input="v=>values.qty_stock=v" :hints="formErrors.qty_stock"
+        label="Quantity Stock"
+        placeholder="Quantity Stock"
         :check="false" />
     </div>
     <div>

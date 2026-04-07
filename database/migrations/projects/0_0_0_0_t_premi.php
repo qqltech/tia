@@ -16,16 +16,20 @@ class tpremi extends Migration
             $table->string('no_premi',40)->nullable();
             $table->integer('t_spk_angkutan_id')->comment('{"src":"t_spk_angkutan.id"}')->nullable();
             $table->integer('grup_head_id')->comment('{"src":"m_grup_head.id"}')->nullable();
+            $table->integer('trip_id')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->decimal('tol',18,2)->nullable();
-            $table->text('catatan')->change();
+            $table->text('catatan')->nullable();
             $table->string("status", 10)->default("DRAFT")->nullable();
             $table->decimal('total_premi',18,2)->nullable();
             $table->date('tgl')->nullable();
             $table->decimal('premi',18,4);
+            $table->decimal('history_nominal',18,4)->nullable();
             
             $table->decimal('hutang_supir',18,4)->nullable();
             $table->decimal('hutang_dibayar',18,4)->nullable();
             $table->decimal('total_premi_diterima',18,4)->nullable();
+            $table->decimal('lain_lain',18,4)->nullable();
+            $table->date('filter_tahun')->nullable();
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

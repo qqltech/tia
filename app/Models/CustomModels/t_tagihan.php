@@ -2,6 +2,8 @@
 
 namespace App\Models\CustomModels;
 
+use Illuminate\Support\Facades\DB;
+
 class t_tagihan extends \App\Models\BasicModels\t_tagihan
 {
     private $helper;
@@ -20,6 +22,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tgl']);
         $checkDuplicate = $this->IsDuplicate($arrayData);
         $checkDuplicate2 = $this->IsDuplicate2($arrayData);
         if($checkDuplicate) return ['errors' => ["No Buku Order Sudah Pernah Dibuat"]];
@@ -48,6 +51,10 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
 
     public function updateBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $tgl = $arrayData['tgl'] ?? $model->tgl;
+
+        $this->helper->checkIsPeriodClosed($tgl);
+
         $checkDuplicate = $this->IsDuplicate($arrayData);
         if($checkDuplicate) return ['errors' => ["Data Sudah Pernah Dibuat"]];
 
@@ -314,9 +321,11 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
         $tagihanJasa = $req['detailArr1'];
         $tagihanPpjk = $req['detailArr2'];
         $tagihanLain = $req['detailArr3'];
-        $tarifdp = $req['total_tarif_dp'];
         $idBukuOrder = $req['t_buku_order_id'];
         $ppn = $req['ppn'];
+        $tarifdp = DB::table('t_dp_penjualan')
+            ->where('t_buku_order_id', $idBukuOrder)
+            ->sum('total_amount');
         $countKontainer = collect($req['detailArr'])->count();
 
         $nominalPpjk = $req['detailArr'][0]['tarif'][0]['tarif_ppjk'] ?? 0;
@@ -337,6 +346,7 @@ class t_tagihan extends \App\Models\BasicModels\t_tagihan
             'total_ppn' => $totalPPN + $totalJasa['total_ppn'],
             'total_jasa_angkutan' => $totalJasa['total_non_ppn'],
             'total_lain_non_ppn' => $totalLainArray['total_non_ppn'],
+            'total_tarif_dp' => $tarifdp,
             'grand_total' => $totalKontainer + $totalPpjk['total_non_ppn'] + $totalLain + $totalPPN + $totalJasa['total'],
         ];
     }

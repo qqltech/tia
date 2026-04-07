@@ -24,7 +24,7 @@ class m_jasa extends Model
     public $rules       = [];
     public $joins       = [];
     public $details     = [];
-    public $heirs       = ["m_customer_d_tarif","m_tarif_d_jasa","t_tagihan_d_tarif"];
+    public $heirs       = ["t_tagihan_d_tarif","m_customer_d_tarif","m_tarif_d_jasa"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

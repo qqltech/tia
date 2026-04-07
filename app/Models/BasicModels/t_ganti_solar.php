@@ -17,10 +17,10 @@ class t_ganti_solar extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
+    protected $fillable = ["t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
 
-    public $columns     = ["id","t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","t_spk_angkutan_id:integer","status:string:191","tgl:date","no_container_1:string:191","no_container_2:string:191","nominal:decimal","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
+    public $columnsFull = ["id:bigint","t_spk_angkutan_id:integer","status:string:191","tgl:date","no_container_1:string:191","no_container_2:string:191","nominal:decimal","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["t_spk_angkutan.id=t_ganti_solar.t_spk_angkutan_id"];
     public $details     = [];
@@ -29,9 +29,9 @@ class t_ganti_solar extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["t_spk_angkutan_id","no_container_1","no_container_2"];
-    public $createable  = ["t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $updateable  = ["t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $searchable  = ["id","t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $updateable  = ["t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $searchable  = ["id","t_spk_angkutan_id","status","tgl","no_container_1","no_container_2","nominal","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

@@ -16,7 +16,8 @@ class tkomisiundername extends Migration
             // $table->renameColumn('presentase','persentase');
             // $table->bigInteger('cutomer_id')->comment('{"src":"m_customer.id"}')->nullable();
             // $table->renameColumn('cutomer_id','customer_id');
-            $table->date('tanggal_pelunasan')->nullable();
+            // $table->date('tanggal_pelunasan')->nullable();
+            // $table->renameColumn('status_id','status');
         });
     }
 }

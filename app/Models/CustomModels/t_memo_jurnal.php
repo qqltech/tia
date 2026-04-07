@@ -20,6 +20,8 @@ class t_memo_jurnal extends \App\Models\BasicModels\t_memo_jurnal
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $status = "DRAFT";
         $req = app()->request;
         if ($req->post) {
@@ -40,6 +42,10 @@ class t_memo_jurnal extends \App\Models\BasicModels\t_memo_jurnal
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+        
         $req = app()->request;
         $status = $req->post ? "POST" : $arrayData["status"];
 

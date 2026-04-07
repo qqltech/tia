@@ -68,7 +68,12 @@
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -343,9 +348,8 @@
           transform: true,
           getCustomer:true,
           useSPKVal: true,
-          //scopes:'getCodeCustomer',
           simplest:false,
-          where:`this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id : 0}`,
+          where:`this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id : 0} AND t_buku_order.is_closed = false`,
           searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi'
         },
         onsuccess: (response) => {
@@ -482,9 +486,8 @@
           transform: true,
           getCustomer:true,
           useSPKVal: true,
-          //scopes:'getCodeCustomer',
           simplest:false,
-          where:`this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 }`,
+          where:`this.id!=${data.t_detail_npwp_container_1_id ? data.t_detail_npwp_container_1_id: 0 } AND t_buku_order.is_closed = false`,
           searchfield: 't_buku_order.no_buku_order, this.no_prefix, this.no_suffix, ukuran.deskripsi, jenis.deskripsi'
         },
         onsuccess: (response) => {

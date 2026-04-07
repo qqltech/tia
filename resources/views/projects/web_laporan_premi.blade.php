@@ -2,48 +2,55 @@
 $helper = getCore('Helper');
 
 function formatUang($amount = 0) {
-return number_format($amount, 0, ',', '.');
+    return number_format($amount, 0, ',', '.');
 }
 
 function formatTanggalIndonesia($date) {
-if (!$date) return null;
+    if (!$date) return null;
 
-// Jika format dari database biasanya Y-m-d atau Y-m-d H:i:s
-try {
-$carbon = \Carbon\Carbon::parse($date)->locale('id');
-return $carbon->translatedFormat('d/m/Y');
-} catch (\Exception $e) {
-return $date; // fallback kalau format tidak dikenal
-}
+    // Jika format dari database biasanya Y-m-d atau Y-m-d H:i:s
+    try {
+        $carbon = \Carbon\Carbon::parse($date)->locale('id');
+        return $carbon->translatedFormat('d/m/Y');
+    } catch (\Exception $e) {
+        return $date; // fallback kalau format tidak dikenal
+    }
 }
 
 function singkatOrder($str) {
-if (!$str) return $str;
-$parts = explode('-', $str);
-return implode('-', array_slice($parts, 0, 2)); // ambil dua bagian pertama
+    if (!$str) return $str;
+    $parts = explode('-', $str);
+    return implode('-', array_slice($parts, 0, 2)); // ambil dua bagian pertama
+}
+
+function singkatExpImp($str) {
+    if (!$str) return $str;
+    $parts = explode('-', $str);
+    return implode('-', array_slice($parts, 0, 1)); // ambil dua bagian pertama
 }
 
 function convertToYmd($date) {
-if (!$date) return null;
-$parts = explode('/', $date); // d/m/Y
-if (count($parts) !== 3) return null;
-return $parts[2] . '-' . $parts[1] . '-' . $parts[0]; // Y-m-d
+    if (!$date) return null;
+    $parts = explode('/', $date); // d/m/Y
+    if (count($parts) !== 3) return null;
+    return $parts[2] . '-' . $parts[1] . '-' . $parts[0]; // Y-m-d
 }
 
 function bulanRomawi($bulan)
 {
-$romawi = [
-1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
-5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
-9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
-];
-return $romawi[(int)$bulan] ?? '';
+    $romawi = [
+        1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+        5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
+        9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
+    ];
+    return $romawi[(int)$bulan] ?? '';
 }
 
 
 $req = app()->request;
 $userId = $req->user ? floatval(base64_decode($req->user)) : null;
 
+$saldo_awal_input = $req->get('saldo_awal') ?? 0;
 $hutang_supir = $req->get('hutang_supir') ?? 0;
 $hutang_dibayar = $req->get('hutang_dibayar') ?? 0;
 $total_premi_diterima = $req->get('total_premi_diterima') ?? 0;
@@ -52,34 +59,34 @@ $kode = $req->get('kode') ?? '-';
 // ambil id[] dari frontend
 $ids = $req->get('id') ?? [];
 if (!is_array($ids)) {
-$ids = $ids ? [$ids] : [];
+    $ids = $ids ? [$ids] : [];
 }
 $ids = array_map('intval', $ids);
 
 // jika user tidak dikirim, ambil dari creator_id t_premi
 if (!$userId && count($ids) > 0) {
-$creator = \DB::selectOne("
-SELECT creator_id
-FROM t_premi
-WHERE id = ?
-LIMIT 1
-", [$ids[0]]);
+    $creator = \DB::selectOne("
+        SELECT creator_id
+        FROM t_premi
+        WHERE id = ?
+        LIMIT 1
+    ", [$ids[0]]);
 
-if ($creator && $creator->creator_id) {
-$userId = $creator->creator_id;
-}
+    if ($creator && $creator->creator_id) {
+        $userId = $creator->creator_id;
+    }
 }
 
 // error jika tetap tidak dapat userId
 if (!$userId) {
-dd("Error: parameter ?user= tidak dikirim dan creator_id tidak ditemukan", $req->all());
+    dd("Error: parameter ?user= tidak dikirim dan creator_id tidak ditemukan", $req->all());
 }
 
 // ambil user
 $user = \DB::selectOne("SELECT * FROM default_users WHERE id = ?", [$userId]);
 
 if (!$user) {
-dd("Error: user ID tidak ditemukan di DB", $userId);
+    dd("Error: user ID tidak ditemukan di DB", $userId);
 }
 
 // simpan dalam variabel
@@ -95,50 +102,56 @@ $ids = $req->get('id') ?? []; // Laravel menerima id[] sebagai 'id' => array
 
 // pastikan $ids berupa array dan cast ke int
 if (!is_array($ids)) {
-$ids = $ids ? [$ids] : [];
+    $ids = $ids ? [$ids] : [];
 }
 $ids = array_map('intval', array_filter($ids, function($v){ return $v !== null && $v !== ''; }));
 
 // ambil nama supir bila supirId diberikan (agar tampil di header)
 $supir = null;
 if (!empty($supirId)) {
-$sRow = \DB::selectOne("SELECT nama FROM set.m_kary WHERE id = ?", [(int)$supirId]);
-$supir = $sRow->nama ?? null;
+    $sRow = \DB::selectOne("SELECT nama FROM set.m_kary WHERE id = ?", [(int)$supirId]);
+    $supir = $sRow->nama ?? null;
 }
 
 // Build SQL
 $sql = "
-SELECT
-a.id AS id,
-b.no_spk,
-a.tgl,
-a.hutang_supir,
-b.dari,
-b.ke,
-c.no_buku_order,
-ca.no_buku_order AS no_buku_order2,
-d.nama_perusahaan,
-d.kode,
-a.no_premi,
-ukuran.deskripsi AS ukuran,
-trip.kode AS trip,
-f.nama AS supir,
-COALESCE(CAST(b.sangu AS DECIMAL(15,2)), 0) AS sangu,
-COALESCE(a.tarif_premi, 0) AS tarif_premi,
-COALESCE(a.tol, 0) AS tol,
-COALESCE((SELECT SUM(ab.nominal) FROM t_premi_d ab WHERE ab.t_premi_id = a.id), 0) AS lain_lain,
-COALESCE((SELECT SUM(ac.nominal) FROM t_ganti_solar ac WHERE ac.t_spk_angkutan_id = b.id), 0) AS ganti_solar,
-a.catatan,
-b.tanggal_spk
-FROM t_premi a
-LEFT JOIN t_spk_angkutan b ON b.id = a.t_spk_angkutan_id
-LEFT JOIN t_buku_order c ON c.id = b.t_buku_order_1_id
-LEFT JOIN t_buku_order ca ON ca.id = b.t_buku_order_2_id
-LEFT JOIN m_customer d ON d.id = c.m_customer_id
-LEFT JOIN t_buku_order_d_npwp e ON e.t_buku_order_id = c.id
-LEFT JOIN set.m_general ukuran ON ukuran.id = e.ukuran
-LEFT JOIN set.m_general trip ON trip.id = b.trip_id
-LEFT JOIN set.m_kary f ON f.id = b.supir
+    SELECT
+    a.id AS id,
+    b.no_spk,
+    a.tgl,
+    a.hutang_supir,
+    a.no_premi,
+    a.lain_lain AS nominal_lain,
+    a.catatan,
+    a.total_premi,
+    a.saldo_awal,
+    b.dari,
+    b.ke,
+    c.no_buku_order,
+    ca.no_buku_order AS no_buku_order2,
+    d.nama_perusahaan,
+    d.kode,
+    ukuran.deskripsi AS ukuran,
+    trip.kode AS trip,
+    head.kode AS head,
+    f.nama AS supir,
+    f.nip AS nama_singkat,
+    COALESCE(CAST(b.sangu AS DECIMAL(15,2)), 0) AS sangu,
+    COALESCE(a.tarif_premi, 0) AS tarif_premi,
+    COALESCE(a.tol, 0) AS tol,
+    COALESCE((SELECT SUM(ab.nominal) FROM t_premi_d ab WHERE ab.t_premi_id = a.id), 0) AS lain_lain,
+    COALESCE((SELECT SUM(ac.nominal) FROM t_ganti_solar ac WHERE ac.t_spk_angkutan_id = b.id), 0) AS ganti_solar,
+    b.tanggal_spk
+    FROM t_premi a
+    LEFT JOIN t_spk_angkutan b ON b.id = a.t_spk_angkutan_id
+    LEFT JOIN t_buku_order c ON c.id = b.t_buku_order_1_id
+    LEFT JOIN t_buku_order ca ON ca.id = b.t_buku_order_2_id
+    LEFT JOIN m_customer d ON d.id = c.m_customer_id
+    LEFT JOIN t_buku_order_d_npwp e ON e.t_buku_order_id = c.id
+    LEFT JOIN set.m_general head ON head.id = b.head
+    LEFT JOIN set.m_general ukuran ON ukuran.id = e.ukuran
+    LEFT JOIN set.m_general trip ON trip.id = b.trip_id
+    LEFT JOIN set.m_kary f ON f.id = b.supir
 ";
 
 $where = [];
@@ -146,22 +159,22 @@ $bindings = [];
 
 // Jika ada id[] yang dikirim, pakai filter IN untuk menampilkan baris terpilih saja
 if (count($ids) > 0) {
-// siapkan placeholders untuk binding
-$placeholders = implode(',', array_fill(0, count($ids), '?'));
-$where[] = "a.id IN ($placeholders)";
-foreach ($ids as $v) $bindings[] = $v;
+    // siapkan placeholders untuk binding
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $where[] = "a.id IN ($placeholders)";
+    foreach ($ids as $v) $bindings[] = $v;
 }
 
 // filter berdasarkan supir jika diberikan
 if (!empty($supirId)) {
-$where[] = "b.supir = ?";
-$bindings[] = (int)$supirId;
+    $where[] = "b.supir = ?";
+    $bindings[] = (int)$supirId;
 }
 
 
 
 if (count($where) > 0) {
-$sql .= " WHERE " . implode(" AND ", $where);
+    $sql .= " WHERE " . implode(" AND ", $where);
 }
 
 $sql .= " ORDER BY a.created_at DESC";
@@ -170,18 +183,24 @@ $data = \DB::select($sql, $bindings);
 
 // hitung grand total
 $grandtotal = [
-"sangu" => 0,
-"tarif_premi" => 0,
-"tol" => 0,
-"lain_lain" => 0,
-"ganti_solar" => 0,
-"total" => 0,
+    "sangu" => 0,
+    "tarif_premi" => 0,
+    "tol" => 0,
+    "nominal_lain" => 0,
+    "lain_lain" => 0,
+    "ganti_solar" => 0,
+    "total" => 0,
 ];
 
 // untuk menampilkan periode di header gunakan start/end yang dikirim (jika ada)
 $periode_awal = convertToYmd($start);
 $periode_akhir = convertToYmd($end);
+
+
+
 @endphp
+
+
 
 <style>
   /* Area luar: seperti latar abu-abu di contoh BKK */
@@ -271,6 +290,16 @@ $periode_akhir = convertToYmd($end);
     background-color: #eee;
   }
 
+  .total-rows td {
+    border: none !important;
+  }
+
+  .total-rows td.border-black {
+    border: 1px solid #000 !important;
+    background-color: #eee;
+    font-weight: bold;
+  }
+
   @page {
     size: A4 landscape;
     margin: 0;
@@ -329,20 +358,20 @@ $periode_akhir = convertToYmd($end);
       <tr>
         <th>Order Angk.</th>
         <th>Tanggal</th>
-        <th>Dari</th>
+        <th style="width: 5%;">Dari</th>
         <th style="width: 5%;">Ke</th>
         <th>No. Ord Tia</th>
-        <th>Exp/Imp</th>
-        <th>TR No.</th>
+        <th style="width: 2%;">Exp/Imp</th>
+        <th style="width: 2%;">TR No.</th>
         <th>20/40</th>
         <th>Trip</th>
         <th>Supir</th>
-        <th>Sangu</th>
-        <th>Premi</th>
-        <th style="width: 5%;">Tol</th>
-        <th>Lain-Lain</th>
-        <th style="width: 5%;">Biaya Tmb. Solar</th>
-        <th style="width: 6%;">Total</th>
+        <th style="width: 7%;">Sangu</th>
+        <th style="width: 7%;">Premi</th>
+        <th style="width: 7%;">Tol</th>
+        <th style="width: 6%;">Lain-Lain</th>
+        <th style="width: 7%;">Biaya Tmb. Premi</th>
+        <th style="width: 7%;">Total</th>
         <th style="width: 10%;">Ket.</th>
       </tr>
     </thead>
@@ -352,86 +381,124 @@ $periode_akhir = convertToYmd($end);
       @php
       $tarif = (float) ($dt->tarif_premi ?? 0);
       $tol = (float) ($dt->tol ?? 0);
+      $nominal = (float) ($dt->nominal_lain ?? 0);
       $lain = (float) ($dt->lain_lain ?? 0);
       $solar = (float) ($dt->ganti_solar ?? 0);
       $sangu = (float) ($dt->sangu ?? 0);
-      $total = ($tarif + $tol + $lain + $solar) - $sangu;
+      //$total = ($tarif + $tol + $lain + $solar) - $sangu;
+      $total = (float) ($dt->total_premi ?? 0);
 
       $grandtotal['sangu'] += $sangu;
       $grandtotal['tarif_premi'] += $tarif;
       $grandtotal['tol'] += $tol;
+      $grandtotal['nominal_lain'] += $nominal;
       $grandtotal['lain_lain'] += $lain;
       $grandtotal['ganti_solar'] += $solar;
       $grandtotal['total'] += $total;
       @endphp
 
       <tr class="highlight">
-        <td>{{ $dt->no_buku_order }}</td>
+        <td>{{ $dt->no_spk }}</td>
         <td>{{ formatTanggalIndonesia($dt->tgl) }}</td>
         <td>{{ $dt->dari }}</td>
         <td>{{ $dt->ke }}</td>
         <td>{{ singkatOrder($dt->no_buku_order) }}</td>
-        <td>{{ $dt->kode }}</td>
-        <td>{{ $dt->no_premi }}</td>
+        <td>{{ singkatExpImp($dt->kode) }}</td>
+        <td>{{ $dt->head }}</td>
         <td>{{ $dt->ukuran }}</td>
         <td>{{ $dt->trip }}</td>
-        <td>{{ $dt->supir }}</td>
+        <td>{{ $dt->nama_singkat }}</td>
         <td class="right">{{ formatUang($sangu) }}</td>
         <td class="right">{{ formatUang($tarif) }}</td>
         <td class="right">{{ formatUang($tol) }}</td>
+        <td class="right">{{ formatUang($nominal) }}</td>
         <td class="right">{{ formatUang($lain) }}</td>
-        <td class="right">{{ formatUang($solar) }}</td>
         <td class="right">{{ formatUang($total) }}</td>
         <td>{{ $dt->catatan }}</td>
       </tr>
       @endforeach
+
+      @php
+
+        $db_saldo_awal = isset($data[0]->saldo_awal) ? (float)$data[0]->saldo_awal : 0;
+        
+        if ($saldo_awal_input != 0) {
+            $fixed_saldo_awal = $saldo_awal_input;
+        } else {
+            $fixed_saldo_awal = $db_saldo_awal;
+        }
+
+        $fixed_saldo_akhir = $fixed_saldo_awal + $grandtotal['total'] - $hutang_dibayar;
+
+        // Update Database
+        // Ini akan menimpa data lama contoh -> (500.000) menjadi data baru -> (635.000)
+        if (!empty($ids)) {
+           $placeholders = implode(',', array_fill(0, count($ids), '?'));
+           
+           // Simpan saldo akhir (total_pembayaran) & saldo awal
+           $params = array_merge([$fixed_saldo_akhir, $fixed_saldo_awal], $ids);
+           
+           \DB::update("UPDATE t_premi SET total_pembayaran = ?, saldo_awal = ? WHERE id IN ($placeholders)", $params);
+        }
+        
+      @endphp
 
       <tr class="total-row">
         <td colspan="10" class="right"><b>Total :</b> &nbsp;&nbsp;&nbsp;{{ $data[0]->supir ?? '-' }}</td>
         <td class="right border-black">{{ formatUang($grandtotal['sangu']) }}</td>
         <td class="right border-black">{{ formatUang($grandtotal['tarif_premi']) }}</td>
         <td class="right border-black">{{ formatUang($grandtotal['tol']) }}</td>
+        <td class="right border-black">{{ formatUang($grandtotal['nominal_lain']) }}</td>
         <td class="right border-black">{{ formatUang($grandtotal['lain_lain']) }}</td>
-        <td class="right border-black">{{ formatUang($grandtotal['ganti_solar']) }}</td>
+        <!-- <td class="right border-black">{{ formatUang($grandtotal['ganti_solar']) }}</td> -->
         <td class="right border-black">{{ formatUang($grandtotal['total']) }}</td>
         <td></td>
+      </tr>
+
+      <tr class="total-rows">
+        <td colspan="10" class="right"></td>
+        <td class="right"></td>
+        <td class="right"></td>
+        <td class="right"></td>
+        <td class="right"></td>
+        <!-- Cicilan -->
+        <td colspan="2" class="right  border-black">{{ formatUang($hutang_dibayar) }}</td>
+      </tr>
+      
+      <tr class="total-rows">
+        <td colspan="10" class="right"></td>
+        <td class="right"></td>
+        <td class="right"></td>
+        <td class="right"></td>
+        <td class="right"></td>
+        <!-- total pembayaran -->
+        <td colspan="2" class="right  border-black">{{ formatUang($fixed_saldo_akhir) }}</td>
       </tr>
     </tbody>
   </table>
 
   <br>
 
-  <!-- <table class="no-border small">
-    <tr>
-      <td style="width:10%;">Awal</td>
-      <td style="width:2%;">:</td>
-      <td class="right" style="width:9%;">28.910.100</td>
-    </tr>
-    <tr>
-      <td>Pinjaman</td>
-      <td>:</td>
-      <td class="right">0</td>
-      <td class="right" colspan="11"></td>
-    </tr>
-    <tr>
-      <td>Cicilan</td>
-      <td>:</td>
-      <td class="right">189.000</td>
-      <td class="right" colspan="11"></td>
-    </tr>
-    <tr>
-      <td>Saldo</td>
-      <td>:</td>
-      <td class="right">28.721.100</td>
-    </tr>
-  </table> -->
-
   <table class="no-border" style="width: 100%;">
     <tbody>
       <tr>
-        <td style="text-align: left; width: 7%;">
-          Hutang supir
-          <span style="padding-left: 70%;">
+        <td style="text-align: left; width: 2%;">
+          Saldo Awal
+          <span style="padding-left: 41%;">
+            :
+          </span>
+        </td>
+        <td style="text-align: left; width: 20%;">
+          Rp
+          <span style="padding-left: 3px;">
+            {{ formatUang($fixed_saldo_awal) }}
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: left; width: 2%;">
+          Pinjaman
+          <span style="padding-left: 48%;">
             :
           </span>
         </td>
@@ -444,8 +511,8 @@ $periode_akhir = convertToYmd($end);
       </tr>
       <tr>
         <td style="text-align: left;">
-          Hutang supir yang ingin di bayarkan
-          <span style="padding-left: 23%;">
+          Cicilan
+          <span style="padding-left: 59.5%;">
             :
           </span>
         </td>
@@ -458,15 +525,15 @@ $periode_akhir = convertToYmd($end);
       </tr>
       <tr>
         <td style="text-align: left;">
-          Total premi yang di terima
-          <span style="padding-left: 43.5%;">
+          Saldo
+          <span style="padding-left: 64%;">
             :
           </span>
         </td>
         <td style="text-align: left; width: 20%;">
           Rp
           <span style="padding-left: 3px;">
-              {{ formatUang($total_premi_diterima) }}
+              {{ formatUang($fixed_saldo_akhir) }}
           </span>
         </td>
       </tr>

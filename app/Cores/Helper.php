@@ -18,20 +18,20 @@ class Helper
         $this->timestamp = \Carbon\Carbon::now();
     }
 
-
-    public function getGeneralId($group, $ref, $val){
-        $get_id = DB::table('set.m_general')
-            ->select('id')
-            ->where('group', '=', $group)
-            ->where($ref, '=', $val)
-            ->where('is_active', true)
+    public function getGeneralId($group, $ref, $val)
+    {
+        $get_id = DB::table("set.m_general")
+            ->select("id")
+            ->where("group", "=", $group)
+            ->where($ref, "=", $val)
+            ->where("is_active", true)
             ->first();
-        if (!$get_id) trigger_error("invalid $group $ref $val");
-        
+        if (!$get_id) {
+            trigger_error("invalid $group $ref $val");
+        }
+
         return $get_id->id;
     }
-
-    
 
     public function generateNomor($nama, $counter = true, $static = null)
     {
@@ -77,12 +77,17 @@ class Helper
                         $temporaryCode .= date($trx_type->value);
                     } elseif ($trx_type->ref_type === "seq") {
                         // type seq
+                        $temporaryCodeWithoutSeq = $temporaryCode;
                         $table = "generate_num";
                         $length = (int) $trx_type->value ?? 6;
                         $lastDataQuery = generate_num_log::where(
                             "nama",
                             @$generate_num->nama
                         )
+                            ->where(
+                                "value_without_seq",
+                                "$temporaryCodeWithoutSeq{seq}"
+                            )
                             ->where("table", $table)
                             ->orderBy("created_at", "DESC");
 
@@ -102,6 +107,10 @@ class Helper
                         if ($counter && !$static) {
                             if ($lastDataQuery->exists()) {
                                 generate_num_log::where("table", $table)
+                                    ->where(
+                                        "value_without_seq",
+                                        "$temporaryCodeWithoutSeq{seq}"
+                                    )
                                     ->where("nama", $generate_num->nama)
                                     ->update([
                                         "value" => $temporaryCode,
@@ -112,6 +121,7 @@ class Helper
                                     "table" => $table,
                                     "nama" => $generate_num->nama,
                                     "value" => $temporaryCode,
+                                    "value_without_seq" => "$temporaryCodeWithoutSeq{seq}",
                                     "seq" => $latest,
                                 ]);
                             }
@@ -129,20 +139,30 @@ class Helper
         return $temporaryCode;
     }
 
-    public function formatTime($time) {
+    public function formatTime($time)
+    {
         return date("H:i", strtotime($time));
     }
 
-    public function formatTanggalIndonesia($tanggal) {
+    public function formatTanggalIndonesia($tanggal)
+    {
         $bulan = [
-            'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret',
-            'April' => 'April', 'May' => 'Mei', 'June' => 'Juni',
-            'July' => 'Juli', 'August' => 'Agustus', 'September' => 'September',
-            'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
+            "January" => "Januari",
+            "February" => "Februari",
+            "March" => "Maret",
+            "April" => "April",
+            "May" => "Mei",
+            "June" => "Juni",
+            "July" => "Juli",
+            "August" => "Agustus",
+            "September" => "September",
+            "October" => "Oktober",
+            "November" => "November",
+            "December" => "Desember",
         ];
 
         $date = new \DateTime($tanggal);
-        $formattedDate = $date->format('d F Y'); // Contoh: 05 February 2025
+        $formattedDate = $date->format("d F Y"); // Contoh: 05 February 2025
         return strtr($formattedDate, $bulan); // Mengubah bulan ke bahasa Indonesia
     }
 
@@ -313,23 +333,24 @@ class Helper
 
     public function snakeCaseToCapitalize($str)
     {
-        $words = explode('_', $str);
-        $capitalizedWords = array_map('ucfirst', $words);
-        $result = implode(' ', $capitalizedWords);
+        $words = explode("_", $str);
+        $capitalizedWords = array_map("ucfirst", $words);
+        $result = implode(" ", $capitalizedWords);
 
         return $result;
     }
 
-   public function midtransConn($data, $url) {
-        $serverKey = 'SB-Mid-server-0VQPFdz3p3o84RcwVrWCFE4i';
+    public function midtransConn($data, $url)
+    {
+        $serverKey = "SB-Mid-server-0VQPFdz3p3o84RcwVrWCFE4i";
         // $url = 'https://app.sandbox.midtrans.com/snap/v1/transactions';
         // $url = 'https://api.sandbox.midtrans.com/v2/charge';
-        $auth = base64_encode($serverKey. ':');
-        $headers = array(
-            'Accept: application/json',
-            'Authorization: Basic ' . $auth,
-            'Content-Type: application/json'
-        );
+        $auth = base64_encode($serverKey . ":");
+        $headers = [
+            "Accept: application/json",
+            "Authorization: Basic " . $auth,
+            "Content-Type: application/json",
+        ];
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -344,4 +365,224 @@ class Helper
         return $response;
     }
 
+    public function getOutstandingClosing($m_bu_id, $tahun) 
+    {
+        $outstandingList = [];
+        $modules = $this->closingModules();
+
+        foreach ($modules as $mod) {
+            try {
+                $numberCol = $mod["number_col"] ?? null;
+                $dateCol = $mod["date_col"] ?? null;
+                $statusCol = $mod["status_col"] ?? "status";
+
+                $query = \DB::table($mod["table"] . " as trx")
+                    ->whereYear("trx." . $dateCol, $tahun)
+                    ->whereNull("trx.deleted_at");
+
+                if ($statusCol && isset($mod["done_value2"])) {
+                    $query->whereNotIn(
+                        "trx." . $statusCol,
+                        $mod["done_value2"]
+                    );
+                }
+
+                $select = ["trx.id", \DB::raw("trx." . $dateCol . " as date")];
+
+                $select[] = $statusCol
+                    ? \DB::raw("trx." . $statusCol . " as status_name")
+                    : \DB::raw("NULL as status_name");
+
+                $select[] = $numberCol
+                    ? \DB::raw("trx." . $numberCol . " as no")
+                    : \DB::raw("NULL as no");
+
+                $records = $query
+                    ->select($select)
+                    ->get()
+                    ->values();
+
+                if ($records->count() > 0) {
+                    $outstandingList[] = [
+                        "nama_transaksi" => $mod["name"],
+                        "jumlah" => $records->count(),
+                        "details" => $records->map(function ($r) {
+                            return (array) $r;
+                        }),
+                    ];
+                }
+            } catch (\Exception $e) {
+                throw new \Exception(
+                    "Error Menu: " . $mod["name"] . " | Table: " . $mod["table"] . " -> " . $e->getMessage()
+                );
+            }
+        }
+
+        return [
+            "outstanding" => array_values($outstandingList)
+        ];
+    }
+
+    public function closingModules()
+    {
+        return [
+            // FIXED ASSET
+            [
+                "name" => "Confirm Asset",
+                "table" => "t_confirm_asset",
+                "date_col" => "tanggal",
+                "number_col" => "no_asset_confirmation",
+                "done_value2" => ["APPROVED"],
+            ],
+            [
+                "name" => "Asset Disposal",
+                "table" => "t_asset_disposal",
+                "date_col" => "tanggal",
+                "done_value2" => ["ACTIVE"],
+            ],
+
+            // INVENTORY
+            [
+                "name" => "Internal Usage",
+                "table" => "t_internal",
+                "date_col" => "tanggal",
+                "number_col" => "no_pemakaian",
+                "done_value2" => ["POST"],
+            ],
+
+            // ACCOUNTING
+            [
+                "name" => "BKK (Non Order)",
+                "table" => "t_bkk_non_order",
+                "date_col" => "tanggal",
+                "number_col" => "no_bkk",
+                "done_value2" => ["APPROVED", "PRINTED"],
+            ],
+            [
+                "name" => "Down Payment Penjualan",
+                "table" => "t_dp_penjualan",
+                "date_col" => "tgl_dp",
+                "number_col" => "no_dp",
+                "done_value2" => ["POST"],
+            ],
+            [
+                "name" => "BLL",
+                "table" => "t_bll",
+                "date_col" => "tanggal",
+                "number_col" => "no_bll",
+                "done_value2" => ["APPROVED"],
+            ],
+            [
+                "name" => "BKK (NON KASBON)",
+                "table" => "t_bkk",
+                "date_col" => "tanggal",
+                "number_col" => "no_bkk",
+                "done_value2" => ["APPROVED", "PRINTED"],
+            ],
+            [
+                "name" => "Bon Dinas Luar",
+                "table" => "t_bon_dinas_luar",
+                "date_col" => "tanggal",
+                "number_col" => "no_bon_dinas_luar",
+                "done_value2" => ["POST"],
+            ],
+            [
+                "name" => "Rencana Pembayaran Hutang",
+                "table" => "t_rencana_pembayaran_hutang",
+                "date_col" => "tgl",
+                "number_col" => "no_rph",
+                "done_value2" => ["POST"],
+            ],
+            [
+                "name" => "Komisi Undername",
+                "table" => "t_komisi_undername",
+                "date_col" => "tanggal",
+                "number_col" => "no_komisi_undername",
+                "done_value2" => ["POST", "COMPLETED"],
+            ],
+            [
+                "name" => "Pembayaran Hutang",
+                "table" => "t_pembayaran_hutang",
+                "date_col" => "tanggal",
+                "number_col" => "no_pembayaran",
+                "done_value2" => ["APPROVED", "COMPLETED"],
+            ],
+            [
+                "name" => "Buku Penyesuaian",
+                "table" => "t_buku_penyesuaian",
+                "date_col" => "tanggal_buku_penyesuaian",
+                "number_col" => "no_buku_penyesuaian",
+                "done_value2" => ["POST"],
+            ],
+            [
+                "name" => "Pembayaran Piutang",
+                "table" => "t_pembayaran_piutang",
+                "date_col" => "tanggal",
+                "number_col" => "no_pembayaran",
+                "done_value2" => ["POST"],
+            ],
+            [
+                "name" => "Premi",
+                "table" => "t_premi",
+                "date_col" => "tgl",
+                "number_col" => "no_premi",
+                "done_value2" => ["APPROVED", "PRINTED"],
+            ],
+            [
+                "name" => "Ganti Solar",
+                "table" => "t_ganti_solar",
+                "date_col" => "tgl",
+                "done_value2" => ["ACTIVE"],
+            ],
+            [
+                "name" => "Komisi",
+                "table" => "t_komisi",
+                "date_col" => "tanggal",
+                "number_col" => "no_komisi",
+                "done_value2" => ["POST"],
+            ],
+            [
+                "name" => "BKM",
+                "table" => "t_bkm",
+                "date_col" => "tanggal",
+                "number_col" => "no_bkm",
+                "done_value2" => ["POST", "PRINTED"],
+            ],
+            [
+                "name" => "BKM Non Order",
+                "table" => "t_bkm_non_order",
+                "date_col" => "tanggal",
+                "number_col" => "no_bkm",
+                "done_value2" => ["POST"],
+            ],
+            [
+                "name" => "Memo Jurnal",
+                "table" => "t_memo_jurnal",
+                "date_col" => "tanggal_memo",
+                "number_col" => "no_memo",
+                "done_value2" => ["POST"],
+            ],
+        ];
+    }
+
+    public function checkIsPeriodClosed($trx_date)
+    {
+        $parsedDate = Carbon::createFromFormat('d/m/Y', $trx_date);
+        $tahun = $parsedDate->year;
+
+        $periodeStr = $tahun;
+
+        $closing = \DB::table("t_tutup_buku")
+            ->where("periode", $periodeStr)
+            //->where("status", "POST")
+            ->whereNull("deleted_at");
+
+        if ($closing->exists()) {
+            throw new \Exception(
+                "Transaksi ditolak! Periode akuntansi untuk {$tahun} sudah ditutup (Closing)."
+            );
+        }
+
+        return true;
+    }
 }

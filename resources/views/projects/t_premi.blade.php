@@ -64,6 +64,12 @@
   <TableApi ref="apiTable" :api="table.api" :columns="table.columns" :actions="table.actions"
     class="max-h-[500px] pt-2 !px-4 !pb-8">
     <template #header>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
       <div>
         <button
           class="pr-2 border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5 transition-colors duration-300"
@@ -159,25 +165,36 @@
               </table>
             </div>
 
-            <div class="flex items-center space-x-2 mb-4 pl-20 !mt-3">
-              <label class="text-sm whitespace-nowrap">Kurang bayar &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
-              <FieldNumber class="w-1/2" :bind="{ readonly: true, disabled: true }" :value="values.hutang_supir" @input="(v)=>values.hutang_supir=v"
-                :errorText="formErrors.hutang_supir?'failed':''" :hints="formErrors.hutang_supir"
-                placeholder="Kurang Bayar" label="" :check="false" />
-            </div>
+            <!-- SECTION YANG DIRAPIKAN: Kurang bayar, Yang dibayarkan, Yang diterima -->
+            <div class="flex justify-center mt-6">
+              <div class="grid grid-cols-[160px_1fr] gap-x-3 gap-y-4 w-full max-w-md">
+                <!-- Row 0: Saldo awal -->
+                <label class="text-sm whitespace-nowrap text-right self-center">Saldo Awal :</label>
+                <FieldNumber class="w-full" :bind="{ readonly: isSaldoReadonly }" :value="values.saldo_awal"
+                  @input="(v)=>{ values.saldo_awal=v; kurangBayar(); }" 
+                  placeholder="Saldo Awal" label="" :check="false" />
 
-            <div class="flex items-center space-x-2 mb-4 pl-20 !mt-3">
-              <label class="text-sm whitespace-nowrap">Yang dibayarkan &nbsp;&nbsp;:</label>
-              <FieldNumber class="w-1/2" :bind="{ }" :value="values.hutang_dibayar"
-                @input="(v)=>values.hutang_dibayar=v" :errorText="formErrors.hutang_dibayar?'failed':''"
-                :hints="formErrors.hutang_dibayar" placeholder="Yang dibayarkan" label="" :check="false" />
-            </div>
+                <!-- Row 1: Kurang bayar -->
+                <label class="text-sm whitespace-nowrap text-right self-center">Pinjaman :</label>
+                <FieldNumber class="w-full" :bind="{ readonly: true, disabled: true }" :value="values.hutang_supir"
+                  @input="(v)=>values.hutang_supir=v" :errorText="formErrors.hutang_supir?'failed':''"
+                  :hints="formErrors.hutang_supir" placeholder="Kurang Bayar" label="" :check="false" />
 
-            <div class="flex items-center space-x-2 mb-4 pl-20 !mt-3">
-              <label class="text-sm whitespace-nowrap">Yang diterima &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
-              <FieldNumber class="w-1/2" :bind="{ readonly: true, disabled: true }" :value="values.total_premi_diterima"
-                @input="(v)=>{ values.total_premi_diterima = v; values.total_premi = v }" :errorText="formErrors.total_premi_diterima?'failed':''"
-                :hints="formErrors.total_premi_diterima" placeholder="Yang diditerima" label="" :check="false" />
+                <!-- Row 2: Yang dibayarkan -->
+                <label class="text-sm whitespace-nowrap text-right self-center">Cicilan :</label>
+                <FieldNumber class="w-full" :bind="{ }" :value="values.hutang_dibayar"
+                  @input="(v)=>values.hutang_dibayar=v" :errorText="formErrors.hutang_dibayar?'failed':''"
+                  :hints="formErrors.hutang_dibayar" placeholder="Yang dibayarkan" label="" :check="false" />
+
+                <!-- Row 3: Yang diterima -->
+                <label class="text-sm whitespace-nowrap text-right self-center">Saldo :</label>
+                <FieldNumber class="w-full" :bind="{ readonly: true, disabled: true }"
+                  :value="values.total_premi_diterima"
+                  @input="(v)=>{ values.total_premi_diterima = v; values.total_premi = v }"
+                  :errorText="formErrors.total_premi_diterima?'failed':''" :hints="formErrors.total_premi_diterima"
+                  placeholder="Yang diterima" label="" :check="false" />
+
+              </div>
             </div>
 
             <!-- Footer -->
@@ -244,7 +261,7 @@
         },
         params: {
           simplest:false,
-          scopes: 'WithGrupHead',
+          scopes: 'WithGrupHead,ExcludeUsedSpk',
           searchfield:'this.no_spk, this.tipe_spk, supir.nama, sektor1.deskripsi, this.sangu',
         },
         onsuccess: (response) => {
@@ -258,6 +275,7 @@
           // getTarifPremi(res);
         if(res){
           $log(res)
+          getNominal(res.id);
           getTarifPremi(res.id);
           getDetailNPWPContainer(res.t_detail_npwp_container_1_id, res.t_detail_npwp_container_2_id);
           //data.no_container = (res['no_container_1'] ?? '-') +', ' + (res['no_container_2'] ?? '-');
@@ -270,7 +288,7 @@
           data.grup_head_id = res.grup_head_id
           data.tanggal_in = res.tanggal_in;
           data.waktu_in = res.waktu_in;
-          data.trip = res['trip.deskripsi']
+          data.trip_id = res['trip.id']
           // data.ukuran_container = (res['t_detail_npwp_container_1.ukuran'] ?? '-')+', '+ (res['t_detail_npwp_container_2.ukuran'] ?? '-');
           data.m_karyawan_id = res['supir.id'];
           data.chasis = res.chasis;
@@ -290,7 +308,7 @@
           data.waktu_out = '';
           data.no_bon_sementara = '';
           data.tanggal_bon = '';
-          data.trip = '';
+          data.trip_id = '';
           data.tanggal_in = '';
           data.waktu_in = '';
           data.ukuran_container = '';
@@ -358,9 +376,9 @@
         placeholder="Pilih Status" label="Status" :check="false" />
     </div>
     <div>
-      <FieldX :bind="{ readonly: true }" class="w-1/2 !mt-3" :value="data.tgl" :errorText="formErrors.tgl?'failed':''"
-        @input="v=>data.tgl=v" :hints="formErrors.tgl" :check="false" type="date" label="Tanggal"
-        placeholder="Pilih Tanggal" />
+      <FieldX :bind="{ readonly: true, disabled: true }" class="w-1/2 !mt-3" :value="data.tgl"
+        :errorText="formErrors.tgl?'failed':''" @input="v=>data.tgl=v" :hints="formErrors.tgl" :check="false"
+        type="date" label="Tanggal" placeholder="Pilih Tanggal" />
     </div>
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_container" @input="v=>data.no_container=v"
@@ -495,9 +513,9 @@
           }" label="Chasis 1" placeholder="Pilih Chasis 1" fa-icon="sort-desc" :check="false" />
     </div>
     <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="data.trip"
-        @input="v=>data.trip=v" :errorText="formErrors.trip?'failed':''" :hints="formErrors.trip" valueField="id"
-        displayField="deskripsi" :api="{
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="data.trip_id"
+        @input="v=>data.trip_id=v" :errorText="formErrors.trip_id?'failed':''" :hints="formErrors.trip_id"
+        valueField="id" displayField="deskripsi" :api="{
               url: `${store.server.url_backend}/operation/m_general`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
@@ -510,6 +528,11 @@
       <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="data.total_sangu"
         @input="v=>data.total_sangu=v" :errorText="formErrors.total_sangu?'failed':''" :hints="formErrors.total_sangu"
         placeholder="Total Sangu" :check="false" />
+    </div>
+    <div>
+      <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="data.lain_lain"
+        @input="v=>data.lain_lain=v" :errorText="formErrors.lain_lain?'failed':''" :hints="formErrors.lain_lain"
+        placeholder="Lain Lain" label="Lain Lain" :check="false" />
     </div>
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.sektor" @input="v=>data.sektor=v"
@@ -602,9 +625,13 @@
         @input="v=>data.tarif_premi=v" :errorText="formErrors.tarif_premi?'failed':''" :hints="formErrors.tarif_premi"
         placeholder="Tarif Premi" label="Tarif Premi" :check="false" />
     </div>
-    <div>
-      <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.tol" @input="v=>data.tol=v"
+    <div class="flex gap-x-2">
+      <FieldNumber :bind="{ readonly: !actionText }" class="w-[50%] !mt-3" :value="data.tol" @input="v=>data.tol=v"
         :errorText="formErrors.tol?'failed':''" :hints="formErrors.tol" placeholder="Tol" label="Tol" :check="false" />
+
+      <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold !mt-3 w-10 h-1 py-5 text-center items-center justify-center rounded-md flex items-center justify-center"
+        @click="openHistoryTol(detailArr[index])">
+        <icon fa="calculator" />
     </div>
     <div>
       <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="data.catatan"
@@ -617,7 +644,7 @@
   <!-- START TABLE DETAIL -->
   <div class="<md:col-span-1 col-span-3 p-2 grid <md:grid-cols-1 grid-cols-3 gap-2">
     <div class="overflow-x-auto <md:col-span-1 col-span-3">
-      <button class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
+      <button v-show="actionText" class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
             items-center transition-colors duration-300" @click="addDetail">
         <icon fa="plus" size="sm" />
         <span>Add To List</span>
@@ -688,6 +715,83 @@
       @input="v=>data.total_premi=v" :errorText="formErrors.total_premi?'failed':''" :hints="formErrors.total_premi"
       :check="false" />
   </div>
+
+  <!-- START POP UP TOL -->
+  <div v-show="modalOpenHistoryTol" class="fixed inset-0 flex items-center justify-center z-50">
+    <div class="modal-overlay fixed inset-0 bg-black opacity-50"></div>
+    <div class="modal-container bg-white  w-[70%] mx-auto rounded shadow-lg z-50 overflow-y-auto">
+      <div class="modal-content py-4 text-left px-6">
+        <!-- Modal Header -->
+        <div class="modal-header flex items-center justify-between flex-wrap">
+          <div class="flex items-center">
+            <h3 class="text-xl font-semibold ml-2">Nominal Tol</h3>
+          </div>
+        </div>
+
+        <hr class="mt-2 mb-4">
+        <div class="modal-header flex items-center justify-between flex-wrap">
+          <div class="flex items-center">
+            <!-- <h4 class="text-md font-bold ml-2">{{dataHistoryDataItem.itemName}}</h4> -->
+          </div>
+        </div>
+        <div class="modal-header flex items-center justify-between flex-wrap">
+          <div class="flex items-center">
+            <!-- <h4 class="text-md ml-2">Kode {{dataHistoryDataItem.itemCode}}</h4> -->
+          </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div v-if="dataHistoryDataItem?.items.length" class="modal-body">
+          <table class="w-[100%] my-3 border">
+            <thead>
+              <tr class="border">
+                <td class="border px-2 py-1 w-[5%] font-medium text-center">No</td>
+                <td class="border px-2 py-1 font-medium text-center">Nominal</td>
+              </tr>
+            </thead>
+
+            <tr class="border" v-for="(d,i) in dataHistoryDataItem.items" :key="i">
+              <td class="border px-2 py-1 text-center">{{ i+1 }}</td>
+              <td class="border px-2 py-1">
+                <FieldNumber class="!mt-0" :bind="{ readonly: !actionText }" :value="d.history_nominal"
+                  @input="(v)=>d.history_nominal=v" placeholder="Nominal" label="" :check="false" />
+              </td>
+            </tr>
+          </table>
+
+          <!-- Tambah baris -->
+          <button
+            class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded-md"
+            @click="addNominalRow()"
+          >
+            + Tambah Nominal
+          </button>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer flex justify-end mt-4">
+
+          <button
+            @click="saveHistoryTol"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 rounded-sm mr-2"
+          >
+            Save
+          </button>
+
+          <button
+            @click="closeModalHistoryTol"
+            class="bg-gray-200 hover:bg-gray-400 text-black font-semibold px-3 py-1 rounded-sm"
+          >
+            Tutup
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- END POP UP TOL -->
+
   <!-- ACTION BUTTON FORM -->
   <hr v-show="actionText" />
   <div class="flex flex-row items-center justify-end space-x-2 py-3 px-4" v-show="actionText">

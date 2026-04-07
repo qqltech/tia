@@ -16,8 +16,9 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
     public $createAdditionalData = ["creator_id"=>"auth:id"];
     public $updateAdditionalData = ["last_editor_id"=>"auth:id"];
 
-        public function createBefore($model, $arrayData, $metaData, $id = null)
+    public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal_lpb']);
         $newData = [
             "no_lpb" => $this->helper->generateNomor("Nomor LPB"),
             "tanggal" => date("Y-m-d"),
@@ -33,6 +34,9 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal_lpb = $arrayData['tanggal_lpb'] ?? $model->tanggal_lpb;
+
+        $this->helper->checkIsPeriodClosed($tanggal_lpb);
         $newData = [
             "tanggal" => date("Y-m-d"),
         ];
@@ -73,6 +77,7 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
                     "m_item_id" => $dt->m_item_id,
                     "qty_awal" => $view_stock ? $view_stock->qty_stock : 0,
                     "qty_in" => $dt->qty,
+                    "qty_sisa" => $view_stock ? $view_stock->qty_sisa : 0,
                     "price" => $dt->harga,
                     "price_old" => $view_stock ? $view_stock->price : 0,
                     "note" => $dt->catatan

@@ -20,6 +20,7 @@ class tlpb extends Migration
             $table->string('status', 20)->default('DRAFT');
             $table->date('tanggal_lpb');
             $table->date('tanggal_sj_supplier');
+            $table->date('filter_tahun')->nullable();
 
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

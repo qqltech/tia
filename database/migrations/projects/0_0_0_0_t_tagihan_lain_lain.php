@@ -26,10 +26,12 @@ class ttagihanlainlain extends Migration
             $table->decimal('grand_total_amount',18,4);
             $table->decimal('piutang',18,4);
             $table->string('catatan',500);
+            $table->date('filter_tahun')->nullable();
+
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();
-            $table->timestamp('delete_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
 

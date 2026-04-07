@@ -18,6 +18,7 @@ class tbabukuorder extends Migration
             $table->date('tanggal')->nullable();
             $table->bigInteger('t_buku_order_id')->comment('{"src":"t_buku_order.id}');
             $table->text('alasan');
+            $table->date('filter_tahun')->nullable();
 
             //penting
             $table->integer('creator_id')->nullable();

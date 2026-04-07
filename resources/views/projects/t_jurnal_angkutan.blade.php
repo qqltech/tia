@@ -31,8 +31,14 @@
   <hr>
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
     class="max-h-[450px]">
-    <!-- <template #header>
-    </template> -->
+    <template #header>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
+    </template>
   </TableApi>
 </div>
 @else
@@ -153,10 +159,10 @@
     <!-- Status  -->
     <div>
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="values.status"
-        :errorText="formErrors.status?'failed':''" @input="v=>values.status=v"
-        :hints="formErrors.status" label="status" placeholder="status" :check="false" />
+        :errorText="formErrors.status?'failed':''" @input="v=>values.status=v" :hints="formErrors.status" label="status"
+        placeholder="status" :check="false" />
     </div>
-    
+
     <!-- END COLUMN -->
     <!-- ACTION BUTTON START -->
   </div>
@@ -312,14 +318,14 @@
       <div class="grid grid-cols-2 gap-y-0 gap-x-2 items-start mb-0">
         <label class="!mt-4 !ml-3">DPP :</label>
         <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="values.dpp"
-          :errorText="formErrors.dpp?'failed':''" @input="v=>values.dpp=v"
-          :hints="formErrors.dpp" label="" placeholder="Total DPP" :check="false" />
+          :errorText="formErrors.dpp?'failed':''" @input="v=>values.dpp=v" :hints="formErrors.dpp" label=""
+          placeholder="Total DPP" :check="false" />
       </div>
       <div class="grid grid-cols-2 gap-y-0 gap-x-2 items-start mb-0">
         <label class="!mt-4 !ml-3">Total PPN :</label>
         <FieldNumber :bind="{ readonly: true }" class="w-full !mt-3" :value="values.ppn"
-          :errorText="formErrors.ppn?'failed':''" @input="v=>values.ppn=v"
-          :hints="formErrors.ppn" label="" placeholder="Total PPN" :check="false" />
+          :errorText="formErrors.ppn?'failed':''" @input="v=>values.ppn=v" :hints="formErrors.ppn" label=""
+          placeholder="Total PPN" :check="false" />
       </div>
       <div class="grid grid-cols-2 gap-y-0 gap-x-2 items-start mb-3">
         <label class="!mt-4 !ml-3">Grand Total :</label>

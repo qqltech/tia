@@ -156,6 +156,7 @@ async function buku(no_buku_order) {
     values.total_lain_non_ppn=0;
     values.grand_total=0;
     values.total_setelah_ppn=0;
+    values.total_tarif_dp=0;
     values.total_ppn=0;
 
     return;
@@ -213,7 +214,7 @@ async function buku(no_buku_order) {
       detailArrAju.value = [itemAju, ...detailArrAju.value];
     });
 
-    values.total_tarif_dp = initialValues?.tarif_dp?.total_amount || 0;
+    // values.total_tarif_dp = initialValues.total_tarif_dp || 0;
     const tipe_kontainer = initialValues.tipe || 0;
 
     if (Array.isArray(initialValues['t_buku_order_d_npwp'])) {
@@ -283,9 +284,6 @@ async function buku(no_buku_order) {
 }
 
 
-
-
-
 async function generateTotal() {
   if (!values.no_buku_order) {
     swal.fire({
@@ -306,7 +304,7 @@ async function generateTotal() {
       tarif_coo: values.tarif_coo || 0,
       tarif_ppjk: values.tarif_ppjk || 0,
       ppn: values.ppn || false,
-      total_tarif_dp: values.total_tarif_dp || 0,
+      // total_tarif_dp: values.total_tarif_dp || 0,
       grand_total_nota_rampung: grandTotalNotaRampung
     };
     console.log(payload)
@@ -330,6 +328,7 @@ async function generateTotal() {
     values.total_ppn = hasil.total_ppn || 0;
     values.total_jasa_angkutan = hasil.total_jasa_angkutan || 0;
     values.total_lain_non_ppn = hasil.total_lain_non_ppn || 0;
+    values.total_tarif_dp = hasil.total_tarif_dp || 0;
 
     swal.fire({
       icon: 'success',
@@ -469,24 +468,92 @@ async function onSave(isPost = false) {
 
 // FUNGSI BUTTON KEMBALI
 function onBack() {
-  swal.fire({
-    title: 'Warning!',
-    icon: 'warning',
-    text: 'Apakah anda yakin ingin kembali ?',
-    showCancelButton: true,
-    confirmButtonText: 'Ya',
-    cancelButtonText: 'Tidak',
-    reverseButtons: true,
-    confirmButtonColor: '#dc3545',
-    cancelButtonColor: '#6c757d'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      router.replace('/' + modulPath);
+  let isChanged = false
+  for (const key in initialValues) {
+    if (values[key] !== initialValues[key]) {
+      isChanged = true
+      break;
     }
-  });
+  }
+
+  if (!isChanged) {
+    router.replace('/' + modulPath)
+    return
+  }
+
+  swal.fire({
+    icon: 'warning',
+    text: 'Buang semua perubahan dan kembali ke list data?',
+    showDenyButton: true
+  }).then((res) => {
+    if (res.isConfirmed) {
+      router.replace('/' + modulPath)
+    }
+  })
 }
 
 //  @else----------------------- LANDING
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tgl) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
 const landing = reactive({
   actions: [
     {
@@ -679,7 +746,7 @@ const landing = reactive({
     field: 'customer.nama_perusahaan',
     filter: true,
     sortable: true,
-    flex: 1,
+    flex: 1.5,
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
@@ -694,7 +761,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   // {
   //   headerName: 'No.Faktur Pajak',
@@ -716,7 +783,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     valueFormatter: (params) => {
 
       if (params.value) {
@@ -764,12 +831,12 @@ const landing = reactive({
   ]
 })
 
-const filterButton = ref(null);
-function filterShowData(status) {
-  filterButton.value = filterButton.value === status ? null : status;
-  landing.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
-}
+// const filterButton = ref(null);
+// function filterShowData(status) {
+//   filterButton.value = filterButton.value === status ? null : status;
+//   landing.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 onActivated(() => {
   //  reload table api landing

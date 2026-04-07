@@ -50,29 +50,6 @@ function bulanRomawi($bulan)
     return $romawi[(int)$bulan] ?? '';
 }
 
-function generateKodeLaporanPremi()
-{
-    // ambil tahun & bulan sekarang
-    $bulan = (int)date('m');
-    $tahun = date('y'); // dua digit
-
-    // konversi ke romawi
-    $romawi = bulanRomawi($bulan);
-    try {
-        $count = \DB::table('t_bkk')
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', date('Y'))
-            ->count();
-    } catch (\Exception $e) {
-        $count = 0; // fallback jika error
-    }
-
-    $noUrut = $count + 1; // nomor urut berikutnya
-    $noUrutFormatted = str_pad($noUrut, 4, '0', STR_PAD_LEFT);
-
-    return "PPJK/" . $noUrutFormatted . "/" . $romawi . "/" . $tahun;
-}
-
 // Get BKK headers for all ids and keep ordering
 $dataBkkNonKasbon = \DB::table('t_bkk as tb')
     ->select('tb.*', 'tb.total_amt')
@@ -80,49 +57,50 @@ $dataBkkNonKasbon = \DB::table('t_bkk as tb')
     ->orderByRaw("array_position(ARRAY[" . implode(',', $ids) . "]::bigint[], tb.id::bigint)")
     ->get();
 
+$tipeBkk = $dataBkkNonKasbon->first()->tipe_bkk;
+
+$noUrut = \DB::table('t_bkk')
+            ->where('status', 'PRINTED') 
+            ->count();
+
+function generateKodeLaporanPremi($tipeBkk, $noUrut)
+{
+    // ambil tahun & bulan sekarang
+    $bulan = (int)date('m');
+    $tahun = date('y'); // dua digit
+
+    // konversi ke romawi
+    $romawi = bulanRomawi($bulan);
+
+    return $tipeBkk . "/" . $noUrut . "/" . $romawi . "/" . $tahun;
+}
+
+$kodeFix = generateKodeLaporanPremi($tipeBkk, $noUrut);
+
 // Get details for all those BKKs (we will combine into one table)
 $detailRaw = \DB::table('t_bkk_d as tbd')
     ->leftJoin('m_coa as mc', 'mc.id', 'tbd.m_coa_id')
     ->leftJoin('t_buku_order as tbo', 'tbo.id', 'tbd.t_buku_order_id')
     ->whereIn('tbd.t_bkk_id', $ids)
     ->select('tbd.*', 'mc.nomor as nomor_coa', 'mc.nama_coa', 'tbo.no_buku_order', 'tbd.t_bkk_id')
+    ->orderBy('tbo.no_buku_order', 'asc') // Urutkan berdasarkan Order dulu
     ->orderBy('tbd.t_bkk_id')
     ->orderBy('tbd.id')
     ->get();
 
-// Combine all details into one grouped table (group by COA + keterangan)
-$grouped = [];
+$renderRows = [];
 foreach ($detailRaw as $d) {
-    // group key: nomor_coa + nama_coa + keterangan (keeps rows concise)
-    $key = ($d->nomor_coa ?? '') . '||' . ($d->nama_coa ?? '') . '||' . ($d->keterangan ?? '');
-    if (!isset($grouped[$key])) {
-        $grouped[$key] = [
-            'nomor_coa' => $d->nomor_coa ?? '-',
-            'nama_coa' => $d->nama_coa ?? '-',
-            'keterangan' => $d->keterangan ?? '-',
-            'orders' => [],
-            'nominal_sum' => 0.0,
-            // track t_bkk_id list (if you want to show which BKK each order came from)
-            'bkk_ids' => []
-        ];
-    }
-
-    if (!empty($d->no_buku_order)) {
-        $grouped[$key]['orders'][] = trim($d->no_buku_order);
-    }
-    $grouped[$key]['nominal_sum'] += floatval($d->nominal);
-    $grouped[$key]['bkk_ids'][] = $d->t_bkk_id;
+    // Masukkan setiap baris detail sebagai baris terpisah
+    $renderRows[] = [
+        'nomor_coa'   => $d->nomor_coa ?? '-',
+        'nama_coa'    => $d->nama_coa ?? '-',
+        'keterangan'  => $d->keterangan ?? '-',
+        // Kita jadikan array agar loop di view (implode) tetap berjalan tanpa error
+        'orders'      => !empty($d->no_buku_order) ? [trim($d->no_buku_order)] : [],
+        'nominal_sum' => floatval($d->nominal),
+        'bkk_ids'     => [$d->t_bkk_id]
+    ];
 }
-
-// Normalize orders (unique) and keep order
-foreach ($grouped as $k => $g) {
-    $unique = array_values(array_unique($g['orders']));
-    $grouped[$k]['orders'] = $unique;
-    $grouped[$k]['bkk_ids'] = array_values(array_unique($g['bkk_ids']));
-}
-
-// Prepare render rows
-$renderRows = array_values($grouped);
 
 // Totals
 $total_nominal = 0;
@@ -132,7 +110,8 @@ foreach ($renderRows as $r) {
 
 // Prepare header fields: join no_bkk into single string (kept design but concatenate)
 $joined_no_bkk = implode(', ', $dataBkkNonKasbon->pluck('no_bkk')->toArray());
-$first_tanggal = $dataBkkNonKasbon->first()->tanggal ?? date('Y-m-d');
+// $first_tanggal = $dataBkkNonKasbon->first()->tanggal ?? date('Y-m-d');
+$first_tanggal = \Carbon::now();
 
 function formatDate($date){
   $unixTime = strtotime($date);
@@ -200,7 +179,7 @@ $currentTime = date("H:i:s");
 </head>
 
 <body class="continuous_form">
-  <!-- Single page combining all selected BKKs into ONE table -->
+  <!-- <pre>{{var_dump($noUrut)}}</pre> -->
   <section class="sheet padding-3mm">
     <div style="width: 100%; font-size: 14px; font-family: sans-serif; font-weight: bold; text-align: center; padding: 2%;">
       <tr>
@@ -212,7 +191,7 @@ $currentTime = date("H:i:s");
       <tr>
         <td style="width: 60%; padding-bottom: 10px;">No. Bukti
           <span style="margin-left: 3.5%;">:</span>
-          <span style="margin-left: 2%; font-weight: bold; text-decoration: underline; font-style: italic;">{{ generateKodeLaporanPremi() }}</span>
+          <span style="margin-left: 2%; font-weight: bold; text-decoration: underline; font-style: italic;">{{ $kodeFix }}</span>
         </td>
       </tr>
     </div>

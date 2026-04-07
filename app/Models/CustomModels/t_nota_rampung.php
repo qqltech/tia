@@ -18,6 +18,7 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
         $status = "DRAFT";
         $req = app()->request;
         if($req->post){
@@ -38,6 +39,9 @@ class t_nota_rampung extends \App\Models\BasicModels\t_nota_rampung
 
     public function updateBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
         // DELETE FILE BEFORE IF IT CHANGES
         $prevData = $this->where('id', $id)->first();
         if($prevData->foto_scn != $arrayData['foto_scn']){

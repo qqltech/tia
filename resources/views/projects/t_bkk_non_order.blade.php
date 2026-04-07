@@ -153,9 +153,202 @@
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
+      <div class="flex items-center space-x-4">
+        <ButtonMultiSelect title="Preview Print" @add="onPreview" :api="{
+          url: `${store.server.url_backend}/operation/${endpointApi}`,
+          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          params:{
+            searchfield: 'this.no_bkk, this.no_reference, this.tanggal, this.tipe_bkk, this.total_amt, this.status',
+          },
+          onsuccess:(response)=>{
+            response.data = [...response.data].map((dt)=>{
+              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
+              return dt
+            })
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
+        }" :columns="[{
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            headerName: 'No',
+            valueGetter:(params)=>{
+              return ''
+            },
+            width:60,
+            sortable: false, resizable: true, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+          },
+          {
+            flex: 1,
+            headerName:'No BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'No Reference',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_reference',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tanggal',
+            sortable: false, resizable: true, filter: false,
+            field: 'tanggal',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tipe BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'tipe_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Total Amount',
+            sortable: false, resizable: true, filter: false,
+            field: 'total_amt',
+            cellClass: ['justify-end','!border-gray-200'],
+            filter:'ColFilter',
+            valueFormatter: params => {
+              if (params == null) return '-';
+              return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+            }
+          },
+          {
+            flex: 1,
+            headerName:'Status',
+            sortable: false, resizable: true, filter: false,
+            field: 'status',
+            filter:'ColFilter',
+            cellClassRules: {
+              'text-green-600': params => params.value === 'APPROVED',
+              'text-purple-600': params => params.value === 'PRINTED',
+              'text-gray-600': params => params.value === 'DRAFT',
+            },
+            cellClass: ['justify-center','!border-gray-200']
+          }
+          ]">
+          <div class="flex items-center space-x-2">
+            <div
+              class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+              <icon fa="eye" />
+              Preview Print
+            </div>
+          </div>
+        </ButtonMultiSelect>
+
+        <ButtonMultiSelect title="Multiple Print" @add="onPrint" :api="{
+          url: `${store.server.url_backend}/operation/${endpointApi}`,
+          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+          params:{
+            searchfield: 'this.no_bkk, this.no_reference, this.tanggal, this.tipe_bkk, this.total_amt, this.status',
+            where: `this.status = 'APPROVED'`
+          },
+          onsuccess:(response)=>{
+            response.data = [...response.data].map((dt)=>{
+              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
+              return dt
+            })
+            response.page = response.current_page
+            response.hasNext = response.has_next
+            return response
+          }
+        }" :columns="[{
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            headerName: 'No',
+            valueGetter:(params)=>{
+              return ''
+            },
+            width:60,
+            sortable: false, resizable: true, filter: false,
+            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+          },
+          {
+            flex: 1,
+            headerName:'No BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'No Reference',
+            sortable: false, resizable: true, filter: false,
+            field: 'no_reference',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tanggal',
+            sortable: false, resizable: true, filter: false,
+            field: 'tanggal',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Tipe BKK',
+            sortable: false, resizable: true, filter: false,
+            field: 'tipe_bkk',
+            cellClass: ['justify-center','!border-gray-200'],
+            filter:'ColFilter'
+          },
+          {
+            flex: 1,
+            headerName:'Total Amount',
+            sortable: false, resizable: true, filter: false,
+            field: 'total_amt',
+            cellClass: ['justify-end','!border-gray-200'],
+            filter:'ColFilter',
+            valueFormatter: params => {
+              if (params == null) return '-';
+              return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(params.value);
+            }
+          },
+          {
+            flex: 1,
+            headerName:'Status',
+            sortable: false, resizable: true, filter: false,
+            field: 'status',
+            filter:'ColFilter',
+            cellClassRules: {
+              'text-green-600': params => params.value === 'APPROVED',
+              'text-purple-600': params => params.value === 'PRINTED',
+              'text-gray-600': params => params.value === 'DRAFT',
+            },
+            cellClass: ['justify-center','!border-gray-200']
+          }
+          ]">
+          <div class="flex items-center space-x-2">
+            <div
+              class="bg-amber-600 text-white font-semibold hover:bg-amber-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+              <icon fa="print" />
+              Multiple Print
+            </div>
+          </div>
+        </ButtonMultiSelect>
+      </div>
     </template>
-  </TableApi>
+    <TableApi />
 </div>
 @else
 

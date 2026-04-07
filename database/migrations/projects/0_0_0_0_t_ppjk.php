@@ -30,6 +30,8 @@ class tppjk extends Migration
             $table->decimal('nilai_kurs',18,4)->nullable();
             $table->decimal('tarif_ppjk',18,4)->nullable();
             $table->integer('admin_ppjk_id')->nullable()->comment('{"src":"set.m_general.id"}');
+            $table->date('filter_tahun')->nullable();
+            $table->string('no_ppjk_manual')->nullable();
             $table->text('catatan')->nullable();
             //penting
             $table->integer("creator_id")->nullable();

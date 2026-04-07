@@ -23,12 +23,13 @@ class tassetdisposal extends Migration
             $table->decimal('nominal_ppn',18,2);
             $table->date('tanggal');
             $table->string('no_faktur_pajak');
+            $table->date('filter_tahun')->nullable();
             $table->text('catatan')->nullable();
 
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();
-            $table->timestamp('delete_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
 

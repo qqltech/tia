@@ -26,6 +26,12 @@ class tpremi extends Migration
             // $table->text('catatan')->nullable()->change();
             // $table->integer('grup_head_id')->comment('{"src":"m_grup_head.id"}')->nullable();
             // $table->decimal('tol',18,2)->nullable()->change();
+            // $table->integer('trip_id')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->decimal('history_nominal',18,4)->nullable();
+            // $table->decimal('saldo_awal',18,4)->nullable();
+            // $table->decimal('total_pembayaran',18,4)->nullable();
+            // $table->decimal('lain_lain',18,4)->nullable();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

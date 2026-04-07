@@ -17,6 +17,7 @@ const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
 const idMulti = ref([])
 const isApproval = route.query.is_approval;
+const abortControllers = ref([]);
 
 let coaListEks = reactive([]);
 let coaListImp = reactive([]);
@@ -34,6 +35,71 @@ onBeforeMount(() => {
 
 
 // @if( !$id ) | --- LANDING TABLE --- |
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'IN APPROVAL',
+    3: 'APPROVED',
+    4: 'PRINTED',
+    5: 'REVISED',
+    6: 'REJECTED'
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke table
+  table.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
 const onDetailAdd = (e) => {
   const newIds = e.map(row => row.id);
   idMulti.value = [...new Set([...idMulti.value, ...newIds])]
@@ -79,7 +145,7 @@ async function multiPost() {
       icon: 'success',
       text: responseJson.message || 'Post successful'
     })
-    
+
     idMulti.value = []
     router.replace('/' + modulPath)
 
@@ -829,12 +895,12 @@ async function tesPrint(bon_dinas_luar_id) {
 }
 
 // FILTER
-const filterButton = ref(null);
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
-}
+// const filterButton = ref(null);
+// function filterShowData(params) {
+//   filterButton.value = filterButton.value === params ? null : params;
+//   table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 onActivated(() => {
   if (apiTable.value && route.query.reload) {
@@ -844,8 +910,8 @@ onActivated(() => {
 
 
 onBeforeMount(async () => {
+  isRequesting.value = false;
   const dataURL = `${store.server.url_backend}/operation/m_coa`;
-  isRequesting.value = true;
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `${store.user.token_type} ${store.user.token}`,
@@ -855,38 +921,38 @@ onBeforeMount(async () => {
     const response = await fetch(`${url}?${queryString}`, { headers });
     return response.json();
   };
-  // FETCH HEADER DATA
-  // await fetchData(dataURL, {
-  //   simplest: true,
-  //   transform: false,
-  //   join: false,
-  //   where: `this.is_active=true AND this.nama_coa IN ('PENG CONT EXPORT', 'PEMASUKAN FULL+UMS', 'PEMBTALAN STEK+PPN', 'STUFFING', 'FIAT', 'KARANTINA', 'LIFT ON TIA', 'LIFT ON SUT', 'URUS COO', 'DOC FEE')`
-  // }).then((res) => {
-  //   coaListEks.push(...res.data);
-  // });
-  // console.log(coaListEks);
 
-  await fetchData(dataURL, {
-    simplest: true,
-    transform: false,
-    join: false,
-    where: 'this.is_active=true AND id IN (508, 457, 455, 446, 464, 543, 681, 682, 506, 528)'
-  }).then((res) => {
-    coaListEks.push(...res.data);
-  });
-  console.log(coaListEks);
+  try {
+    isRequesting.value = true;
 
-  await fetchData(dataURL, {
-    simplest: true,
-    transform: false,
-    join: false,
-    where: 'this.is_active=true AND id IN (515, 504, 543)'
-  }).then((res) => {
-    coaListImp.push(...res.data);
-  });
-  console.log(coaListImp);
+    await fetchData(dataURL, {
+      simplest: true,
+      transform: false,
+      join: false,
+      where: 'this.is_active=true AND id IN (508, 457, 455, 446, 464, 543, 681, 682, 506, 528)'
+    }).then((res) => {
+      coaListEks.push(...res.data);
+    });
+    console.log(coaListEks);
+
+    await fetchData(dataURL, {
+      simplest: true,
+      transform: false,
+      join: false,
+      where: 'this.is_active=true AND id IN (515, 504, 543)'
+    }).then((res) => {
+      coaListImp.push(...res.data);
+    });
+    console.log(coaListImp);
+
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.error('Error loading COA:', err);
+    }
+  } finally {
+    isRequesting.value = false;
+  }
 })
-
 
 const openModal = (to_id, to) => {
   tipe_order_id.value = to_id;
@@ -911,7 +977,13 @@ const handleKeyDown = (event) => {
 }
 
 onMounted(() => { window.addEventListener('keydown', handleKeyDown) });
-onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
+onBeforeUnmount(() => {
+  // Cancel semua request
+  abortControllers.value.forEach(c => c.abort());
+  isRequesting.value = false;  // 👈 Force reset
+
+  window.removeEventListener('keydown', handleKeyDown);
+});
 
 // FORM DATA
 let default_value = {
@@ -929,6 +1001,11 @@ const detailArr = reactive([]);
 
 // GET DATA FROM API
 onBeforeMount(async () => {
+  // RESET STATE
+  isRequesting.value = false;
+  const controller = new AbortController();
+  abortControllers.value.push(controller);
+
   if (actionText.value === 'Create' || data.status === 'DRAFT') {
     data.tanggal = getCurrentDateFormatted();
   }
@@ -936,16 +1013,19 @@ onBeforeMount(async () => {
   if (!isRead) return;
 
   try {
-
     let trx_id;
 
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `${store.user.token_type} ${store.user.token}`,
     };
+
     const fetchData = async (url, params = {}) => {
       const queryString = new URLSearchParams(params).toString();
-      const response = await fetch(`${url}?${queryString}`, { headers });
+      const response = await fetch(`${url}?${queryString}`, {
+        headers,
+        signal: controller.signal  // 👈 TAMBAHKAN
+      });
       return response.json();
     };
 
@@ -953,7 +1033,6 @@ onBeforeMount(async () => {
       const dataApprovalURL = `${store.server.url_backend}/operation/generate_approval/${route.params.id}`;
       isRequesting.value = true;
 
-      // FETCH HEADER DATA
       await fetchData(dataApprovalURL, { join: false, transform: false }).then((res) => {
         trx_id = res.data.trx_id;
         console.log(res, trx_id);
@@ -964,9 +1043,7 @@ onBeforeMount(async () => {
     const dataURL = trx_id ? `${store.server.url_backend}/operation/${endpointApi}/${trx_id}` : `${store.server.url_backend}/operation/${endpointApi}/${editedId}`;
     isRequesting.value = true;
 
-    // FETCH HEADER DATA
     await fetchData(dataURL, { join: true, transform: false }).then((res) => {
-      // default_value.data = res.data;
       detailArr.push(...res.data.t_bon_dinas_luar_d);
       for (const key in res.data) {
         data[key] = res.data[key];
@@ -980,26 +1057,25 @@ onBeforeMount(async () => {
         data.is_printed = 0;
       }
     });
+
     for (let idx = 0; idx < detailArr.length; idx++) {
       detailArr[idx].nomor = detailArr[idx]['m_coa.nomor'];
       detailArr[idx].nama_coa = detailArr[idx]['m_coa.nama_coa'];
       detailArr[idx].no_buku_order = detailArr[idx]['t_buku_order.no_buku_order'];
     }
 
-    // detailArr.value = data.t_bon_dinas_luar_d.map((dt) => ({
-    //   ...dt,
-    //   no_buku_order: dt['t_buku_order.no_buku_order'],
-    // }));
-
-    // console.log(detailArr.value, 'hasil mapping detailArr');
-
   } catch (err) {
-    isBadForm.value = true;
-    swal.fire({
-      icon: 'error', text: err, allowOutsideClick: false, confirmButtonText: 'Kembali',
-    }).then(() => { router.back() });
+    if (err.name !== 'AbortError') {  // 👈 TAMBAHKAN check ini
+      isBadForm.value = true;
+      swal.fire({
+        icon: 'error',
+        text: err.message || err,
+        allowOutsideClick: false,
+        confirmButtonText: 'Kembali',
+      }).then(() => { router.back() });
+    }
   } finally {
-    isRequesting.value = false;
+    isRequesting.value = false;  // 👈 Pastikan ada
   }
 });
 
@@ -1259,4 +1335,16 @@ const getCurrentDateFormatted = () => {
   return `${day}/${month}/${year}`;
 };
 //  @endif | --- END --- |
-watchEffect(() => store.commit('set', ['isRequesting', isRequesting.value]))
+watchEffect(() => {
+  store.commit('set', ['isRequesting', isRequesting.value]);
+
+  // Safety net: auto-reset jika stuck > 30 detik
+  if (isRequesting.value) {
+    setTimeout(() => {
+      if (isRequesting.value) {
+        console.warn('⚠️ Force reset isRequesting - stuck detected');
+        isRequesting.value = false;
+      }
+    }, 30000);
+  }
+});

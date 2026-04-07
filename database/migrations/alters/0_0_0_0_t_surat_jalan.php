@@ -20,7 +20,7 @@ class tsuratjalan extends Migration
             // $table->string('depo')->nullable();
             // $table->integer('no_container')->comment('{"src":"t_buku_order.id"}')->nullable();
             // $table->integer('no_container')->comment('{"src":"t_buku_order_d_npwp.id"}')->nullable();
-            // $table->renameColumn('no_container_id','t_buku_order_d_npwp_id');
+            // $table->renameColumn('deleted_at','delete_at');
             // $table->integer('ukuran_kontainer')->nullable();
             // $table->string('jenis_kontainer')->nullable();
             // $table->integer('jenis_sj')->comment('{"src":"set.m_general.id"}')->nullable();
@@ -32,6 +32,8 @@ class tsuratjalan extends Migration
             // $table->string('tare')->nullable();
             // $table->string('foto_surat_jalan')->nullable();
             // $table->BigInteger('jumlah_print')->default(0)->nullable();
+            // $table->date('filter_tahun')->nullable();
+            // $table->renameColumn('delete_at','deleted_at');
         });
     }
 }

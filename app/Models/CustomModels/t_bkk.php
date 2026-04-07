@@ -22,6 +22,8 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft BKK"),
             "no_bkk" => $this->helper->generateNomor("Nomor BKK"),
@@ -42,18 +44,17 @@ class t_bkk extends \App\Models\BasicModels\t_bkk
         return ["success" => true];
     }
 
-    // public function updateBefore($model, $arrayData, $metaData, $id = null)
-    // {
-    //     $newData = [
-    //         "tanggal" => date("Y-m-d"),
-    //     ];
-    //     $newArrayData = array_merge($arrayData, $newData);
-    //     return [
-    //         "model" => $model,
-    //         "data" => $newArrayData,
-    //         // "errors" => ['error1']
-    //     ];
-    // }
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
+        ];
+    }
 
     public function custom_post()
     {

@@ -23,8 +23,8 @@ class m_tarif extends Model
     public $columnsFull = ["id:bigint","no_tarif:string:20","tipe_tarif:string:20","m_customer_id:integer","sektor:integer","jenis:integer","is_active:boolean","ukuran_kontainer:integer","tarif_sewa:decimal","tarif_sewa_diskon:decimal","catatan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","tt_elektronik:string:191","tarif_ppjk:decimal"];
     public $rules       = [];
     public $joins       = ["m_customer.id=m_tarif.m_customer_id","set.m_general.id=m_tarif.sektor","set.m_general.id=m_tarif.jenis"];
-    public $details     = ["m_tarif_d_jasa","m_tarif_d_lain_lain"];
-    public $heirs       = ["m_customer_d_tarif","t_tagihan_d_tarif"];
+    public $details     = ["m_tarif_d_lain_lain","m_tarif_d_jasa"];
+    public $heirs       = ["t_tagihan_d_tarif","m_customer_d_tarif"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
@@ -37,13 +37,13 @@ class m_tarif extends Model
     public $deleteOnUse = false;
 
     
-    public function m_tarif_d_jasa() :\HasMany
-    {
-        return $this->hasMany('App\Models\BasicModels\m_tarif_d_jasa', 'm_tarif_id', 'id');
-    }
     public function m_tarif_d_lain_lain() :\HasMany
     {
         return $this->hasMany('App\Models\BasicModels\m_tarif_d_lain_lain', 'm_tarif_id', 'id');
+    }
+    public function m_tarif_d_jasa() :\HasMany
+    {
+        return $this->hasMany('App\Models\BasicModels\m_tarif_d_jasa', 'm_tarif_id', 'id');
     }
     
     

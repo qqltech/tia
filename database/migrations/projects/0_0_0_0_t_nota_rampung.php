@@ -36,6 +36,7 @@ class tnotarampung extends Migration
             $table->date('tgl_nr')->nullable();
             $table->decimal('grand_total',18,4)->default(0);
             $table->integer('tipe_nota_rampung')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->date('filter_tahun')->nullable();
             //penting
             $table->integer("creator_id")->nullable();
             $table->integer("last_editor_id")->nullable();

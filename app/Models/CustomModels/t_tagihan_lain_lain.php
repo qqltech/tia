@@ -17,6 +17,7 @@ class t_tagihan_lain_lain extends \App\Models\BasicModels\t_tagihan_lain_lain
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tgl']);
         $checkDuplicate = $this->IsDuplicate($arrayData);
         if($checkDuplicate) return ['errors' => ["No Buku Order Sudah Pernah Dibuat"]];
 
@@ -43,6 +44,10 @@ class t_tagihan_lain_lain extends \App\Models\BasicModels\t_tagihan_lain_lain
 
     public function updateBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $tgl = $arrayData['tgl'] ?? $model->tgl;
+
+        $this->helper->checkIsPeriodClosed($tgl);
+        
         $checkDuplicate = $this->IsDuplicate($arrayData);
         if($checkDuplicate) return ['errors' => ["Data Sudah Pernah Dibuat"]];
 

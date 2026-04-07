@@ -34,6 +34,7 @@ class tpurchaseinvoice extends Migration
             $table->decimal('total_ppn', 18, 4);
             $table->decimal('grand_total', 18, 4);
             $table->decimal('utang',18,4)->nullable();
+            $table->date('filter_tahun')->nullable();
 
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

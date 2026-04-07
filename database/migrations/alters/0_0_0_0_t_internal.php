@@ -14,7 +14,9 @@ class tinternal extends Migration
             //$table->string('_columnName_');
             //$table->dropColumn('is_bundling');
             //$table->unsignedBigInteger('satuan_id')->comment('{"src": "m_general.id"}')->nullable();
-            
+            // $table->renameColumn('date', 'tanggal');
+            // $table->string('status')->nullable()->change();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

@@ -18,7 +18,7 @@
           <FieldSelect :bind="{ readonly: !actionText, clearable: false }" class="w-full !mt-3"
             :value="values.tipe_report" :errorText="formErrors.tipe_report ? 'failed' : ''"
             @input="v => values.tipe_report = v" :hints="formErrors.tipe_report" :check="true" label="Tipe Laporan"
-            :options="['General Journal','General Ledger']" placeholder="Pilih Tipe Laporan" valueField="key"
+            :options="['General Journal','General Ledger', 'LKH']" placeholder="Pilih Tipe Laporan" valueField="key"
             displayField="key" />
         </div>
         <div v-if="values.tipe_report === 'General Ledger'">

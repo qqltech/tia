@@ -17,10 +17,10 @@ class generate_num_log extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["comp_id","nama","table","value","seq","creator_id","last_editor_id"];
+    protected $fillable = ["comp_id","nama","table","value","seq","creator_id","last_editor_id","value_without_seq"];
 
-    public $columns     = ["id","comp_id","nama","table","value","seq","creator_id","last_editor_id","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","comp_id:bigint","nama:string:191","table:string:191","value:string:191","seq:bigint","creator_id:bigint","last_editor_id:bigint","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","comp_id","nama","table","value","seq","creator_id","last_editor_id","created_at","updated_at","value_without_seq"];
+    public $columnsFull = ["id:bigint","comp_id:bigint","nama:string:191","table:string:191","value:string:191","seq:bigint","creator_id:bigint","last_editor_id:bigint","created_at:datetime","updated_at:datetime","value_without_seq:string:191"];
     public $rules       = [];
     public $joins       = ["default_users.id=generate_num_log.creator_id","default_users.id=generate_num_log.last_editor_id"];
     public $details     = [];
@@ -29,9 +29,9 @@ class generate_num_log extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["nama","table","value","seq"];
-    public $createable  = ["comp_id","nama","table","value","seq","creator_id","last_editor_id"];
-    public $updateable  = ["comp_id","nama","table","value","seq","creator_id","last_editor_id"];
-    public $searchable  = ["id","comp_id","nama","table","value","seq","creator_id","last_editor_id","created_at","updated_at"];
+    public $createable  = ["comp_id","nama","table","value","seq","creator_id","last_editor_id","value_without_seq"];
+    public $updateable  = ["comp_id","nama","table","value","seq","creator_id","last_editor_id","value_without_seq"];
+    public $searchable  = ["id","comp_id","nama","table","value","seq","creator_id","last_editor_id","created_at","updated_at","value_without_seq"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

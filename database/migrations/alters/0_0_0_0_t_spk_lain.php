@@ -17,6 +17,8 @@ class tspklain extends Migration
             // $table->integer('t_buku_order_id')->comment('{"src":"t_buku_order.id"}')->nullable();
             // $table->integer('m_customer_id')->comment('{"src":"m_customer.id"}')->nullable();
             // $table->integer('ukuran')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->date('filter_tahun')->nullable();
+            // $table->renameColumn('delete_at' , 'deleted_at');
         });
     }
 }

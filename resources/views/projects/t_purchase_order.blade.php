@@ -66,7 +66,12 @@
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -449,7 +454,8 @@
         </div>
       </ButtonMultiSelect>
       <ButtonMultiSelect v-if="actionText  && data.tipe=='Asset'" @add="addDetailArr" :api="{
-        url: `${store.server.url_backend}/operation/m_item`,
+        //url: `${store.server.url_backend}/operation/m_item`,
+        url: `${store.server.url_backend}/operation/m_asset`,
         headers: {
           'Content-Type': 'Application/json', 
           authorization: `${store.user.token_type} ${store.user.token}`
@@ -459,7 +465,7 @@
             notin: `this.id: ${detailArr.map((det)=> (det.m_item_id))}`,
             //where: `this.is_active = true AND this.tipe_item = 'ASSET'`,
             where: `this.is_active = true`,
-            scopes: 'GetQTY',
+            // scopes: 'GetQTY',
             },
             onsuccess: (response) => {
               response.data = [...response.data].map((dt) => {
@@ -467,7 +473,8 @@
                   t_po_id: data.id || null,
                   m_item_id: dt.id,
                   kode: dt.kode,
-                  nama_item: dt.nama_item,
+                  // nama_item: dt.nama_item,
+                  nama: dt.nama,
                   tipe_item: dt.tipe_item,
                   quantity: dt.qty_stock,
                   disc1: 0,
@@ -499,19 +506,22 @@
         {
           pinned: false,
           headerName: 'Nama Asset',
-          field: 'nama_item',
+          // field: 'nama_item',
+          field: 'nama',
           cellClass: ['border-r', '!border-gray-200', 'justify-center'],
           filter: 'ColFilter',
           flex: 1
-        },
-        {
-          pinned: false,
-          headerName: 'Tipe Item',
-          field: 'tipe_item',
-          cellClass: ['border-r', '!border-gray-200', 'justify-center'],
-          filter: 'ColFilter',
-          flex: 1
-        },
+        }
+
+//        {
+//          pinned: false,
+//          headerName: 'Tipe Item',
+//          field: 'tipe_item',
+//          cellClass: ['border-r', '!border-gray-200', 'justify-center'],
+//          filter: 'ColFilter',
+//          flex: 1
+//        },
+        
         ]">
         <div class="text-xs rounded py-2 px-2.5 text-white bg-blue-600 hover:bg-blue-700 flex gap-x-1
             items-center transition-colors duration-300">

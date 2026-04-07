@@ -30,9 +30,17 @@ class m_item extends \App\Models\BasicModels\m_item
         ];
     }
 
-    public function scopeGetQTY($model){
-        $model->leftJoin('v_stock_item', 'v_stock_item.m_item_id', '=', 'm_item.id')->addSelect('v_stock_item.qty_stock');
+    public function scopeGetQTY($query)
+    {
+        return $query
+            ->leftJoin('v_stock_item', 'v_stock_item.m_item_id', '=', 'm_item.id')
+            ->leftJoin('set.m_general as mg', function ($join) {
+                $join->on('mg.id', '=', 'm_item.uom_id')
+                    ->where('mg.group', '=', 'UOM');
+            })
+            ->select('m_item.*','v_stock_item.qty_stock', 'mg.deskripsi as uom');
     }
+
 
     public function scopeGetLPB($model){
         $model->leftJoin('t_lpb_d', 't_lpb_d.m_item_id', '=', 'm_item.id')->addSelect('t_lpb_d.*');

@@ -14,13 +14,17 @@ class tinternal extends Migration
             $table->id()->from(1);
 
             $table->string('no_pemakaian', 100)->nullable();
-            $table->boolean('status')->nullable()->default(false);
-            $table->date('date')->nullable()->default(DB::raw('CURRENT_DATE'));
+            $table->string('status')->nullable();
+            $table->date('tanggal')->nullable()->default(DB::raw('CURRENT_DATE'));
+            $table->bigInteger('m_kary_id')->nullable()->comment('{"src": "set.m_kary.id"}');
+            $table->date('filter_tahun')->nullable();
             $table->string('catatan', 100)->nullable();
 
-            // $table->integer('creator_id')->nullable();
-            // $table->integer('last_editor_id')->nullable();
+            $table->integer('creator_id')->nullable();
+            $table->integer('last_editor_id')->nullable();
             $table->timestamps();
+            $table->integer('deleted_id')->nullable();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         table_config($this->tableName, [

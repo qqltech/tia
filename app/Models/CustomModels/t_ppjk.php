@@ -34,6 +34,9 @@ class t_ppjk extends \App\Models\BasicModels\t_ppjk
         if ($req->post) {
             $status = "POST";
         }
+
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft PPJK"),
             "kode_customer" => $this->helper->generateNomor("Customer PPJK"),
@@ -53,6 +56,9 @@ class t_ppjk extends \App\Models\BasicModels\t_ppjk
         $req = app()->request;
         $status = $req->post ? "POST" : $arrayData["status"];
 
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $newData = [
             "status" => $status,
         ];
@@ -68,7 +74,7 @@ class t_ppjk extends \App\Models\BasicModels\t_ppjk
     public function rules()
     {
         return [
-            "no_ppjk_id" => "required",
+            "no_ppjk_manual" => "required",
         ];
     }
 

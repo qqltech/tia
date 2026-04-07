@@ -21,127 +21,165 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     public $createAdditionalData = ["creator_id" => "auth:id"];
     public $updateAdditionalData = ["last_editor_id" => "auth:id"];
 
-    public function transformRowData( array $row )
+    public function transformRowData(array $row)
     {
         $req = app()->request;
-        $data=[];
-        if($req->getNoBukuOrder){
-        $result1 = t_buku_order::where('id',$row['t_detail_npwp_container_1.t_buku_order_id'])->first();
-        $result2 = t_buku_order::where('id',$row['t_detail_npwp_container_2.t_buku_order_id'])->first();
-        // trigger_error(json_encode($result1));
-        $data=[
-            't_detail_npwp_container_1.no_buku_order'=>@$result1['no_buku_order'],
-            't_detail_npwp_container_2.no_buku_order'=>@$result2['no_buku_order']
+        $data = [];
+        if ($req->getNoBukuOrder) {
+            $result1 = t_buku_order::where(
+                "id",
+                $row["t_detail_npwp_container_1.t_buku_order_id"]
+            )->first();
+            $result2 = t_buku_order::where(
+                "id",
+                $row["t_detail_npwp_container_2.t_buku_order_id"]
+            )->first();
+            // trigger_error(json_encode($result1));
+            $data = [
+                "t_detail_npwp_container_1.no_buku_order" => @$result1[
+                    "no_buku_order"
+                ],
+                "t_detail_npwp_container_2.no_buku_order" => @$result2[
+                    "no_buku_order"
+                ],
             ];
         }
-        
-        return array_merge( $row, $data );
+
+        return array_merge($row, $data);
     }
-    
 
-   public function createBefore($model, $arrayData, $metaData, $id = null)
-{   
+    public function createBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal_spk']);
+        if (false) {
+            // $id = request("id");
+            $data_req = [
+                "t_detail_npwp_container_1_id",
+                "t_detail_npwp_container_2_id",
+            ];
+            // $data_det_req = ['no_prefix','no_suffix','ukuran','jenis','sektor','depo','m_petugas_pengkont_id','m_petugas_pemasukan_id'];
 
-        if(false){
+            $messages = [];
+            // $messages2 = [];
+            $data = $this->where("id", $id)
+                ->select("*")
+                ->first();
+            $data_det = \DB::table("t_buku_order_d_npwp")
+                ->where("t_buku_order_id", $id)
+                ->get();
 
-        // $id = request("id");
-        $data_req = ['t_detail_npwp_container_1_id', 't_detail_npwp_container_2_id'];
-        // $data_det_req = ['no_prefix','no_suffix','ukuran','jenis','sektor','depo','m_petugas_pengkont_id','m_petugas_pemasukan_id'];
-
-        $messages = [];
-        // $messages2 = [];
-        $data =  $this->where("id", $id)->select('*')->first();
-        $data_det =  \DB::table('t_buku_order_d_npwp')->where("t_buku_order_id", $id)->get();
-
-        foreach($data_req as $d){
-            if(@$data->$d == null){
-                $messages[] = "$d";
-            }
-        }
-
-        foreach(@$data_det_req ?? [] as $d){
-            foreach($data_det as $dd){
-                if($dd->$d == null){
-                    $messages2[] = "$d";
+            foreach ($data_req as $d) {
+                if (@$data->$d == null) {
+                    $messages[] = "$d";
                 }
             }
-        }
 
-        $textMessage = "";
-        if(count($messages)){
-            foreach($messages as $d){
-                $textMessage .= "$d, ";
+            foreach (@$data_det_req ?? [] as $d) {
+                foreach ($data_det as $dd) {
+                    if ($dd->$d == null) {
+                        $messages2[] = "$d";
+                    }
+                }
+            }
+
+            $textMessage = "";
+            if (count($messages)) {
+                foreach ($messages as $d) {
+                    $textMessage .= "$d, ";
+                }
+            }
+            $textMessage2 = "";
+            if (count($messages2)) {
+                foreach ($messages2 as $d) {
+                    $textMessage2 .= "$d, ";
+                }
+            }
+
+            $text =
+                " Header Perlu Diisi \n" .
+                $textMessage .
+                "Detail Perlu Diisi \n" .
+                $textMessage2;
+
+            if (count($messages) > 0 || count($messages2) > 0) {
+                return $this->helper->CustomResponse($text, 422);
+            }
+            // $messages = [];
+
+            // Cek No SPK untuk container 1
+            if (!empty($arrayData["t_detail_npwp_container_1_id"])) {
+                $existingOrder1 = t_spk_angkutan::where(
+                    "t_detail_npwp_container_1_id",
+                    $arrayData["t_detail_npwp_container_1_id"]
+                )
+                    ->select("no_spk")
+                    ->first();
+
+                if ($existingOrder1) {
+                    $messages[] =
+                        "No Buku Order 1 sudah pernah dibuat di SPK No: " .
+                        $existingOrder1->no_spk;
+                }
+            }
+
+            // Cek No SPK untuk container 2, kalau ada
+            if (!empty($arrayData["t_detail_npwp_container_2_id"])) {
+                $existingOrder2 = t_spk_angkutan::where(
+                    "t_detail_npwp_container_2_id",
+                    $arrayData["t_detail_npwp_container_2_id"]
+                )
+                    ->select("no_spk")
+                    ->first();
+
+                if ($existingOrder2) {
+                    $messages[] =
+                        "No Buku Order 2 sudah pernah dibuat di SPK No: " .
+                        $existingOrder2->no_spk;
+                }
+            }
+
+            // Jika ada duplikasi, return dengan data kosong
+            if (count($messages) > 0) {
+                return [
+                    "error" => true,
+                    "message" => "Duplikasi Order Ditemukan",
+                    "warnings" => $messages,
+                    "confirm" => true,
+                    "data" => null, // Pastikan ada key 'data' untuk menghindari undefined array key
+                ];
             }
         }
-        $textMessage2 = "";
-        if(count($messages2)){
-            foreach($messages2 as $d){
-                $textMessage2 .= "$d, ";
-            }
-        }
 
-        $text = " Header Perlu Diisi \n".$textMessage."Detail Perlu Diisi \n" . $textMessage2;
+        // Ambil ID supplier
+        $getid = $this->get_supplier();
 
-        if(count($messages) > 0 || count($messages2) > 0){
-            return $this->helper->CustomResponse($text, 422);
-        }
-    // $messages = [];
-
-    // Cek No SPK untuk container 1
-    if (!empty($arrayData['t_detail_npwp_container_1_id'])) {
-        $existingOrder1 = t_spk_angkutan::where('t_detail_npwp_container_1_id', $arrayData['t_detail_npwp_container_1_id'])
-            ->select('no_spk')
-            ->first();
-
-        if ($existingOrder1) {
-            $messages[] = "No Buku Order 1 sudah pernah dibuat di SPK No: " . $existingOrder1->no_spk;
-        }
-    }
-
-    // Cek No SPK untuk container 2, kalau ada
-    if (!empty($arrayData['t_detail_npwp_container_2_id'])) {
-        $existingOrder2 = t_spk_angkutan::where('t_detail_npwp_container_2_id', $arrayData['t_detail_npwp_container_2_id'])
-            ->select('no_spk')
-            ->first();
-
-        if ($existingOrder2) {
-            $messages[] = "No Buku Order 2 sudah pernah dibuat di SPK No: " . $existingOrder2->no_spk;
-        }
-    }
-
-    // Jika ada duplikasi, return dengan data kosong
-    if (count($messages) > 0) {
-        return [
-            "error" => true,
-            "message" => "Duplikasi Order Ditemukan",
-            "warnings" => $messages,
-            "confirm" => true,
-            "data" => null // Pastikan ada key 'data' untuk menghindari undefined array key
+        // Siapkan data baru untuk disimpan
+        $newData = [
+            "no_spk" => $this->helper->generateNomor("SPK Angkutan"),
+            "status" => "DRAFT",
+            "m_supplier_id" => $getid,
+            "is_printed" => 0,
         ];
-    }
-    }
 
-    // Ambil ID supplier
-    $getid = $this->get_supplier();
-   
-    // Siapkan data baru untuk disimpan
-    $newData = [
-        "no_spk" => $this->helper->generateNomor("SPK Angkutan"),
-        "status" => "DRAFT",
-        "m_supplier_id" => $getid,
-        "is_printed" => 0
-    ];
-    
-    $newArrayData = array_merge($arrayData, $newData);
+        $newArrayData = array_merge($arrayData, $newData);
         return [
             "model" => $model,
             "data" => $newArrayData,
             // "errors" => ['error1']
         ];
-}
+    }
 
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tanggal_spk = $arrayData['tanggal_spk'] ?? $model->tanggal_spk;
 
+        $this->helper->checkIsPeriodClosed($tanggal_spk);
 
+        return [
+            "model" => $model,
+            "data"  => $arrayData
+        ];
+    }
 
     // public function updateBefore( $model, $arrayData, $metaData, $id=null )
     // {
@@ -163,7 +201,7 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     //             ];
     //         }
     //     }
-    //     if($ad_npwp_2 != null){    
+    //     if($ad_npwp_2 != null){
     //         if($npwp_2 != null || $npwp_2 != $ad_npwp_2 || $npwp_2 == $ad_npwp_2){
     //             if($checkDataExist2 > 1){
     //                 return [
@@ -172,116 +210,129 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     //             }
     //         }
     //     }
-        // $checkDuplicate = $this->IsDuplicate($arrayData);
-    
-        // // Kasih notifikasi kalau ada order yang duplikat, tapi tetap lanjut proses
-        // if (count($checkDuplicate) > 0) {
-        //     $this->helper->CustomResponse([
-        //         "message" => "Peringatan: Ada No Buku Order yang sudah pernah dibuat!",
-        //         "detail" => $checkDuplicate
-        //     ], 200);
-        // }
-        
-        // $newData=[
-        //     "status" => $status
-        // ];
-        // $newArrayData = array_merge($arrayData,  $newData);
-        // return [
-        //     "model" => $model,
-        //     "data" => $newArrayData,
-        //     // "errors" => ['error1']
-        // ];
+    // $checkDuplicate = $this->IsDuplicate($arrayData);
+
+    // // Kasih notifikasi kalau ada order yang duplikat, tapi tetap lanjut proses
+    // if (count($checkDuplicate) > 0) {
+    //     $this->helper->CustomResponse([
+    //         "message" => "Peringatan: Ada No Buku Order yang sudah pernah dibuat!",
+    //         "detail" => $checkDuplicate
+    //     ], 200);
     // }
-    
+
+    // $newData=[
+    //     "status" => $status
+    // ];
+    // $newArrayData = array_merge($arrayData,  $newData);
+    // return [
+    //     "model" => $model,
+    //     "data" => $newArrayData,
+    //     // "errors" => ['error1']
+    // ];
+    // }
+
     // public function scopeCheckOrder($model){
     //     $order1 = request('order1');
     //     $order2 = request('order2');
 
     //     $result1 = $model->where('t_detail_npwp_container_1_id',$order1)->get()->count();
     //     // return $result1;
-        
+
     // }
 
-    public function custom_checkOrder(){
-        $order1 = request('order1');
-        $order2 = request('order2');
+    public function custom_checkOrder()
+    {
+        $order1 = request("order1");
+        $order2 = request("order2");
 
-        $result1 = t_spk_angkutan::where('t_detail_npwp_container_1_id',$order1)->count();
-        $result2 = t_spk_angkutan::where('t_detail_npwp_container_2_id',$order1)->count();
+        $result1 = t_spk_angkutan::where(
+            "t_detail_npwp_container_1_id",
+            $order1
+        )->count();
+        $result2 = t_spk_angkutan::where(
+            "t_detail_npwp_container_2_id",
+            $order1
+        )->count();
 
-        $result3 = t_spk_angkutan::where('t_detail_npwp_container_1_id',$order2)->count();
-        $result4 = t_spk_angkutan::where('t_detail_npwp_container_2_id',$order2)->count();
-        if($result1 > 1 || $result2 > 1){
+        $result3 = t_spk_angkutan::where(
+            "t_detail_npwp_container_1_id",
+            $order2
+        )->count();
+        $result4 = t_spk_angkutan::where(
+            "t_detail_npwp_container_2_id",
+            $order2
+        )->count();
+        if ($result1 > 1 || $result2 > 1) {
             return [
-                "hasil_npwp_1_1"=> $result1,
-                "hasil_npwp_1_2"=>$result2,
-                "hasil_npwp_2_1"=> $result3,
-                "hasil_npwp_2_2"=>$result4,
-                "is_used"=>true
+                "hasil_npwp_1_1" => $result1,
+                "hasil_npwp_1_2" => $result2,
+                "hasil_npwp_2_1" => $result3,
+                "hasil_npwp_2_2" => $result4,
+                "is_used" => true,
             ];
         }
-        if($result3 > 1 || $result4 > 1){
+        if ($result3 > 1 || $result4 > 1) {
             return [
-                "hasil_npwp_1_1"=> $result1,
-                "hasil_npwp_1_2"=>$result2,
-                "hasil_npwp_2_1"=> $result3,
-                "hasil_npwp_2_2"=>$result4,
-                "is_used"=>true
+                "hasil_npwp_1_1" => $result1,
+                "hasil_npwp_1_2" => $result2,
+                "hasil_npwp_2_1" => $result3,
+                "hasil_npwp_2_2" => $result4,
+                "is_used" => true,
             ];
         }
-        
     }
 
-// public function custom_CheckBukuOrder($req)
-// {
-//     $id = request('id');
-//     $data_req = ['t_detail_npwp_container_1_id', 't_detail_npwp_container_2_id'];
+    // public function custom_CheckBukuOrder($req)
+    // {
+    //     $id = request('id');
+    //     $data_req = ['t_detail_npwp_container_1_id', 't_detail_npwp_container_2_id'];
 
-//     $data = $this->where("id", $id)->select($data_req)->first();
+    //     $data = $this->where("id", $id)->select($data_req)->first();
 
-//     if (!$data) {
-//         return ['message' => "Data tidak ditemukan"];
-//     }
+    //     if (!$data) {
+    //         return ['message' => "Data tidak ditemukan"];
+    //     }
 
-//     // Cek duplikasi dan kasih notifikasi kalau ada
-//     $checkDuplicate = $this->IsDuplicate($data);
+    //     // Cek duplikasi dan kasih notifikasi kalau ada
+    //     $checkDuplicate = $this->IsDuplicate($data);
 
-//     if (count($checkDuplicate) > 0) {
-//         return [
-//             'message' => "Peringatan: Ada No Buku Order yang sudah pernah dibuat!",
-//             'detail' => $checkDuplicate
-//         ];
-//     }
+    //     if (count($checkDuplicate) > 0) {
+    //         return [
+    //             'message' => "Peringatan: Ada No Buku Order yang sudah pernah dibuat!",
+    //             'detail' => $checkDuplicate
+    //         ];
+    //     }
 
-//     return ['message' => "No Buku Order belum pernah dibuat, aman lanjut!"];
-// }
+    //     return ['message' => "No Buku Order belum pernah dibuat, aman lanjut!"];
+    // }
 
+    // public function IsDuplicate($data)
+    // {
+    //     $messages = [];
 
-// public function IsDuplicate($data)
-// {
-//     $messages = [];
+    //     foreach (['t_detail_npwp_container_1_id', 't_detail_npwp_container_2_id'] as $field) {
+    //         // Pastikan field ada sebelum dicek
+    //         if (!empty($data[$field])) {
+    //             $existingOrder = t_spk_angkutan::where($field, $data[$field])
+    //                 ->select('no_spk')
+    //                 ->first();
 
-//     foreach (['t_detail_npwp_container_1_id', 't_detail_npwp_container_2_id'] as $field) {
-//         // Pastikan field ada sebelum dicek
-//         if (!empty($data[$field])) {
-//             $existingOrder = t_spk_angkutan::where($field, $data[$field])
-//                 ->select('no_spk')
-//                 ->first();
+    //             if ($existingOrder) {
+    //                 $messages[] = "No Buku Order sudah pernah dibuat di SPK No: " . $existingOrder->no_spk;
+    //             }
+    //         }
+    //     }
 
-//             if ($existingOrder) {
-//                 $messages[] = "No Buku Order sudah pernah dibuat di SPK No: " . $existingOrder->no_spk;
-//             }
-//         }
-//     }
+    //     return $messages;
+    // }
 
-//     return $messages;
-// }
-
-
-    function get_supplier(){
-        $getid = m_general::where('group','SUPPLIER_DEFAULT')->where('kode','SUPPLIER01')->first();
-        $getsupplier = m_supplier::where('nama',$getid->deskripsi)->first();
-        $result = $getsupplier->id??0;
+    function get_supplier()
+    {
+        $getid = m_general::where("group", "SUPPLIER_DEFAULT")
+            ->where("kode", "SUPPLIER01")
+            ->first();
+        $getsupplier = m_supplier::where("nama", $getid->deskripsi)->first();
+        $result = $getsupplier->id ?? 0;
         return $result;
     }
 
@@ -291,7 +342,6 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         $status = $this->where("id", $id)->update(["status" => "POST"]);
         return ["success" => true];
     }
-
 
     public function custom_send_approval()
     {
@@ -320,7 +370,7 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
     private function createAppTicket($id)
     {
         $tempId = $id;
-        $trx = \DB::table('t_spk_angkutan')->find($tempId);
+        $trx = \DB::table("t_spk_angkutan")->find($tempId);
         $conf = [
             "app_name" => "APPROVAL SPK ANGKUTAN",
             "trx_id" => $trx->id,
@@ -346,7 +396,6 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         \DB::beginTransaction();
 
         try {
-            
             $conf = [
                 "app_id" => $req->id,
                 "app_type" => $req->type, // APPROVED, REVISED, REJECTED,
@@ -358,9 +407,8 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
                 $data = $this->find($app->trx_id);
                 if ($app->finish) {
                     $data->update([
-                        "status" => $req->type
+                        "status" => $req->type,
                     ]);
-                   
                 } else {
                     $data->update([
                         "status" => "IN APPROVAL",
@@ -368,12 +416,17 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
                 }
             }
 
-            if($req->type=="APPROVED"){
-                $get_trx_id = generate_approval::where('id',$req->id)->first();
-                $t_spk_angkutan = t_spk_angkutan::where('id',$get_trx_id->trx_id)->first();
-                $update_status_print = t_spk_angkutan::where('id',$get_trx_id->trx_id)->update(["is_printed"=>0]);
+            if ($req->type == "APPROVED") {
+                $get_trx_id = generate_approval::where("id", $req->id)->first();
+                $t_spk_angkutan = t_spk_angkutan::where(
+                    "id",
+                    $get_trx_id->trx_id
+                )->first();
+                $update_status_print = t_spk_angkutan::where(
+                    "id",
+                    $get_trx_id->trx_id
+                )->update(["is_printed" => 0]);
             }
-
 
             \DB::commit();
 
@@ -384,8 +437,6 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         }
     }
 
-
-
     public function custom_multi_progress($req)
     {
         \DB::beginTransaction();
@@ -393,9 +444,9 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         try {
             foreach ($req->items as $item) {
                 $conf = [
-                    "app_id" => $item['id'],
-                    "app_type" => $item['type'], // APPROVED, REVISED, REJECTED
-                    "app_note" => $item['note'] ?? null,
+                    "app_id" => $item["id"],
+                    "app_type" => $item["type"], // APPROVED, REVISED, REJECTED
+                    "app_note" => $item["note"] ?? null,
                 ];
 
                 $app = $this->approval->approvalProgress($conf, true);
@@ -404,28 +455,32 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
                     $data = $this->find($app->trx_id);
 
                     $data->update([
-                        "status" => $app->finish ? $item['type'] : "IN APPROVAL"
+                        "status" => $app->finish
+                            ? $item["type"]
+                            : "IN APPROVAL",
                     ]);
                 }
 
-                if ($item['type'] === "APPROVED") {
-                    $get_trx_id = generate_approval::find($item['id']);
+                if ($item["type"] === "APPROVED") {
+                    $get_trx_id = generate_approval::find($item["id"]);
                     if ($get_trx_id) {
                         $trx_id = $get_trx_id->trx_id;
-                        t_spk_angkutan::where('id', $trx_id)->update(["is_printed" => 0]);
+                        t_spk_angkutan::where("id", $trx_id)->update([
+                            "is_printed" => 0,
+                        ]);
                     }
                 }
             }
 
             \DB::commit();
-            return $this->helper->customResponse("Proses multi-approval berhasil");
-
+            return $this->helper->customResponse(
+                "Proses multi-approval berhasil"
+            );
         } catch (\Exception $e) {
             \DB::rollback();
             return $this->helper->responseCatch($e);
         }
     }
-
 
     public function custom_detail($req)
     {
@@ -443,10 +498,16 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         return response($data);
     }
 
-    public function scopeTipe($model){
-        return $model->addSelect('t_buku_order_d_npwp.tipe','m_general.deskripsi')
-        ->join('t_buku_order_d_npwp','t_buku_order_d_npwp.id',"$this->table.t_detail_npwp_container_1_id")
-        ->join('set.m_general','m_general.id',"t_buku_order_d_npwp.tipe");
+    public function scopeTipe($model)
+    {
+        return $model
+            ->addSelect("t_buku_order_d_npwp.tipe", "m_general.deskripsi")
+            ->join(
+                "t_buku_order_d_npwp",
+                "t_buku_order_d_npwp.id",
+                "$this->table.t_detail_npwp_container_1_id"
+            )
+            ->join("set.m_general", "m_general.id", "t_buku_order_d_npwp.tipe");
     }
 
     public function custom_print()
@@ -458,23 +519,27 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
 
     public function scopeWithDetail($model)
     {
-        return $model->with('t_spk_bon_detail');
+        return $model->with("t_spk_bon_detail");
     }
 
-    public function custom_getPrintData(){
+    public function custom_getPrintData()
+    {
         $req = app()->request;
 
         $user = \Auth::user();
-        $user_print = \DB::table('default_users as du')->where('du.id', $user->id)
-        ->leftJoin("set.m_kary as kary", 'kary.id', '=', 'du.m_employee_id')
-        ->select('du.name', 'kary.nip')->first();
+        $user_print = \DB::table("default_users as du")
+            ->where("du.id", $user->id)
+            ->leftJoin("set.m_kary as kary", "kary.id", "=", "du.m_employee_id")
+            ->select("du.name", "kary.nip")
+            ->first();
 
         // $user_print = (object) [
-            // "name" => @$user->name,
-            // "nip" => @$emp->name
+        // "name" => @$user->name,
+        // "nip" => @$emp->name
         // ];
 
-        $data = \DB::select("SELECT tsa.*,
+        $data = \DB::select(
+            "SELECT tsa.*,
         mg1.kode as chasis1_kode, mg2.kode as chasis2_kode, mg3.deskripsi as ukuran1_deskripsi,
         mk.nama as supir_nama, mk.nip as supir_nip,
 
@@ -519,12 +584,16 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         left join set.m_general mg12 on tsa.isi_container_1 = mg12.id
         left join set.m_general mg13 on tsa.isi_container_2 = mg13.id
 
-        WHERE tsa.id = ?", [@$req->t_spk_id ?? 0]);
+        WHERE tsa.id = ?",
+            [@$req->t_spk_id ?? 0]
+        );
 
-        $nospkd = \DB::select("SELECT tsbd.*
+        $nospkd = \DB::select(
+            "SELECT tsbd.*
         from t_spk_bon_detail tsbd
-        WHERE tsbd.t_spk_angkutan_id = ?", [@$req->t_spk_id ?? 0]);
-
+        WHERE tsbd.t_spk_angkutan_id = ?",
+            [@$req->t_spk_id ?? 0]
+        );
 
         $count_spk = count(@$data ?? []);
         $currentDate = date("d/m/Y");
@@ -536,34 +605,54 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
             "nospkd" => @$nospkd,
             "count_spk" => @$count_spk,
             "currentDate" => @$currentDate,
-            "currentTime" => @$currentTime
+            "currentTime" => @$currentTime,
         ];
     }
 
-    public function custom_updatePrintData(){
-        $spk_id = request('t_spk_id');
+    public function custom_updatePrintData()
+    {
+        $spk_id = request("t_spk_id");
 
-        $get_jumlah_print = t_spk_angkutan::where('id',$spk_id)->first();
-        $new_jumlah_print = ($get_jumlah_print->jumlah_print + 1);
-        $update_jumlah_print = t_spk_angkutan::where('id',$spk_id)->update([
-            "jumlah_print"=>$new_jumlah_print,
-            "is_printed"=>1,
-            "status" =>"PRINTED"
-            ]);
+        $get_jumlah_print = t_spk_angkutan::where("id", $spk_id)->first();
+        $new_jumlah_print = $get_jumlah_print->jumlah_print + 1;
+        $update_jumlah_print = t_spk_angkutan::where("id", $spk_id)->update([
+            "jumlah_print" => $new_jumlah_print,
+            "is_printed" => 1,
+            "status" => "PRINTED",
+        ]);
+    }
+
+    public function scopeNama($model)
+    {
+        $result1 = m_karyawan::where()
+            ->where("t_detail_npwp_container_1_id", $order1)
+            ->get()
+            ->count();
+        // return $result1;
     }
 
     public function scopeWithGrupHead($query)
     {
         return $query
-            ->leftJoin('set.m_general as mg', 'mg.id', '=', 't_spk_angkutan.head')
-            ->leftJoin('m_grup_head_d as mghd', 'mghd.no_head_id', '=', 'mg.id')
-            ->leftJoin('m_grup_head as mgh', 'mgh.id', '=', 'mghd.m_grup_head_id')
-            ->where('mg.group', 'HEAD')
+            ->leftJoin(
+                "set.m_general as mg",
+                "mg.id",
+                "=",
+                "t_spk_angkutan.head"
+            )
+            ->leftJoin("m_grup_head_d as mghd", "mghd.no_head_id", "=", "mg.id")
+            ->leftJoin(
+                "m_grup_head as mgh",
+                "mgh.id",
+                "=",
+                "mghd.m_grup_head_id"
+            )
+            ->where("mg.group", "HEAD")
             ->addSelect([
-                't_spk_angkutan.*',
-                'mgh.id as grup_head_id',
-                'mgh.no_head as grup_head_no',
-                'mgh.nama_grup as grup_head_nama',
+                "t_spk_angkutan.*",
+                "mgh.id as grup_head_id",
+                "mgh.no_head as grup_head_no",
+                "mgh.nama_grup as grup_head_nama",
             ]);
     }
 
@@ -573,28 +662,36 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
             $id = $req->id;
 
             if (!$id) {
-                return response()->json(['message' => 'ID tidak ditemukan.'], 400);
+                return response()->json(
+                    ["message" => "ID tidak ditemukan."],
+                    400
+                );
             }
 
             // Ambil data t_spk_angkutan
-            $spk = \DB::table('t_spk_angkutan')->where('id', $id)->first();
+            $spk = \DB::table("t_spk_angkutan")
+                ->where("id", $id)
+                ->first();
             if (!$spk) {
-                return response()->json(['message' => 'Data SPK Angkutan tidak ditemukan.'], 404);
+                return response()->json(
+                    ["message" => "Data SPK Angkutan tidak ditemukan."],
+                    404
+                );
             }
 
             \DB::beginTransaction();
 
             // Update status SPK menjadi CANCEL
-            \DB::table('t_spk_angkutan')
-                ->where('id', $id)
+            \DB::table("t_spk_angkutan")
+                ->where("id", $id)
                 ->update([
-                    'status' => 'CANCEL',
-                    'updated_at' => \Carbon\Carbon::now()
+                    "status" => "CANCEL",
+                    "updated_at" => \Carbon\Carbon::now(),
                 ]);
 
             // Ambil semua t_premi yang terkait
-            $premis = \DB::table('t_premi')
-                ->where('t_spk_angkutan_id', $id)
+            $premis = \DB::table("t_premi")
+                ->where("t_spk_angkutan_id", $id)
                 ->get();
 
             // Pastikan total_sangu dari t_spk_angkutan dalam bentuk numerik
@@ -604,31 +701,74 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
                 $tarif_premi = 0;
                 $total_premi = $total_sangu_spk - $tarif_premi;
 
-                \DB::table('t_premi')
-                    ->where('id', $premi->id)
+                \DB::table("t_premi")
+                    ->where("id", $premi->id)
                     ->update([
-                        'tarif_premi' => $tarif_premi,
-                        'total_premi' => $total_premi,
-                        'updated_at' => \Carbon\Carbon::now()
+                        "tarif_premi" => $tarif_premi,
+                        "total_premi" => $total_premi,
+                        "updated_at" => \Carbon\Carbon::now(),
                     ]);
             }
 
             \DB::commit();
 
-            return response()->json([
-                'message' => 'Data berhasil di-cancel dan premi diperbarui.',
-                'data' => ['t_spk_angkutan_id' => $id]
-            ], 200);
-
+            return response()->json(
+                [
+                    "message" =>
+                        "Data berhasil di-cancel dan premi diperbarui.",
+                    "data" => ["t_spk_angkutan_id" => $id],
+                ],
+                200
+            );
         } catch (\Throwable $e) {
             \DB::rollBack();
 
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat cancel data.',
-                'data' => ['errorText' => $e->getMessage()]
-            ], 500);
+            return response()->json(
+                [
+                    "message" => "Terjadi kesalahan saat cancel data.",
+                    "data" => ["errorText" => $e->getMessage()],
+                ],
+                500
+            );
         }
     }
 
+    // public function scopeExcludeUsedSpk($query)
+    // {
+    //     return $query->whereNotIn('t_spk_angkutan.id', function ($q) {
+    //         $q->select('t_spk_angkutan_id')
+    //         ->from('t_premi')
+    //         ->whereNotNull('t_spk_angkutan_id');
+    //     });
+    // }
 
+    public function scopeExcludeUsedSpk($query)
+    {
+        $requestedId = request()->route('t_spk_angkutan') ?? request('id');
+
+        return $query->where(function($q) use ($requestedId) {
+            // iki ben spk ne gak duplicate
+            $q->whereNotIn('t_spk_angkutan.id', function ($sub) {
+                $sub->select('t_spk_angkutan_id')
+                    ->from('t_premi')
+                    ->whereNotNull('t_spk_angkutan_id');
+            });
+            
+            // gawe goleki / njaluk t_spk_angkutan (id) ne
+            if ($requestedId) {
+                $q->orWhere('t_spk_angkutan.id', $requestedId);
+            }
+        });
+    }
+    
+    public function scopeGetDetail($query)
+{
+    return $query
+        ->leftJoin('t_spk_bon_detail as tsbd', 'tsbd.id', '=', 't_spk_angkutan.t_spk_bon_detail_id')
+        ->select(
+            't_spk_angkutan.*',
+            'tsbd.id as bon_detail_id',
+            'tsbd.nominal as bon_nominal'
+        );
+}
 }

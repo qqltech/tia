@@ -29,6 +29,7 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
         $newData = [
             "no_bkk" => $this->helper->generateNomor("No BKK Non Order"),
             "no_draft" => $this->helper->generateNomor("Draft BKK Non Order"),
@@ -40,6 +41,18 @@ class t_bkk_non_order extends \App\Models\BasicModels\t_bkk_non_order
             "model" => $model,
             "data" => $newArrayData,
             // "errors" => ['error1']
+        ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
         ];
     }
 

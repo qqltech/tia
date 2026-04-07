@@ -22,6 +22,7 @@ class tdppenjualan extends Migration
             $table->decimal('total_amount',18,4);
             $table->string("status", 10)->default("DRAFT")->nullable();
             $table->text('keterangan')->nullable();
+            $table->date('filter_tahun')->nullable();
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

@@ -23,7 +23,7 @@ class tkomisiundername extends Migration
             $table->decimal('tarif_komisi',18,4);
             $table->decimal('total_komisi',18,4);
             $table->decimal('persentase',18,4);
-            $table->string('status_id', 20)->nullable();
+            $table->string('status', 20)->nullable();
             $table->text('catatan')->nullable();
             $table->bigInteger('customer_id')->comment('{"src":"m_customer.id"}')->nullable();
             $table->date('tanggal_pelunasan')->nullable();

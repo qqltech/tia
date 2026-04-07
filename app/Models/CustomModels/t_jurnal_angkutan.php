@@ -18,6 +18,7 @@ class t_jurnal_angkutan extends \App\Models\BasicModels\t_jurnal_angkutan
     
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tgl']);
         $status = "DRAFT";
         $req = app()->request;
         if ($req->post) {
@@ -39,6 +40,9 @@ class t_jurnal_angkutan extends \App\Models\BasicModels\t_jurnal_angkutan
 
     public function updateBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $tgl = $arrayData['tgl'] ?? $model->tgl;
+
+        $this->helper->checkIsPeriodClosed($tgl);
         $status = "DRAFT";
         $req = app()->request;
         if ($req->post) {

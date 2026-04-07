@@ -177,4 +177,12 @@ class t_buku_order_d_npwp extends \App\Models\BasicModels\t_buku_order_d_npwp
             )
         ;
     }
+
+    public function scopeNotClosed($query)
+    {
+        return $query->where(function($q) {
+            $q->whereNull('t_buku_order.is_closed')
+            ->orWhere('t_buku_order.is_closed', false);
+        });
+    }
 }

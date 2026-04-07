@@ -9,10 +9,7 @@ const swal = inject('swal')
 // reactive mode helpers
 const isRead = computed(() => !!route.params.id && route.params.id !== 'create')
 const actionText = computed(() => (route.params.id === 'create' ? 'Create' : (route.query.action || '')))
-/*
-  isView true hanya jika ada id dan tidak ada query.action (mis. /module/123).
-  Jika route menggunakan ?action=Edit maka isView = false.
-*/
+
 const isView = computed(() => isRead.value && !route.query.action)
 
 
@@ -35,6 +32,67 @@ onBeforeMount(() => {
 
 // @if( !$id ) | --- LANDING TABLE --- |
 
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tgl) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke table
+  table.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
 const isOpen = ref(false)
 
 const values = reactive({
@@ -43,11 +101,13 @@ const values = reactive({
   end_date: null,
   hutang_supir: 0,
   hutang_dibayar: 0,
-  total_premi_diterima: 0
+  total_premi_diterima: 0,
+  saldo_awal: 0,
 })
 
 const laporanPremi = ref([])
 const laporanPremiAll = ref([])
+const isSaldoReadonly = ref(false)
 
 // --- Open / Close modal ---
 const openModal = async () => {
@@ -162,6 +222,37 @@ const applyFilters = () => {
   kurangBayar()
 }
 
+const checkSaldoAwal = async (supirId) => {
+  if (!supirId) return
+
+  try {
+    const response = await fetch(`${store.server.url_backend}/operation/t_premi/get_last_saldo?supir_id=${supirId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+    })
+
+    if (response.ok) {
+      const res = await response.json()
+
+      if (res.data && res.data.exists) {
+        values.saldo_awal = parseFloat(res.data.saldo) || 0
+        isSaldoReadonly.value = true
+      } else {
+        values.saldo_awal = 0
+        isSaldoReadonly.value = false
+      }
+    }
+  } catch (err) {
+    console.error("Gagal cek saldo awal", err)
+    isSaldoReadonly.value = false
+  }
+  // Hitung ulang total setelah saldo awal terisi
+  kurangBayar()
+}
+
 // When a supir is selected from FieldSelect
 const onSelectSupir = (v) => {
   // FieldSelect may emit the id (primitive) or an object (with id). Normalize to id.
@@ -194,9 +285,12 @@ const onSelectSupir = (v) => {
       values.start_date = null
       values.end_date = null
     }
+
+    checkSaldoAwal(values.nama_supir)
   } else {
     values.start_date = null
     values.end_date = null
+    values.hutang_dibayar = 0
   }
 
   // clear previous checks whenever filter changes
@@ -245,8 +339,11 @@ const kurangBayar = () => {
   }, 0)
 
   values.hutang_supir = sum
+  const s_awal = parseFloat(values.saldo_awal) || 0
   const dibayar = parseFloat(values.hutang_dibayar) || 0
-  values.total_premi_diterima = values.hutang_supir - dibayar
+
+  // Rumus: Saldo Awal + Pinjaman - Cicilan
+  values.total_premi_diterima = s_awal + values.hutang_supir - dibayar
 }
 
 // Watches
@@ -255,13 +352,13 @@ watch(selectedRows, () => {
 })
 
 watch(
-  [() => values.hutang_supir, () => values.hutang_dibayar],
+  [() => values.saldo_awal, () => values.hutang_supir, () => values.hutang_dibayar],
   () => {
+    const s_awal = parseFloat(values.saldo_awal) || 0
     const dibayar = parseFloat(values.hutang_dibayar) || 0
-    values.total_premi_diterima = (parseFloat(values.hutang_supir) || 0) - dibayar
+    values.total_premi_diterima = s_awal + (parseFloat(values.hutang_supir) || 0) - dibayar
   }
 )
-
 
 const selectedIds = computed(() => {
   return selectedRows.value.map(r => r.id).filter(Boolean)
@@ -445,6 +542,7 @@ const onPrintButton = async () => {
         Authorization: `${store.user.token_type} ${store.user.token}`,
       },
       body: JSON.stringify({
+        saldo_awal: values.saldo_awal ?? 0,
         supir_id: values.nama_supir,
         start_date: values.start_date,
         end_date: values.end_date,
@@ -468,7 +566,7 @@ const onPrintButton = async () => {
       window.premiCounter++;
       const bulan = new Date().getMonth() + 1;
       const tahun = new Date().getFullYear().toString().slice(-2);
-      const romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][bulan - 1];
+      const romawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][bulan - 1];
       return String(window.premiCounter).padStart(3, '0') + "/PRMI/" + romawi + "/" + tahun;
     }
     const kode = generateKode();
@@ -478,6 +576,7 @@ const onPrintButton = async () => {
       `supir_id=${encodeURIComponent(values.nama_supir)}`,
       `start_date=${encodeURIComponent(values.start_date)}`,
       `end_date=${encodeURIComponent(values.end_date)}`,
+      `saldo_awal=${encodeURIComponent(values.saldo_awal ?? 0)}`,
       `hutang_supir=${encodeURIComponent(values.hutang_supir ?? 0)}`,
       `hutang_dibayar=${encodeURIComponent(values.hutang_dibayar ?? 0)}`,
       `total_premi_diterima=${encodeURIComponent(values.total_premi_diterima ?? 0)}`
@@ -502,7 +601,7 @@ const onPrintButton = async () => {
       },
       body: JSON.stringify({
         id: ids,
-        total_premi: values.total_premi_diterima ?? 0
+        total_premi: values.hutang_dibayar ?? 0
       }),
     });
 
@@ -574,6 +673,7 @@ const table = reactive({
     },
     params: {
       simplest: false,
+      scopes: 'GetSupir',
       searchfield: 'this.id, this.no_premi, this.tgl, this.total_premi, this.catatan',
     },
     onsuccess(response) {
@@ -598,6 +698,16 @@ const table = reactive({
       // wrapText: true,
       filter: 'ColFilter',
     },
+    // {
+    //   headerName: 'No. Buku Order',
+    //   field: 'no_buku_order',
+    //   flex: 1,
+    //   cellClass: ['border-r', '!border-gray-200', 'justify-center',],
+    //   sortable: true,
+    //   // resizable: true,
+    //   // wrapText: true,
+    //   filter: 'ColFilter',
+    // },
     {
       headerName: 'Tanggal',
       field: 'tgl',
@@ -621,6 +731,26 @@ const table = reactive({
         const value = Number(params.value) || 0;
         return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
       }
+    },
+    {
+      headerName: 'No. SPK',
+      field: 't_spk_angkutan.no_spk',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
+    },
+    {
+      headerName: 'Nama Supir',
+      field: 'supir_nama',
+      flex: 1,
+      cellClass: ['border-r', '!border-gray-200', 'justify-center',],
+      sortable: true,
+      // resizable: true,
+      // wrapText: true,
+      filter: 'ColFilter',
     },
     {
       headerName: 'Catatan',
@@ -828,12 +958,12 @@ async function deleteData(row) {
 }
 
 // FILTER
-const filterButton = ref(null);
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
-}
+// const filterButton = ref(null);
+// function filterShowData(params) {
+//   filterButton.value = filterButton.value === params ? null : params;
+//   table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 onActivated(() => {
   if (apiTable.value && route.query.reload) {
@@ -856,7 +986,14 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeyDown) });
 
 // FORM DATA
 let default_value = {
-  data: { status: 'DRAFT', no_draft: 'Generate by System', no_premi: 'Generate by System', total_bon_tambahan: 0 },
+  data: {
+    status: 'DRAFT',
+    no_draft: 'Generate by System',
+    no_premi: 'Generate by System',
+    total_bon_tambahan: 0,
+    // history_nominal: []
+    history_nominal: 0
+  },
   detail: []
 }
 
@@ -868,6 +1005,55 @@ const initArr = {
 }
 const detailArr = reactive([])
 
+let modalOpenHistoryTol = ref(false)
+let dataHistoryDataItem = reactive({ items: [] })
+
+// const openHistoryTol = (data, tipe) => {
+//   dataHistoryDataItem.items = []
+//   modalOpenHistoryTol.value = true
+//   dataHistoryDataItem.items.push({ nominal: 0 })
+
+//   loadHistoryTol(data)
+// }
+
+const openHistoryTol = () => {
+  modalOpenHistoryTol.value = true;
+
+  if (Array.isArray(data.history_nominal_list) && data.history_nominal_list.length) {
+    // jika array history nominal memang ada → load
+    dataHistoryDataItem.items = JSON.parse(JSON.stringify(data.history_nominal_list));
+  } else if (data.history_nominal) {
+    // jika tidak ada list tapi ada total → tampilkan total sebagai 1 baris
+    dataHistoryDataItem.items = [{ history_nominal: data.history_nominal }];
+  } else {
+    // tidak ada apapun → baris kosong default
+    dataHistoryDataItem.items = [{ history_nominal: 0 }];
+  }
+};
+
+
+function closeModalHistoryTol(i) {
+  dataHistoryDataItem.items = []
+  modalOpenHistoryTol.value = false
+}
+
+function addNominalRow() {
+  dataHistoryDataItem.items.push({ history_nominal: 0 })
+}
+
+function saveHistoryTol() {
+  const sum = dataHistoryDataItem.items.reduce((t, x) => t + Number(x.history_nominal || 0), 0)
+
+  data.tol = sum
+
+  data.history_nominal = sum
+  data.history_nominal_list = JSON.parse(JSON.stringify(dataHistoryDataItem.items))
+
+  modalOpenHistoryTol.value = false
+}
+
+async function loadHistoryTol(data) {
+}
 
 // GET DATA FROM API
 onBeforeMount(async () => {
@@ -946,6 +1132,7 @@ onBeforeMount(async () => {
         data.waktu_out = res.data.waktu_out;
         data.no_bon_sementara = res.data.no_bon_sementara;
         data.tanggal_bon = res.data.tanggal_bon;
+        data.trip_id = res.data['trip.id'];
 
         data.tanggal_in = res.data.tanggal_in;
         data.waktu_in = res.data.waktu_in;
@@ -1044,6 +1231,13 @@ async function onSave() {
   try {
     const isCreating = ['Create', 'Copy'].includes(actionText.value);
     const dataURL = `${store.server.url_backend}/operation/${endpointApi}${isCreating ? '' : '/' + route.params.id}`;
+    const payload = {
+      ...data,
+      t_premi_d: detailArr
+    }
+
+    delete payload.history_nominal_list
+
     isRequesting.value = true;
 
     const res = await fetch(dataURL, {
@@ -1052,10 +1246,7 @@ async function onSave() {
         'Content-Type': 'application/json',
         Authorization: `${store.user.token_type} ${store.user.token}`,
       },
-      body: JSON.stringify({
-        ...data,
-        t_premi_d: detailArr,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -1102,8 +1293,45 @@ const getTarifPremi = async (t_1_id, t_2_id) => {
 
 }
 
+const getNominal = async (dt) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `${store.user.token_type} ${store.user.token}`,
+  };
+
+  const dataURL = `${store.server.url_backend}/operation/t_spk_bon_detail`;
+  const params = {
+    spk_id: data.t_spk_angkutan_id
+  };
+
+  const fetchData = async (url, params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await fetch(`${url}?${queryString}`, { headers });
+    return response.json();
+  };
+
+  // FETCH HEADER DATA
+  await fetchData(dataURL, params).then((res) => {
+    // console.log('nominal:', res.data)
+
+    if (Array.isArray(res.data)) {
+      const spkId = data.t_spk_angkutan_id
+
+      data.lain_lain = res.data
+        .filter(item => item.t_spk_angkutan_id === spkId)
+        .reduce((sum, item) => {
+          return sum + (Number(item.nominal) || 0)
+        }, 0);
+    } else {
+      data.lain_lain = ''
+    }
+  })
+
+
+}
+
 const getDetailNPWPContainer = async (t_1_id, t_2_id) => {
-  console.log("AAAAAAAAAAAAAA", t_1_id, t_2_id)
+  // console.log("AAAAAAAAAAAAAA", t_1_id, t_2_id)
   if (t_1_id) {
     const url1 = `${store.server.url_backend}/operation/t_buku_order_d_npwp/${t_1_id}`
     const res1 = await fetch(url1, {
@@ -1191,7 +1419,9 @@ const getDetailNPWPContainer = async (t_1_id, t_2_id) => {
 //   { deep: true }
 // );
 
-// Watch pengganti — paste menggantikan watch lama
+// PERBAIKAN WATCH UNTUK PERHITUNGAN total_premi
+// Rumus: total_premi = sangu - (tarif_premi + tol) + detail - hutang_dibayar
+
 watch(
   // Trigger: perhatikan perubahan panjang & nominal detail, serta field-field yang relevan
   () => [
@@ -1208,7 +1438,7 @@ watch(
       return Number.isFinite(n) ? n : 0;
     };
 
-       // MODE VIEW: gunakan value yang dikirim server, jangan hitung ulang
+    // MODE VIEW: gunakan value yang dikirim server, jangan hitung ulang
     if (isView.value) {
       // API kadang mengirim string, parse aman jadi number
       const parsed = parseFloat(data.total_premi)
@@ -1224,14 +1454,20 @@ watch(
       }
     }
 
-    // Basis perhitungan: total_sangu (positif)
-    let total = toNum(data.total_sangu);
+    // ===== RUMUS YANG DIPERBAIKI =====
+    // total_premi = sangu - (tarif_premi + tol) + detail - hutang_dibayar
 
-    // Tambahkan tarif premi (boleh nol)
+    // Basis perhitungan: total_sangu (positif)
+    let total = 0;
+
+    // KURANGI tarif premi
     total += toNum(data.tarif_premi);
 
-    // Tambahkan tol
+    // KURANGI tol
     total += toNum(data.tol);
+
+    // Kurangi sangu
+    total -= toNum(data.total_sangu);
 
     // Tambahkan detail
     total += totalDetail;

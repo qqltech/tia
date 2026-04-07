@@ -74,7 +74,7 @@ onBeforeMount(async () => {
       const dataURL = `${store.server.url_backend}/operation${endpointApi}/${editedId}`
       isRequesting.value = true
 
-      const params = { scopes: 'GetQTY', selectfield: "this.*, qty_stock" }
+      const params = { scopes: 'GetQTY' }
       const fixedParams = new URLSearchParams(params)
       const res = await fetch(dataURL + '?' + fixedParams, {
         headers: {
@@ -86,7 +86,7 @@ onBeforeMount(async () => {
       const resultJson = await res.json()
       initialValues = resultJson.data
       initialValues.is_active = initialValues.is_active ? 1 : 0
-      initialValues.is_bundling = initialValues.qty_stock
+      initialValues.qty_stock = initialValues.qty_stock
 
       initialValues.detailArr = initialValues.m_item_d;
       console.log('Detail Array:', initialValues.detailArr);

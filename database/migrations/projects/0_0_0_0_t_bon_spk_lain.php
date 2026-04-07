@@ -21,6 +21,7 @@ class tbonspklain extends Migration
             $table->text('catatan')->nullable();
             $table->decimal('total_bon',18,4)->nullable();
             $table->decimal('total_tagihan',18,4)->nullable();
+            $table->date('filter_tahun')->nullable();
 
             //penting
             $table->integer('creator_id')->nullable();

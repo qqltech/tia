@@ -20,6 +20,7 @@ class t_ba_buku_order extends \App\Models\BasicModels\t_ba_buku_order
 
     public function createBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
         $newData=[
             "no_draft" => $this->helper->generateNomor("Draft BA Buku Order"),
             "no_ba_buku_order" => $this->helper->generateNomor("No BA Buku Order"),
@@ -32,6 +33,18 @@ class t_ba_buku_order extends \App\Models\BasicModels\t_ba_buku_order
           "data"   => $newArrayData,
           // "errors" => ['error1']
       ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
+        ];
     }
 
     public function transformRowData( array $row )

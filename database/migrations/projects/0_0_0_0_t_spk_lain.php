@@ -30,6 +30,7 @@ class tspklain extends Migration
             $table->string('tiba_lokasi_temperatur',100)->nullable();
             $table->text('lokasi_stuffing')->nullable();
             $table->text('catatan')->nullable();
+            $table->date('filter_tahun')->nullable();
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

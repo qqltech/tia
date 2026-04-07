@@ -4,160 +4,181 @@
   <div class="pl-4 pt-2">
     <h1 class="text-xl font-semibold">BON DINAS LUAR</h1>
   </div>
-  <div class="flex justify-between items-center gap-x-4 p-4">
+  <div class="flex flex-col gap-y-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-x-4">
 
-    <!-- FILTER -->
-    <div class="flex items-center gap-x-2">
-      <p>Filter Status :</p>
-      <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
-          : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          DRAFT
-        </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-amber-600 text-white hover:bg-amber-600' 
-          : 'border border-amber-600 text-amber-600 bg-white hover:bg-amber-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          POST
-        </button>
-        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
-        <button @click="filterShowData('PRINTED')" :class="filterButton === 'PRINTED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
-          : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
-          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
-          PRINTED
-        </button>
-      </div>
-    </div>
-
-    <!-- ACTION BUTTON -->
-    <div class="flex items-center gap-x-4">
-      <ButtonMultiSelect title="Multiple Post" @add="onDetailAdd" :api="{
-          url: `${store.server.url_backend}/operation/${endpointApi}`,
-          headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
-          params:{
-            searchfield: 'this.no_bon_dinas_luar, this.tanggal, this.total_amt, this.status',
-            where: `this.status= 'DRAFT'`
-          },
-          onsuccess:(response)=>{
-            response.data = [...response.data].map((dt)=>{
-              Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
-              return dt
-            })
-            response.page = response.current_page
-            response.hasNext = response.has_next
-            return response
-          }
-        }" :columns="[{
-            checkboxSelection: true,
-            headerCheckboxSelection: true,
-            headerName: 'No',
-            valueGetter:(params)=>{
-              return ''
-            },
-            width:60,
-            sortable: false, resizable: true, filter: false,
-            cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
-          },
-          {
-            flex: 1,
-            headerName:'No. Bon Dinas Luar',
-            sortable: false, resizable: true, filter: false,
-            field: 'no_bon_dinas_luar',
-            cellClass: ['justify-center','!border-gray-200'],
-            filter:'ColFilter'
-          },
-          {
-            flex: 1,
-            headerName:'Tanggal',
-            sortable: false, resizable: true, filter: false,
-            field: 'tanggal',
-            cellClass: ['justify-center','!border-gray-200'],
-            filter:'ColFilter'
-          },
-          {
-            flex: 1,
-            headerName:'Nominal',
-            sortable: false, resizable: true, filter: false,
-            field: 'total_amt',
-            cellClass: ['justify-end','!border-gray-200'],
-            filter:'ColFilter',
-            valueFormatter: params => {
-              if (params.value == null) return '';
-              return 'Rp ' + params.value.toLocaleString('id-ID');
-            }
-          },
-          {
-            flex: 1,
-            headerName:'Status',
-            sortable: false, resizable: true, filter: false,
-            field: 'status',
-            cellClass: ['justify-center','!border-gray-200'],
-            filter:'ColFilter'
-          }
-          ]" @selection-change="selectedItems = $event">
-        <div class="flex items-center space-x-2">
-          <div
-            class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
-            <icon fa="arrow-up-right-from-square" />
-            Multiple Post
-          </div>
-        </div>
-      </ButtonMultiSelect>
-
-      <button class="border border-blue-600 
-      text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
-      transition-colors duration-300" @click="openModal('320', 'Eksport')">Create New Eksport</button>
-
-      <button class="border border-blue-600 
-      text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
-      transition-colors duration-300" @click="openModal('319', 'Import')">Create New Import</button>
+  <!-- FILTER -->
+  <div class="flex flex-wrap items-center gap-x-2 gap-y-2">
+    <p class="shrink-0 text-sm">Filter Status :</p>
+    <div class="flex flex-wrap gap-x-2 gap-y-2">
+      <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
+        : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
+        class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+        DRAFT
+      </button>
+      <div class="hidden sm:flex my-auto h-4 w-px bg-gray-300"></div>
+      <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-amber-600 text-white hover:bg-amber-600' 
+        : 'border border-amber-600 text-amber-600 bg-white hover:bg-amber-600 hover:text-white'"
+        class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+        POST
+      </button>
+      <div class="hidden sm:flex my-auto h-4 w-px bg-gray-300"></div>
+      <button @click="filterShowData('PRINTED')" :class="filterButton === 'PRINTED' ? 'bg-purple-600 text-white hover:bg-purple-600' 
+        : 'border border-purple-600 text-purple-600 bg-white hover:bg-purple-600 hover:text-white'"
+        class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+        PRINTED
+      </button>
     </div>
   </div>
+
+  <!-- ACTION BUTTON -->
+  <div class="flex flex-wrap items-center gap-2">
+    <ButtonMultiSelect title="Multiple Post" @add="onDetailAdd" :api="{
+        url: `${store.server.url_backend}/operation/${endpointApi}`,
+        headers: {'Content-Type': 'Application/json', authorization: `${store.user.token_type} ${store.user.token}`},
+        params:{
+          searchfield: 'this.no_bon_dinas_luar, this.tanggal, this.total_amt, this.status',
+          where: `this.status= 'DRAFT'`
+        },
+        onsuccess:(response)=>{
+          response.data = [...response.data].map((dt)=>{
+            Object.keys(dt).forEach(k=>dt['t_bkk_non_order.'+k] = dt[k])
+            return dt
+          })
+          response.page = response.current_page
+          response.hasNext = response.has_next
+          return response
+        }
+      }" :columns="[{
+          checkboxSelection: true,
+          headerCheckboxSelection: true,
+          headerName: 'No',
+          valueGetter:(params)=>{ return '' },
+          width:60,
+          sortable: false, resizable: true, filter: false,
+          cellClass: ['justify-center', 'bg-gray-50', '!border-gray-200']
+        },
+        {
+          flex: 1,
+          headerName:'No. Bon Dinas Luar',
+          sortable: false, resizable: true, filter: false,
+          field: 'no_bon_dinas_luar',
+          cellClass: ['justify-center','!border-gray-200'],
+          filter:'ColFilter'
+        },
+        {
+          flex: 1,
+          headerName:'Tanggal',
+          sortable: false, resizable: true, filter: false,
+          field: 'tanggal',
+          cellClass: ['justify-center','!border-gray-200'],
+          filter:'ColFilter'
+        },
+        {
+          flex: 1,
+          headerName:'Nominal',
+          sortable: false, resizable: true, filter: false,
+          field: 'total_amt',
+          cellClass: ['justify-end','!border-gray-200'],
+          filter:'ColFilter',
+          valueFormatter: params => {
+            if (params.value == null) return '';
+            return 'Rp ' + params.value.toLocaleString('id-ID');
+          }
+        },
+        {
+          flex: 1,
+          headerName:'Status',
+          sortable: false, resizable: true, filter: false,
+          field: 'status',
+          cellClass: ['justify-center','!border-gray-200'],
+          filter:'ColFilter'
+        }
+        ]" @selection-change="selectedItems = $event">
+      <div class="flex items-center space-x-2">
+        <div
+          class="bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded p-1.5">
+          <icon fa="arrow-up-right-from-square" />
+          Multiple Post
+        </div>
+      </div>
+    </ButtonMultiSelect>
+
+    <button class="border border-blue-600 
+    text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
+    transition-colors duration-300" @click="openModal('320', 'Eksport')">Create New Eksport</button>
+
+    <button class="border border-blue-600 
+    text-blue-600 bg-white hover:bg-blue-600 hover:text-white text-sm rounded py-1 px-2.5
+    transition-colors duration-300" @click="openModal('319', 'Import')">Create New Import</button>
+  </div>
+</div>
   <hr>
 
   <!-- TABLE -->
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
 <div v-if="isModalOpen"
-  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto max-h-[100vh]">
-  <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+  class="fixed inset-0 flex items-start sm:items-center justify-center bg-black bg-opacity-50 overflow-y-auto p-4">
+  
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg my-auto">
+    
+    <!-- HEADER -->
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold">
+      <h2 class="text-lg font-semibold">
         Pilih Akun <span v-text="tipe_order"></span>
       </h2>
-      <hr>
     </div>
-    <div class="p-1 ">
-      <div class="flex justify-center">
-        <div class="grid grid-cols-3">
-          <button v-for="(item, i) in coaListEks" :key="i" v-show="coaListEks.length > 0 && tipe_order=='Eksport'"
-            @click="setTipeKategori(item.id)"
-            class="border-1 border-blue-500 hover:bg-blue-400 hover:text-white transition-transform duration-300 transform hover:-translate-y-0.5 shadow-xl m-2 h-[80px] w-[calc(90%)] rounded-1xl m-2 text-xl font-semibold"
-            :class="(tipe_kategori_id == item.id) ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'">
-            <span v-text="item.nama_coa"></span>
-          </button>
-          <button v-for="(item, i) in coaListImp" :key="i" v-show="coaListImp.length > 0 && tipe_order=='Import'"
-            @click="setTipeKategori(item.id)"
-            class="border-1 border-blue-500 hover:bg-blue-400 hover:text-white transition-transform duration-300 transform hover:-translate-y-0.5 shadow-xl m-2 h-[80px] w-[calc(90%)] rounded-1xl m-2 text-xl font-semibold"
-            :class="(tipe_kategori_id == item.id) ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'">
-            <span v-text="item.nama_coa"></span>
-          </button>
-        </div>
-      </div>
+
+    <!-- GRID BUTTON -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <button
+        v-for="(item, i) in coaListEks" :key="'eks-'+i"
+        v-show="coaListEks.length > 0 && tipe_order === 'Eksport'"
+        @click="setTipeKategori(item.id)"
+        class="border border-blue-500 hover:bg-blue-400 hover:text-white transition-all duration-300 
+               hover:-translate-y-0.5 shadow h-[80px] w-full rounded-lg 
+               text-sm font-semibold px-2 py-2 break-words hyphens-auto leading-tight"
+        :class="tipe_kategori_id == item.id ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'">
+        <span v-text="item.nama_coa"></span>
+      </button>
+
+      <button
+        v-for="(item, i) in coaListImp" :key="'imp-'+i"
+        v-show="coaListImp.length > 0 && tipe_order === 'Import'"
+        @click="setTipeKategori(item.id)"
+        class="border border-blue-500 hover:bg-blue-400 hover:text-white transition-all duration-300 
+               hover:-translate-y-0.5 shadow h-[80px] w-full rounded-lg 
+               text-sm font-semibold px-2 py-2 break-words hyphens-auto leading-tight"
+        :class="tipe_kategori_id == item.id ? 'bg-blue-600 text-white' : 'bg-white text-blue-500'">
+        <span v-text="item.nama_coa"></span>
+      </button>
     </div>
-    <div class="flex justify-end pt-4">
-      <RouterLink v-if="tipe_kategori_id"
+
+    <!-- FOOTER -->
+    <div class="flex justify-end gap-x-3 pt-5">
+      <RouterLink
+        v-if="tipe_kategori_id"
         :to="`${$route.path}/create?${Date.parse(new Date())}&tipe_order_id=${tipe_order_id}&tipe_kategori_id=${tipe_kategori_id}`"
-        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 mr-4">
-        Create</RouterLink>
-      <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" @click="isModalOpen=false; setTipeKategori('')">Cancel</button>
+        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
+        Create
+      </RouterLink>
+      <button
+        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm"
+        @click="isModalOpen = false; setTipeKategori('')">
+        Cancel
+      </button>
     </div>
+
   </div>
 </div>
 @else
@@ -379,6 +400,7 @@
           authorization: `${store.user.token_type} ${store.user.token}`
         }, params: { 
             simplest: false, 
+            where: `t_buku_order.status='POST' AND t_buku_order.is_closed = false`,
             searchfield: 'this.no_buku_order, this.jenis_barang, m_customer.nama_perusahaan',
             // notin: `this.id: ${detailArr.map((det)=> (det.t_buku_order_id))}`
             },

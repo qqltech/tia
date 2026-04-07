@@ -39,7 +39,12 @@
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -75,6 +80,11 @@
       <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="data.no_komisi"
         :errorText="formErrors.no_komisi?'failed':''" @input="v=>data.no_komisi=v" :hints="formErrors.no_komisi"
         label="No. Komisi" placeholder="No. Komisi" :check="false" />
+    </div>
+    <div>
+      <FieldX :bind="{ readonly: true, disabled: true }" class="w-full !mt-3" :value="data.tanggal"
+        :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal" label="Tanggal"
+        placeholder="Tanggal" type="date" :check="false" />
     </div>
     <div>
       <FieldPopup label="Kode Tarif Komisi" :bind="{ disabled: !actionText, readonly: !actionText }"
@@ -177,6 +187,8 @@
           // transform:true,
           // join:true,
           // override:true,
+          
+          where: `t_buku_order.status='POST' AND t_buku_order.is_closed = false`,
           // where:`this.id NOT IN(${dataOrderId.join(', ')}) AND this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id: 0 }`,
           searchfield: 'this.no_suffix, this.no_prefix, this.jenis',
           // selectfield: 'this.no_id,this.no_prefix, this.nama, this.alamat_domisili' 
@@ -248,6 +260,7 @@
           // transform:true,
           // join:true,
           // override:true,
+          where: `t_buku_order.status='POST' AND t_buku_order.is_closed = false`,
           // where:`this.id NOT IN(${dataOrderId.join(', ')}) AND this.id!=${data.t_detail_npwp_container_2_id ? data.t_detail_npwp_container_2_id: 0 }`,
           searchfield: 'this.no_suffix, this.no_prefix, this.jenis',
           // selectfield: 'this.no_id,this.no_prefix, this.nama, this.alamat_domisili' 

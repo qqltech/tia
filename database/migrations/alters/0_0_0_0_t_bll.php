@@ -14,6 +14,7 @@ class tbll extends Migration
             //$table->string('_columnName_');
             // $table->dropColumn(['m_akun_pembayaran_id']);
             // $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}')->change();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

@@ -17,10 +17,10 @@ class t_dp_penjualan extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
+    protected $fillable = ["no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
 
-    public $columns     = ["id","no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","no_dp:string:40","no_draft:string:40","m_customer_id:bigint","t_buku_order_id:bigint","tgl_dp:date","tipe_dp_id:bigint","total_amount:decimal","status:string:10","keterangan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_dp:string:40","no_draft:string:40","m_customer_id:bigint","t_buku_order_id:bigint","tgl_dp:date","tipe_dp_id:bigint","total_amount:decimal","status:string:10","keterangan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["m_customer.id=t_dp_penjualan.m_customer_id","t_buku_order.id=t_dp_penjualan.t_buku_order_id","set.m_general.id=t_dp_penjualan.tipe_dp_id"];
     public $details     = [];
@@ -29,9 +29,9 @@ class t_dp_penjualan extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tgl_dp","total_amount"];
-    public $createable  = ["no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $updateable  = ["no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $searchable  = ["id","no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $updateable  = ["no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $searchable  = ["id","no_dp","no_draft","m_customer_id","t_buku_order_id","tgl_dp","tipe_dp_id","total_amount","status","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

@@ -28,6 +28,71 @@ const userId = btoa(store.user.data['id']);
 
 // @if( !$id ) | --- LANDING TABLE --- |
 
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'IN APPROVAL',
+    3: 'APPROVED',
+    4: 'PRINTED',
+    5: 'REVISED',
+    6: 'REJECTED'
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke table
+  table.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+} 
+
 const onDetailAdd = (e) => {
   const newIds = e.map(row => row.id);
   idMulti.value = [...new Set([...idMulti.value, ...newIds])]
@@ -144,6 +209,113 @@ async function multiProgress(status) {
       router.replace('/notifikasi?reload=true');
     }
   })
+}
+
+// Preview Print
+async function onPreview(rows = []) {
+  const ids = [...new Set(rows.map(r => r.id).filter(Boolean))]
+
+  if (!ids.length) {
+    await swal.fire({
+      icon: 'warning',
+      text: 'Tidak ada item yang dipilih untuk dicetak'
+    })
+    return
+  }
+
+  isRequesting.value = true
+
+  try {
+    const previewUrl = `${store.server.url_backend}/web/bkk_non_order_multiple_p?${ids.map(i => `id[]=${i}`).join('&')}&user=${userId}`
+    window.open(previewUrl, '_blank')
+
+    router.replace('/' + modulPath)
+  } catch (err) {
+    console.error(err)
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      text: err?.message || err
+    })
+  } finally {
+    isRequesting.value = false
+  }
+}
+
+// Multi Print
+async function onPrint(rows = []) {
+  const ids = [...new Set(rows.map(r => r.id).filter(Boolean))]
+
+  if (!ids.length) {
+    await swal.fire({
+      icon: 'warning',
+      text: 'Tidak ada item yang dipilih untuk dicetak'
+    })
+    return
+  }
+
+  // Ask for confirmation before proceeding
+  const confirm = await swal.fire({
+    icon: 'warning',
+    text: ` Yakin print ${ids.length} BKK?`,
+    iconColor: '#1469AE',
+    confirmButtonColor: '#1469AE',
+    showDenyButton: true
+  })
+
+  if (!confirm.isConfirmed) return
+
+  isRequesting.value = true
+
+  try {
+    const previewUrl = `${store.server.url_backend}/web/bkk_non_order_multiple?${ids.map(i => `id[]=${i}`).join('&')}&user=${userId}`
+    window.open(previewUrl, '_blank')
+
+    // Custom Print!!
+    const updatePromises = ids.map(id =>
+      fetch(`${store.server.url_backend}/operation/${endpointApi}/print?id=${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'Application/json',
+          Authorization: `${store.user.token_type} ${store.user.token}`
+        }
+      }).then(async res => {
+        if (!res.ok) {
+          let text = await res.text()
+          throw new Error(`Failed marking id ${id} as printed. Status ${res.status}. ${text}`)
+        }
+        return res.json().catch(() => ({}))
+      })
+    )
+
+    // Wait for all requests to settle and collect results
+    const settled = await Promise.allSettled(updatePromises)
+    const rejected = settled.filter(s => s.status === 'rejected')
+
+    if (rejected.length > 0) {
+      const messages = rejected.map((r) => r.reason?.message || JSON.stringify(r.reason)).slice(0, 5).join('\n')
+      await swal.fire({
+        icon: 'warning',
+        text: `Beberapa item gagal di-update sebagai printed:\n${messages}`
+      })
+    } else {
+      await swal.fire({
+        icon: 'success',
+        text: `Semua ${ids.length} item berhasil ditandai sebagai printed`
+      })
+    }
+
+    router.replace('/' + modulPath)
+  } catch (err) {
+    console.error(err)
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      text: err?.message || err
+    })
+  } finally {
+    isRequesting.value = false
+  }
 }
 
 // TABLE
@@ -416,12 +588,12 @@ async function deleteData(row) {
 }
 
 // FILTER
-const filterButton = ref(null);
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
-}
+// const filterButton = ref(null);
+// function filterShowData(params) {
+//   filterButton.value = filterButton.value === params ? null : params;
+//   table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 onActivated(() => {
   if (apiTable.value && route.query.reload) {

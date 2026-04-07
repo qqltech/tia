@@ -19,6 +19,7 @@ class t_rencana_pembayaran_hutang extends \App\Models\BasicModels\t_rencana_pemb
 
     public function createBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tgl']);
         $status = "DRAFT";
         $req = app()->request;
         if($req->post){
@@ -36,6 +37,18 @@ class t_rencana_pembayaran_hutang extends \App\Models\BasicModels\t_rencana_pemb
             "model"  => $model,
             "data"   => $newArrayData,
             // "errors" => ['error1']
+        ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tgl = $arrayData['tgl'] ?? $model->tgl;
+
+        $this->helper->checkIsPeriodClosed($tgl);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
         ];
     }
 

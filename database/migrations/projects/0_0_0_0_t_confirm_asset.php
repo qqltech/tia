@@ -22,6 +22,7 @@ class tconfirmasset extends Migration
             $table->integer('kategori_id')->comment('{"src":"set.m_general.id"}');
             $table->integer('m_perkiraan_asset_id')->comment('{"src":"m_coa.id"}');
             $table->integer('m_perkiraan_by_akun_penyusutan')->comment('{"src":"m_coa.id"}');
+            $table->date('filter_tahun')->nullable();
             $table->text('catatan')->nullable();
             //penting
             $table->integer('creator_id')->nullable();

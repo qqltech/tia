@@ -1,4 +1,4 @@
-<?php
+// <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,6 +20,7 @@ class tangkutan extends Migration
             $table->date("tanggal")->nullable();
             $table->string("party")->nullable();
             $table->boolean('custom_stuple')->nullable()->default(0);
+            $table->date('filter_tahun')->nullable();
             
             //penting
             $table->integer("creator_id")->nullable();

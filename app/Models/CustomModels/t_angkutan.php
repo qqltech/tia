@@ -461,6 +461,7 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
         $party = $this->custom_Party2($arrayData["t_buku_order_id"]);
         $status = "DRAFT";
         $req = app()->request;
@@ -483,6 +484,10 @@ class t_angkutan extends \App\Models\BasicModels\t_angkutan
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+        
         $party = $this->custom_Party2($arrayData["t_buku_order_id"]);
         $status = $arrayData["status"];
         $req = app()->request;

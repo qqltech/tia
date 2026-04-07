@@ -6,7 +6,6 @@
   </div>
   <div class="flex justify-between items-center px-4 py-1">
     <!-- FILTER -->
-    <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
@@ -34,8 +33,14 @@
   <hr>
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
     class="max-h-[450px]">
-    <!-- <template #header>
-    </template> -->
+    <template #header>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
+    </template>
   </TableApi>
 </div>
 @else
@@ -84,7 +89,8 @@
                 simplest:true,
                 //selectfield: 'id,no_buku_order,tgl',
                 scopes:'NotDuplicateForAngkutan',
-                searchfield: 'this.no_buku_order, this.tgl'
+                searchfield: 'this.no_buku_order, this.tgl',
+                where: 'this.is_closed = false'
               },
               onsuccess:(response)=> {
                 response.page = response.current_page
@@ -229,11 +235,15 @@
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[7%] border bg-[#f8f8f8] border-[#CACACA]">
-              Staple
+              Staple Awal
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
               Free
+            </td>
+            <td
+              class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[7%] border bg-[#f8f8f8] border-[#CACACA]">
+              Staple Akhir
             </td>
             <td
               class="text-[#8F8F8F] font-semibold text-[14px] text-capitalize px-2 text-center min-w-[10%] border bg-[#f8f8f8] border-[#CACACA]">
@@ -428,7 +438,12 @@
             <td class="p-2 border border-[#CACACA]">
               <FieldNumber :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="item.free"
                 :errorText="formErrors.free?'failed':''" @input="v=>item.free=v" :hints="formErrors.free" :check="false"
-                label="" placeholder="" />
+                label="" placeholder="" @change="(val) => (item.staple_akhir = item.staple - item.free)" />
+            </td>
+            <td class="p-2 border border-[#CACACA]">
+              <FieldX :bind="{ readonly: true }" class="w-full !mt-3" :value="item.staple_akhir"
+                :errorText="formErrors.staple_akhir?'failed':''" @input="v=>item.staple_akhir=v"
+                :hints="formErrors.staple_akhir" :check="false" label="" placeholder="" />
             </td>
             <td class="p-2 border border-[#CACACA]">
               <FieldNumber

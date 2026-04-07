@@ -20,6 +20,7 @@ class t_dp_penjualan extends \App\Models\BasicModels\t_dp_penjualan
 
      public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tgl_dp']);
         $status = "DRAFT";
         $req = app()->request;
         if($req->post){
@@ -40,6 +41,10 @@ class t_dp_penjualan extends \App\Models\BasicModels\t_dp_penjualan
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+        
         $req = app()->request;
         $status = $req->post ? "POST" : $arrayData['status'];
         

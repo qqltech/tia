@@ -19,6 +19,8 @@ class t_komisi extends \App\Models\BasicModels\t_komisi
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $status = "DRAFT";
         $req = app()->request;
         if ($req->post) {
@@ -33,6 +35,18 @@ class t_komisi extends \App\Models\BasicModels\t_komisi
             "model" => $model,
             "data" => $newArrayData,
             // "errors" => ['error1']
+        ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
         ];
     }
 

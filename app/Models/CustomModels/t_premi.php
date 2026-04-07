@@ -22,6 +22,8 @@ class t_premi extends \App\Models\BasicModels\t_premi
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tgl']);
+
         $status = "DRAFT";
         $req = app()->request;
         if ($req->post) {
@@ -42,6 +44,10 @@ class t_premi extends \App\Models\BasicModels\t_premi
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tgl = $arrayData['tgl'] ?? $model->tgl;
+
+        $this->helper->checkIsPeriodClosed($tgl);
+
         $req = app()->request;
         $status = $req->post ? "POST" : $arrayData["status"];
 
@@ -215,8 +221,8 @@ class t_premi extends \App\Models\BasicModels\t_premi
 
     public function custom_update_premi_terima()
     {
-        $ids = request("id"); // array id data premi
-        $total_premi_diterima = request("total_premi"); // nilai baru total premi
+        $ids = request("id"); // array of ids
+        $total_premi_diterima = request("total_premi");
 
         if (!$ids || !$total_premi_diterima) {
             return $this->helper->customResponse(
@@ -225,15 +231,21 @@ class t_premi extends \App\Models\BasicModels\t_premi
             );
         }
 
-        $eligiblePremis = [];
+        // Load semua premi berdasarkan IDs
+        $premiMap = [];
         foreach ((array) $ids as $id) {
             $premi = $this->find($id);
-            if ($premi && $premi->total_premi > 0) {
-                $eligiblePremis[] = $premi;
+            if ($premi) {
+                $premiMap[$id] = $premi;
             }
         }
 
-        if (empty($eligiblePremis)) {
+        // Filter hanya yang total_premi > 0
+        $eligible = array_filter($premiMap, function ($p) {
+            return $p->total_premi > 0;
+        });
+
+        if (empty($eligible)) {
             return $this->helper->customResponse(
                 "Tidak ada premi yang eligible (total_premi > 0) untuk pengurangan",
                 422
@@ -243,52 +255,12 @@ class t_premi extends \App\Models\BasicModels\t_premi
         $remaining = $total_premi_diterima;
 
         try {
-            while ($remaining > 0 && !empty($eligiblePremis)) {
-                $count = count($eligiblePremis);
-                $share = $remaining / $count;
-                $newEligible = [];
-                foreach ($eligiblePremis as $premi) {
-                    if ($premi->total_premi > $share) {
-                        $premi->total_premi -= $share;
-                        $remaining -= $share;
-                    } else {
-                        $remaining -= $premi->total_premi;
-                        $premi->total_premi = 0;
-                    }
-                    if ($premi->total_premi > 0) {
-                        $newEligible[] = $premi;
-                    }
-                }
-                $eligiblePremis = $newEligible;
-            }
-
-            // Save all changes
-            foreach ($eligiblePremis as $premi) {
-                $premi->save();
-            }
-            // Also save those set to 0, but since they are removed, need to collect all
-            // Actually, better to collect all premi from start and save at end
-            // Wait, modify: collect all premi in a map or array
-
-            // Revised: Use a map to track changes
-            $premiMap = [];
-            foreach ((array) $ids as $id) {
-                $premi = $this->find($id);
-                if ($premi) {
-                    $premiMap[$id] = $premi;
-                }
-            }
-
-            $eligible = array_filter($premiMap, function ($p) {
-                return $p->total_premi > 0;
-            });
-
-            $remaining = $total_premi_diterima;
-
+            // Distribusi pemotongan secara adil
             while ($remaining > 0 && !empty($eligible)) {
                 $count = count($eligible);
                 $share = $remaining / $count;
                 $newEligible = [];
+
                 foreach ($eligible as $id => $premi) {
                     if ($premi->total_premi > $share) {
                         $premi->total_premi -= $share;
@@ -297,6 +269,7 @@ class t_premi extends \App\Models\BasicModels\t_premi
                         $remaining -= $premi->total_premi;
                         $premi->total_premi = 0;
                     }
+
                     if ($premi->total_premi > 0) {
                         $newEligible[$id] = $premi;
                     }
@@ -304,17 +277,67 @@ class t_premi extends \App\Models\BasicModels\t_premi
                 $eligible = $newEligible;
             }
 
-            // Save all premi that were in ids
+            // Save semua perubahan
             foreach ($premiMap as $premi) {
                 $premi->save();
             }
 
             return $this->helper->customResponse(
-                "Total premi berhasil dikurangi dan didistribusikan sampai habis",
+                "Total premi berhasil dikurangi dan didistribusikan",
                 200
             );
         } catch (\Exception $e) {
             return $this->helper->responseCatch($e);
+        }
+    }
+
+    public function scopeGetSupir($query){
+        return $query
+        ->leftJoin('t_spk_angkutan as spk_supir', 'spk_supir.id', '=', 't_premi.t_spk_angkutan_id')
+        ->leftJoin('t_buku_order', 't_buku_order.id', '=', 'spk_supir.t_buku_order_1_id')
+        ->leftJoin('set.m_kary as supir', 'supir.id', '=', 'spk_supir.supir')
+        ->addSelect([
+            // 'spk_supir.t_buku_order_id as no_order',
+            't_buku_order.id as t_buku_order_id',
+            't_buku_order.no_buku_order as no_buku_order',
+            'supir.id as supir_id',
+            'supir.nama as supir_nama',
+        ]);
+    }
+
+    public function custom_get_last_saldo()
+    {
+        $supirId = request('supir_id');
+
+        if (!$supirId) {
+            return $this->helper->customResponse("Supir ID diperlukan", 422);
+        }
+
+        $lastTrx = \DB::table($this->getTable())
+            ->join('t_spk_angkutan', 't_premi.t_spk_angkutan_id', '=', 't_spk_angkutan.id')
+            ->where('t_spk_angkutan.supir', $supirId) // Filter berdasarkan Supir
+            ->whereNotNull('t_premi.total_pembayaran')
+            // ->where('t_premi.total_pembayaran', '!=', 0)
+            ->orderBy('t_premi.created_at', 'desc') 
+            ->select('t_premi.total_pembayaran')
+            ->first();
+
+        if ($lastTrx) {
+            return [
+                "status" => true,
+                "data" => [
+                    "exists" => true,
+                    "saldo" => $lastTrx->total_pembayaran
+                ]
+            ];
+        } else {
+            return [
+                "status" => true,
+                "data" => [
+                    "exists" => false,
+                    "saldo" => 0
+                ]
+            ];
         }
     }
 }

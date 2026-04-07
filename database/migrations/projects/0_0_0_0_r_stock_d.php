@@ -20,6 +20,7 @@ class rstockd extends Migration
             $table->integer('qty_awal');
             $table->integer('qty_in')->nullable();
             $table->integer('qty_out')->nullable();
+            $table->integer('qty_sisa')->nullable();
             $table->decimal('price', 18, 4);
             $table->decimal('price_old', 18, 4);
             $table->text('note')->nullable();

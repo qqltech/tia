@@ -17,21 +17,21 @@ class t_internal_d extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["t_internal_id","m_item_id","m_item_d_id","usage","catatan","satuan_id","is_bundling"];
+    protected $fillable = ["t_internal_id","m_item_id","uom_id","qty_stock","usage","catatan","creator_id","last_editor_id","deleted_id","deleted_at"];
 
-    public $columns     = ["id","t_internal_id","m_item_id","m_item_d_id","usage","catatan","created_at","updated_at","satuan_id","is_bundling"];
-    public $columnsFull = ["id:bigint","t_internal_id:bigint","m_item_id:bigint","m_item_d_id:bigint","usage:decimal","catatan:string:15","created_at:datetime","updated_at:datetime","satuan_id:bigint","is_bundling:boolean"];
+    public $columns     = ["id","t_internal_id","m_item_id","uom_id","qty_stock","usage","catatan","creator_id","last_editor_id","created_at","updated_at","deleted_id","deleted_at"];
+    public $columnsFull = ["id:bigint","t_internal_id:bigint","m_item_id:bigint","uom_id:bigint","qty_stock:decimal","usage:decimal","catatan:string:191","creator_id:integer","last_editor_id:integer","created_at:datetime","updated_at:datetime","deleted_id:integer","deleted_at:datetime"];
     public $rules       = [];
-    public $joins       = ["t_internal.id=t_internal_d.t_internal_id","m_item.id=t_internal_d.m_item_id","m_item_d.id=t_internal_d.m_item_d_id","m_general.id=t_internal_d.satuan_id"];
+    public $joins       = ["t_internal.id=t_internal_d.t_internal_id","m_item.id=t_internal_d.m_item_id","set.m_general.id=t_internal_d.uom_id"];
     public $details     = [];
     public $heirs       = [];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = [""];
-    public $createable  = ["t_internal_id","m_item_id","m_item_d_id","usage","catatan","satuan_id","is_bundling"];
-    public $updateable  = ["t_internal_id","m_item_id","m_item_d_id","usage","catatan","satuan_id","is_bundling"];
-    public $searchable  = ["id","t_internal_id","m_item_id","m_item_d_id","usage","catatan","created_at","updated_at","satuan_id","is_bundling"];
+    public $createable  = ["t_internal_id","m_item_id","uom_id","qty_stock","usage","catatan","creator_id","last_editor_id","deleted_id","deleted_at"];
+    public $updateable  = ["t_internal_id","m_item_id","uom_id","qty_stock","usage","catatan","creator_id","last_editor_id","deleted_id","deleted_at"];
+    public $searchable  = ["id","t_internal_id","m_item_id","uom_id","qty_stock","usage","catatan","creator_id","last_editor_id","created_at","updated_at","deleted_id","deleted_at"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
@@ -47,12 +47,8 @@ class t_internal_d extends Model
     {
         return $this->belongsTo('App\Models\BasicModels\m_item', 'm_item_id', 'id');
     }
-    public function m_item_d() :\BelongsTo
+    public function uom() :\BelongsTo
     {
-        return $this->belongsTo('App\Models\BasicModels\m_item_d', 'm_item_d_id', 'id');
-    }
-    public function satuan() :\BelongsTo
-    {
-        return $this->belongsTo('App\Models\BasicModels\m_general', 'satuan_id', 'id');
+        return $this->belongsTo('App\Models\BasicModels\set.m_general', 'uom_id', 'id');
     }
 }

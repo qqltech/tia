@@ -17,6 +17,8 @@ class tangkutan extends Migration
             // $table->boolean('custom_stuple')->nullable()->default(0);
             // $table->string('code_customer')->nullable();
             // $table->boolean('is_special_case')->nullable()->default(0);
+            // $table->date('filter_tahun')->nullable();
+            // $table->renameColumn('delete_at','deleted_at');
         });
     }
 }

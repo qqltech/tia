@@ -17,10 +17,10 @@ class t_bon_spk_lain extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
+    protected $fillable = ["no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
 
-    public $columns     = ["id","no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","no_draft:string:20","status:string:191","no_bsg:string:100","tanggal:date","t_spk_lain_lain_id:integer","operator:integer","catatan:text","total_bon:decimal","total_tagihan:decimal","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_draft:string:20","status:string:191","no_bsg:string:100","tanggal:date","t_spk_lain_lain_id:integer","operator:integer","catatan:text","total_bon:decimal","total_tagihan:decimal","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["t_spk_lain.id=t_bon_spk_lain.t_spk_lain_lain_id","set.m_kary.id=t_bon_spk_lain.operator"];
     public $details     = ["t_bon_spk_lain_d"];
@@ -29,9 +29,9 @@ class t_bon_spk_lain extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["t_spk_lain_lain_id"];
-    public $createable  = ["no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $updateable  = ["no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $searchable  = ["id","no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $updateable  = ["no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $searchable  = ["id","no_draft","status","no_bsg","tanggal","t_spk_lain_lain_id","operator","catatan","total_bon","total_tagihan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

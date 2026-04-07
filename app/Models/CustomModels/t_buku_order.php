@@ -57,6 +57,8 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
         } elseif ($tipeOrder == "OLS") {
             $kodeTipe = "Buku Order OLS";
         }
+        
+        $this->helper->checkIsPeriodClosed($arrayData['tgl']);
 
         $noBukuOrder = $this->helper->generateNomor($kodeTipe);
         
@@ -65,7 +67,7 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
 
         $currentYear = date('y');
 
-         $formattedNoBukuOrder = $noBukuOrder . $romanMonth ."-".$currentYear;
+        $formattedNoBukuOrder = $noBukuOrder . $romanMonth ."-".$currentYear;
 
         $newData = [
             "no_buku_order" => $formattedNoBukuOrder,
@@ -77,6 +79,18 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
             "model" => $model,
             "data" => $newArrayData,
             // "errors" => ['error1']
+        ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tgl = $arrayData['tgl'] ?? $model->tgl;
+
+        $this->helper->checkIsPeriodClosed($tgl);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
         ];
     }
 
@@ -204,32 +218,31 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
 
     public function scopeWithDetailAju2($model)
     {
-    return $model
-        ->with(['relationPpjk' => function ($query) {
-            $query->join('m_generate_no_aju_d', 'm_generate_no_aju_d.id', '=', 't_ppjk.no_ppjk_id')
-                ->join('m_customer', 'm_customer.id', '=', 't_ppjk.m_customer_id')
-                ->orderBy('t_ppjk.tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
-                ->take(1); // Ambil hanya satu data
-        }])
-        // ->with(['persentaseKomisi' => function ($query) use ($tipe_tarif, $cust_id, $buku_order_id) {
-        //     $query->join('m_tarif_komisi_undername as mtku', 'mtku.m_cust_id', '=', 't_buku_order.m_customer_id')
-        //         ->join('m_tarif_komisi_undername_d as mtku_d', 'mtku_d.m_tarif_komisi_undername_id', '=', 'mtku.id')
-        //         ->select(
-        //             'mtku.id as m_tarif_komisi_undername_id',
-        //             'mtku.m_cust_id as mtku_cust_id',
-        //             'mtku.tipe_tarif',
-        //             'mtku.tarif_komisi',
-        //             'mtku_d.id as m_tarif_komisi_undername_d_id',
-        //             'mtku_d.nilai_awal',
-        //             'mtku_d.nilai_akhir',
-        //             'mtku_d.persentase',
-        //         )
-        //         ->where('mtku.tipe_tarif', $tipe_tarif)
-        //         ->where('mtku.m_cust_id', $cust_id)
-        //         ->where('t_buku_order.id', $buku_order_id);
-        // }])
-        ;
-}
+        return $model
+            ->with(['relationPpjk' => function ($query) {
+                $query->join('m_generate_no_aju_d', 'm_generate_no_aju_d.id', '=', 't_ppjk.no_ppjk_id')
+                    ->join('m_customer', 'm_customer.id', '=', 't_ppjk.m_customer_id')
+                    ->orderBy('t_ppjk.tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
+                    ->take(1); // Ambil hanya satu data
+            }]);
+            // ->with(['persentaseKomisi' => function ($query) use ($tipe_tarif, $cust_id, $buku_order_id) {
+            //     $query->join('m_tarif_komisi_undername as mtku', 'mtku.m_cust_id', '=', 't_buku_order.m_customer_id')
+            //         ->join('m_tarif_komisi_undername_d as mtku_d', 'mtku_d.m_tarif_komisi_undername_id', '=', 'mtku.id')
+            //         ->select(
+            //             'mtku.id as m_tarif_komisi_undername_id',
+            //             'mtku.m_cust_id as mtku_cust_id',
+            //             'mtku.tipe_tarif',
+            //             'mtku.tarif_komisi',
+            //             'mtku_d.id as m_tarif_komisi_undername_d_id',
+            //             'mtku_d.nilai_awal',
+            //             'mtku_d.nilai_akhir',
+            //             'mtku_d.persentase',
+            //         )
+            //         ->where('mtku.tipe_tarif', $tipe_tarif)
+            //         ->where('mtku.m_cust_id', $cust_id)
+            //         ->where('t_buku_order.id', $buku_order_id);
+            // }])
+    }
 
 
     public function scopeGetPersentase($model){
@@ -327,7 +340,7 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
     public function custom_print_biaya()
     {
         $id = request("id");
-        $status = $this->where("id", $id)->update(["status" => "CLOSED"]);
+        $status = $this->where("id", $id)->update(["status" => "PRINTED"]); // ini sebelumnya closed
         return ["success" => true];
     }
 
@@ -354,22 +367,23 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
 
     public function scopeGetDetailNPWP($model)
     {
-    $req = app()->request;
+        $req = app()->request;
 
-    $model->join('t_buku_order_d_npwp', 't_buku_order_d_npwp.t_buku_order_id', '=', 't_buku_order.id')
-          ->join('m_customer as cust', 'cust.id', '=', 't_buku_order.m_customer_id')
-          ->join('set.m_general as ukuran', 'ukuran.id', '=', 't_buku_order.ukuran') // Correct column name
-          ->join('set.m_general as jenis', 'jenis.id', '=', 't_buku_order.jenis');  // Correct column name
+        $model->join('t_buku_order_d_npwp', 't_buku_order_d_npwp.t_buku_order_id', '=', 't_buku_order.id')
+            ->join('m_customer as cust', 'cust.id', '=', 't_buku_order.m_customer_id')
+            ->join('set.m_general as ukuran', 'ukuran.id', '=', 't_buku_order.ukuran') // Correct column name
+            ->join('set.m_general as jenis', 'jenis.id', '=', 't_buku_order.jenis');  // Correct column name
 
-    $model->select(
-        'ukuran.*',
-    'jenis.*',
-        't_buku_order.*',
-        't_buku_order_d_npwp.*',
-        'cust.*',
-        // 'ukuran.nama as ukuran_nama', // Assuming the `set.m_general` table has a `nama` column
-        // 'jenis.nama as jenis_nama'
-    );
+        $model->select(
+            'ukuran.*',
+        'jenis.*',
+            't_buku_order.*',
+            't_buku_order_d_npwp.*',
+            'cust.*',
+            // 'ukuran.nama as ukuran_nama', // Assuming the `set.m_general` table has a `nama` column
+            // 'jenis.nama as jenis_nama'
+        );
     }
+    
 
 }

@@ -17,10 +17,10 @@ class m_tarif_komisi_undername extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
+    protected $fillable = ["kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
 
-    public $columns     = ["id","kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","kode_tarif_komisi_undername:string:50","is_active:boolean","tipe_tarif:string:50","m_cust_id:integer","tarif_komisi:decimal","keterangan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
+    public $columnsFull = ["id:bigint","kode_tarif_komisi_undername:string:50","is_active:boolean","tipe_tarif:string:50","m_cust_id:integer","tarif_komisi:decimal","keterangan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["m_customer.id=m_tarif_komisi_undername.m_cust_id"];
     public $details     = ["m_tarif_komisi_undername_d"];
@@ -29,9 +29,9 @@ class m_tarif_komisi_undername extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tipe_tarif","m_cust_id","tarif_komisi"];
-    public $createable  = ["kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $updateable  = ["kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $searchable  = ["id","kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $updateable  = ["kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $searchable  = ["id","kode_tarif_komisi_undername","is_active","tipe_tarif","m_cust_id","tarif_komisi","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

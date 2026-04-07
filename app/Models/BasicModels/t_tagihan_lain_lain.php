@@ -17,10 +17,10 @@ class t_tagihan_lain_lain extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","delete_at","tgl","tgl_nota","no_buku_order"];
+    protected $fillable = ["no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","deleted_at","tgl","tgl_nota","no_buku_order","filter_tahun"];
 
-    public $columns     = ["id","no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","tgl","tgl_nota","no_buku_order"];
-    public $columnsFull = ["id:bigint","no_draft:string:40","no_tagihan_lain_lain:string:200","customer:integer","status:string:10","ppn:decimal","total_amount_ppn:decimal","total_amount_non_ppn:decimal","total_ppn:decimal","grand_total_amount:decimal","piutang:decimal","catatan:string:500","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","tgl:datetime","tgl_nota:datetime","no_buku_order:integer"];
+    public $columns     = ["id","no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","deleted_at","created_at","updated_at","tgl","tgl_nota","no_buku_order","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_draft:string:40","no_tagihan_lain_lain:string:200","customer:integer","status:string:10","ppn:decimal","total_amount_ppn:decimal","total_amount_non_ppn:decimal","total_ppn:decimal","grand_total_amount:decimal","piutang:decimal","catatan:string:500","creator_id:integer","last_editor_id:integer","delete_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","tgl:datetime","tgl_nota:datetime","no_buku_order:integer","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["m_customer.id=t_tagihan_lain_lain.customer","t_buku_order.id=t_tagihan_lain_lain.no_buku_order"];
     public $details     = ["t_tagihan_d_lain"];
@@ -29,9 +29,9 @@ class t_tagihan_lain_lain extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","tgl","tgl_nota","no_buku_order"];
-    public $createable  = ["no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","delete_at","tgl","tgl_nota","no_buku_order"];
-    public $updateable  = ["no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","delete_at","tgl","tgl_nota","no_buku_order"];
-    public $searchable  = ["id","no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","tgl","tgl_nota","no_buku_order"];
+    public $createable  = ["no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","deleted_at","tgl","tgl_nota","no_buku_order","filter_tahun"];
+    public $updateable  = ["no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","deleted_at","tgl","tgl_nota","no_buku_order","filter_tahun"];
+    public $searchable  = ["id","no_draft","no_tagihan_lain_lain","customer","status","ppn","total_amount_ppn","total_amount_non_ppn","total_ppn","grand_total_amount","piutang","catatan","creator_id","last_editor_id","delete_id","deleted_at","created_at","updated_at","tgl","tgl_nota","no_buku_order","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

@@ -36,6 +36,7 @@ class t_bon_spk_lain extends \App\Models\BasicModels\t_bon_spk_lain
 
     public function createBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
         $newData=[
             "no_draft"=>$this->helper->generateNomor("Draft Bon SPK Lain"),
             "no_bsg"=>$this->helper->generateNomor("BSG SPK Lain"),
@@ -48,6 +49,18 @@ class t_bon_spk_lain extends \App\Models\BasicModels\t_bon_spk_lain
           "data"   => $newArrayData,
           // "errors" => ['error1']
       ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
+        ];
     }
 
     public function custom_post()

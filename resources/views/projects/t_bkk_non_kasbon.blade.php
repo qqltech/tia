@@ -148,10 +148,16 @@
   </div>
   <hr>
 
-  <!-- TABLE -->
+  <!-- TABLE LANDING--> 
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
       <div>
         <ButtonMultiSelect title="Preview Print" @add="onPreview" :api="{
           url: `${store.server.url_backend}/operation/${endpointApi}`,
@@ -784,7 +790,10 @@
                     params: {
                       simplest:true,
                       transform:false,
-                      join:false
+                      join:false,
+                      where: actionText
+                        ? `t_buku_order.status='POST' AND t_buku_order.is_closed = false`
+                        : `t_buku_order.status='POST'`
                     }
                 }" placeholder="" label="" fa-icon="" :check="true" />
 

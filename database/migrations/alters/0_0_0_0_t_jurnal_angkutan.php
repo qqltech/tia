@@ -20,6 +20,8 @@ class tjurnalangkutan extends Migration
             // $table->string('no_draft',20)->nullable();
             // $table->string('no_jurnal',20)->nullable();
             // table->string('no_nota_piutang',20)->nullable();
+            // $table->date('filter_tahun')->nullable();
+            // $table->renameColumn('delete_at','deleted_at');
         });
     }
 }

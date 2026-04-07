@@ -20,6 +20,7 @@ class t_purchase_invoice extends \App\Models\BasicModels\t_purchase_invoice
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
         $checkDuplicate2 = $this->IsDuplicate2($arrayData);
         if($checkDuplicate2) return ['errors' => ["No Faktur Pajak Sudah Pernah Dibuat"]];
         $req = app()->request;
@@ -42,6 +43,9 @@ class t_purchase_invoice extends \App\Models\BasicModels\t_purchase_invoice
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
         $req = app()->request;
         $status = $req->post ? "POST" : $arrayData['status'];
 

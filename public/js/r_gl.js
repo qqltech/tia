@@ -128,6 +128,25 @@ const onGenerate = async () => {
     }
   }
 
+  if (values.tipe_report === 'LKH') {
+    if (values.periode_awal && values.periode_akhir) {
+      let [day, month, year] = values.periode_awal.split('/');
+      tempGet.push(`periode_awal=${year}-${month}-${day}`);
+
+      let [day2, month2, year2] = values.periode_akhir.split('/');
+      tempGet.push(`periode_akhir=${year2}-${month2}-${day2}`);
+    }
+  } else {
+    if (values.select_month) {
+      const selectedDate = new Date(values.select_month + '-01');
+      const firstDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      const lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+
+      tempGet.push(`periode_awal=${formatDate(firstDay)}`);
+      tempGet.push(`periode_akhir=${formatDate(lastDay)}`);
+    }
+  }
+
   // if(values.periode_awal){
   //   let tempYear = values.periode_awal.split('/')[2]
   //   let tempMonth = values.periode_awal.split('/')[1]
@@ -152,6 +171,8 @@ const onGenerate = async () => {
     urlPath = '/web/r_gj';
   } else if (values.tipe_report === 'General Ledger') {
     urlPath = '/web/r_gl';
+  } else if (values.tipe_report === 'LKH') {
+    urlPath = '/web/r_lkh';
   }
 
 

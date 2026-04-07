@@ -15,6 +15,7 @@ class tinternald extends Migration
             //$table->dropColumn('satuan_id');
             //$table->unsignedBigInteger('satuan_id')->comment('{"src": "m_general.id"}')->nullable();
            // $table->boolean('is_bundling')->nullable()->default(false);
+        //    $table->unsignedBigInteger('uom_id')->comment('{"src": "set.m_general.id"}')->nullable()->change();
         });
     }
 }

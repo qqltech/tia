@@ -14,6 +14,8 @@ class tbonspklain extends Migration
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
             // $table->integer('operator')->comment('{"src":"set.m_kary.id"}')->nullable()->change();
+            // $table->date('filter_tahun')->nullable();
+            // $table->renameColumn('delete_at','deleted_at');
         });
     }
 }

@@ -25,10 +25,12 @@ class tbkmnonorder extends Migration
             $table->string('no_ref',20)->nullable();
             $table->text('keterangan')->nullable();
             $table->string('nama_penerima', 100)->nullable();
+            $table->date('filter_tahun')->nullable();
+
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();
-            $table->timestamp('delete_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
 

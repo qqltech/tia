@@ -20,6 +20,8 @@ class t_pembayaran_hutang extends \App\Models\BasicModels\t_pembayaran_hutang
 
     public function createBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $status = "DRAFT";
         $req = app()->request;
         if($req->post){
@@ -36,6 +38,18 @@ class t_pembayaran_hutang extends \App\Models\BasicModels\t_pembayaran_hutang
           "data"   => $newArrayData,
           // "errors" => ['error1']
       ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
+        ];
     }
 
     public function custom_post()

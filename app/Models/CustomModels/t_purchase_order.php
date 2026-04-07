@@ -38,6 +38,7 @@ class t_purchase_order extends \App\Models\BasicModels\t_purchase_order
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
         // $req = app()->request;
         $status = "DRAFT";
 
@@ -62,7 +63,9 @@ class t_purchase_order extends \App\Models\BasicModels\t_purchase_order
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
-        
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
         $newData = [
             "tanggal" => date("Y-m-d"),
         ];

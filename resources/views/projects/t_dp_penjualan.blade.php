@@ -5,8 +5,8 @@
 <div class="bg-white p-1 rounded-md min-h-[520px] border-t-10 border-blue-500">
   <div class="flex flex-col justify-center w-full px-2.5 py-1">
     <div class="pt-2 pb-2">
-    <h1 class="text-xl font-semibold">DOWN PAYMENT PENJUALAN</h1>
-  </div>
+      <h1 class="text-xl font-semibold">DOWN PAYMENT PENJUALAN</h1>
+    </div>
     <div class="flex justify-between items-center gap-2">
       <div class="flex gap-2 pb-3">
         <p class="py-2">Filter Status :</p>
@@ -40,8 +40,14 @@
     <hr>
     <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
       class="max-h-[450px]">
-      <!-- <template #header>
-    </template> -->
+      <template #header>
+        <div class="flex gap-x-2">
+          <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+        </div>
+      </template>
     </TableApi>
   </div>
 
@@ -69,13 +75,12 @@
           :errorText="formErrors.no_draft?'failed':''" @input="v=>values.no_draft=v" :hints="formErrors.no_draft"
           label="No.Draft" placeholder="No Draft" :check="false" />
       </div>
-      
+
       <div class="w-full !mt-3">
-        <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.no_dp"
-          :errorText="formErrors.no_dp?'failed':''" @input="v=>values.no_dp=v"
-          :hints="formErrors.no_dp" placeholder="No. DP Penjualan" :check="false" />
+        <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.no_dp" :errorText="formErrors.no_dp?'failed':''"
+          @input="v=>values.no_dp=v" :hints="formErrors.no_dp" placeholder="No. DP Penjualan" :check="false" />
       </div>
-      
+
       <div class="w-full !mt-3">
         <FieldPopup class="!mt-0" :bind="{ readonly: !actionText }" :value="values.t_buku_order_id" @input="v=>{
           if(v){
@@ -84,16 +89,16 @@
             values.t_buku_order_id=null
           }
           
-        }" :errorText="formErrors.t_buku_order_id?'failed':''" :hints="formErrors.t_buku_order_id" valueField="id" displayField="no_buku_order" 
-        @update:valueFull= "(data)=>{
+        }" :errorText="formErrors.t_buku_order_id?'failed':''" :hints="formErrors.t_buku_order_id" valueField="id"
+          displayField="no_buku_order" @update:valueFull="(data)=>{
           values.m_customer_id = data['m_customer.id']
-        }"
-        :api="{
+        }" :api="{
               url: `${store.server.url_backend}/operation/t_buku_order`,
               headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
               params: {
                 simplest:true,
                 //where: `this.status='POST'`
+                where: `this.status='POST' AND t_buku_order.is_closed = false`
               }
             }" placeholder="No Order" :check="false" :columns="[{
               headerName: 'No',
@@ -119,15 +124,15 @@
             ]" />
       </div>
       <div>
-      <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_dp"
-        :errorText="formErrors.tgl_dp?'failed':''" @input="v=>values.tgl_dp=v" :hints="formErrors.tgl_dp" :check="false"
-        type="date" label="Tanggal DP" placeholder="Pilih Tanggal" />
+        <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" :value="values.tgl_dp"
+          :errorText="formErrors.tgl_dp?'failed':''" @input="v=>values.tgl_dp=v" :hints="formErrors.tgl_dp"
+          :check="false" type="date" label="Tanggal DP" placeholder="Pilih Tanggal" />
       </div>
       <div>
-      
-      <FieldSelect class=" w-full !mt-3" :bind="{ disabled: !actionText }" :value="values.tipe_dp_id"
-        @input="v=>values.tipe_dp_id=v" :errorText="formErrors.tipe_dp_id?'failed':''" :hints="formErrors.tipe_dp_id"
-        valueField="id" displayField="deskripsi" :api="{
+
+        <FieldSelect class=" w-full !mt-3" :bind="{ disabled: !actionText }" :value="values.tipe_dp_id"
+          @input="v=>values.tipe_dp_id=v" :errorText="formErrors.tipe_dp_id?'failed':''" :hints="formErrors.tipe_dp_id"
+          valueField="id" displayField="deskripsi" :api="{
                 url: `${store.server.url_backend}/operation/m_general`,
                 headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
                 params: {
@@ -137,12 +142,12 @@
       </div>
 
       <div>
-      <FieldNumber class=" w-full !mt-3" :bind="{ readonly: !actionText }" :value="values.total_amount"
-          @input="(v)=>values.total_amount=v" :errorText="formErrors.total_amount?'failed':''" :hints="formErrors.total_amount" label="Tarif DP" placeholder="Masukkan Tarif DP"
-          :check="false" />
+        <FieldNumber class=" w-full !mt-3" :bind="{ readonly: !actionText }" :value="values.total_amount"
+          @input="(v)=>values.total_amount=v" :errorText="formErrors.total_amount?'failed':''"
+          :hints="formErrors.total_amount" label="Tarif DP" placeholder="Masukkan Tarif DP" :check="false" />
       </div>
-      
-      
+
+
       <div class="w-full !mt-3">
         <FieldSelect class="!mt-0" :bind="{ disabled: true, clearable:true  }" :value="values.status"
           :errorText="formErrors.status ? 'failed' : ''" @input="v => values.status = v" :hints="formErrors.status"
@@ -159,15 +164,10 @@
       </div>
 
       <div class="w-full !mt-3 visibility: hidden">\
-        <FieldNumber
-        class="!mt-0"
-          :bind="{ readonly: !actionText }"
-          :value="values.m_customer_id" @input="(v)=>values.m_customer_id=v"
-          :errorText="formErrors.m_customer_id?'failed':''" 
-          :hints="formErrors.m_customer_id"
-          placeholder="Customer"  :check="false"
-        />
-        
+        <FieldNumber class="!mt-0" :bind="{ readonly: !actionText }" :value="values.m_customer_id"
+          @input="(v)=>values.m_customer_id=v" :errorText="formErrors.m_customer_id?'failed':''"
+          :hints="formErrors.m_customer_id" placeholder="Customer" :check="false" />
+
         <!-- <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.catatan"
           :errorText="formErrors.catatan?'failed':''" @input="v=>values.catatan=v" :hints="formErrors.catatan"
           type="textarea" placeholder="Customer" :check="false" /> -->
@@ -184,11 +184,11 @@
         <icon fa="times" />
         Reset
       </button>
-      <button class="text-sm rounded-md py-2 px-3 text-white bg-yellow-600 hover:bg-yellow-700 flex gap-x-1 items-center
+      <!-- <button class="text-sm rounded-md py-2 px-3 text-white bg-yellow-600 hover:bg-yellow-700 flex gap-x-1 items-center
         transition-colors duration-300" @click="onSave(true)">
             <icon fa="paper-plane" />
             <span>Post</span>
-      </button>
+      </button> -->
       <button
         class="bg-green-600 text-white font-semibold hover:bg-green-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         @click="onSave(false)"

@@ -20,6 +20,8 @@ class t_bll extends \App\Models\BasicModels\t_bll
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+        
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft BLL"),
             "no_bll" => $this->helper->generateNomor("Nomor BLL"),
@@ -35,6 +37,10 @@ class t_bll extends \App\Models\BasicModels\t_bll
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
         $newData = [
             "tanggal" => date("Y-m-d"),
         ];

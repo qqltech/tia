@@ -26,6 +26,8 @@ class t_bon_dinas_luar extends \App\Models\BasicModels\t_bon_dinas_luar
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+        
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft Bon Dinas Luar"),
             "no_bon_dinas_luar" => $this->helper->generateNomor(
@@ -42,6 +44,10 @@ class t_bon_dinas_luar extends \App\Models\BasicModels\t_bon_dinas_luar
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+
         $newData = [
             "tanggal" => date("Y-m-d"),
         ];

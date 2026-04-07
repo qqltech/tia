@@ -20,6 +20,8 @@ class t_buku_penyesuaian extends \App\Models\BasicModels\t_buku_penyesuaian
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal_buku_penyesuaian']);
+
         $status = "DRAFT";
         $req = app()->request;
         if($req->post){
@@ -40,6 +42,10 @@ class t_buku_penyesuaian extends \App\Models\BasicModels\t_buku_penyesuaian
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal_buku_penyesuaian = $arrayData['tanggal_buku_penyesuaian'] ?? $model->tanggal_buku_penyesuaian;
+
+        $this->helper->checkIsPeriodClosed($tanggal_buku_penyesuaian);
+
         $req = app()->request;
         $status = $req->post ? "POST" : $arrayData['status'];
         

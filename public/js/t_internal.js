@@ -27,8 +27,8 @@ let initialValues = {}
 const changedValues = []
 
 const values = reactive({
-  status: 1,
-  date: new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
+  status: 'DRAFT',
+  tanggal: new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
 })
 
 onBeforeMount(async () => {
@@ -50,11 +50,11 @@ onBeforeMount(async () => {
       if (!res.ok) throw new Error("Failed when trying to read data")
       const resultJson = await res.json()
       initialValues = resultJson.data
-      initialValues.status = initialValues.status == true ? 1 : 0
       detailArr.value = initialValues.t_internal_d.map((dt) => ({
         ...dt,
-        m_item_d_id: dt.m_item_d_id
       }))
+
+      console.log('iki cuk: ',detailArr.value)
 
     } catch (err) {
       isBadForm.value = true
@@ -78,7 +78,7 @@ onBeforeMount(async () => {
 const detailArr = ref([])
 const addDetail = (dt) => {
   const tempItem = (dt) => ({
-    stock: dt.qty_stock || 0
+    qty_stock: 0
   });
   detailArr.value = [...detailArr.value, tempItem(dt)];
 }
@@ -111,23 +111,22 @@ async function onSave() {
     const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`
     isRequesting.value = true
 
-    values.status = values.status ? 1 : 0;
+    // values.status = values.status ? 1 : 0;
 
-    const cleanDetails = detailArr.value.map(item => {
-      const cleaned = { ...item };
+    // const cleanDetails = detailArr.value.map(item => {
+    //   const cleaned = { ...item };
 
-      cleaned.is_bundling = item.is_bundling ? 1 : 0;
+    //   cleaned.is_bundling = item.is_bundling ? 1 : 0;
 
-      if (cleaned.is_bundling === 1) {
-        cleaned.m_item_d_id = cleaned.m_item_d_text;
-      }
+    //   if (cleaned.is_bundling === 1) {
+    //     cleaned.m_item_d_id = cleaned.m_item_d_text;
+    //   }
 
-      return cleaned;
-    });
+    //   return cleaned;
+    // });
 
-    values.t_internal_d = cleanDetails;
-
-    console.log('IKI VALUES COK :', values);
+    // values.t_internal_d = cleanDetails;
+    values.t_internal_d = detailArr.value
 
     const res = await fetch(dataURL, {
       method: isCreating ? 'POST' : 'PUT',
@@ -161,6 +160,86 @@ async function onSave() {
 
 
 //  @else----------------------- LANDING
+// const activeBtn = ref()
+
+// function filterShowData(params) {
+//   if (activeBtn.value === params) {
+//     activeBtn.value = null
+//   } else {
+//     activeBtn.value = params
+//   }
+//   if (params) {
+//     landing.api.params.where = `this.status='${params}'`
+//   }
+//   if (activeBtn.value == null) {
+//     // clear params filter
+//     landing.api.params.where = null
+//   }
+
+//   apiTable.value.reload()
+// }
+
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const activeBtn = ref()
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (activeBtn.value === noBtn) {
+      activeBtn.value = null
+      statusLabel = null
+    } else {
+      activeBtn.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[activeBtn.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
 const landing = reactive({
   actions: [
     {
@@ -230,6 +309,63 @@ const landing = reactive({
       click(row) {
         router.push(`${route.path}/${row.id}?action=Copy&` + tsId)
       }
+    },
+    {
+      icon: 'location-arrow',
+      title: "Post Data",
+      class: 'bg-rose-700 rounded-lg text-white',
+      show: (row) => row.status==='DRAFT',
+      async click(row) {
+        swal.fire({
+          icon: 'warning',
+          text: 'Post Data?',
+          iconColor: '#1469AE',
+          confirmButtonColor: '#1469AE',
+
+          showDenyButton: true
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            try {
+              const dataURL = `${store.server.url_backend}/operation/t_internal/post`
+              isRequesting.value = true
+              const res = await fetch(dataURL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'Application/json',
+                  Authorization: `${store.user.token_type} ${store.user.token}`
+                },
+                body: JSON.stringify({ id: row.id })
+              })
+              if (!res.ok) {
+                if ([400, 422, 500].includes(res.status)) {
+                  const responseJson = await res.json()
+                  formErrors.value = responseJson.errors || {}
+                  throw (responseJson.message+ " "+responseJson.data.errorText || "Failed when trying to post data")
+                } else {
+                  throw ("Failed when trying to post data")
+                }
+              }
+              const responseJson = await res.json()
+              swal.fire({
+                icon: 'success',
+                text: responseJson.message
+              })
+              // const resultJson = await res.json()
+            } catch (err) {
+              isBadForm.value = true
+              swal.fire({
+                icon: 'error',
+                iconColor: '#1469AE',
+                confirmButtonColor: '#1469AE',
+                text: err
+              })
+            }
+            isRequesting.value = false
+
+            apiTable.value.reload()
+          }
+        })
+      }
     }
   ],
   api: {
@@ -239,6 +375,7 @@ const landing = reactive({
       authorization: `${store.user.token_type} ${store.user.token}`
     },
     params: {
+      scopes: 'WithDetail',
       simplest: true,
       searchfield: 'this.no_pemakaian, this.date, this.catatan, this.status',
     },
@@ -269,7 +406,17 @@ const landing = reactive({
   },
   {
     headerName: 'Tanggal',
-    field: 'date',
+    field: 'tanggal',
+    filter: true,
+    sortable: true,
+    filter: 'ColFilter',
+    resizable: true,
+    flex: 1,
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
+  },
+  {
+    headerName: 'PIC',
+    field: 'nama',
     filter: true,
     sortable: true,
     filter: 'ColFilter',
@@ -279,7 +426,7 @@ const landing = reactive({
   },
   {
     headerName: 'Catatan',
-    field: 'catatan',
+    field: 'cacat',
     filter: true,
     sortable: true,
     filter: 'ColFilter',
@@ -295,22 +442,24 @@ const landing = reactive({
     sortable: true,
     flex: 1,
     cellClass: ['border-r', '!border-gray-200', 'justify-center'],
-    cellRenderer: ({ value }) => {
-      return value === true
-        ? `<span class="text-green-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Active</span>`
-        : `<span class="text-red-500 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Inactive</span>`
+    cellRenderer: ( params ) => {
+      return params.data['status'] == 1
+        ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+        : (params.data['status'] == 'POST' ? `<span class="text-amber-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+        : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+        : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">Status Tidak Terdaftar</span>`))
     }
   }
   ]
 })
 
-const filterButton = ref(null);
+// const filterButton = ref(null);
 
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  landing.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
-  apiTable.value.reload();
-}
+// function filterShowData(params) {
+//   filterButton.value = filterButton.value === params ? null : params;
+//   landing.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
+//   apiTable.value.reload();
+// }
 
 
 onActivated(() => {

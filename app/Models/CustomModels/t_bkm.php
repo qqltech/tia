@@ -21,6 +21,8 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $newData = [
             "no_draft" => $this->helper->generateNomor("DRAFT BKM"),
             "no_bkm" => $this->helper->generateNomor("Nomor BKM"),
@@ -36,6 +38,10 @@ class t_bkm extends \App\Models\BasicModels\t_bkm
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+        
         $newData = [
             "tanggal" => date("Y-m-d"),
         ];

@@ -17,10 +17,10 @@ class t_memo_jurnal extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
+    protected $fillable = ["no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
 
-    public $columns     = ["id","no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","no_draft:string:40","no_memo:string:40","tanggal_memo:date","divisi:bigint","status:string:20","catatan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_draft:string:40","no_memo:string:40","tanggal_memo:date","divisi:bigint","status:string:20","catatan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["set.m_general.id=t_memo_jurnal.divisi"];
     public $details     = ["t_memo_jurnal_d"];
@@ -29,9 +29,9 @@ class t_memo_jurnal extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tanggal_memo"];
-    public $createable  = ["no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $updateable  = ["no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
-    public $searchable  = ["id","no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];
+    public $createable  = ["no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $updateable  = ["no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","filter_tahun"];
+    public $searchable  = ["id","no_draft","no_memo","tanggal_memo","divisi","status","catatan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

@@ -17,6 +17,7 @@ class mtarifkomisiundername extends Migration
             $table->string('tipe_tarif',50);
             $table->integer('m_cust_id')->comment('{"src":"m_customer.id"}');
             $table->decimal('tarif_komisi',18,4);
+            $table->date('filter_tahun')->nullable();
             $table->text('keterangan')->nullable();
             //penting
             $table->integer('creator_id')->nullable();

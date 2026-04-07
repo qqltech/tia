@@ -25,6 +25,8 @@ class t_pembayaran_piutang extends \App\Models\BasicModels\t_pembayaran_piutang
 
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
+        $this->helper->checkIsPeriodClosed($arrayData['tanggal']);
+
         $req = app()->request;
         
         $newData = [
@@ -51,6 +53,10 @@ class t_pembayaran_piutang extends \App\Models\BasicModels\t_pembayaran_piutang
 
     public function updateBefore( $model, $arrayData, $metaData, $id=null )
     {
+        $tanggal = $arrayData['tanggal'] ?? $model->tanggal;
+
+        $this->helper->checkIsPeriodClosed($tanggal);
+        
         $req = app()->request;
 
         $newArrayData  = array_merge( $arrayData,[

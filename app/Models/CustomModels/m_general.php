@@ -23,7 +23,7 @@ class m_general extends \App\Models\BasicModels\m_general
         if ($req->has("group") && $req->group) {
             $query->where("group", $req->group);
         }
-
+        dd($req->group);
         return $query->get();
     }
 

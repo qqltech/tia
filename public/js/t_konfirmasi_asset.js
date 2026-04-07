@@ -1,5 +1,5 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
-import { ref, readonly, reactive, inject, onMounted, onBeforeMount, watchEffect, onActivated, watch } from 'vue'
+import { ref, readonly, reactive, inject, onMounted, onBeforeMount, onBeforeUnmount, watchEffect, onActivated, watch } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -15,6 +15,11 @@ const currentMenu = store.currentMenu
 const apiTable = ref(null)
 const formErrors = ref({})
 const tsId = `ts=` + (Date.parse(new Date()))
+const tipe = ref(route.query.isType)
+
+const allowedTipe = [
+  'chasis', 'kendaraan', 'inventaris', 'mesin', 'lain'
+]
 
 // ------------------------------ PERSIAPAN
 const endpointApi = '/t_confirm_asset'
@@ -23,13 +28,227 @@ onBeforeMount(() => {
 })
 
 //  @if( $id )------------------- VALUES FORM ! PENTING JANGAN DIHAPUS
+const detailArr = ref([])
+
+// HOT KEY
+onMounted(() => {
+  // window.addEventListener('keydown', handleKeyDown);
+  const today = new Date();
+  // Format tanggal sesuai dengan "dd-mm-yyyy"
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const year = today.getFullYear();
+  const formattedDate = `${day}/${month}/${year}`;
+  values.tanggal = formattedDate;
+  values.tanggal_pakai = formattedDate;
+
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+})
+
+const handleKeyDown = (event) => {
+  console.log(event)
+  if (event?.ctrlKey && event?.key === 's') {
+    event.preventDefault(); // Prevent the default behavior (e.g., saving the page)
+    onSave();
+  }
+}
+
 let initialValues = {}
 const changedValues = []
 
 const values = reactive({
   is_active: true,
-  tgl_awal: new Date().toLocaleDateString('en-US')
+  tgl_awal: new Date().toLocaleDateString('en-US'),
+  tipe: tipe.value,
+  tipe_asset:
+    tipe.value === 'chasis' ? 'Chasis' :
+      tipe.value === 'kendaraan' ? 'Kendaraan' :
+        tipe.value === 'inventaris' ? 'Inventaris Kantor' :
+          tipe.value === 'mesin' ? 'Asset Mesin' :
+            tipe.value === 'lain' ? 'Lain-lain' : '',
+  nilai_minimal: 0,
+  nilai_penyusutan: 0,
+  nilai_buku: 0
 })
+
+const assetFieldMap = {
+  kendaraan: [
+    'jenis_kendaraan_id', 'no_mesin', 'no_rangka', 'nopol', 'no_bpkb',
+    'tahun_produksi', 'merk_id', 'jumlah_roda', 'bahan_bakar_id', 'no_urut_kendaraan',
+    'jumlah_cylinder', 'warna_id', 'no_faktur', 'tanggal_faktur', 'nama_pemilik'
+  ],
+  chasis: [
+    'dimensi', 'jumlah_ban', 'warna_id'
+  ],
+  inventaris: [
+    'spesifikasi', 'merk_id', 'jenis_inventaris_id'
+  ],
+  mesin: [
+    'no_mesin', 'tipe_mesin_id', 'dimensi', 'nomor_sertifikat', 'tahun_produksi'
+  ]
+};
+
+watch(
+  () => values.t_lpb_id,
+  (newVal, oldVal) => {
+    if (oldVal && newVal !== oldVal) {
+      // Reset Asset jika user mengganti Nomor LPB agar harga tidak salah
+      values.m_item_id = null;
+      values.kode = null;
+      values.name_asset = null;
+      values.harga_perolehan = 0;
+    }
+  }
+);
+
+watch(
+  () => [values.harga_perolehan, values.masa_manfaat],
+  ([harga_perolehan, masa_manfaat]) => {
+    if (harga_perolehan && masa_manfaat) {
+      values.nilai_penyusutan = harga_perolehan / masa_manfaat;
+    } else {
+      values.nilai_penyusutan = 0;
+    }
+  }
+);
+
+
+watch(() => values.harga_perolehan, (newVal) => {
+  values.nilai_buku = newVal;
+});
+
+function parseDDMMYYYY(dateStr) {
+  const [dd, mm, yyyy] = dateStr.split('/');
+  return new Date(yyyy, mm - 1, dd); // bulan - 1 karena index dari 0
+}
+
+function updateStatusForEach(detailArr, today) {
+  if (!today || !Array.isArray(detailArr) || !detailArr.length) return;
+
+  let dateToday;
+  if (typeof today === 'string' && today.includes('/')) {
+    const [dd, mm, yyyy] = today.split('/');
+    dateToday = new Date(yyyy, mm - 1, dd);
+  } else {
+    dateToday = new Date(today);
+  }
+
+  detailArr.forEach(item => {
+    if (!item.tanggal_penyusutan) return;
+
+    const dateSusut = parseDDMMYYYY(item.tanggal_penyusutan);
+
+    item.status = dateSusut <= dateToday ? "COMPLETE" : "NEW";
+    
+  });
+}
+
+watch([() => values.tanggal, () => detailArr.value], ([_, newDetailArr]) => {
+  // Gunakan tanggal hari ini:
+  const today = new Date();
+  updateStatusForEach(newDetailArr, today);
+}, { immediate: true });
+
+
+function formatDateToDDMMYYYY(dateStr) {
+  const [yyyy, mm, dd] = dateStr.split('-');
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function formatCurrency(value) {
+  if (value == null || value === '') return '';
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(value);
+};
+
+async function generateTotal() {
+  // Validasi nilai_minimal tidak lebih besar dari harga_perolehan
+  if (
+    parseFloat(values.nilai_minimal) > parseFloat(values.harga_perolehan)
+  ) {
+    swal.fire({
+      icon: 'warning',
+      title: 'Validasi Gagal',
+      text: 'Nilai minimal tidak boleh lebih besar dari harga perolehan.',
+      confirmButtonText: 'OK',
+    });
+    return; // hentikan eksekusi
+  }
+
+  // Tampilkan loading popup
+  swal.fire({
+    title: 'Mohon tunggu...',
+    text: 'Sedang memproses generate total',
+    allowOutsideClick: false,
+    didOpen: () => {
+      swal.showLoading();
+    }
+  });
+
+  // Timer maksimal 3 menit (180000 ms)
+  let timeoutHandler = setTimeout(() => {
+    swal.close();
+    swal.fire({
+      icon: 'error',
+      title: 'Waktu Habis',
+      text: 'Proses generate terlalu lama. Silakan coba lagi.',
+      confirmButtonText: 'OK',
+    });
+  }, 180000);
+
+  try {
+    const dataURL = `${store.server.url_backend}/operation${endpointApi}/generateDepreciation`;
+    const res = await fetch(dataURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${store.user.token_type} ${store.user.token}`,
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (!res.ok) throw new Error('Failed to generate total.');
+
+    const hasil = await res.json();
+
+    const butaMap = hasil.map(itels => ({
+      seq: itels.no,
+      tanggal_penyusutan: itels.tanggal_penyusutan ? formatDateToDDMMYYYY(itels.tanggal_penyusutan) : null,
+      nilai_akun_sebelum_penyusutan: itels.nilai_akun_sebelum,
+      nilai_buku_sebelum_penyusutan: itels.nilai_buku_sebelum,
+      nilai_penyusutan: itels.nilai_penyusutan,
+      nilai_akumulasi_setelah_penyusutan: itels.nilai_akun_setelah,
+      nilai_buku_setelah_penyusutan: itels.nilai_buku_setelah,
+      status: []
+    }));
+
+    detailArr.value = butaMap;
+
+    clearTimeout(timeoutHandler); // Stop timer jika selesai sebelum 3 menit
+    swal.close();
+
+    swal.fire({
+      icon: 'success',
+      text: 'Total Berhasil Di Generated',
+      confirmButtonText: 'OK',
+    });
+  } catch (err) {
+    clearTimeout(timeoutHandler); // Stop timer jika error
+    swal.close();
+    console.error(err);
+    swal.fire({
+      icon: 'error',
+      text: err.message || 'An error occurred while generating total.',
+      confirmButtonText: 'OK',
+    });
+  }
+}
 
 onBeforeMount(async () => {
   if (isRead) {
@@ -51,6 +270,21 @@ onBeforeMount(async () => {
       const resultJson = await res.json()
       initialValues = resultJson.data
 
+      const tipe = initialValues.tipe_asset?.toLowerCase();
+      const confirmationKey = `t_confirm_asset_${tipe}`;
+
+      if (initialValues[confirmationKey] && Array.isArray(initialValues[confirmationKey])) {
+        initialValues[confirmationKey].forEach((dt) => {
+          const fields = assetFieldMap[tipe];
+          if (fields) {
+            fields.forEach((field) => {
+              initialValues[field] = dt[field];
+            });
+          }
+        });
+      }
+
+      initialValues.no_draft = null
       // Add this mapping for kategori
       if (initialValues.kategori) {
         initialValues.kategori_id = initialValues.kategori.id
@@ -80,8 +314,6 @@ onBeforeMount(async () => {
     values[key] = initialValues[key]
   }
 })
-
-const detailArr = ref([])
 
 watch(
   () => [values.harga_perolehan, values.masa_manfaat],
@@ -202,11 +434,11 @@ const addDetail = async () => {
   }
 };
 
-
-
 const removeItem = (index) => {
   detailArr.value.splice(index, 1);
 };
+
+
 
 function onBack() {
   router.replace('/' + modulPath)
@@ -226,51 +458,374 @@ function onReset() {
   })
 }
 
-async function onSave() {
-  values.is_active = (values.is_active === true) ? 1 : 0;
-  try {
-    values.t_confirm_asset_d = detailArr
+// async function onSave() {
+//   values.is_active = (values.is_active === true) ? 1 : 0;
+//   try {
+//     values.t_confirm_asset_d = detailArr
 
-    // Add this to ensure kategori_id is properly passed
-    if (values.kategori && typeof values.kategori === 'object') {
-      values.kategori_id = values.kategori.id
+//     // Add this to ensure kategori_id is properly passed
+//     if (values.kategori && typeof values.kategori === 'object') {
+//       values.kategori_id = values.kategori.id
+//     }
+
+//     const type = route.query.isType;
+
+//     const assetDetailMap = {
+//       kendaraan: {
+//         key: 't_confirm_asset_kendaraan',
+//         data: [{
+//           jenis_kendaraan_id: values.jenis_kendaraan_id,
+//           no_mesin: values.no_mesin,
+//           no_rangka: values.no_rangka,
+//           nopol: values.nopol,
+//           no_bpkb: values.no_bpkb,
+//           no_urut_kendaraan: values.no_urut_kendaraan,
+//           tahun_produksi: values.tahun_produksi,
+//           merk_id: values.merk_id,
+//           jumlah_roda: parseInt(values.jumlah_roda),
+//           bahan_bakar_id: values.bahan_bakar_id,
+//           jumlah_cylinder: parseInt(values.jumlah_cylinder),
+//           warna_id: values.warna_id,
+//           no_faktur: values.no_faktur,
+//           tanggal_faktur: values.tanggal_faktur,
+//           nama_pemilik: values.nama_pemilik
+//         }]
+//       },
+//       chasis: {
+//         key: 't_confirm_asset_chasis',
+//         data: [{
+//           dimensi: values.dimensi,
+//           jumlah_ban: values.jumlah_ban,
+//           warna_id: values.warna_id
+//         }]
+//       },
+//       inventaris: {
+//         key: 't_confirm_asset_inventaris',
+//         data: [{
+//           spesifikasi: values.spesifikasi,
+//           merk_id: values.merk_id,
+//           jenis_inventaris_id: values.jenis_inventaris_id
+//         }]
+//       },
+//       mesin: {
+//         key: 't_confirm_asset_mesin',
+//         data: [{
+//           no_mesin: values.no_mesin,
+//           tipe_mesin_id: values.tipe_mesin_id,
+//           dimensi: values.dimensi,
+//           nomor_sertifikat: values.nomor_sertifikat,
+//           tahun_produksi: values.tahun_produksi
+//         }]
+//       },
+//       // lain: {
+//       //   key: 't_confirm_asset_lain',
+//       //   data: [{}] // tambahkan field sesuai kebutuhan
+//       // }
+//     };
+
+//     Object.entries(assetDetailMap).forEach(([t, val]) => {
+//       if (t !== type) {
+//         delete values[val.key];
+//       }
+//     });
+
+//     if (assetDetailMap[type]) {
+//       values[assetDetailMap[type].key] = assetDetailMap[type].data;
+//     }
+
+//     const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value)
+//     const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`
+//     isRequesting.value = true
+//     const res = await fetch(dataURL, {
+//       method: isCreating ? 'POST' : 'PUT',
+
+//       headers: {
+//         'Content-Type': 'Application/json',
+//         Authorization: `${store.user.token_type} ${store.user.token}`
+//       },
+//       body: JSON.stringify(values)
+
+//     })
+
+//     if (!res.ok) {
+//       if ([400, 422].includes(res.status)) {
+//         const responseJson = await res.json()
+//         formErrors.value = responseJson.errors || {}
+//         throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data")
+//       } else {
+//         throw ("Failed when trying to post data")
+//       }
+//     }
+//     router.replace('/' + modulPath + '?reload=' + (Date.parse(new Date())))
+//   } catch (err) {
+//     isBadForm.value = true
+//     swal.fire({
+//       icon: 'error',
+//       text: err
+//     })
+//   }
+//   isRequesting.value = false
+// }
+
+async function onSave() {
+  try {
+    isRequesting.value = true;
+    let next = true;
+
+    if (!values.tanggal) {
+      swal.fire({
+        icon: 'warning',
+        text: `Tanggal harus diisi`
+      });
+      next = false;
+      return;
     }
 
-    const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value)
-    const dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`
-    isRequesting.value = true
-    const res = await fetch(dataURL, {
-      method: isCreating ? 'POST' : 'PUT',
+    if (!next) return;
 
+    values.t_asset_confirmation_detail = detailArr.value;
+
+    const type = route.query.isType;
+
+    const assetDetailMap = {
+      kendaraan: {
+        key: 't_asset_confirmation_kendaraan',
+        data: [{
+          jenis_kendaraan_id: values.jenis_kendaraan_id,
+          no_mesin: values.no_mesin,
+          no_rangka: values.no_rangka,
+          nopol: values.nopol,
+          no_bpkb: values.no_bpkb,
+          no_urut_kendaraan: values.no_urut_kendaraan,
+          tahun_produksi: values.tahun_produksi,
+          merk_id: values.merk_id,
+          jumlah_roda: parseInt(values.jumlah_roda),
+          bahan_bakar_id: values.bahan_bakar_id,
+          jumlah_cylinder: parseInt(values.jumlah_cylinder),
+          warna_id: values.warna_id,
+          no_faktur: values.no_faktur,
+          tanggal_faktur: values.tanggal_faktur,
+          nama_pemilik: values.nama_pemilik
+        }]
+      },
+      bangunan: {
+        key: 't_asset_confirmation_bangunan',
+        data: [{
+          nomor_sertifikat: values.nomor_sertifikat,
+          jenis_sertifikat_id: values.jenis_sertifikat_id,
+          luas_bangunan: values.luas_bangunan,
+          luas_tanah: values.luas_tanah,
+          alamat: values.alamat,
+          atas_nama: values.atas_nama
+        }]
+      },
+      tabung: {
+        key: 't_asset_confirmation_tabung',
+        data: [{
+          m_tabung_id: values.m_tabung_id
+        }]
+      },
+      chasis: {
+        key: 't_asset_confirmation_chasis',
+        data: [{
+          dimensi: values.dimensi,
+          jumlah_ban: values.jumlah_ban,
+          warna_id: values.warna_id
+        }]
+      },
+      tanah: {
+        key: 't_asset_confirmation_tanah',
+        data: [{
+          luas_tanah: values.luas_tanah,
+          alamat: values.alamat,
+          nomor_njop: values.nomor_njop,
+          nomor_sertifikat: values.nomor_sertifikat,
+          nomor_ajb: values.nomor_ajb,
+          atas_nama: values.atas_nama,
+          jenis_sertifikat_id: values.jenis_sertifikat_id
+        }]
+      },
+      cradle: {
+        key: 't_asset_confirmation_cradle',
+        data: [{
+          m_cradle_id: values.m_cradle_id
+        }]
+      },
+      inventaris: {
+        key: 't_asset_confirmation_inventaris',
+        data: [{
+          spesifikasi: values.spesifikasi,
+          merk_id: values.merk_id,
+          jenis_inventaris_id: values.jenis_inventaris_id
+        }]
+      },
+      tangki: {
+        key: 't_asset_confirmation_tangki',
+        data: [{
+          m_isotank_id: values.m_isotank_id,
+          made_in: values.made_in,
+          dimensi: values.dimensi,
+          satuan_pressure_id: values.satuan_pressure_id,
+          pressure: values.pressure,
+          satuan_temperatur_id: values.satuan_temperatur_id,
+          temperatur: values.temperatur
+        }]
+      },
+      mesin: {
+        key: 't_asset_confirmation_mesin',
+        data: [{
+          no_mesin: values.no_mesin,
+          tipe_mesin_id: values.tipe_mesin_id,
+          dimensi: values.dimensi,
+          nomor_sertifikat: values.nomor_sertifikat,
+          tahun_produksi: values.tahun_produksi
+        }]
+      }
+    };
+
+    // Hapus semua properti asset spesifik yang tidak sesuai tipe
+    Object.entries(assetDetailMap).forEach(([t, val]) => {
+      if (t !== type) {
+        delete values[val.key];
+      }
+    });
+
+    // Tambahkan hanya yang sesuai tipe
+    if (assetDetailMap[type]) {
+      values[assetDetailMap[type].key] = assetDetailMap[type].data;
+    }
+
+    // Inti onSave
+    const isCreating = ['Create', 'Copy', 'Tambah'].includes(actionText.value);
+    let method = isCreating ? 'POST' : 'PUT';
+    let dataURL = `${store.server.url_backend}/operation${endpointApi}${isCreating ? '' : ('/' + route.params.id)}`;
+
+    // Jika EditBerkas maka selalu POST ke id yang sama
+    if (route.query.action === 'EditBerkas') {
+      if (!kendaraanDetailId.value) {
+        swal.fire({
+          icon: 'error',
+          text: 'ID detail kendaraan tidak ditemukan'
+        });
+        return;
+      }
+
+      method = 'POST';
+      // masukkan langsung kendaraanDetailId ke dalam url
+      dataURL = `${store.server.url_backend}/operation/t_asset_confirmation_kendaraan/${kendaraanDetailId.value}`;
+
+    }
+
+
+    isRequesting.value = true;
+    const res = await fetch(dataURL, {
+      method,
       headers: {
         'Content-Type': 'Application/json',
         Authorization: `${store.user.token_type} ${store.user.token}`
       },
       body: JSON.stringify(values)
-
-    })
+    });
 
     if (!res.ok) {
       if ([400, 422].includes(res.status)) {
-        const responseJson = await res.json()
-        formErrors.value = responseJson.errors || {}
-        throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Failed when trying to post data")
+        const responseJson = await res.json();
+        formErrors.value = responseJson.errors || {};
+        throw (responseJson.errors.length ? responseJson.errors[0] : responseJson.message || "Oops, sesuatu yang salah terjadi. Coba kembali nanti.");
       } else {
-        throw ("Failed when trying to post data")
+        throw ("Oops, sesuatu yang salah terjadi. Coba kembali nanti.");
       }
     }
-    router.replace('/' + modulPath + '?reload=' + (Date.parse(new Date())))
+
+    // ✅ Notifikasi sukses
+    await swal.fire({
+      icon: 'success',
+      text: 'Data berhasil disimpan!'
+    });
+
+    router.replace('/' + modulPath + '?reload=' + (Date.parse(new Date())));
   } catch (err) {
-    isBadForm.value = true
+    isBadForm.value = true;
     swal.fire({
-      icon: 'error',
+      icon: 'warning',
       text: err
-    })
+    });
   }
-  isRequesting.value = false
+  isRequesting.value = false;
 }
 
 //  @else----------------------- LANDING
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tgl_asset) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
+const modalOpenCreate = ref(false)
+
+function openCreatePopUp() {
+  modalOpenCreate.value = true
+}
+
+function closeCreatePopUp() {
+  modalOpenCreate.value = false
+}
+
 const landing = reactive({
   actions: [
     {
@@ -401,13 +956,13 @@ const landing = reactive({
   ]
 })
 
-const filterButton = ref(null);
+// const filterButton = ref(null);
 
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  landing.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
-  apiTable.value.reload();
-}
+// function filterShowData(params) {
+//   filterButton.value = filterButton.value === params ? null : params;
+//   landing.api.params.where = filterButton.value !== null ? `this.status=${filterButton.value}` : null;
+//   apiTable.value.reload();
+// }
 
 
 onActivated(() => {
@@ -417,6 +972,10 @@ onActivated(() => {
       apiTable.value.reload()
     }
   }
+})
+
+onMounted(() => {
+  getJenisKendaraan()
 })
 
 //  @endif -------------------------------------------------END

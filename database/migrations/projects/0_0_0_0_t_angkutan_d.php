@@ -30,7 +30,8 @@ class tangkutand extends Migration
             $table->bigInteger('pelabuhan')->comment('{"src":"set.m_general.id"}')->nullable();
             $table->integer('angkutan_pelabuhan')->comment('{"src":"m_supplier.id"}')->nullable();
             $table->integer('nama_angkutan_id')->comment('{"src":"m_supplier.id"}')->nullable();
-            $table->string('staple')->nullable();
+            $table->integer('staple')->nullable();
+            $table->integer('staple_akhir')->nullable()->default(0);
             $table->string('no_container')->nullable();
             $table->decimal('biaya_lain_lain',18,4)->nullable();
             $table->date('tgl_stuffing')->nullable();

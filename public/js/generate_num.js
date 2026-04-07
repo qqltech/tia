@@ -1,5 +1,3 @@
-//   javascript//   javascript
-
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { ref, readonly, reactive, inject, onMounted, onBeforeMount, watchEffect, onActivated } from 'vue'
 

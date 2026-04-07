@@ -41,7 +41,12 @@
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
     class="max-h-[450px] pt-2 !px-4 !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -141,6 +146,7 @@
             //customer_id: `${values.customer_id}`,
             nilai_invoice: `${values.nilai_invoice}`,
             scopes: 'WithDetailAju,GetPersentase',
+            where: `t_buku_order.status='POST' AND t_buku_order.is_closed = false`,
             searchfield: 'this.no_buku_order, m_customer.kode, m_customer.nama_perusahaan'
           },
           onsuccess(response) {

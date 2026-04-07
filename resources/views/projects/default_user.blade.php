@@ -118,6 +118,20 @@
     </div>
 
     <div class="w-full !mt-3">
+      <FieldSelect class="!mt-0" :bind="{ disabled: !actionText, clearable:false }" :value="values.m_business_unit_id"
+        @input="v=>values.m_business_unit_id=v" :errorText="formErrors.m_business_unit_id?'failed':''"
+        :hints="formErrors.m_business_unit_id" valueField="id" displayField="nama" :api="{
+            url: `${store.server.url_backend}/operation/m_business_unit`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              where:`this.is_active=true`
+            }
+        }" placeholder="Pilih Business Unit" label="Business Unit" :check="true" />
+
+    </div>
+
+    <div class="w-full !mt-3">
       <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.catatan"
         :errorText="formErrors.catatan?'failed':''" @input="v=>values.catatan=v" :hints="formErrors.catatan"
         type="textarea" placeholder="Catatan" :check="false" />

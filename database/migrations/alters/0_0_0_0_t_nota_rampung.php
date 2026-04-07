@@ -36,8 +36,10 @@ class tnotarampung extends Migration
             // $table->date('tgl_eir')->nullable();
             // $table->text('foto_scn')->nullable()->change();
             // $table->integer('tipe_tarif')->comment('{"src":"set.m_general.id"}')->nullable();
-            // $table->renameColumn('tipe_tarif','tipe_nota_rampung');
+            // $table->renameColumn('deleted_at','delete_at');
             // $table->date('tgl_nr')->nullable();
+            // $table->date('filter_tahun')->nullable();
+            // $table->renameColumn('delete_at','deleted_at');
         });
     }
 }
