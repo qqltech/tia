@@ -23,6 +23,8 @@ class tjurnalangkutan extends Migration
             $table->decimal('grand_total',18,4)->nullable();
             $table->decimal('ppn',18,4)->nullable();
             $table->decimal('dpp',18,4)->nullable();
+            $table->date('filter_tahun')->nullable();
+
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();

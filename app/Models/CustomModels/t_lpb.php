@@ -73,6 +73,7 @@ class t_lpb extends \App\Models\BasicModels\t_lpb
                     "m_item_id" => $dt->m_item_id,
                     "qty_awal" => $view_stock ? $view_stock->qty_stock : 0,
                     "qty_in" => $dt->qty,
+                    "qty_sisa" => $view_stock ? $view_stock->qty_sisa : 0,
                     "price" => $dt->harga,
                     "price_old" => $view_stock ? $view_stock->price : 0,
                     "note" => $dt->catatan

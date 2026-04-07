@@ -18,6 +18,7 @@ class tbkknonorder extends Migration
             // $table->integer('tipe_bkk')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable()->change();
             // $table->string('nama_penerima', 100)->nullable();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

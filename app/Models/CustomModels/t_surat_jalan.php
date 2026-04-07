@@ -36,30 +36,186 @@ class t_surat_jalan extends \App\Models\BasicModels\t_surat_jalan
         return $result;
     }
 
+    // public function createBefore($model, $arrayData, $metaData, $id = null)
+    // {
+    //     $result = m_general::where('id',$arrayData['jenis_sj'])->first();
+    //     $tipe_surat_jalan = $arrayData['tipe_surat_jalan'];
+    //     $no_surat_jalan=$this->checkTypeOfSJ($tipe_surat_jalan,$result->kode);
+    //     // trigger_error(json_encode($no_surat_jalan));
+
+    //     $status = "DRAFT";
+    //     $req = app()->request;
+    //     if($req->post){
+    //         $status = "POST";
+    //     }
+
+    //     $newData = [
+    //         "no_draft" => $this->helper->generateNomor("Draft Surat Jalan"),
+    //         "no_surat_jalan" => $this->helper->generateNomor($no_surat_jalan),
+    //         "status" => $status,
+    //     ];
+    //     $newArrayData = array_merge($arrayData, $newData);
+    //     return [
+    //         "model" => $model,
+    //         "data" => $newArrayData,
+    //         // "errors" => ['error1']
+    //     ];
+    // }
+
+    // public function checkTypeOfSJ($tipe,$jenis){
+
+    //     //SJ IMPORT
+    //     if($tipe == "IMPORT" && $jenis == "CONTAINER EMPTY"){
+    //         $no_surat_jalan = "Surat Jalan Import Empty";
+    //     }
+    //     else if($tipe == "IMPORT" && $jenis == "CONTAINER FULL"){
+    //         $no_surat_jalan = "Surat Jalan Import Full";
+    //     }
+    //     else if($tipe == "IMPORT" && $jenis == "CONTAINER PP"){
+    //         $no_surat_jalan = "Surat Jalan Import PP";
+    //     }
+    //     //SJ EXPORT & EXPORT S
+    //     else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER EMPTY"){
+    //         $no_surat_jalan = "Surat Jalan Export Empty";
+    //     }
+    //     else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER FULL"){
+    //         $no_surat_jalan = "Surat Jalan Export Full";
+    //     }
+    //     else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER PP"){
+    //         $no_surat_jalan = "Surat Jalan Export PP";
+    //     }
+    //     //SJ OL & OLS
+    //     else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER EMPTY"){
+    //         $no_surat_jalan = "Surat Jalan OL Empty";
+    //     }
+    //     else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER FULL"){
+    //         $no_surat_jalan = "Surat Jalan OL Full";
+    //     }
+    //     else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER PP"){
+    //         $no_surat_jalan = "Surat Jalan OL PP";
+    //     }
+    //     //SJ LOKAL
+    //     else if(($tipe == "LOKAL") && $jenis == "CONTAINER EMPTY"){
+    //         $no_surat_jalan = "Surat Jalan Lokal Empty";
+    //     }
+    //     else if(($tipe == "LOKAL") && $jenis == "CONTAINER FULL"){
+    //         $no_surat_jalan = "Surat Jalan Lokal Full";
+    //     }
+    //     else if(($tipe == "LOKAL") && $jenis == "CONTAINER PP"){
+    //         $no_surat_jalan = "Surat Jalan Lokal PP";
+    //     }
+    //     else{
+    //         $no_surat_jalan = "Surat Jalan";
+    //     }
+    //     return $no_surat_jalan;
+    // }
+
     public function createBefore($model, $arrayData, $metaData, $id = null)
     {
-        $result = m_general::where('id',$arrayData['jenis_sj'])->first();
-        $tipe_surat_jalan = $arrayData['tipe_surat_jalan'];
-        $no_surat_jalan=$this->checkTypeOfSJ($tipe_surat_jalan,$result->kode);
-        // trigger_error(json_encode($no_surat_jalan));
-
         $status = "DRAFT";
         $req = app()->request;
-        if($req->post){
+        if ($req->post) {
             $status = "POST";
         }
 
+        $jenisSj = isset($arrayData['jenis_sj']) ? $arrayData['jenis_sj'] : null;
+        $tipeSuratJalan = isset($arrayData['tipe_surat_jalan']) ? $arrayData['tipe_surat_jalan'] : null;
+
+        $noSuratJalanFormat = "Surat Jalan";
+
+        // jukuk jenis kodene nek ono
+        if ($jenisSj) {
+            $result = m_general::where('id', $jenisSj)->first();
+            $jenisKode = ($result && isset($result->kode)) ? $result->kode : null;
+            $noSuratJalanFormat = $this->checkTypeOfSJ($tipeSuratJalan, $jenisKode);
+        } else {
+            // nek jenis_sj gaono, jajalen golek berdasarkan tipe ne ae
+            $noSuratJalanFormat = $this->checkTypeOfSJ($tipeSuratJalan, null);
+        }
+
+        // dd($noSuratJalanFormat);
+
         $newData = [
             "no_draft" => $this->helper->generateNomor("Draft Surat Jalan"),
-            "no_surat_jalan" => $this->helper->generateNomor($no_surat_jalan),
             "status" => $status,
         ];
+
+        try {
+            $newData["no_surat_jalan"] = $this->helper->generateNomor($noSuratJalanFormat);
+        } catch (\Throwable $e) {
+            try {
+                $newData["no_surat_jalan"] = $this->helper->generateNomor("Surat Jalan");
+            } catch (\Throwable $e2) {
+                $newData["no_surat_jalan"] = $this->helper->generateNomor("Draft Surat Jalan");
+            }
+        }
+
         $newArrayData = array_merge($arrayData, $newData);
+
         return [
             "model" => $model,
             "data" => $newArrayData,
-            // "errors" => ['error1']
         ];
+    }
+
+    public function checkTypeOfSJ($tipe, $jenis)
+    {
+        $tipeNorm = strtoupper(trim((string) ($tipe ?? '')));
+        $jenisNorm = strtoupper(trim((string) ($jenis ?? '')));
+
+        // mapping kombinasi tipe|jenis -> format penomoran
+        $map = [
+            // IMPORT
+            'IMPORT|CONTAINER EMPTY' => 'Surat Jalan Import Empty',
+            'IMPORT|CONTAINER FULL'  => 'Surat Jalan Import Full',
+            'IMPORT|CONTAINER PP'    => 'Surat Jalan Import PP',
+
+            // EKSPORT / EKSPORT S
+            'EKSPORT|CONTAINER EMPTY'   => 'Surat Jalan Export Empty',
+            'EKSPORT|CONTAINER FULL'    => 'Surat Jalan Export Full',
+            'EKSPORT|CONTAINER PP'      => 'Surat Jalan Export PP',
+            'EKSPORT S|CONTAINER EMPTY' => 'Surat Jalan Export Empty',
+            'EKSPORT S|CONTAINER FULL'  => 'Surat Jalan Export Full',
+            'EKSPORT S|CONTAINER PP'    => 'Surat Jalan Export PP',
+
+            // OL / OLS
+            'OL|CONTAINER EMPTY'  => 'Surat Jalan OL Empty',
+            'OL|CONTAINER FULL'   => 'Surat Jalan OL Full',
+            'OL|CONTAINER PP'     => 'Surat Jalan OL PP',
+            'OLS|CONTAINER EMPTY' => 'Surat Jalan OL Empty',
+            'OLS|CONTAINER FULL'  => 'Surat Jalan OL Full',
+            'OLS|CONTAINER PP'    => 'Surat Jalan OL PP',
+
+            // LOKAL
+            'LOKAL|CONTAINER EMPTY' => 'Surat Jalan Lokal Empty',
+            'LOKAL|CONTAINER FULL'  => 'Surat Jalan Lokal Full',
+            'LOKAL|CONTAINER PP'    => 'Surat Jalan Lokal PP',
+        ];
+
+        $key = $tipeNorm . '|' . $jenisNorm;
+
+        if (isset($map[$key])) {
+            return $map[$key];
+        }
+
+        // nek meng ono tipene ae (jenis kosong), jajalen beberapa seng default berdasarkan tipe ne
+        if ($jenisNorm === '') {
+            // untuk tipe IMPORT/LOKAL/OL/EKSPORT balikke format umum seng mungkin di tompo
+            if ($tipeNorm === 'IMPORT') {
+                return 'Surat Jalan Import Full';
+            }
+            if ($tipeNorm === 'EKSPORT' || $tipeNorm === 'EKSPORT S') {
+                return 'Surat Jalan Export Full';
+            }
+            if ($tipeNorm === 'OL' || $tipeNorm === 'OLS') {
+                return 'Surat Jalan OL Full';
+            }
+            if ($tipeNorm === 'LOKAL') {
+                return 'Surat Jalan Lokal Full';
+            }
+        }
+
+        return 'Surat Jalan';
     }
 
     public function updateBefore($model, $arrayData, $metaData, $id = null)
@@ -83,54 +239,6 @@ class t_surat_jalan extends \App\Models\BasicModels\t_surat_jalan
             "data" => $newArrayData,
             // "errors" => ['error1']
         ];
-    }
-
-    public function checkTypeOfSJ($tipe,$jenis){
-
-        //SJ IMPORT
-        if($tipe == "IMPORT" && $jenis == "CONTAINER EMPTY"){
-            $no_surat_jalan = "Surat Jalan Import Empty";
-        }
-        else if($tipe == "IMPORT" && $jenis == "CONTAINER FULL"){
-            $no_surat_jalan = "Surat Jalan Import Full";
-        }
-        else if($tipe == "IMPORT" && $jenis == "CONTAINER PP"){
-            $no_surat_jalan = "Surat Jalan Import PP";
-        }
-        //SJ EXPORT & EXPORT S
-        else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER EMPTY"){
-            $no_surat_jalan = "Surat Jalan Export Empty";
-        }
-        else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER FULL"){
-            $no_surat_jalan = "Surat Jalan Export Full";
-        }
-        else if(($tipe == "EKSPORT" || $tipe == "EKSPORT S" ) && $jenis == "CONTAINER PP"){
-            $no_surat_jalan = "Surat Jalan Export PP";
-        }
-        //SJ OL & OLS
-        else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER EMPTY"){
-            $no_surat_jalan = "Surat Jalan OL Empty";
-        }
-        else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER FULL"){
-            $no_surat_jalan = "Surat Jalan OL Full";
-        }
-        else if(($tipe == "OL" || $tipe == "OLS" ) && $jenis == "CONTAINER PP"){
-            $no_surat_jalan = "Surat Jalan OL PP";
-        }
-        //SJ LOKAL
-        else if(($tipe == "LOKAL") && $jenis == "CONTAINER EMPTY"){
-            $no_surat_jalan = "Surat Jalan Lokal Empty";
-        }
-        else if(($tipe == "LOKAL") && $jenis == "CONTAINER FULL"){
-            $no_surat_jalan = "Surat Jalan Lokal Full";
-        }
-        else if(($tipe == "LOKAL") && $jenis == "CONTAINER PP"){
-            $no_surat_jalan = "Surat Jalan Lokal PP";
-        }
-        else{
-            $no_surat_jalan = "Surat Jalan";
-        }
-        return $no_surat_jalan;
     }
 
     public function custom_post()

@@ -26,6 +26,7 @@ class tbkk extends Migration
             $table->integer('tipe_pembayaran')->comment('{"src":"set.m_general.id"}');
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
             $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
+            $table->date('filter_tahun')->nullable();
             $table->text('keterangan')->nullable();
             
             $table->integer('creator_id')->nullable();

@@ -204,8 +204,8 @@ onBeforeMount(async () => {
         item['quantity'] = item['t_po_d.quantity']
         item['kode'] = item['m_item.kode']
         item['nama'] = item['m_item.nama_item']
-        item['is_bundling'] = item['t_po_d.is_bundling']
-        item['bundling'] = item['t_po_d.is_bundling'] == true ? 'Ya' : 'Tidak'
+        // item['is_bundling'] = item['t_po_d.is_bundling']
+        item['is_bundling'] = item['t_po_d.is_bundling'] == true ? 'Ya' : 'Tidak'
         detailArr.value = [item, ...detailArr.value];
       });
     } catch (err) {
@@ -260,7 +260,14 @@ async function onSave() {
 
         values.pph = values.pph ? 1 : 0
         
-        const detailsWithSeq = details.map((detail, index) => ({ ...detail, seq: index + 1 }));
+        // const detailsWithSeq = details.map((detail, index) => ({ ...detail, seq: index + 1 }));
+        const detailsWithSeq = details.map((item, index) => ({
+            ...item,
+            seq: index + 1,
+            is_bundling: item['t_po_d.is_bundling'] === true,
+            bundling: item['t_po_d.is_bundling'] === true ? 'Ya' : 'Tidak'
+        }));
+
 
         values.t_lpb_d = detailsWithSeq.map(detail => ({ ...detail}));
 
@@ -295,25 +302,86 @@ async function onSave() {
 }
 
 //  @else----------------------- LANDING
+const valLand = reactive({})
 
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+// const filterButton = ref(null)
 const activeBtn = ref()
 
-function filterShowData(params) {
-  if (activeBtn.value === params) {
-    activeBtn.value = null
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (activeBtn.value === noBtn) {
+      activeBtn.value = null
+      statusLabel = null
+    } else {
+      activeBtn.value = noBtn
+    }
   } else {
-    activeBtn.value = params
+    statusLabel = statusMap[activeBtn.value] || null
   }
-  if (params) {
-    landing.api.params.where = `this.status='${params}'`
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
   }
-  if (activeBtn.value == null) {
-    // clear params filter
-    landing.api.params.where = null
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal_lpb) = ${valLand.filter_tahun}`)
   }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
 
   apiTable.value.reload()
 }
+
+// const activeBtn = ref()
+
+// function filterShowData(params) {
+//   if (activeBtn.value === params) {
+//     activeBtn.value = null
+//   } else {
+//     activeBtn.value = params
+//   }
+//   if (params) {
+//     landing.api.params.where = `this.status='${params}'`
+//   }
+//   if (activeBtn.value == null) {
+//     // clear params filter
+//     landing.api.params.where = null
+//   }
+
+//   apiTable.value.reload()
+// }
 
 const landing = reactive({
   actions: [

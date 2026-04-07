@@ -68,7 +68,7 @@ class t_ppjk extends \App\Models\BasicModels\t_ppjk
     public function rules()
     {
         return [
-            "no_ppjk_id" => "required",
+            "no_ppjk_manual" => "required",
         ];
     }
 

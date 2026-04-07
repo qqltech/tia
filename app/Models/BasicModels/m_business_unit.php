@@ -21,7 +21,7 @@ class m_business_unit extends Model
     public $rules       = [];
     public $joins       = [];
     public $details     = [];
-    public $heirs       = ["r_gl","t_bkk","t_bkk_non_order","t_bkm","t_bkm_non_order","t_purchase_order","set.m_kary"];
+    public $heirs       = ["t_bkk","default_users","t_tutup_buku","t_bkm_non_order","t_purchase_order","t_bkm","r_gl","t_bkk_non_order","set.m_kary"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];

@@ -27,6 +27,7 @@ class ttagihan extends Migration
             // $table->decimal('tarif_ppjk',18,4);
             $table->decimal('grand_total',18,4)->nullable();
             $table->date('tgl_nota')->nullable();
+            $table->date('filter_tahun')->nullable();
             
             $table->text('catatan')->nullable();
             $table->integer('creator_id')->nullable();
@@ -34,6 +35,7 @@ class ttagihan extends Migration
             $table->integer('delete_id')->nullable();
             $table->timestamp('delete_at')->nullable();
 
+            $table->decimal('total_tarif_dp',18,4)->nullable();
             $table->decimal('total_jasa_cont_ppjk',18,4)->nullable();
             $table->decimal('total_lain2_ppn',18,4)->nullable();
             $table->decimal('total_jasa_angkutan',18,4)->nullable();

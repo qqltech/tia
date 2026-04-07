@@ -10,13 +10,13 @@
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
-        <button @click="filterShowData('DRAFT')" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
+        <button @click="filterShowData('DRAFT',1)" :class="filterButton === 'DRAFT' ? 'bg-gray-600 text-white hover:bg-gray-600' 
                         : 'border border-gray-600 text-gray-600 bg-white hover:bg-gray-600 hover:text-white'"
                         class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
                     DRAFT
                 </button>
         <div class="flex my-auto h-4 w-px bg-[#6E91D1]"></div>
-        <button @click="filterShowData('POST')" :class="filterButton === 'POST' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
+        <button @click="filterShowData('POST',2)" :class="filterButton === 'POST' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
                         : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
                         class="rounded-md text-sm py-1 px-2.5 transition-colors duration-300">
                     POST
@@ -44,7 +44,12 @@
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions"
     class="max-h-[450px] pt-2 !px-4 !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -81,7 +86,11 @@
             {'id': 'POSTED', 'key' : 'Posted'},
           ]" placeholder="Status" :check="true" />
 
-    <FieldPopup class="pt-1" :bind="{ disabled: !actionText, clearable:false }" :value="data.no_ppjk_id"
+    <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="pt-1" :value="data.no_ppjk_manual"
+      :errorText="formErrors.no_ppjk_manual?'failed':''" @input="v=>data.no_ppjk_manual=v" :hints="formErrors.no_ppjk_manual"
+      placeholder="Masukkan No PPJK" :check="false" />
+
+    <!-- <FieldPopup class="pt-1" :bind="{ disabled: !actionText, clearable:false }" :value="data.no_ppjk_id"
       @input="v=>data.no_ppjk_id=v" :errorText="formErrors.no_ppjk_id?'failed':''" :hints="formErrors.no_ppjk_id"
       valueField="id" displayField="no_aju" :api="{
               url: `${store.server.url_backend}/operation/m_generate_no_aju_d`,
@@ -113,10 +122,12 @@
           {
               headerName: 'Tipe PPJK', field: 'tipe', flex: 1, cellClass: ['border-r', '!border-gray-200', 'justify-start'],
               sortable: true, filter: 'ColFilter'
-          }]" />
+          }]" /> -->
+
     <FieldX :bind="{ readonly: !actionText, disabled: !actionText }" class="pt-1" :value="data.tanggal"
       :errorText="formErrors.tanggal?'failed':''" @input="v=>data.tanggal=v" :hints="formErrors.tanggal"
       placeholder="Masukkan Tanggal" :check="false" type="date" />
+
     <FieldPopup :bind="{ readonly: !actionText }" :value="data.t_buku_order_id" @input="v=>{
         if(v){
           data.t_buku_order_id=v

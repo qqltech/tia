@@ -17,10 +17,10 @@ class t_buku_penyesuaian extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at"];
+    protected $fillable = ["no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at","filter_tahun"];
 
-    public $columns     = ["id","no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","no_buku_penyesuaian:string:40","no_draft:string:40","t_buku_order_id:bigint","tanggal_buku_penyesuaian:date","no_bkk_id:bigint","total_amt:decimal","m_akun_pembayaran_id:bigint","status:string:10","keterangan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_buku_penyesuaian:string:40","no_draft:string:40","t_buku_order_id:bigint","tanggal_buku_penyesuaian:date","no_bkk_id:bigint","total_amt:decimal","m_akun_pembayaran_id:bigint","status:string:10","keterangan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["t_buku_order.id=t_buku_penyesuaian.t_buku_order_id","t_bkk.id=t_buku_penyesuaian.no_bkk_id","m_coa.id=t_buku_penyesuaian.m_akun_pembayaran_id"];
     public $details     = ["t_buku_penyesuaian_d"];
@@ -29,9 +29,9 @@ class t_buku_penyesuaian extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tanggal_buku_penyesuaian","total_amt"];
-    public $createable  = ["no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at"];
-    public $updateable  = ["no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at"];
-    public $searchable  = ["id","no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at"];
+    public $createable  = ["no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at","filter_tahun"];
+    public $updateable  = ["no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at","filter_tahun"];
+    public $searchable  = ["id","no_buku_penyesuaian","no_draft","t_buku_order_id","tanggal_buku_penyesuaian","no_bkk_id","total_amt","m_akun_pembayaran_id","status","keterangan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

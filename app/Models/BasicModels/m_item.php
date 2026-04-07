@@ -24,7 +24,7 @@ class m_item extends Model
     public $rules       = [];
     public $joins       = ["set.m_general.id=m_item.uom_id"];
     public $details     = [];
-    public $heirs       = ["r_stock_d","t_confirm_asset","t_lpb_d","t_pemakaian_stok_d","t_purchase_order_d","tes_d"];
+    public $heirs       = ["t_confirm_asset","t_lpb_d","r_stock_d","t_pemakaian_stok_d","t_purchase_order_d","tes_d","t_internal_d"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [

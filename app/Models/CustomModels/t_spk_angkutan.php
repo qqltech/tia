@@ -630,5 +630,22 @@ class t_spk_angkutan extends \App\Models\BasicModels\t_spk_angkutan
         }
     }
 
+    public function scopeExcludeUsedSpk($query)
+    {
+        $requestedId = request()->route('t_spk_angkutan') ?? request('id');
 
+        return $query->where(function($q) use ($requestedId) {
+            // iki ben spk ne gak duplicate
+            $q->whereNotIn('t_spk_angkutan.id', function ($sub) {
+                $sub->select('t_spk_angkutan_id')
+                    ->from('t_premi')
+                    ->whereNotNull('t_spk_angkutan_id');
+            });
+            
+            // gawe goleki / njaluk t_spk_angkutan (id) ne
+            if ($requestedId) {
+                $q->orWhere('t_spk_angkutan.id', $requestedId);
+            }
+        });
+    }
 }

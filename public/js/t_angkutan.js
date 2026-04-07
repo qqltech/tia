@@ -99,6 +99,7 @@ async function addDetail() {
                 angkutan_pelabuhan: item['m_supplier_id'],
                 // staple: staple
                 staple:0,
+                staple_akhir: item['staple_akhir'] ?? item['staple'],
                 custom_stuple: values['custom_stuple'],
 
                 trip_desc: item['trip_kode']??'-',
@@ -176,6 +177,7 @@ const updateJamIn = async (event, values) => {
   values.jam_in = event;
   updateStaple(values);
 };
+
 //////  END FUNGSI UPDATE DATA STAPLE ////////////////////////////////////////////////////////////
 
 // DEFAULT VALUE BEFORE MOUNT --UBAH DISINI
@@ -399,13 +401,74 @@ async function onSaveAndPost() {
 
 //  @else----------------------- LANDING
 
-const filterButton = ref(null);
+const valLand = reactive({})
 
-function filterShowData(status) {
-  filterButton.value = filterButton.value === status ? null : status;
-  landing.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
 }
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
+// const filterButton = ref(null);
+
+// function filterShowData(status) {
+//   filterButton.value = filterButton.value === status ? null : status;
+//   landing.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 const landing = reactive({
   actions: [
@@ -597,14 +660,15 @@ const landing = reactive({
   },
   {
     headerName:'Kode Customer',
-    field: 'kode_cust',
+    // field: 'customer.kode',
     filter: true,
     sortable: true,
     flex:1,
     filter: 'ColFilter',
     resizable: true,
     wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    cellClass: [ 'border-r', '!border-gray-200', 'justify-center'],
+    valueGetter: (params) => params.data?.customer?.kode || '-'
   },
   {
     headerName:'Party',
@@ -615,7 +679,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText:true,
-    cellClass: [ 'border-r', '!border-gray-200', 'justify-start']
+    cellClass: [ 'border-r', '!border-gray-200', 'justify-end']
   },
   {
     // field: 'status',

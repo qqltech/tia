@@ -13,7 +13,8 @@ class tkomisi extends Migration
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
-            $table->decimal('grandtotal',18,4)->default(0)->nullable(true)->change();
+            // $table->decimal('grandtotal',18,4)->default(0)->nullable(true)->change();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

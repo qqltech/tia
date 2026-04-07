@@ -20,6 +20,7 @@ class tbll extends Migration
             $table->integer('m_coa_id')->comment('{"src":"m_coa.id"}');
             $table->decimal('total_amt', 18, 4);
             // $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
+            $table->date('filter_tahun')->nullable();
             $table->text('keterangan')->nullable();
             
             $table->integer('creator_id')->nullable();

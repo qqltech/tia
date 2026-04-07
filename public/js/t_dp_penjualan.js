@@ -241,6 +241,70 @@ async function onSave(isPost = false) {
 }
 
 //  @else----------------------- LANDING
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'IN APPROVAL',
+    3: 'APPROVED',
+    4: 'PRINTED',
+    5: 'REVISED',
+    6: 'REJECTED'
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tgl_dp) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+} 
 // function openModal(id, statusProf = null) {
 //   dataLog.items = []
 //   modalOpen.value = true
@@ -469,19 +533,6 @@ const landing = reactive({
     cellClass: ['border-r', '!border-gray-200']
   },
   {
-    headerName: 'Customer',
-    // valueGetter: (params) => {
-    //   return params.data['t_buku_order_d_npwp.no_prefix'] + params.data[' m_customer.nama_perusahaan']
-    // },
-    field:'m_customer.nama_perusahaan',
-    filter: true,
-    sortable: true,
-    flex: 1,
-    filter: 'ColFilter',
-    resizable: true,
-    cellClass: ['border-r', '!border-gray-200']
-  },
-  {
     headerName: 'No DP',
     field: 'no_dp',
     filter: true,
@@ -489,6 +540,19 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
+    cellClass: ['border-r', '!border-gray-200']
+  },
+  {
+    headerName: 'Customer',
+    // valueGetter: (params) => {
+    //   return params.data['t_buku_order_d_npwp.no_prefix'] + params.data[' m_customer.nama_perusahaan']
+    // },
+    field:'m_customer.nama_perusahaan',
+    filter: true,
+    sortable: true,
+    flex: 1.5,
+    filter: 'ColFilter',
+    resizable: true,
     cellClass: ['border-r', '!border-gray-200']
   },
   {
@@ -509,7 +573,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Tipe DP',
@@ -519,7 +583,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     flex: 1,
-    cellClass: ['border-r', '!border-gray-200']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   {
     headerName: 'Status',
@@ -552,17 +616,17 @@ const landing = reactive({
 })
 
 
-const filterButton = ref(null);
+// const filterButton = ref(null);
 
-function filterShowData(status) {
-  filterButton.value = filterButton.value === status ? null : status;
+// function filterShowData(status) {
+//   filterButton.value = filterButton.value === status ? null : status;
 
-  landing.api.params.where = filterButton.value
-    ? `this.status='${filterButton.value}'`
-    : null;
+//   landing.api.params.where = filterButton.value
+//     ? `this.status='${filterButton.value}'`
+//     : null;
 
-  apiTable.value.reload();
-}
+//   apiTable.value.reload();
+// }
 
 function buttonClass(status) {
   const isActive = filterButton.value === status;

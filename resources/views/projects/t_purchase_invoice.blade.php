@@ -28,6 +28,12 @@
           IN APPROVAL
         </button>
         <div class="flex my-auto h-4 w-px bg-gray-300"></div>
+        <button @click="filterShowData('APPROVED')" :class="filterButton === 'APPROVED' ? 'bg-green-600 text-white hover:bg-green-600' 
+          : 'border border-green-600 text-green-600 bg-white hover:bg-green-600 hover:text-white'"
+          class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
+          APPROVED
+        </button>
+        <div class="flex my-auto h-4 w-px bg-gray-300"></div>
         <button @click="filterShowData('IN PROCESS')" :class="filterButton === 'IN PROCESS' ? 'bg-yellow-600 text-white hover:bg-yellow-600' 
           : 'border border-yellow-600 text-yellow-600 bg-white hover:bg-yellow-600 hover:text-white'"
           class="rounded text-sm py-1 px-2.5 transition-colors duration-300">
@@ -63,7 +69,12 @@
   <TableApi ref='apiTable' :api="table.api" :columns="table.columns" :actions="table.actions" class="max-h-[500px] pt-2 !px-4 
   !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -216,7 +227,7 @@
           url: `${store.server.url_backend}/operation/t_purchase_order`,
           headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
           params: {
-            simplest:true,
+            simplest:false,
             scopes: 'GetPOD',
             searchfield: 'this.no_draft, this.no_po, this.tanggal, this.tipe, this.status, this.catatan',
           }
@@ -460,21 +471,11 @@
         placeholder="Pilih No. Faktur Pajak" :check="false" />
     </div>
     <div>
-      <!-- <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:false }" :value="data.t_lpb_id"
-        @input="v=>data.t_lpb_id=v" :errorText="formErrors.name?'failed':''" :hints="formErrors.name" valueField="no_lpb"
-        displayField="no_lpb" :api="{
-            url: `${store.server.url_backend}/operation/t_lpb`,
-            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
-            params: {
-              simplest:true
-            },
-            onsuccess: (res)=>{
-              $log(res);
-              return res;
-            }
-        }" label="No. LPB" placeholder="Pilih No. LPB" :check="false" /> -->
+      <FieldX :bind="{ readonly: !actionText }" :value="data.t_lpb_id" :errorText="formErrors.t_lpb_id?'failed':''"
+        @input="v=>data.t_lpb_id=v" :hints="formErrors.t_lpb_id" placeholder="No. LPB" label="No. LPB" :check="false" />
 
-      <FieldPopup :bind="{ readonly: true }" label="No. LPB" class="w-full !mt-3" valueField="id" displayField="no_lpb"
+
+      <!-- <FieldPopup :bind="{ readonly: true }" label="No. LPB" class="w-full !mt-3" valueField="id" displayField="no_lpb"
         :value="data.t_lpb_id" @input="(v)=>data.t_lpb_id=v" :errorText="formErrors.t_lpb_id?'failed':''"
         :hints="formErrors.t_lpb_id" @update:valueFull="(response)=>{
           if(response == undefined) data.tanggal_lpb = '';
@@ -487,7 +488,7 @@
               //selectfield: 'id, no_lpb, status, catatan, tanggal_lpb',
               searchfield: 'this.no_lpb, this.status, this.catatan'
             }
-          }" placeholder="Pilih No. LPB" :check="false" :columns="[{
+          }" placeholder="No. LPB" :check="false" :columns="[{
             headerName: 'No',
             valueGetter:(p)=>p.node.rowIndex + 1,
             width: 60,
@@ -515,7 +516,7 @@
             sortable: false, resizable: true, filter: 'ColFilter',
             cellClass: ['border-r', '!border-gray-200', 'justify-start']
           }
-          ]" />
+          ]" /> -->
     </div>
     <div>
       <FieldX :bind="{ readonly: true, disabled: true }" class="w-full !mt-3" :value="data.tanggal_lpb"

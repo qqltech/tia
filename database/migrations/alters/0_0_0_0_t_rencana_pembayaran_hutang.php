@@ -15,7 +15,7 @@ class trencanapembayaranhutang extends Migration
             // $table->string('status')->nullable()->change();
             // $table->integer('m_supplier_id')->comment('{"src":"m_supplier.id"}')->nullable();
             // $table->string('status')->default("DRAFT");
-
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

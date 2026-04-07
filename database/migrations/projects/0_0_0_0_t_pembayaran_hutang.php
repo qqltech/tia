@@ -24,6 +24,7 @@ class tpembayaranhutang extends Migration
             $table->integer('m_akun_pembayaran_id')->comment('{"src":"m_coa.id"}');
             $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
             $table->integer('supplier_id')->comment('{"src":"m_supplier.id"}');
+            $table->date('filter_tahun')->nullable();
             $table->text('keterangan')->nullable();
 
             //penting

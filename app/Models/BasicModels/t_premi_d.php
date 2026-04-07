@@ -28,7 +28,7 @@ class t_premi_d extends Model
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [];
-    public $required    = ["t_premi_id","nominal","catatan","keterangan"];
+    public $required    = ["t_premi_id","nominal","keterangan"];
     public $createable  = ["t_premi_id","nominal","catatan","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
     public $updateable  = ["t_premi_id","nominal","catatan","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at"];
     public $searchable  = ["id","t_premi_id","nominal","catatan","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at"];

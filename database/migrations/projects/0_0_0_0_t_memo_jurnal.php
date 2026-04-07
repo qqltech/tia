@@ -18,6 +18,7 @@ class tmemojurnal extends Migration
             $table->bigInteger('divisi')->comment('{"src": "set.m_general.id"}')->nullable();
             $table->string('status', 20)->default("DRAFT")->nullable();
             $table->text('catatan')->nullable();
+            $table->date('filter_tahun')->nullable();
             //penting
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

@@ -24,6 +24,71 @@ onBeforeMount(() => {
 
 // @if( !$id ) | --- LANDING TABLE --- |
 
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'IN APPROVAL',
+    3: 'APPROVED',
+    4: 'REVISED',
+    5: 'REJECTED',
+    6: 'CANCEL'
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal_spk) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke table
+  table.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
 // TABLE
 const table = reactive({
   api: {
@@ -982,12 +1047,12 @@ async function tesPrint(spk_angkutan_id) {
 }
 
 // FILTER
-const filterButton = ref(null);
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
-}
+// const filterButton = ref(null);
+// function filterShowData(params) {
+//   filterButton.value = filterButton.value === params ? null : params;
+//   table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 onActivated(() => {
   if (apiTable.value && route.query.reload) {

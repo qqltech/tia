@@ -14,6 +14,7 @@ class tbabukuorder extends Migration
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
             // $table->bigInteger('t_buku_order_id')->comment('{"src":"t_buku_order.id}')->change();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

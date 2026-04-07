@@ -20,7 +20,9 @@ class tbukupenyesuaian extends Migration
             $table->decimal('total_amt',18,4);
             $table->bigInteger('m_akun_pembayaran_id')->comment('{"src": "m_coa.id"}')->nullable();
             $table->string("status", 10)->default("DRAFT")->nullable();
+            $table->date('filter_tahun')->nullable();
             $table->text('keterangan')->nullable();
+            
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();

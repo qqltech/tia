@@ -16,7 +16,8 @@ class tpembayaranpiutang extends Migration
 
             //$table->dropColumn([ ]);
             // $table->integer('m_akun_bank_id')->comment('{"src":"m_coa.id"}')->nullable();
-            $table->integer('tipe_piutang')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->integer('tipe_piutang')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

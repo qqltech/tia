@@ -23,6 +23,7 @@ class defaultusers extends Migration
             // $table->timestamp("edited_at")->nullable();
             // $table->integer("delete_id")->nullable();
             // $table->timestamp("deleted_at")->nullable();
+            // $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable();
 
         });
     }

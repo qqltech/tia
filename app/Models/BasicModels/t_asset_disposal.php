@@ -17,10 +17,10 @@ class t_asset_disposal extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at"];
+    protected $fillable = ["no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at","filter_tahun"];
 
-    public $columns     = ["id","no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at"];
-    public $columnsFull = ["id:bigint","no_draft:string:191","tipe_disposal:string:191","m_customer_id:integer","m_asset_id:integer","tipe_asset:string:191","perkiraan_disposal:string:191","nilai_jual:decimal","tipe_ppn:string:191","nominal_ppn:decimal","tanggal:date","no_faktur_pajak:string:191","catatan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime"];
+    public $columns     = ["id","no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_draft:string:191","tipe_disposal:string:191","m_customer_id:integer","m_asset_id:integer","tipe_asset:string:191","perkiraan_disposal:string:191","nilai_jual:decimal","tipe_ppn:string:191","nominal_ppn:decimal","tanggal:date","no_faktur_pajak:string:191","catatan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["m_customer.id=t_asset_disposal.m_customer_id","m_asset.id=t_asset_disposal.m_asset_id"];
     public $details     = ["t_asset_disposal_d"];
@@ -29,9 +29,9 @@ class t_asset_disposal extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak"];
-    public $createable  = ["no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at"];
-    public $updateable  = ["no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at"];
-    public $searchable  = ["id","no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at"];
+    public $createable  = ["no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at","filter_tahun"];
+    public $updateable  = ["no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at","filter_tahun"];
+    public $searchable  = ["id","no_draft","tipe_disposal","m_customer_id","m_asset_id","tipe_asset","perkiraan_disposal","nilai_jual","tipe_ppn","nominal_ppn","tanggal","no_faktur_pajak","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

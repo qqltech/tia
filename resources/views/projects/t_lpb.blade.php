@@ -13,7 +13,6 @@
                 <button @click="filterShowData('DRAFT')" :class="activeBtn?.toUpperCase() === 'DRAFT'?'bg-gray-600 font-semibold !text-white hover:bg-gray-400':'border border-gray-600 text-gray-600 bg-white  hover:bg-gray-600 hover:text-white'" class="duration-300 transform transition hover:-translate-y-0.5 rounded-md py-1 px-2">DRAFT</button>
                 <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
                 <button @click="filterShowData('POST')" :class="activeBtn?.toUpperCase() === 'POST'?'bg-amber-600 !text-white hover:bg-amber-400':'border border-amber-600 font-semibold bg-white text-amber-600  hover:bg-amber-600 hover:text-white'" class="duration-300 transition transform hover:-translate-y-0.5 rounded-md py-1 px-2">POST</button>
-                <div class="flex my-auto h-4 w-0.5 bg-[#6E91D1]"></div>
             </div>
         </div>
     <div>
@@ -25,8 +24,14 @@
   </div>
   <hr>
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions" class="max-h-[450px]">
-    <!-- <template #header>
-    </template> -->
+    <template #header>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
+    </template>
   </TableApi>
 </div>
 @else
@@ -304,7 +309,7 @@
                 />
               </td>
               <td class="p-2 border border-[#CACACA]">
-                <FieldSelect :bind="{ disabled: true, clearable:true }" class="w-full py-2 !mt-0" :value="item.uom_id"
+                <FieldSelect :bind="{ disabled: true, clearable:false }" class="w-full py-2 !mt-0" :value="item.uom_id"
                   @input="v=>{
                       if(v){
                         item.uom_id=v
@@ -319,7 +324,7 @@
                           simplest:true,
                           where:`this.is_active=true and this.group='UOM'`
                         }
-                    }" placeholder="Pilih UoM" label="" :check="false" />
+                    }" placeholder="Pilih UoM" label="" :check="true" />
               </td>
               <td class="p-2 border border-[#CACACA]">
                 <FieldNumber :bind="{ readonly: item.is_bundling === true ? false : true, clearable:false }"

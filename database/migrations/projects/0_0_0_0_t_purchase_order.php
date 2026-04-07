@@ -31,6 +31,7 @@ class tpurchaseorder extends Migration
             $table->decimal('total_ppn',18,4);
             $table->decimal('grand_total',18,4);
             $table->bigInteger('tipe_po')->comment('{"src":"set.m_business_unit.id"}')->nullable();
+            $table->date('filter_tahun')->nullable();
 
             //penting
             $table->integer('creator_id')->nullable();

@@ -62,7 +62,12 @@
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
     class="max-h-[450px] pt-2 !px-4 !pb-8">
     <template #header>
-      <div class="pb-13 h-full"></div>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
     </template>
   </TableApi>
 </div>
@@ -87,6 +92,8 @@
 
   <!-- FORM START -->
   <div class="grid <md:grid-cols-1 grid-cols-3 grid-flow-row p-4 gap-3">
+
+    <!-- Field Pilih LPB -->
     <div class=" w-full !mt-3">
       <FieldPopup class="!mt-0" displayField="no_lpb" valueField="id" :bind="{ readonly: !actionText }"
         :value="values.t_lpb_id" @input="(v)=>values.t_lpb_id=v" :errorText="formErrors.t_lpb_id?'failed':''"
@@ -172,10 +179,51 @@
           },
           ]" />
     </div>
+
+    <!-- Field Kode Asset -->
     <div class="w-full !mt-3 flex space-x-3">
       <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.kode" :errorText="formErrors.kode?'failed':''"
         @input="v=>values.kode=v" :hints="formErrors.kode" placeholder="Kode Asset" label="Kode Asset" :check="false" />
     </div>
+
+    <!-- Field Pilih Status -->
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="values.status"
+        @input="v=>values.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status"
+        valueField="id" displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
+      {'id' : 'Posted', 'key' : 'Posted'},
+      {'id' : 'APPROVAL', 'key' : 'APPROVAL'},
+      {'id' : 'APPROVED', 'key' : 'APPROVED'}, 
+      {'id' : 'COMPLETED', 'key' : 'COMPLETED'}, 
+      {'id' : 'CLOSED', 'key' : 'CLOSED'}, 
+      {'id' : 'CANCEL', 'key' : 'CANCEL'}, 
+      {'id' : 'REJECTED', 'key' : 'REJECTED'},
+      {'id' : 'REVISED', 'key' : 'REVISED'}]" fa-icon="sort-desc" placeholder="Pilih Status" label="Status"
+        :check="false" />
+    </div>
+
+    <!-- Field No. Draft -->
+    <div class="w-full !mt-3">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.no_draft"
+        :errorText="formErrors.no_draft?'failed':''" @input="v=>values.no_draft=v" :hints="formErrors.no_draft"
+        placeholder="No. Draft" label="No. Draft" :check="false" />
+    </div>
+
+    <!-- Field No. Konfirmasi Asset -->
+    <div class="w-full !mt-3">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.no_konfirmasi_asset"
+        :errorText="formErrors.no_konfirmasi_asset?'failed':''" @input="v=>values.no_konfirmasi_asset=v"
+        :hints="formErrors.no_konfirmasi_asset" placeholder="No. Konfirmasi" label="No. Konfirmasi" :check="false" />
+    </div>
+
+    <!-- Field Tanggal -->
+    <div class="w-full !mt-3">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.tgl" :errorText="formErrors.tgl?'failed':''"
+        @input="v=>values.tgl=v" :hints="formErrors.tgl" type="date" placeholder="Tanggal" label="Tanggal"
+        :check="false" />
+    </div>
+
+    <!-- Field Pilih Asset -->
     <div class=" w-full !mt-3">
       <FieldPopup class="!mt-0" displayField="nama_item" valueField="id" :bind="{ readonly: !actionText }"
         :value="values.m_item_id" @input="(v)=>values.m_item_id=v" :errorText="formErrors.m_item_id?'failed':''"
@@ -233,6 +281,8 @@
           },
           ]" />
     </div>
+
+    <!-- Field PIC -->
     <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" displayField="nama" valueField="id" :bind="{ readonly: !actionText }"
         :value="values.pic" @input="(v)=>values.pic=v" :errorText="formErrors.pic?'failed':''" :hints="formErrors.pic"
@@ -284,6 +334,8 @@
           },
           ]" />
     </div>
+
+    <!-- Field Kategori -->
     <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" displayField="kode" valueField="id" :bind="{ readonly: !actionText }"
         :value="values.kategori_id" @input="(v)=>values.kategori_id=v" :errorText="formErrors.kategori_id?'failed':''"
@@ -327,18 +379,159 @@
           },
           ]" />
     </div>
+
+    <!-- Field Tanggal LPB -->
     <div class="w-full !mt-3">
       <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.tgl_asset"
         :errorText="formErrors.tgl_asset?'failed':''" @input="v=>values.tgl_asset=v" :hints="formErrors.tgl_asset"
         type="date" placeholder="Tanggal LPB" label="Tanggal Asset" :check="false" />
     </div>
 
-    <div class="w-full !mt-3 flex space-x-3">
-      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="formatRupiah(values.harga_perolehan)" :errorText="formErrors.harga_perolehan?'failed':''"
-        @input="v=>values.harga_perolehan=v" :hints="formErrors.harga_perolehan" placeholder="Harga Perolehan" label="Harga Perolehan"
+    <!-- Field Tanggal Pakai -->
+    <div class="w-full !mt-3">
+      <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.tgl_pakai"
+        :errorText="formErrors.tgl_pakai?'failed':''" @input="v=>values.tgl_pakai=v" :hints="formErrors.tgl_pakai"
+        type="date" placeholder="Tanggal Pakai" label="Tanggal Pakai" :check="false" />
+    </div>
+
+    <!-- Field Nama Asset -->
+    <div class="w-full flex !mt-3">
+      <FieldX class="!mt-0" :bind="{ readonly: false }" :value="values.name_asset"
+        :errorText="formErrors.name_asset?'failed':''" @input="v=>values.name_asset=v" :hints="formErrors.name_asset"
+        placeholder="Nama Asset" label="Nama Asset" :check="false" />
+    </div>
+
+    <!-- Field Nomor Mesin -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.nomor_mesin"
+        :errorText="formErrors.nomor_mesin?'failed':''" @input="v=>values.nomor_mesin=v" :hints="formErrors.nomor_mesin"
+        placeholder="Nomor Mesin" label="Nomor Mesin" :check="false" />
+    </div>
+
+    <!-- Field Nomor Rangka -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.nomr_rangka"
+        :errorText="formErrors.nomr_rangka?'failed':''" @input="v=>values.nomr_rangka=v" :hints="formErrors.nomr_rangka"
+        placeholder="Nomor Rangka" label="Nomor Rangka" :check="false" />
+    </div>
+
+    <!-- Field Nomor BPKB -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.nomor_bpkb"
+        :errorText="formErrors.nomor_bpkb?'failed':''" @input="v=>values.nomor_bpkb=v" :hints="formErrors.nomor_bpkb"
+        placeholder="Nomor BPKB" label="Nomor BPKB" :check="false" />
+    </div>
+
+    <!-- Field Nomor Urut Kendaraan -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.nomor_urut_kendaraan"
+        :errorText="formErrors.nomor_urut_kendaraan?'failed':''" @input="v=>values.nomor_urut_kendaraan=v"
+        :hints="formErrors.nomor_urut_kendaraan" placeholder="Nomor Urut Kendaraan" label="Nomor Urut Kendaraan"
         :check="false" />
     </div>
 
+    <!-- Field Nopol -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.nopol"
+        :errorText="formErrors.nopol?'failed':''" @input="v=>values.nopol=v" :hints="formErrors.nopol"
+        placeholder="Nopol" label="Nopol" :check="false" />
+    </div>
+
+    <!-- Field Jenis Kendaraan -->
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false }"
+        :value="values.jenis_kendaraaan" @input="v=>values.jenis_kendaraaan=v"
+        :errorText="formErrors.jenis_kendaraaan?'failed':''" :hints="formErrors.jenis_kendaraaan" valueField="id"
+        displayField="deskripsi" :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              where: `this.group = 'JENIS KENDARAAN' and this.is_active = true`,
+            }
+        }" placeholder="Pilih Jenis Kendaraan" label="Jenis Kendaraan" :check="true" />
+
+    </div>
+
+    <!-- Field Merk Kendaraan -->
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false }"
+        :value="values.merk_kendaraan" @input="v=>values.merk_kendaraan=v"
+        :errorText="formErrors.merk_kendaraan?'failed':''" :hints="formErrors.merk_kendaraan" valueField="id"
+        displayField="deskripsi" :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              where: `this.group = 'MERK KENDARAAN' and this.is_active = true`
+            }
+        }" placeholder="Pilih Merk Kendaraan" :check="true" label="Merk Kendaraan" />
+    </div>
+
+    <!-- Field Bahan Bakar -->
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false }" :value="values.bahan_bakar"
+        @input="v=>values.bahan_bakar=v" :errorText="formErrors.bahan_bakar?'failed':''" :hints="formErrors.bahan_bakar"
+        valueField="id" displayField="deskripsi" :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              where: `this.group = 'BAHAN BAKAR' and this.is_active = true`,
+            }
+        }" placeholder="Pilih Bahan Bakar" :check="true" label="Bahan Bakar" />
+    </div>
+
+    <!-- Field Warna -->
+    <div>
+      <FieldSelect class="w-full !mt-3" :bind="{ disabled: !actionText, clearable:false }" :value="values.warna_kendaraan"
+        @input="v=>values.warna_kendaraan=v" :errorText="formErrors.warna_kendaraan?'failed':''" :hints="formErrors.warna_kendaraan"
+        valueField="id" displayField="deskripsi" :api="{
+            url: `${store.server.url_backend}/operation/m_general`,
+            headers: { 'Content-Type': 'Application/json', Authorization: `${store.user.token_type} ${store.user.token}`},
+            params: {
+              simplest:true,
+              where: `this.group = 'WARNA KENDARAAN' and this.is_active = true`,
+            }
+        }" placeholder="Pilih Warna Kendaraan" :check="true" label="Warna Kendaraan" />
+    </div>
+
+    <!-- Field Tahun Produksi -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.tahun_produksi"
+        :errorText="formErrors.tahun_produksi?'failed':''" @input="v=>values.tahun_produksi=v"
+        :hints="formErrors.tahun_produksi" placeholder="Tahun Produksi" label="Tahun Produksi" :check="false" />
+    </div>
+
+    <!-- Field Jumlah Roda -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.jumlah_roda"
+        :errorText="formErrors.jumlah_roda?'failed':''" @input="v=>values.jumlah_roda=v"
+        :hints="formErrors.jumlah_roda" placeholder="Masukkan Jumlah Roda" label="Jumlah Roda" :check="false" />
+    </div>
+
+    <!-- Field Jumlah Cylinder -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.jumlah_cylinder"
+        :errorText="formErrors.jumlah_cylinder?'failed':''" @input="v=>values.jumlah_cylinder=v"
+        :hints="formErrors.jumlah_cylinder" placeholder="Masukkan Jumlah Cylinder" label="Jumlah Cylinder" :check="false" />
+    </div>
+
+    <!-- Field Nomor Faktur -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.nomor_faktur"
+        :errorText="formErrors.nomor_faktur?'failed':''" @input="v=>values.nomor_faktur=v"
+        :hints="formErrors.nomor_faktur" placeholder="Masukkan Nomor Faktur" label="Nomor Faktur" :check="false" />
+    </div>
+
+    <!-- Field Nama Pemilik -->
+    <div class="w-full flex !mt-3">
+      <FieldX :bind="{ readonly: !actionText }" class="!mt-0" :value="values.nama_pemilik"
+        :errorText="formErrors.nama_pemilik?'failed':''" @input="v=>values.nama_pemilik=v"
+        :hints="formErrors.nama_pemilik" placeholder="Masukkan Nama Pemilik" label="Nama Pemilik" :check="false" />
+    </div>
+
+    <!-- Field Masa Manfaat -->
     <div class="w-full !mt-3 flex space-x-3">
       <FieldNumber class="!mt-0 w-[70%]" :bind="{ readonly: !actionText }" :value="values.masa_manfaat"
         :errorText="formErrors.masa_manfaat?'failed':''" @input="v=>values.masa_manfaat=v"
@@ -346,42 +539,61 @@
       <span class="!mt-0 text-xl font-bold">BLN</span>
     </div>
 
+    <!-- Field Harga Perolehan -->
+    <div class="w-full flex !mt-3">
+      <FieldNumber
+        :bind="{ readonly: !actionText }" class="!mt-0"
+        :value="values.harga_perolehan" @input="(v)=>values.harga_perolehan=v"
+        :errorText="formErrors.harga_perolehan?'failed':''" 
+        :hints="formErrors.harga_perolehan"
+        placeholder="Masukkan Harga Perolehan" label="Harga Perolehan" :check="false"
+      />
+      
+    </div>
+
+    <!-- Field Tanggal Awal Susut -->
     <div class="w-full !mt-3">
       <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tgl_awal"
         :errorText="formErrors.tgl_awal?'failed':''" @input="v=>values.tgl_awal=v" :hints="formErrors.tgl_awal"
         type="date" placeholder="Tanggal Awal Susut" label="Tanggal Awal Susut" :check="false" />
     </div>
+
+    <!-- Field Tanggal Akhir Susut -->
     <div class="w-full !mt-3">
       <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="values.tgl_akhir"
         :errorText="formErrors.tgl_akhir?'failed':''" @input="v=>values.tgl_akhir=v" :hints="formErrors.tgl_akhir"
         type="date" placeholder="Tanggal Akhir Susut" label="Tanggal Akhir Susut" :check="false" />
     </div>
 
+    <!-- Field Nilai Penyusutan -->
     <div class="w-full !mt-3 flex space-x-3">
       <FieldX class="!mt-0" :bind="{ readonly: true }" :value="formatRupiah(values.nilai_penyusutan)"
-        :errorText="formErrors.nilai_penyusutan?'failed':''" @input="v=>values.nilai_penyusutan=v" :hints="formErrors.nilai_penyusutan"
-        placeholder="Nilai Penyusutan" label="Nilai Penyusutan" :check="false" />
+        :errorText="formErrors.nilai_penyusutan?'failed':''" @input="v=>values.nilai_penyusutan=v"
+        :hints="formErrors.nilai_penyusutan" placeholder="Nilai Penyusutan" label="Nilai Penyusutan" :check="false" />
     </div>
 
+    <!-- Field Akumulasi Penyusutan -->
     <div class="w-full !mt-3 flex space-x-3">
       <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.akum_susut"
         :errorText="formErrors.akum_susut?'failed':''" @input="v=>values.akum_susut=v" :hints="formErrors.akum_susut"
         placeholder="Akumulasi Penyusutan" label="Akumulasi Penyusutan" :check="false" />
     </div>
 
+    <!-- Field Nilai Minimal -->
     <div class="w-full !mt-3 flex space-x-3">
       <FieldX class="!mt-0" :bind="{ readonly: !actionText }" :value="formatRupiah(values.nilai_min)"
         :errorText="formErrors.nilai_min?'failed':''" @input="v=>values.nilai_min=v" :hints="formErrors.nilai_min"
         placeholder="Nilai Minimal" label="Nilai Minimal" :check="false" />
     </div>
 
+    <!-- Field Nilai Buku -->
     <div class="w-full !mt-3 flex space-x-3">
       <FieldX class="!mt-0" :bind="{ readonly: true }" :value="values.nilai_buku"
         :errorText="formErrors.nilai_buku?'failed':''" @input="v=>values.nilai_buku=v" :hints="formErrors.nilai_buku"
         placeholder="Nilai Buku" label="Nilai Buku" :check="false" />
     </div>
 
-
+    <!-- Field Perkiraan Asset -->
     <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }"
         :value="values.m_perkiraan_asset_id" @input="(v)=>values.m_perkiraan_asset_id=v"
@@ -426,6 +638,7 @@
           ]" />
     </div>
 
+    <!-- Field Perkiraan Akun Penyusutan -->
     <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }"
         :value="values.m_perkiraan_akun_penyusutan" @input="(v)=>values.m_perkiraan_akun_penyusutan=v"
@@ -470,11 +683,13 @@
           ]" />
     </div>
 
+    <!-- Field Perkiraan by Akun Penyusutan -->
     <div class="w-full !mt-3">
       <FieldPopup class="!mt-0" displayField="nama_coa" valueField="id" :bind="{ readonly: !actionText }"
         :value="values.m_perkiraan_by_akun_penyusutan" @input="(v)=>values.m_perkiraan_by_akun_penyusutan=v"
-        :errorText="formErrors.m_perkiraan_by_akun_penyusutan?'failed':''" :hints="formErrors.m_perkiraan_by_akun_penyusutan"
-        placeholder="Perkiraan By Akun Penyusutan" label="Perkiraan By Akun Penyusutan" :check='false' :api="{
+        :errorText="formErrors.m_perkiraan_by_akun_penyusutan?'failed':''"
+        :hints="formErrors.m_perkiraan_by_akun_penyusutan" placeholder="Perkiraan By Akun Penyusutan"
+        label="Perkiraan By Akun Penyusutan" :check='false' :api="{
             url: `${store.server.url_backend}/operation/m_coa`,
             headers: {
               'Content-Type': 'Application/json',
@@ -514,25 +729,11 @@
           ]" />
     </div>
 
+    <!-- Field Catatan -->
     <div>
       <FieldX :bind="{ readonly: !actionText }" class="w-full !mt-3" type="textarea" :value="values.catatan"
         :errorText="formErrors.catatan?'failed':''" @input="v=>values.catatan=v" :hints="formErrors.catatan"
         label="Catatan" placeholder="Catatan" :check="false" />
-    </div>
-
-    <div>
-      <FieldSelect class="w-full !mt-3" :bind="{ disabled: true, clearable:true }" :value="values.status"
-        @input="v=>values.status=v" :errorText="formErrors.status?'failed':''" :hints="formErrors.status" valueField="id"
-        displayField="key" :options="[{'id' : 'DRAFT' , 'key' : 'DRAFT'},
-      {'id' : 'Posted', 'key' : 'Posted'},
-      {'id' : 'APPROVAL', 'key' : 'APPROVAL'},
-      {'id' : 'APPROVED', 'key' : 'APPROVED'}, 
-      {'id' : 'COMPLETED', 'key' : 'COMPLETED'}, 
-      {'id' : 'CLOSED', 'key' : 'CLOSED'}, 
-      {'id' : 'CANCEL', 'key' : 'CANCEL'}, 
-      {'id' : 'REJECTED', 'key' : 'REJECTED'},
-      {'id' : 'REVISED', 'key' : 'REVISED'}]" fa-icon="sort-desc" placeholder="Pilih Status" label="Status"
-        :check="false" />
     </div>
 
   </div>
@@ -615,8 +816,8 @@
               {{ i + 1 }}.
             </td>
             <td class="p-2 border border-[#CACACA]">
-              <FieldX :bind="{ disabled: true, clearable:false }" class="w-full py-2 !mt-0"
-                :value="item.tgl_penyusutan" @input="v=>item.tgl_penyusutan=v" type="date" :check="false"
+              <FieldX :bind="{ disabled: true, clearable:false }" class="w-full py-2 !mt-0" :value="item.tgl_penyusutan"
+                @input="v=>item.tgl_penyusutan=v" type="date" :check="false"
                 :errorText="formErrors.tgl_penyusutan?'failed':''" :hints="formErrors.tgl_penyusutan" />
             </td>
             <td class="p-2 border border-[#CACACA]">

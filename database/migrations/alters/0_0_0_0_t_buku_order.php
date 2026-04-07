@@ -61,7 +61,8 @@ class tbukuorder extends Migration
             // $table->integer('tipe')->comment('{"src":"set.m_general.id"}')->nullable();
             // $table->date('tgl_etd_eta')->nullable();
             // $table->string('genzet',100)->nullable();
-            $table->string('no_invoice',250)->nullable()->default('-')->change();
+            // $table->string('no_invoice',250)->nullable()->default('-')->change();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

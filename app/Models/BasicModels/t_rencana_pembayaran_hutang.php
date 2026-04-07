@@ -17,10 +17,10 @@ class t_rencana_pembayaran_hutang extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","status"];
+    protected $fillable = ["no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","status","filter_tahun"];
 
-    public $columns     = ["id","no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","status"];
-    public $columnsFull = ["id:bigint","no_draft:string:191","no_rph:string:191","tgl:date","total_pi:decimal","total_bayar:decimal","catatan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","status:string:191"];
+    public $columns     = ["id","no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","status","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_draft:string:191","no_rph:string:191","tgl:date","total_pi:decimal","total_bayar:decimal","catatan:text","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","status:string:191","filter_tahun:date"];
     public $rules       = [];
     public $joins       = [];
     public $details     = ["t_rencana_pembayaran_hutang_d"];
@@ -29,9 +29,9 @@ class t_rencana_pembayaran_hutang extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tgl","status"];
-    public $createable  = ["no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","status"];
-    public $updateable  = ["no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","status"];
-    public $searchable  = ["id","no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","status"];
+    public $createable  = ["no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","status","filter_tahun"];
+    public $updateable  = ["no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","status","filter_tahun"];
+    public $searchable  = ["id","no_draft","no_rph","tgl","total_pi","total_bayar","catatan","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","status","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

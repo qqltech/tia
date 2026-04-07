@@ -17,10 +17,10 @@ class t_pembayaran_hutang extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id"];
+    protected $fillable = ["no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id","filter_tahun"];
 
-    public $columns     = ["id","no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id"];
-    public $columnsFull = ["id:bigint","no_draft:string:20","no_pembayaran:string:20","status:string:40","tanggal:date","tanggal_pembayaran:date","tipe_pembayaran_id:integer","total_amt:decimal","include_pph:boolean","m_akun_pembayaran_id:integer","supplier_id:integer","keterangan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","t_rencana_pembayaran_hutang_id:integer","m_akun_bank_id:integer"];
+    public $columns     = ["id","no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_draft:string:20","no_pembayaran:string:20","status:string:40","tanggal:date","tanggal_pembayaran:date","tipe_pembayaran_id:integer","total_amt:decimal","include_pph:boolean","m_akun_pembayaran_id:integer","supplier_id:integer","keterangan:text","creator_id:integer","last_editor_id:integer","edited_at:datetime","deletor_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","t_rencana_pembayaran_hutang_id:integer","m_akun_bank_id:integer","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["set.m_general.id=t_pembayaran_hutang.tipe_pembayaran_id","m_coa.id=t_pembayaran_hutang.m_akun_pembayaran_id","m_supplier.id=t_pembayaran_hutang.supplier_id","t_rencana_pembayaran_hutang.id=t_pembayaran_hutang.t_rencana_pembayaran_hutang_id","m_coa.id=t_pembayaran_hutang.m_akun_bank_id"];
     public $details     = ["t_pembayaran_hutang_d"];
@@ -29,9 +29,9 @@ class t_pembayaran_hutang extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tanggal_pembayaran","include_pph","m_akun_pembayaran_id","supplier_id"];
-    public $createable  = ["no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id"];
-    public $updateable  = ["no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id"];
-    public $searchable  = ["id","no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id"];
+    public $createable  = ["no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id","filter_tahun"];
+    public $updateable  = ["no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id","filter_tahun"];
+    public $searchable  = ["id","no_draft","no_pembayaran","status","tanggal","tanggal_pembayaran","tipe_pembayaran_id","total_amt","include_pph","m_akun_pembayaran_id","supplier_id","keterangan","creator_id","last_editor_id","edited_at","deletor_id","deleted_at","created_at","updated_at","t_rencana_pembayaran_hutang_id","m_akun_bank_id","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

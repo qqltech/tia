@@ -6,7 +6,6 @@
   </div>
   <div class="flex justify-between items-center px-2.5 py-1">
     <!-- FILTER -->
-    <!-- FILTER -->
     <div class="flex items-center gap-x-2">
       <p>Filter Status :</p>
       <div class="flex gap-x-2">
@@ -124,8 +123,14 @@
   <hr>
   <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
     class="max-h-[450px]">
-    <!-- <template #header>
-    </template> -->
+    <template #header>
+      <div class="flex gap-x-2">
+        <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+      </div>
+    </template>
   </TableApi>
 </div>
 @else

@@ -31,7 +31,8 @@ class vstockitem extends Migration
                         rsd.qty_awal + 
                         case 
                             when rsd.typemin = 1 then rsd.qty_in 
-                            else rsd.qty_out 
+                            when rsd.typemin = 0 then -rsd.qty_out
+                            else 0
                         end
                     from r_stock_d rsd 
                     where rsd.m_item_id = mi.id 
@@ -39,6 +40,21 @@ class vstockitem extends Migration
                     limit 1
                 ), 0
             ) as qty_stock,
+            coalesce(
+                (
+                    select 
+                        rsd.qty_awal + 
+                        case 
+                            when rsd.typemin = 1 then rsd.qty_in 
+                            when rsd.typemin = 0 then -rsd.qty_out
+                            else 0
+                        end
+                    from r_stock_d rsd 
+                    where rsd.m_item_id = mi.id 
+                    order by rsd.created_at desc 
+                    limit 1
+                ), 0
+            ) as qty_sisa,
             coalesce(
                 (select rsd.qty_awal from r_stock_d rsd 
                 where rsd.m_item_id = mi.id order by rsd.created_at 

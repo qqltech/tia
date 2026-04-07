@@ -21,6 +21,7 @@ class tkomisi extends Migration
             $table->boolean('is_pph')->default(false);
             $table->decimal('grandtotal',18,4)->default(0)->nullable();
             $table->string('status', 20)->nullable();
+            $table->date('filter_tahun')->nullable();
             $table->text('catatan')->nullable();
 
             $table->integer('creator_id')->nullable();

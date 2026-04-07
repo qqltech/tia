@@ -17,10 +17,10 @@ class t_lpb extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","m_supplier_id"];
+    protected $fillable = ["no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","m_supplier_id","filter_tahun"];
 
-    public $columns     = ["id","no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","m_supplier_id"];
-    public $columnsFull = ["id:bigint","no_lpb:string:20","t_po_id:integer","no_sj_supplier:string:30","catatan:text","status:string:20","tanggal_lpb:date","tanggal_sj_supplier:date","creator_id:integer","last_editor_id:integer","deleted_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","m_supplier_id:bigint"];
+    public $columns     = ["id","no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","m_supplier_id","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_lpb:string:20","t_po_id:integer","no_sj_supplier:string:30","catatan:text","status:string:20","tanggal_lpb:date","tanggal_sj_supplier:date","creator_id:integer","last_editor_id:integer","deleted_id:integer","deleted_at:datetime","created_at:datetime","updated_at:datetime","m_supplier_id:bigint","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["t_purchase_order.id=t_lpb.t_po_id","m_supplier.id=t_lpb.m_supplier_id"];
     public $details     = ["t_lpb_d"];
@@ -31,9 +31,9 @@ class t_lpb extends Model
     "no_lpb"=> "unique:t_lpb,no_lpb"
 	];
     public $required    = ["no_sj_supplier","status","tanggal_lpb","tanggal_sj_supplier"];
-    public $createable  = ["no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","m_supplier_id"];
-    public $updateable  = ["no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","m_supplier_id"];
-    public $searchable  = ["id","no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","m_supplier_id"];
+    public $createable  = ["no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","m_supplier_id","filter_tahun"];
+    public $updateable  = ["no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","m_supplier_id","filter_tahun"];
+    public $searchable  = ["id","no_lpb","t_po_id","no_sj_supplier","catatan","status","tanggal_lpb","tanggal_sj_supplier","creator_id","last_editor_id","deleted_id","deleted_at","created_at","updated_at","m_supplier_id","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

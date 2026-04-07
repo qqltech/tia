@@ -21,6 +21,7 @@ class tpurchaseinvoice extends Migration
             // $table->string('no_faktur_pajak')->change();
             // $table->integer('tipe_pembayaran_id')->comment('{"src":"set.m_general.id"}')->nullable();
             // \DB::statement("ALTER TABLE t_purchase_invoice ALTER COLUMN no_faktur_pajak TYPE VARCHAR(255);");
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

@@ -19,6 +19,7 @@ class DefaultUsers extends Migration
             //belum di update
             $table->bigIncrements('id');
             $table->string('name')->nullable();
+            $table->integer('m_business_unit_id')->comment('{"src":"set.m_business_unit.id"}')->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('username',60)->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();

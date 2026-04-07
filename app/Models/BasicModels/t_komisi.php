@@ -17,10 +17,10 @@ class t_komisi extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","grandtotal"];
+    protected $fillable = ["tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","grandtotal","filter_tahun"];
 
-    public $columns     = ["id","tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","created_at","updated_at","grandtotal"];
-    public $columnsFull = ["id:bigint","tipe_komisi:string:50","no_komisi:string:50","m_tarif_komisi_id:integer","m_customer_id:integer","t_buku_order_awal_id:integer","t_buku_order_akhir_id:integer","is_pph:boolean","status:string:20","catatan:text","creator_id:integer","last_editor_id:integer","created_at:datetime","updated_at:datetime","grandtotal:decimal"];
+    public $columns     = ["id","tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","created_at","updated_at","grandtotal","filter_tahun"];
+    public $columnsFull = ["id:bigint","tipe_komisi:string:50","no_komisi:string:50","m_tarif_komisi_id:integer","m_customer_id:integer","t_buku_order_awal_id:integer","t_buku_order_akhir_id:integer","is_pph:boolean","status:string:20","catatan:text","creator_id:integer","last_editor_id:integer","created_at:datetime","updated_at:datetime","grandtotal:decimal","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["m_tarif_komisi.id=t_komisi.m_tarif_komisi_id","m_customer.id=t_komisi.m_customer_id","t_buku_order.id=t_komisi.t_buku_order_awal_id","t_buku_order.id=t_komisi.t_buku_order_akhir_id"];
     public $details     = ["t_komisi_d"];
@@ -29,9 +29,9 @@ class t_komisi extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tipe_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph"];
-    public $createable  = ["tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","grandtotal"];
-    public $updateable  = ["tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","grandtotal"];
-    public $searchable  = ["id","tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","created_at","updated_at","grandtotal"];
+    public $createable  = ["tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","grandtotal","filter_tahun"];
+    public $updateable  = ["tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","grandtotal","filter_tahun"];
+    public $searchable  = ["id","tipe_komisi","no_komisi","m_tarif_komisi_id","m_customer_id","t_buku_order_awal_id","t_buku_order_akhir_id","is_pph","status","catatan","creator_id","last_editor_id","created_at","updated_at","grandtotal","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;

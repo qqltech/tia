@@ -24,7 +24,9 @@ class tppjk extends Migration
             // $table->decimal('tarif_ppjk',18,4)->nullable();
             // $table->decimal('admin_ppjk',18,4)->nullable();
             // $table->dropColumn(['admin_ppjk']);
-            $table->integer('admin_ppjk_id')->nullable()->comment('{"src":"set.m_general.id"}');
+            // $table->integer('admin_ppjk_id')->nullable()->comment('{"src":"set.m_general.id"}');
+            // $table->date('filter_tahun')->nullable();
+            // $table->string('no_ppjk_manual')->nullable();
         });
     }
 }

@@ -17,8 +17,9 @@ class ttagihanlainlain extends Migration
             // $table->dropColumn(['tanggal_nota']);
             // $table->datetime('tgl');
             // $table->datetime('tgl_nota');
-            $table->dropColumn(['m_order_id']);
-            $table->integer('no_buku_order')->comment('{"src":"t_buku_order.id"}');
+            // $table->dropColumn(['m_order_id']);
+            // $table->integer('no_buku_order')->comment('{"src":"t_buku_order.id"}');
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

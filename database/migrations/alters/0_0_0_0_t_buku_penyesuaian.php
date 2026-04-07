@@ -14,6 +14,7 @@ class tbukupenyesuaian extends Migration
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
             // $table->renameColumn('no_buku_penyesuain','no_buku_penyesuaian');
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

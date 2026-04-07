@@ -15,16 +15,17 @@ class tinternald extends Migration
 
             $table->unsignedBigInteger('t_internal_id')->comment('{"fk": "t_internal.id"}')->nullable();
             $table->unsignedBigInteger('m_item_id')->comment('{"src": "m_item.id"}')->nullable();
-            $table->unsignedBigInteger('m_item_d_id')->comment('{"src": "m_item_d.id"}')->nullable();
-            $table->unsignedBigInteger('satuan_id')->comment('{"src": "m_general.id"}')->nullable();
-            $table->boolean('is_bundling')->nullable()->default(false);
+            $table->unsignedBigInteger('uom_id')->comment('{"src": "set.m_general.id"}')->nullable();
+            $table->decimal('qty_stock', 18, 4)->nullable();
 
-            $table->decimal('usage', 15, 4)->nullable();
-            $table->string('catatan', 15, 4)->nullable(); 
+            $table->decimal('usage', 18, 4)->nullable();
+            $table->string('catatan')->nullable(); 
 
-            // $table->integer('creator_id')->nullable();
-            // $table->integer('last_editor_id')->nullable();
+            $table->integer('creator_id')->nullable();
+            $table->integer('last_editor_id')->nullable();
             $table->timestamps();
+            $table->integer('deleted_id')->nullable();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         table_config($this->tableName, [

@@ -40,8 +40,14 @@
     <hr>
     <TableApi ref='apiTable' :api="landing.api" :columns="landing.columns" :actions="landing.actions"
       class="max-h-[450px]">
-      <!-- <template #header>
-    </template> -->
+      <template #header>
+        <div class="flex gap-x-2">
+          <FieldX type="date" typeProps="year" :value="valLand.filter_tahun" @input="v => {
+            valLand.filter_tahun=v
+            filterShowData()
+          }" placeholder="Filter Tahunan" label="" :check="false" />
+        </div>
+      </template>
     </TableApi>
   </div>
 
@@ -325,11 +331,11 @@
         <icon fa="times" />
         Reset
       </button>
-      <button class="text-sm rounded-md py-2 px-3 text-white bg-yellow-600 hover:bg-yellow-700 flex gap-x-1 items-center
+      <!-- <button class="text-sm rounded-md py-2 px-3 text-white bg-yellow-600 hover:bg-yellow-700 flex gap-x-1 items-center
         transition-colors duration-300" @click="onSave(true)">
             <icon fa="paper-plane" />
             <span>Post</span>
-      </button>
+      </button> -->
       <button
         class="bg-green-600 text-white font-semibold hover:bg-green-500 transition-transform duration-300 transform hover:-translate-y-0.5 rounded-md p-2"
         @click="onSave(false)"

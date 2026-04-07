@@ -58,7 +58,7 @@ class tspkangkutan extends Migration
             // $table->bigInteger('jumlah_print')->default(0)->nullable();
             // $table->boolean('is_printed')->default(0)->nullable();
             // $table->renameColumn('isPrinted','is_printed');
-            
+            // $table->date('filter_tahun')->nullable();
         });
 
     }

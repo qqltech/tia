@@ -27,6 +27,7 @@ class tbondinasluar extends Migration
             $table->text('catatan')->nullable();
             $table->bigInteger('jumlah_print')->default(0)->nullable();
             $table->boolean('is_printed')->default(0)->nullable();
+            $table->date('filter_tahun')->nullable();
 
             $table->bigInteger('creator_id')->nullable();
             $table->bigInteger('last_editor_id')->nullable();

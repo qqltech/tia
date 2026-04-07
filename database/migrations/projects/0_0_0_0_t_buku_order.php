@@ -60,6 +60,7 @@ class tbukuorder extends Migration
             $table->string('lokasi_stuffing')->nullable();
             // $table->string('berkas_coo')->nullable();
             $table->integer('tipe')->comment('{"src":"set.m_general.id"}')->nullable();
+            $table->date('filter_tahun')->nullable();
 
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();

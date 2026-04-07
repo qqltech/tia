@@ -189,6 +189,67 @@ async function onSave() {
 }
 
 //  @else----------------------- LANDING
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const activeBtn = ref()
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'Active',
+    2: 'InActive',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (activeBtn.value === noBtn) {
+      activeBtn.value = null
+      statusLabel = null
+    } else {
+      activeBtn.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[activeBtn.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
 const landing = reactive({
   actions: [
     {

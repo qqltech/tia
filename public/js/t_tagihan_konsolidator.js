@@ -705,7 +705,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-center']
   },
   // {
   //   headerName: 'No.Faktur Pajak',
@@ -727,7 +727,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start'],
+    cellClass: ['border-r', '!border-gray-200', 'justify-end'],
     valueFormatter: (params) => {
 
       if (params.value) {
@@ -745,7 +745,7 @@ const landing = reactive({
     filter: 'ColFilter',
     resizable: true,
     wrapText: true,
-    cellClass: ['border-r', '!border-gray-200', 'justify-start']
+    cellClass: ['border-r', '!border-gray-200', 'justify-end']
   },
   {
     headerName: 'Catatan',

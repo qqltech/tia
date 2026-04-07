@@ -25,6 +25,66 @@ onBeforeMount(() => {
 })
 
 // @if( !$id ) | --- LANDING TABLE --- |
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke table
+  table.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
 
 // TABLE
 const table = reactive({
@@ -166,10 +226,11 @@ const table = reactive({
         : (params.data['status'] == 'DRAFT' ? `<span class="text-gray-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
           : (params.data['status'] == 'POST' ? `<span class="text-amber-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
             : (params.data['status'] == 'IN APPROVAL' ? `<span class="text-blue-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-              : (params.data['status'] == 'IN PROCESS' ? `<span class="text-yellow-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                : (params.data['status'] == 'COMPLETED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                  : (params.data['status'] == 'CANCEL' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
-                    : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`))))))
+              : (params.data['status'] == 'APPROVED' ? `<span class="text-green-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                : (params.data['status'] == 'IN PROCESS' ? `<span class="text-yellow-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                  : (params.data['status'] == 'COMPLETED' ? `<span class="text-purple-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                    : (params.data['status'] == 'CANCEL' ? `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`
+                      : `<span class="text-red-600 rounded-md text-xs font-medium px-4 py-1 inline-block capitalize">${params.data['status']?.toUpperCase()}</span>`)))))))
     }
   },
   ],
@@ -346,12 +407,12 @@ async function deleteData(row) {
 }
 
 // FILTER
-const filterButton = ref(null);
-function filterShowData(params) {
-  filterButton.value = filterButton.value === params ? null : params;
-  table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
-}
+// const filterButton = ref(null);
+// function filterShowData(params) {
+//   filterButton.value = filterButton.value === params ? null : params;
+//   table.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 onActivated(() => {
   if (apiTable.value && route.query.reload) {
@@ -514,7 +575,7 @@ onBeforeMount(async () => {
     const uniqueDetailIds = [...new Set(data.t_purchase_invoice_d.map(pid => pid["t_po_detail_id"]))];
 
     for (const podetailid of uniqueDetailIds) {
-      const queryString = new URLSearchParams({ 
+      const queryString = new URLSearchParams({
         simplest: true,
         where: `this.id = ${podetailid}`,
         scopes: 'GetDetail'
@@ -522,22 +583,22 @@ onBeforeMount(async () => {
       const response = await fetch(`${store.server.url_backend}/operation/t_purchase_order_d?${queryString}`, { headers });
       const resData = await response.json();
       const result = resData.data.map(dt => ({
-          t_no_po: dt['no_po'],
-          t_po_id: dt['t_po_id'],
-          t_po_detail_id: dt.id,
-          m_item_id: dt['m_item.id'],
-          kode: dt.kode_item,
-          nama_item: dt.nama_item,
-          tipe_item: dt['m_item.tipe_item'],
-          quantity: dt.quantity,
-          harga: parseInt(parseFloat(dt.harga)),
-          satuan: 'Lembar',
-          disc1: dt['disc1'],
-          disc2: dt['disc2'],
-          disc_amt: dt['disc_amt'],
-          catatan: dt.catatan,
-        }));
-        detailArr.push(...result);
+        t_no_po: dt['no_po'],
+        t_po_id: dt['t_po_id'],
+        t_po_detail_id: dt.id,
+        m_item_id: dt['m_item.id'],
+        kode: dt.kode_item,
+        nama_item: dt.nama_item,
+        tipe_item: dt['m_item.tipe_item'],
+        quantity: dt.quantity,
+        harga: parseInt(parseFloat(dt.harga)),
+        satuan: 'Lembar',
+        disc1: dt['disc1'],
+        disc2: dt['disc2'],
+        disc_amt: dt['disc_amt'],
+        catatan: dt.catatan,
+      }));
+      detailArr.push(...result);
     }
 
 
@@ -581,10 +642,10 @@ const poChanged = async (id) => {
     Authorization: `${store.user.token_type} ${store.user.token}`,
   };
 
-  const queryString = new URLSearchParams({ 
-    simplest: true, 
+  const queryString = new URLSearchParams({
+    simplest: true,
     where: `this.t_lpb_id=${id}`
-    
+
   }).toString();
   const response = await fetch(`${store.server.url_backend}/operation/t_lpb_d?${queryString}`, { headers });
 

@@ -37,6 +37,7 @@ class tsuratjalan extends Migration
             $table->string('no_seal')->nullable();
             $table->string('tare')->nullable();
             $table->BigInteger('jumlah_print')->default(0)->nullable();
+            $table->date('filter_tahun')->nullable();
 
             //penting
             $table->integer("creator_id")->nullable();

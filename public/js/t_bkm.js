@@ -243,6 +243,67 @@ async function onSave() {
 }
 
 //  @else----------------------- LANDING
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const activeBtn = ref()
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (activeBtn.value === noBtn) {
+      activeBtn.value = null
+      statusLabel = null
+    } else {
+      activeBtn.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[activeBtn.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tanggal) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
 const onDetailAdd = (e) => {
   const newIds = e.map(row => row.id);
   idMulti.value = [...new Set([...idMulti.value, ...newIds])]
@@ -306,24 +367,24 @@ async function multiPost() {
 }
 
 
-const activeBtn = ref()
+// const activeBtn = ref()
 
-function filterShowData(params) {
-  if (activeBtn.value === params) {
-    activeBtn.value = null
-  } else {
-    activeBtn.value = params
-  }
-  if (params) {
-    landing.api.params.where = `this.status='${params}'`
-  }
-  if (activeBtn.value == null) {
-    // clear params filter
-    landing.api.params.where = null
-  }
+// function filterShowData(params) {
+//   if (activeBtn.value === params) {
+//     activeBtn.value = null
+//   } else {
+//     activeBtn.value = params
+//   }
+//   if (params) {
+//     landing.api.params.where = `this.status='${params}'`
+//   }
+//   if (activeBtn.value == null) {
+//     // clear params filter
+//     landing.api.params.where = null
+//   }
 
-  apiTable.value.reload()
-}
+//   apiTable.value.reload()
+// }
 
 const landing = reactive({
   actions: [

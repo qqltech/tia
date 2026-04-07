@@ -18,7 +18,9 @@ class trencanapembayaranhutang extends Migration
             $table->date('tgl');
             $table->decimal('total_pi',18,2)->nullable();
             $table->decimal('total_bayar',18,2)->nullable();
+            $table->date('filter_tahun')->nullable();
             $table->text('catatan')->nullable();
+            
             $table->integer('creator_id')->nullable();
             $table->integer('last_editor_id')->nullable();
             $table->integer('delete_id')->nullable();

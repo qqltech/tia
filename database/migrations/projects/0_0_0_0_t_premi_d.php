@@ -14,7 +14,7 @@ class tpremid extends Migration
             $table->id()->from(1);
             $table->integer('t_premi_id')->comment('{"fk":"t_premi.id"}');
             $table->decimal('nominal',18,2);
-            $table->text('catatan');
+            $table->text('catatan')->nullable();
             $table->text('keterangan');
             //penting
             $table->integer('creator_id')->nullable();

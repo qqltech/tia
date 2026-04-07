@@ -18,6 +18,7 @@ class rstockd extends Migration
             $table->integer('typemin');
             $table->integer('m_item_id')->comment('{"src":"m_item.id"}');
             $table->integer('qty_awal');
+            $table->integer('qty_sisa')->nullable();
             $table->integer('qty_in')->nullable();
             $table->integer('qty_out')->nullable();
             $table->decimal('price', 18, 4);

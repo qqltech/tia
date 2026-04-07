@@ -165,10 +165,11 @@ onBeforeMount(async () => {
       initialValues.dispensasi_closing_doc = initialValues.dispensasi_closing_doc ? 1 : 0;
       initialValues.kode_cust = initialValues['m_customer.kode']
 
-
+      
       if (actionText.value?.toLowerCase() === 'copy' && initialValues.uid) {
         delete initialValues.uid;
         delete initialValues.berkas_coo
+        initialValues.tgl = new Date().toLocaleDateString('en-GB')
       }
 
       // Menambahkan Data Ke Detail NPWP
@@ -215,17 +216,19 @@ onBeforeMount(async () => {
   for (const key in initialValues) {
     values[key] = initialValues[key];
   }
-});
+
+  // gawe default tanggal!
+  const today = new Date()
+  const day = String(today.getDate()).padStart(2, '0')
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const year = today.getFullYear()
+  const formattedDate = `${day}/${month}/${year}`
+  values.tgl = formattedDate
+
+})
 
 function onBack() {
-  if (route.query.view_gaji) {
-    router.replace('/t_info_gaji')
-  } else if (route.query.view_gaji_final) {
-    router.replace('/t_info_gaji')
-  } else {
-    router.replace('/' + modulPath)
-  }
-  return
+  router.replace('/' + modulPath)
 }
 
 async function onSave() {
@@ -355,14 +358,107 @@ async function onPreview(rows = []) {
   }
 }
 
+async function onPreviewCover(rows = []) {
+  const ids = [...new Set(rows.map(r => r.id).filter(Boolean))]
 
-const filterButton = ref(null);
+  if (!ids.length) {
+    await swal.fire({
+      icon: 'warning',
+      text: 'Tidak ada item yang dipilih untuk dicetak'
+    })
+    return
+  }
 
-function filterShowData(status) {
-  filterButton.value = filterButton.value === status ? null : status;
-  landing.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
-  apiTable.value.reload();
+  isRequesting.value = true
+
+  try {
+    const previewUrl = `${store.server.url_backend}/web/cover_buku_order?${ids.map(i => `id[]=${i}`).join('&')}`
+    window.open(previewUrl, '_blank')
+
+    router.replace('/' + modulPath)
+  } catch (err) {
+    console.error(err)
+    isBadForm.value = true
+    await swal.fire({
+      icon: 'error',
+      text: err?.message || err
+    })
+  } finally {
+    isRequesting.value = false
+  }
 }
+
+const valLand = reactive({})
+
+function aDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const formattedDate = `${year}`;
+
+  return formattedDate
+}
+
+onBeforeMount(() => {
+  valLand.filter_tahun = aDay()
+  filterShowData()
+})
+
+function parseTanggalToYMD(tanggal) {
+  const [yyyy] = tanggal.split('/');
+  return `${yyyy}`;
+}
+
+//FILTER
+const filterButton = ref(null)
+
+function filterShowData(statusLabel = null, noBtn = null) {
+  const statusMap = {
+    1: 'DRAFT',
+    2: 'POST',
+    3: 'PRINTED',
+    4: 'CLOSED'
+  }
+
+  // Handle klik button
+  if (noBtn !== null) {
+    if (filterButton.value === noBtn) {
+      filterButton.value = null
+      statusLabel = null
+    } else {
+      filterButton.value = noBtn
+    }
+  } else {
+    statusLabel = statusMap[filterButton.value] || null
+  }
+
+  const filters = []
+
+  // Filter status
+  if (statusLabel) {
+    filters.push(`this.status='${statusLabel.toUpperCase()}'`)
+  }
+
+  // Filter Tahun
+  if (valLand.filter_tahun) {
+    filters.push(`EXTRACT(YEAR FROM this.tgl) = ${valLand.filter_tahun}`)
+  }
+
+  // Apply ke landing
+  landing.api.params.where = filters.length
+    ? filters.join(' AND ')
+    : null
+
+  apiTable.value.reload()
+}
+
+
+// const filterButton = ref(null);
+
+// function filterShowData(status) {
+//   filterButton.value = filterButton.value === status ? null : status;
+//   landing.api.params.where = filterButton.value !== null ? `this.status='${filterButton.value}'` : null;
+//   apiTable.value.reload();
+// }
 
 const landing = reactive({
   actions: [
@@ -570,7 +666,7 @@ const landing = reactive({
             icon: 'success',
             text: responseJson?.message || 'PRINTED'
           });
-          window.open(`${store.server.url_backend}/web/buku_order?export=pdf&size=b5&orientation=potrait&id=${row.id}`)
+          window.open(`${store.server.url_backend}/web/biaya_tagihan?export=pdf&size=a4&orientation=potrait&id=${row.id}`)
         } catch (err) {
           isBadForm.value = true;
           swal.fire({

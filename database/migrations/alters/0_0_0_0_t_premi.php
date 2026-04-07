@@ -12,7 +12,7 @@ class tpremi extends Migration
         Schema::table($this->tableName, function (Blueprint $table) {
             //$table->string('_existColumnName_')->change();
             //$table->string('_columnName_');
-            //$table->dropColumn([ ]);
+            // $table->dropColumn(['history_nominal']);
             // $table->string("status", 10)->default("DRAFT")->nullable();
             // $table->decimal('total_premi',18,2)->nullable();
             // $table->string('no_draft',40)->nullable();
@@ -26,6 +26,9 @@ class tpremi extends Migration
             // $table->text('catatan')->nullable()->change();
             // $table->integer('grup_head_id')->comment('{"src":"m_grup_head.id"}')->nullable();
             // $table->decimal('tol',18,2)->nullable()->change();
+            // $table->integer('trip_id')->comment('{"src":"set.m_general.id"}')->nullable();
+            // $table->json('history_nominal_list')->nullable();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

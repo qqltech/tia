@@ -32,6 +32,7 @@ class tsuratjalan extends Migration
             // $table->string('tare')->nullable();
             // $table->string('foto_surat_jalan')->nullable();
             // $table->BigInteger('jumlah_print')->default(0)->nullable();
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

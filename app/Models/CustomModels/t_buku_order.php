@@ -58,6 +58,8 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
             $kodeTipe = "Buku Order OLS";
         }
 
+        $this->helper->checkIsPeriodClosed($arrayData['tgl']);
+
         $noBukuOrder = $this->helper->generateNomor($kodeTipe);
         
         $currentMonth = date('M');  
@@ -77,6 +79,18 @@ class t_buku_order extends \App\Models\BasicModels\t_buku_order
             "model" => $model,
             "data" => $newArrayData,
             // "errors" => ['error1']
+        ];
+    }
+
+    public function updateBefore($model, $arrayData, $metaData, $id = null)
+    {
+        $tgl = $arrayData['tgl'] ?? $model->tgl;
+
+        $this->helper->checkIsPeriodClosed($tgl);
+
+        return [
+            "model" => $model,
+            "data"  => $arrayData
         ];
     }
 

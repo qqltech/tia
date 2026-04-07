@@ -13,6 +13,7 @@ class tlpb extends Migration
             // $table->bigInteger('m_supplier_id')->comment('{"src":"m_supplier.id"}')->nullable();
             //$table->string('_columnName_');
             //$table->dropColumn([ ]);
+            // $table->date('filter_tahun')->nullable();
         });
     }
 }

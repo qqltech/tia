@@ -29,6 +29,7 @@ class tpurchaseinvoice extends Migration
             $table->integer('jenis_pph')->comment('{"src":"set.m_general.id"}');
             $table->float('persen_pph');
             $table->text('catatan')->nullable();
+            $table->date('filter_tahun')->nullable();
 
             $table->decimal('total_pph', 18, 4);
             $table->decimal('total_ppn', 18, 4);

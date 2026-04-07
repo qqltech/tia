@@ -317,4 +317,18 @@ class t_premi extends \App\Models\BasicModels\t_premi
             return $this->helper->responseCatch($e);
         }
     }
+
+    public function scopeGetSupir($query){
+        return $query
+        ->leftJoin('t_spk_angkutan as spk_supir', 'spk_supir.id', '=', 't_premi.t_spk_angkutan_id')
+        ->leftJoin('t_buku_order', 't_buku_order.id', '=', 'spk_supir.t_buku_order_1_id')
+        ->leftJoin('set.m_kary as supir', 'supir.id', '=', 'spk_supir.supir')
+        ->addSelect([
+            // 'spk_supir.t_buku_order_id as no_order',
+            't_buku_order.id as t_buku_order_id',
+            't_buku_order.no_buku_order as no_buku_order',
+            'supir.id as supir_id',
+            'supir.nama as supir_nama',
+        ]);
+    }
 }

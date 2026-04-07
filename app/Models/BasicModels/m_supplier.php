@@ -24,7 +24,7 @@ class m_supplier extends Model
     public $rules       = [];
     public $joins       = ["set.m_general.id=m_supplier.tipe_id","set.m_general.id=m_supplier.jenis_id","set.m_general.id=m_supplier.top","set.m_general.id=m_supplier.bank"];
     public $details     = [];
-    public $heirs       = ["m_asset_d","m_tarif_angkutan","t_angkutan_d","t_angkutan_d","t_bon_dinas_luar","t_credit_note","t_debit_note","t_jurnal_angkutan","t_jurnal_angkutan_d","t_jurnal_angkutan_d","t_lpb","t_pembayaran_hutang","t_purchase_invoice","t_spk_angkutan","t_rencana_pembayaran_hutang_d","t_spk_lain","t_purchase_order","temp_t_spk_angkutan"];
+    public $heirs       = ["t_bon_dinas_luar","t_spk_angkutan","t_spk_lain","t_jurnal_angkutan","t_lpb","m_asset_d","temp_t_spk_angkutan","t_jurnal_angkutan_d","t_jurnal_angkutan_d","t_purchase_invoice","t_purchase_order","t_rencana_pembayaran_hutang_d","t_debit_note","t_angkutan_d","t_angkutan_d","t_credit_note","m_tarif_angkutan","t_pembayaran_hutang"];
     public $detailsChild= [];
     public $detailsHeirs= [];
     public $unique      = [

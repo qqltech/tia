@@ -17,10 +17,10 @@ class t_jurnal_angkutan extends Model
     "created_at"=> "datetime:d\/m\/Y H:i",
     "updated_at"=> "datetime:d\/m\/Y H:i"
 	];
-    protected $fillable = ["no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","grand_total","ppn","dpp"];
+    protected $fillable = ["no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","grand_total","ppn","dpp","filter_tahun"];
 
-    public $columns     = ["id","no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","ppn","dpp"];
-    public $columnsFull = ["id:bigint","no_draft:string:20","tgl:date","no_jurnal:string:20","m_supplier_id:integer","catatan:text","status:string:20","no_nota_piutang:string:20","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","grand_total:decimal","ppn:decimal","dpp:decimal"];
+    public $columns     = ["id","no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","ppn","dpp","filter_tahun"];
+    public $columnsFull = ["id:bigint","no_draft:string:20","tgl:date","no_jurnal:string:20","m_supplier_id:integer","catatan:text","status:string:20","no_nota_piutang:string:20","creator_id:integer","last_editor_id:integer","delete_id:integer","delete_at:datetime","created_at:datetime","updated_at:datetime","grand_total:decimal","ppn:decimal","dpp:decimal","filter_tahun:date"];
     public $rules       = [];
     public $joins       = ["m_supplier.id=t_jurnal_angkutan.m_supplier_id"];
     public $details     = ["t_jurnal_angkutan_d"];
@@ -29,9 +29,9 @@ class t_jurnal_angkutan extends Model
     public $detailsHeirs= [];
     public $unique      = [];
     public $required    = ["tgl","m_supplier_id","status"];
-    public $createable  = ["no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","grand_total","ppn","dpp"];
-    public $updateable  = ["no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","grand_total","ppn","dpp"];
-    public $searchable  = ["id","no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","ppn","dpp"];
+    public $createable  = ["no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","grand_total","ppn","dpp","filter_tahun"];
+    public $updateable  = ["no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","grand_total","ppn","dpp","filter_tahun"];
+    public $searchable  = ["id","no_draft","tgl","no_jurnal","m_supplier_id","catatan","status","no_nota_piutang","creator_id","last_editor_id","delete_id","delete_at","created_at","updated_at","grand_total","ppn","dpp","filter_tahun"];
     public $deleteable  = true;
     public $cascade     = true;
     public $deleteOnUse = false;
